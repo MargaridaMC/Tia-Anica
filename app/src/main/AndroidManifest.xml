@@ -32,6 +32,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.mg.tiaanica.AlphaSum" />
         </activity>
+        <activity
+            android:name=".VigenereCipher"
+            android:label="@string/title_activity_vigenere_cipher"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DisplayCipherResult"
+            android:label="@string/title_activity_display_cipher_result"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
