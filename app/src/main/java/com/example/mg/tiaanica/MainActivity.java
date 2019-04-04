@@ -107,4 +107,9 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, VigenereCipher.class);
         startActivity(intent);
     }
+
+    public void goToCoordCalculator(View view){
+        Intent intent = new Intent(this, CoordCalculator.class);
+        startActivity(intent);
+    }
 }

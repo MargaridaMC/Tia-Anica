@@ -13,4 +13,8 @@
     <string name="vigenere">Vigenère Cipher</string>
     <string name="title_activity_vigenere_cipher">vigenere_cipher</string>
     <string name="title_activity_display_cipher_result">DisplayCipherResult</string>
+    <string name="title_activity_coord_calculator">Coordinate Calculator</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
 </resources>
