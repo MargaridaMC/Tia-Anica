@@ -20,6 +20,14 @@
         <item name="android:textSize">14dp</item>
     </style>
 
+    <style name="AppTheme.TextField">
+        <item name="android:background">@drawable/text_field</item>
+        <item name="android:alpha">0.9</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

@@ -192,6 +192,7 @@ public class VigenereCipher extends AppCompatActivity
         String message = "Encoded text: " + String.valueOf(encryptedMsg);
 
         TextView textView = findViewById(R.id.result);
+        textView.setVisibility(View.VISIBLE);
         textView.setText(message);
     }
 
@@ -223,6 +224,7 @@ public class VigenereCipher extends AppCompatActivity
         }
 
         TextView textView = findViewById(R.id.result);
+        textView.setVisibility(View.VISIBLE);
         textView.setText("Encoded text: " + String.valueOf(decryptedMsg));
     }
 }

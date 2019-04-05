@@ -186,7 +186,8 @@ public class CoordCalculator extends AppCompatActivity
         TextView inputSentence = new TextView(this);
         inputSentence.setText("Input the values for each variable.");
         inputSentence.setTextSize(18);
-        inputSentence.setTextColor(Color.BLACK);
+        inputSentence.setTextColor(getResources().getColor(R.color.gray));
+        row0.setVisibility(View.VISIBLE);
         row0.addView(inputSentence);
 
 
@@ -210,7 +211,7 @@ public class CoordCalculator extends AppCompatActivity
             temp.setText(neededLetters.get(i));
             temp.setTextSize(18);
             temp.setWidth(80);
-            temp.setTextColor(Color.BLACK);
+            temp.setTextColor(getResources().getColor(R.color.gray));
 
             blankSpace = new TextView(this);
             blankSpace.setWidth(100);
@@ -221,21 +222,25 @@ public class CoordCalculator extends AppCompatActivity
             tempValue.setId(i);
 
             if(r == 1){
+                row1.setVisibility(View.VISIBLE);
                 row1.addView(temp);
                 row1.addView(tempValue);
                 row1.addView(blankSpace);
             }
             else if (r == 2){
+                row2.setVisibility(View.VISIBLE);
                 row2.addView(temp);
                 row2.addView(tempValue);
                 row2.addView(blankSpace);
             }
             else if(r == 3) {
+                row3.setVisibility(View.VISIBLE);
                 row3.addView(temp);
                 row3.addView(tempValue);
                 row3.addView(blankSpace);
             }
             else if(r == 4) {
+                row4.setVisibility(View.VISIBLE);
                 row4.addView(temp);
                 row4.addView(tempValue);
                 row4.addView(blankSpace);
@@ -257,10 +262,10 @@ public class CoordCalculator extends AppCompatActivity
 
         r++;
 
-        if (r == 2) row2.addView(compute);
-        else if(r == 3) row3.addView(compute);
-        else if(r == 4) row4.addView(compute);
-        else row5.addView(compute);
+        if (r == 2){ row2.setVisibility(View.VISIBLE); row2.addView(compute);}
+        else if(r == 3) { row3.setVisibility(View.VISIBLE); row3.addView(compute);}
+        else if(r == 4) { row4.setVisibility(View.VISIBLE); row4.addView(compute);}
+        else { row5.addView(compute); }
 
     }
 
@@ -489,6 +494,7 @@ public class CoordCalculator extends AppCompatActivity
         }
 
         TextView result = (TextView) findViewById(R.id.result);
+        result.setVisibility(View.VISIBLE);
         result.setText("Final latitude is " + latitude + " and final longitude is "+ longitude);
     }
 }

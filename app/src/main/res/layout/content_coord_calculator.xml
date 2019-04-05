@@ -10,6 +10,7 @@
     tools:showIn="@layout/app_bar_coord_calculator">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/tiaanica" />
@@ -19,24 +20,24 @@
         android:id="@+id/enter"
         android:layout_width="@dimen/one_third_width"
         android:layout_height="@dimen/button_height"
-        android:theme="@style/AppTheme.Button"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:onClick="parseCoordFormula"
         android:text="Enter"
+        android:theme="@style/AppTheme.Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/formula"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/formula"
-        android:layout_width="249dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_width="@dimen/two_thirds_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginStart="44dp"
+        android:layout_marginLeft="44dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="Enter your coordinate formula"
@@ -49,15 +50,15 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="354dp"
-        android:layout_height="65dp"
+        android:layout_width="@dimen/full_width"
+        android:layout_height="@dimen/button_height"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:ems="10"
-        android:textColor="@android:color/black"
+        android:theme="@style/AppTheme.TextField"
         android:textSize="@dimen/text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +66,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="350dp"
+        android:layout_width="@dimen/full_width"
         android:layout_height="300dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
@@ -74,39 +75,52 @@
         android:layout_marginRight="32dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2">
 
         <LinearLayout
             android:id="@+id/row0"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/full_width"
             android:layout_height="50dp"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme.TextField"
+            android:visibility="invisible">
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/row1"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme.TextField"
+            android:visibility="invisible">
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/row2"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme.TextField"
+            android:visibility="invisible"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/row3"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme.TextField"
+            android:visibility="invisible"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/row4"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme.TextField"
+            android:visibility="invisible"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/row5"
@@ -120,7 +134,7 @@
 
     <TextView
         android:id="@+id/result"
-        android:layout_width="350dp"
+        android:layout_width="@dimen/full_width"
         android:layout_height="93dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -128,9 +142,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/text_size"
         android:textIsSelectable="true"
+        android:theme="@style/AppTheme.TextField"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

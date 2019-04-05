@@ -20,7 +20,7 @@
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/two_thirds_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:ems="10"
@@ -38,27 +38,28 @@
         android:id="@+id/button2"
         android:layout_width="@dimen/one_third_width"
         android:layout_height="@dimen/button_height"
-        android:theme="@style/AppTheme.Button"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginRight="32dp"
         android:onClick="calculateAlphaSum"
         android:text="@string/enter"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:theme="@style/AppTheme.Button"
+        app:layout_constraintBottom_toBottomOf="@+id/editText"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.056" />
+        app:layout_constraintStart_toEndOf="@+id/editText" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/full_width"
+        android:layout_height="@dimen/button_height"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:textSize="@dimen/text_size"
         android:textIsSelectable="true"
+        android:textSize="@dimen/text_size"
+        android:theme="@style/AppTheme.TextField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText" />
