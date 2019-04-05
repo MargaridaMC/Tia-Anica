@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.widget.LinearLayout;
 import android.content.res.Resources;
 
@@ -232,6 +233,9 @@ public class CoordCalculator extends AppCompatActivity
         compute.setText("Compute");
         compute.setRight(0);
         compute.setOnClickListener(new View.OnClickListener(){ public void onClick(View view) { computeCoordinates(view);}});
+        compute.setBackgroundResource(R.drawable.bt_style);
+        compute.setTextColor(Color.parseColor("#ffffff"));
+        compute.setTypeface(null, Typeface.BOLD);
 
         r++;
 

@@ -1,6 +1,5 @@
 package com.example.mg.tiaanica;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,13 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.Arrays;
 
 public class VigenereCipher extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,94 +141,69 @@ public class VigenereCipher extends AppCompatActivity
         this.msgLen = msg.length();
     }
 
-    public char[] encode() {
+    public void encode(View view) {
 
+        EditText msgText = findViewById(R.id.msg);
+        String msg= msgText.getText().toString();
+
+        EditText keyText = findViewById(R.id.key);
+        String key= keyText.getText().toString();
+
+        this.VigenereCipher(msg,key);
 
         char[] encryptedMsg = new char[msgLen];
 
         for(int i = 0; i < msgLen; ++i) {
 
-            if (msg[i]==' ') {
+            if (this.msg[i]==' ') {
                 encryptedMsg[i] = ' ';
                 continue;
             }
 
-            if (Arrays.binarySearch(allowedCharacters,msg[i])<0) {
-                encryptedMsg[i] = msg[i];
+            if (Arrays.binarySearch(allowedCharacters, this.msg[i])<0) {
+                encryptedMsg[i] = this.msg[i];
                 continue;
             }
 
 
-            encryptedMsg[i] = (char)(((msg[i] + key[i]) % 26) + 'A');
+            encryptedMsg[i] = (char)(((this.msg[i] + this.key[i]) % 26) + 'A');
 
         }
 
-        return encryptedMsg;
+        String message = "Encoded text: " + String.valueOf(encryptedMsg);
+
+        TextView textView = findViewById(R.id.result);
+        textView.setText(message);
     }
 
-    public char[] decode() {
+    public void decode(View view) {
+
+        EditText msgText = findViewById(R.id.msg);
+        String msg= msgText.getText().toString();
+
+        EditText keyText = findViewById(R.id.key);
+        String key= keyText.getText().toString();
+
+        this.VigenereCipher(msg,key);
 
         char[] decryptedMsg = new char[msgLen];
 
         for(int i = 0; i < msgLen; ++i) {
 
-            if (msg[i]==' ') {
+            if (this.msg[i]==' ') {
                 decryptedMsg[i] = ' ';
                 continue;
             }
 
-            if ( Arrays.binarySearch(allowedCharacters,msg[i])<0) {
-                decryptedMsg[i] = msg[i];
+            if ( Arrays.binarySearch(allowedCharacters,this.msg[i])<0) {
+                decryptedMsg[i] = this.msg[i];
                 continue;
             }
 
-            decryptedMsg[i] = (char)(((msg[i] - key[i] + 26) % 26) + 'A');
+            decryptedMsg[i] = (char)(((this.msg[i] - this.key[i] + 26) % 26) + 'A');
         }
 
-        return decryptedMsg;
-    }
-
-    public void onClickEncode(View view){
-
-        Intent intent = new Intent(this, DisplayCipherResult.class);
-
-        EditText msgText = findViewById(R.id.msg);
-        String msg= msgText.getText().toString();
-
-        EditText keyText = findViewById(R.id.key);
-        String key= keyText.getText().toString();
-
-        this.VigenereCipher(msg,key);
-
-        char[] encryptedMsg = this.encode();
-
-        String message = "Encoded text: " + String.valueOf(encryptedMsg);
-
-        intent.putExtra(EXTRA_MESSAGE,message);
-
-        startActivity(intent);
-
-    }
-
-    public void onClickDecode(View view){
-
-        Intent intent = new Intent(this, DisplayCipherResult.class);
-
-        EditText msgText = findViewById(R.id.msg);
-        String msg= msgText.getText().toString();
-
-        EditText keyText = findViewById(R.id.key);
-        String key= keyText.getText().toString();
-
-        this.VigenereCipher(msg,key);
-
-        char[] decryptedMsg = this.decode();
-
-        String result = "Decoded text: " + String.valueOf(decryptedMsg);
-
-        intent.putExtra(EXTRA_MESSAGE,result);
-
-        startActivity(intent);
-
+        TextView textView = findViewById(R.id.result);
+        textView.setText("Encoded text: " + String.valueOf(decryptedMsg));
     }
 }

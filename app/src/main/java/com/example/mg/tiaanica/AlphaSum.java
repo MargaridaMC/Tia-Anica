@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class AlphaSum extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -109,7 +110,7 @@ public class AlphaSum extends AppCompatActivity
          * 1. a context (activity class is a subclass of context
          * 2. the class of the app component to which the system should deliver the intent (in this case the activity that should be started
          */
-        Intent intent = new Intent(this, DisplayAlphaSumResult.class);
+
         EditText editText = findViewById(R.id.editText);
         String text= editText.getText().toString();
         //putExtra adds the editText value to the intent
@@ -297,11 +298,15 @@ public class AlphaSum extends AppCompatActivity
 
         }
 
-        String message = "The alpha sum value of '" + text + "' is: " + Integer.toString(value);
+        String message = "The alpha sum value of '" + text + "' is " + Integer.toString(value);
 
-        intent.putExtra(EXTRA_MESSAGE,message);
+        // intent.putExtra(EXTRA_MESSAGE,message);
         //startActivity vai começar a actividade DisplayMessageActivity especificada pelo Intent
-        startActivity(intent);
+        // startActivity(intent);
+
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(message);
 
     }
+
 }
