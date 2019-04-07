@@ -40,7 +40,7 @@ public class AlphaSum extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSum.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Alpha Sum:</i></b>" + getString(R.string.alphasum_info)));
+                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Alpha Sum: </i></b>" + getString(R.string.alphasum_info)));
 
                 // Add OK button
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

@@ -27,6 +27,7 @@
         <item name="android:textColor">@color/gray</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">8dp</item>
+        <item name="android:textIsSelectable">true</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

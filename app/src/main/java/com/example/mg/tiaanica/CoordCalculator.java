@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
+import android.view.KeyEvent;
 import android.text.Html;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -32,7 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Collections;
 
+import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
 
 public class CoordCalculator extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,7 +64,7 @@ public class CoordCalculator extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Coordinate Calculator</i></b>" + getString(R.string.coord_calculator_info), Html.FROM_HTML_MODE_LEGACY));
+                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Coordinate Calculator: </i></b>" + getString(R.string.coord_calculator_info), Html.FROM_HTML_MODE_LEGACY));
 
                 // Add OK button
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -81,7 +88,27 @@ public class CoordCalculator extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // When pushing enter on the keyboard on the formula text field, it parses the coordinates right away (as if pushing the enter button)
+        final EditText formula = (EditText) findViewById(R.id.formula);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordCalculator.this.INPUT_METHOD_SERVICE);
+
+        formula.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                        && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    parseCoordFormula(v); // parse the coordinate
+                    mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0); // make the keyboard disappear
+                    return true;
+                }
+                return false;
+            }
+        });
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -142,9 +169,9 @@ public class CoordCalculator extends AppCompatActivity
 
     public void parseCoordFormula(View view){
 
-        // Intent intent = new Intent(this, DisplayCoordVariables.class);
+        // Keyboard manager -- allows keyboard to disappear
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordCalculator.this.INPUT_METHOD_SERVICE);
 
-        LinearLayout linearLayout = findViewById(R.id.linearLayout);
         LinearLayout row0 = findViewById(R.id.row0);
         row0.removeAllViews();
         LinearLayout row1 = findViewById(R.id.row1);
@@ -177,6 +204,7 @@ public class CoordCalculator extends AppCompatActivity
 
         this.coord = coord;
         this.neededLetters = neededLetters;
+        Collections.sort(this.neededLetters);
 
         String list = neededLetters.toString();
 
@@ -221,6 +249,24 @@ public class CoordCalculator extends AppCompatActivity
             tempValue.setWidth(150);
             tempValue.setId(i);
 
+            // If we are inputting the value of the last coordinate compute the result and hide the keyboard
+            if(i == total - 1){
+                tempValue.setImeOptions(IME_ACTION_DONE);
+                tempValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                        // If the event is a key-down event on the "enter" button
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            // Perform action on key press
+                            computeCoordinates(view); // parse the coordinate
+                            mgr.hideSoftInputFromWindow(view.getWindowToken(), 0); // make the keyboard disappear
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+            }
+            else tempValue.setImeOptions(IME_ACTION_NEXT);
+
             if(r == 1){
                 row1.setVisibility(View.VISIBLE);
                 row1.addView(temp);
@@ -250,6 +296,37 @@ public class CoordCalculator extends AppCompatActivity
                 row5.addView(tempValue);
                 row5.addView(blankSpace);
             }
+        }
+
+        // For each of the input fields we want to move on to the next one when pushing the enter button on the keyboard
+        for(int i = 0; i < 1; i++){
+
+            int id = CoordCalculator.this.getResources().getIdentifier(
+                    String.valueOf(i + 1),
+                    "id",
+                    CoordCalculator.this.getPackageName()
+            );
+            final TextView valueField = (TextView) findViewById(id);
+
+            int nextId = CoordCalculator.this.getResources().getIdentifier(
+                    String.valueOf(i + 1),
+                    "id",
+                    CoordCalculator.this.getPackageName()
+            );
+
+            final TextView nextValueField = (TextView) findViewById(nextId);
+            valueField.setOnKeyListener(new View.OnKeyListener() {
+                                            public boolean onKey(View view, int keyCode, KeyEvent event){
+
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                            && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        nextValueField.requestFocus();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
         }
 
         Button compute = new Button(this);
@@ -353,6 +430,7 @@ public class CoordCalculator extends AppCompatActivity
 
         String tokenizedCoord = "";
         String[] parts = coord.split("");
+        int maxLength = coord.length() + 1;
 
         int i = 0;
         String currentChar;
@@ -360,7 +438,7 @@ public class CoordCalculator extends AppCompatActivity
         String nextToNextChar;
         String toAdd;
 
-        while(i < coord.length() + 1) {
+        while(i < maxLength) {
 
             currentChar = parts[i];
             toAdd = "";
@@ -371,14 +449,13 @@ public class CoordCalculator extends AppCompatActivity
 
                 i += 1;
                 currentChar = parts[i];
+                toAdd += currentChar;
 
                 while(!currentChar.equals(")")){
-                    toAdd += currentChar;
                     i += 1;
                     currentChar = parts[i];
+                    toAdd += currentChar;
                 }
-
-                toAdd += ")";
             }
             else if(currentChar.matches("[0-9\\.°NSEW]")){
                 toAdd = currentChar;
@@ -388,15 +465,12 @@ public class CoordCalculator extends AppCompatActivity
                 toAdd += "(";
                 toAdd += currentChar;
 
-                if(i + 1 < coord.length()) {
+                if(i + 2 < maxLength) {
 
                     nextChar = parts[i+1];
                     nextToNextChar = parts[i+2]; //Check for length
 
-                    while(nextChar.matches("[+\\-\\/\\*÷]") & nextToNextChar.matches("[A-Z0-9]") & i + 1 < coord.length()) {
-
-                        nextChar = parts[i+1];
-                        nextToNextChar = parts[i+2];
+                    while(i + 2 < maxLength && nextChar.matches("[+\\-\\/\\*÷]") && nextToNextChar.matches("[A-Z0-9]")) {
 
                         toAdd += nextChar;
                         toAdd += nextToNextChar;
@@ -405,23 +479,28 @@ public class CoordCalculator extends AppCompatActivity
 
                             int j = i + 3;
 
-                            if(j < coord.length()) {
-                                String theOneAfterThat = parts[j];
+                            if(j < maxLength) {
 
-                                while(theOneAfterThat.matches("[0-9]")) {
+                                String theOneAfterThat = parts[j];
+                                toAdd += theOneAfterThat;
+                                j += 1;
+
+                                while(j < maxLength  && theOneAfterThat.matches("[0-9]")) {
+                                    theOneAfterThat = parts[j];
                                     toAdd += theOneAfterThat;
                                     j += 1;
-                                    theOneAfterThat = parts[j];
                                 }
                             }
-                            i = j - 1;
+                            i = j - 3;
                         }
 
-                        if(i + 1 < coord.length()) {
+                        i += 2;
+
+                        if(i + 2 < maxLength) {
                             nextChar = parts[i+1];
                             nextToNextChar = parts[i+2];
                         }
-                        else break;
+
                     }
                 }
 
@@ -437,26 +516,33 @@ public class CoordCalculator extends AppCompatActivity
 
     }
 
-    public void computeCoordinates(View view){
+    public String evaluate(String tokenizedCoord){
 
-        int lonInd = 0;
-
-        if(coord.contains("E")) lonInd = coord.indexOf("E");
-        else {
-            try {
-                lonInd = coord.indexOf("W");
-            }
-            catch (StringIndexOutOfBoundsException e) {
-                System.out.println("The coordinates do not contain information on the longitude.");
-                System.exit(0);
-            }
+        for (Map.Entry<String, Integer> pair : variables.entrySet()) {
+            String key = pair.getKey();
+            String value = Integer.toString(pair.getValue());
+            tokenizedCoord = tokenizedCoord.replaceAll(key, value);
         }
 
-        String latitude = coord.substring(0, lonInd);
-        String longitude = coord.substring(lonInd);
 
-        latitude = tokenize(latitude);
-        longitude = tokenize(longitude);
+        Pattern token = Pattern.compile("\\((.*?)\\)");
+        Matcher latTokens = token.matcher(tokenizedCoord);
+        while (latTokens.find()) {
+            String toEval = latTokens.group(1);
+            tokenizedCoord = tokenizedCoord.replace(latTokens.group(), Integer.toString((int) eval(toEval)));
+        }
+
+        return tokenizedCoord;
+    }
+
+    public void computeCoordinates(View view){
+
+        // Keyboard manager -- allows keyboard to disappear
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordCalculator.this.INPUT_METHOD_SERVICE);
+
+        mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        String tokenizedCoord = tokenize(coord);
 
         for(int i = 0; i < this.neededLetters.size(); i++){
 
@@ -472,29 +558,11 @@ public class CoordCalculator extends AppCompatActivity
             this.variables.put(neededLetters.get(i), value);
         }
 
-        for (Map.Entry<String, Integer> pair : variables.entrySet()) {
-            String key = pair.getKey();
-            String value = Integer.toString(pair.getValue());
-            latitude = latitude.replaceAll(key, value);
-            longitude = longitude.replaceAll(key, value);
-        }
-
-
-        Pattern token = Pattern.compile("\\((.*?)\\)");
-        Matcher latTokens = token.matcher(latitude.substring(1));
-        while (latTokens.find()) {
-            String toEval = latTokens.group(1);
-            latitude = latitude.replace(latTokens.group(), Integer.toString((int) eval(toEval)));
-        }
-
-        Matcher lonTokens = token.matcher(longitude.substring(1));
-        while (lonTokens.find()) {
-            String toEval = lonTokens.group(1);
-            longitude = longitude.replace(lonTokens.group(), Integer.toString((int) eval(toEval)));
-        }
+        tokenizedCoord = evaluate(tokenizedCoord);
 
         TextView result = (TextView) findViewById(R.id.result);
         result.setVisibility(View.VISIBLE);
-        result.setText("Final latitude is " + latitude + " and final longitude is "+ longitude);
+        result.setText("The final coordinates are " + tokenizedCoord);
+
     }
 }

@@ -13,7 +13,7 @@
     <string name="alphasum_info">Calculates the sum of the letters in a word, when these are converted to letter, e.g. A = 1, B = 2, C = 3...</string>
     <string name="vignere_info">Encodes and Decodes a message using the Vignère Cipher</string>
     <string name="coord_calculator_info">Taking a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG) this replaces the letter with the appropriate values and computes the final coordinates. Note: at the moment it does not allow N, S, W and E to be used as variables. If these lettters show up in the formula please replace them with other ones.  </string>
-    <string name="title_activity_alpha_sum">AlphaSum</string>
+    <string name="title_activity_alpha_sum">Alpha Sum</string>
     <string name="vigenere">Vigenère Cipher</string>
     <string name="title_activity_vigenere_cipher">Vigenère Cipher</string>
     <string name="title_activity_coord_calculator">Coordinate Calculator</string>

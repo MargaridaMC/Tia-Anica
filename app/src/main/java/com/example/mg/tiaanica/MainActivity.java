@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Alpha Sum:</i></b>" + getString(R.string.alphasum_info) + "<br><br><b><i>Vignère Cipher:</i></b>" + getString(R.string.vignere_info) + "<br><br><b><i>Coordinate Calculator</i></b>" + getString(R.string.coord_calculator_info), Html.FROM_HTML_MODE_LEGACY));//.setMessage(message[0] );
+                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Alpha Sum: </i></b>" + getString(R.string.alphasum_info) + "<br><br><b><i>Vignère Cipher: </i></b>" + getString(R.string.vignere_info) + "<br><br><b><i>Coordinate Calculator: </i></b>" + getString(R.string.coord_calculator_info), Html.FROM_HTML_MODE_LEGACY));//.setMessage(message[0] );
 
                 // Add OK button
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
