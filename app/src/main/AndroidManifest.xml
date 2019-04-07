@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".CoordinateOffset"
+            android:label="@string/title_activity_coordinate_offset"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.mg.tiaanica.MainActivity" />
+        </activity>
+        <activity
             android:name=".CoordCalculator"
             android:label="@string/title_activity_coord_calculator"
             android:parentActivityName=".MainActivity"

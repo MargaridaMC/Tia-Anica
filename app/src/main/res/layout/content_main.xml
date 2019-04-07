@@ -65,4 +65,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button5" />
 
+    <Button
+        android:id="@+id/button7"
+        android:layout_height="@dimen/button_height"
+        android:layout_width="250dp"
+        android:theme="@style/AppTheme.Button"
+        android:layout_marginTop="8dp"
+        android:text="Coordinate Offset"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:onClick="goToCoordOffset"
+        android:textSize="@dimen/text_size"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
 </android.support.constraint.ConstraintLayout>
