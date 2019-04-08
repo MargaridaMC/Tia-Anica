@@ -25,11 +25,12 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
                 android:alpha="0.9"
                 android:theme="@style/AppTheme.TextField"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/angleConstraint"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -42,20 +43,19 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/latitude"
                     app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/latitude"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginLeft="32dp"
+                    android:layout_height="@dimen/text_height"
                     android:ems="10"
+                    android:hint="@string/latitude_hint"
                     android:inputType="textPersonName"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/textView4"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,11 +68,12 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
                 android:alpha="0.9"
                 android:theme="@style/AppTheme.TextField"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/distanceConstraint"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/latitudeConstraint">
 
@@ -86,19 +87,19 @@
                     app:layout_constraintEnd_toStartOf="@+id/longitude"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
 
                 <EditText
                     android:id="@+id/longitude"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginLeft="32dp"
                     android:ems="10"
+                    android:hint="@string/longitude_hint"
                     android:inputType="textPersonName"
+                    android:nextFocusDown="@+id/angle"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/textView5"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -108,16 +109,15 @@
                 android:id="@+id/angleConstraint"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/text_height"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
                 android:alpha="0.9"
                 android:theme="@style/AppTheme.TextField"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/longitudeConstraint">
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/latitudeConstraint"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/angleID"
@@ -126,21 +126,19 @@
                     android:text="Angle (in degrees):"
                     android:theme="@style/AppTheme.TextField"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/angle"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/angle"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginLeft="32dp"
+                    android:layout_height="@dimen/text_height"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
                     android:ems="10"
+                    android:hint="@string/angle_hint"
                     android:inputType="textPersonName"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/angleID"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -150,43 +148,41 @@
                 android:id="@+id/distanceConstraint"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/text_height"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
                 android:alpha="0.9"
                 android:theme="@style/AppTheme.TextField"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/longitudeConstraint"
                 app:layout_constraintTop_toBottomOf="@+id/angleConstraint">
+
 
                 <TextView
                     android:id="@+id/distanceID"
                     android:layout_width="@dimen/one_third_width"
                     android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:text="Distance (in m):"
                     android:theme="@style/AppTheme.TextField"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/distance"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/distance"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginLeft="32dp"
+                    android:layout_height="@dimen/text_height"
                     android:ems="10"
+                    android:hint="@string/distance_hint"
                     android:inputType="textPersonName"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/distanceID"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </android.support.constraint.ConstraintLayout>
 
             <Button
@@ -194,10 +190,12 @@
                 android:layout_width="@dimen/one_third_width"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 android:onClick="compute"
                 android:text="Compute"
                 android:theme="@style/AppTheme.Button"
-                app:layout_constraintEnd_toEndOf="@+id/distanceConstraint"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/distanceConstraint" />
 
             <TextView

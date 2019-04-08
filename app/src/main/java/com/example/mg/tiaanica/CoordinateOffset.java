@@ -1,11 +1,14 @@
 package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -16,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -36,10 +40,10 @@ public class CoordinateOffset extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinate_offset);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,13 +68,13 @@ public class CoordinateOffset extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         final EditText finalTextField = findViewById(R.id.distance);
@@ -90,11 +94,27 @@ public class CoordinateOffset extends AppCompatActivity
             }
         });
 
+        // Set background
+        ConstraintLayout base_layout = findViewById(R.id.base_layout);
+        Resources res = getResources();
+
+        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        Display display = window.getDefaultDisplay();
+
+        int num = display.getRotation();
+        if (num == 0){
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+        }else if (num == 1 || num == 3){
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.landscape_background));
+        }else{
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+        }
+
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -144,7 +164,7 @@ public class CoordinateOffset extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -238,16 +258,17 @@ public class CoordinateOffset extends AppCompatActivity
         if(initialLongitudeString.substring(0,1).matches("[EW]"))
             this.longitudeCardinalDirection = initialLongitudeString.substring(0, 1);
 
-        Double intialLatitude = degreesMinutesToDegrees(initialLatitudeString);
+        Double initialLatitude = degreesMinutesToDegrees(initialLatitudeString);
         Double initialLongitude = degreesMinutesToDegrees(initialLongitudeString);
         Double angleDeg = Double.parseDouble(angleString);
         Double distanceInMeters = Double.parseDouble(distanceString);
 
-        Offset(intialLatitude, initialLongitude,  angleDeg, distanceInMeters);
+        Offset(initialLatitude, initialLongitude,  angleDeg, distanceInMeters);
 
         TextView result = findViewById(R.id.result);
         result.setVisibility(View.VISIBLE);
-        result.setText("The final coordinates are: \n" + this.latitudeCardinalDirection + this.finalLatitude + " \n" + this.longitudeCardinalDirection + this.finalLongitude);
+        String message = "The final coordinates are: " + this.latitudeCardinalDirection + this.finalLatitude + " " + this.longitudeCardinalDirection + this.finalLongitude;
+        result.setText(message);
 
     }
 

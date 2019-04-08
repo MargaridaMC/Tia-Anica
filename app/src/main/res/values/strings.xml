@@ -1,25 +1,35 @@
 <resources>
-    <string name="app_name">TiaAnica</string>
+    <string name="app_name">Tia Anica</string>
+    <string name="title_activity_alpha_sum">Alpha Sum</string>
+    <string name="title_activity_vigenere_cipher">Vigenère Cipher</string>
+    <string name="title_activity_coord_calculator">Coordinate Calculator</string>
+    <string name="title_activity_coordinate_offset">Coordinate Offset</string>
+    <string name="alphasum">Alpha Sum Calculator</string>
+    <string name="vigenere">Vigenère Cipher</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="alphasum">Alpha Sum Calculator</string>
+
     <string name="hint">Enter your text</string>
+    <string name="key_hint">Enter your key</string>
+    <string name="Encode">Encode</string>
+    <string name="Decode">Decode</string>
+    <string name="latitude_hint"><font size="15">Enter the initial latitude</font></string>
+    <string name="longitude_hint"><font size="15">Enter the initial longitude</font></string>
+    <string name="angle_hint"><font size="15">Enter the angle</font></string>
+    <string name="distance_hint"><font size="15">Enter the distance</font></string>
+    <string name="coord_formula_hint"><font size="15">Enter the coordinate formula</font></string>
+
     <string name="enter">Enter</string>
     <string name="help">Help</string>
     <string name="ok">Got it!</string>
-    <string name="alphasum_info">Calculates the sum of the letters in a word, when these are converted to letter, e.g. A = 1, B = 2, C = 3...</string>
-    <string name="vignere_info">Encodes and Decodes a message using the Vignère Cipher.</string>
+    <string name="alphasum_info">Calculates the sum of the letters in a word, when these are converted to letter, e.g. A = 1, B = 2, C = 3 ...</string>
+    <string name="vigenere_info">Encodes and Decodes a message using the Vignère Cipher.</string>
     <string name="coord_calculator_info">Taking a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG) this replaces the letter with the appropriate values and computes the final coordinates. Note: at the moment it does not allow N, S, W and E to be used as variables. If these lettters show up in the formula please replace them with other ones.  </string>
-    <string name="coord_offset_info">Calculates the coordinates you end up with if you move in a certain angle (in degrees) and a certain distance (in metres) from some intial coordinates.</string>
-    <string name="title_activity_alpha_sum">Alpha Sum</string>
-    <string name="vigenere">Vigenère Cipher</string>
-    <string name="title_activity_vigenere_cipher">Vigenère Cipher</string>
-    <string name="title_activity_coord_calculator">Coordinate Calculator</string>
+    <string name="coord_offset_info">Calculates the coordinates you end up with if you move in a certain angle (in degrees) and a certain distance (in metres) from some initial coordinates.</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="title_activity_coordinate_offset">CoordinateOffset</string>
 </resources>

@@ -1,13 +1,15 @@
 package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.view.Display;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.KeyEvent;
 import android.text.Html;
@@ -47,6 +49,8 @@ public class CoordCalculator extends AppCompatActivity
     String coord;
     List<String> neededLetters = new ArrayList<String>();
     Map<String, Integer> variables = new HashMap<String, Integer>();
+    int lastRowUsed;
+    int orientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,23 @@ public class CoordCalculator extends AppCompatActivity
                 return false;
             }
         });
+
+        // Set background
+        ConstraintLayout base_layout = findViewById(R.id.base_layout);
+        // ScrollView base_layout = findViewById(R.id.scroll_layout);
+        Resources res = getResources();
+
+        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        Display display = window.getDefaultDisplay();
+
+        orientation = display.getRotation();
+        if (orientation == 0){
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+        }else if (orientation == 1 || orientation == 3){
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.landscape_background));
+        }else{
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+        }
     }
 
 
@@ -184,6 +205,10 @@ public class CoordCalculator extends AppCompatActivity
         row4.removeAllViews();
         LinearLayout row5 = findViewById(R.id.row5);
         row5.removeAllViews();
+        LinearLayout row6 = findViewById(R.id.row6);
+        row6.removeAllViews();
+        LinearLayout row7 = findViewById(R.id.row7);
+        row7.removeAllViews();
 
         EditText editText = findViewById(R.id.formula);
         String coord = editText.getText().toString();
@@ -209,6 +234,7 @@ public class CoordCalculator extends AppCompatActivity
         String list = neededLetters.toString();
 
         TextView textView = findViewById(R.id.textView2);
+        textView.setVisibility(View.VISIBLE);
         textView.setText("The required variables are: " + list.substring(1, list.length() - 1));
 
         TextView inputSentence = new TextView(this);
@@ -220,8 +246,12 @@ public class CoordCalculator extends AppCompatActivity
 
 
         int total = neededLetters.size();
-        int columns = 3;
-        int rows = total / columns;
+        int columns;
+
+        // In landscape mode put 5 fields in each row
+        if (orientation == 0) columns = 3;
+        else if (orientation == 1 || orientation == 3) columns = 5;
+        else columns = 3;
 
         TextView temp;
         EditText tempValue;
@@ -248,6 +278,7 @@ public class CoordCalculator extends AppCompatActivity
             tempValue.setInputType(3);
             tempValue.setWidth(150);
             tempValue.setId(i);
+            tempValue.setTextColor(getResources().getColor(R.color.gray));
 
             // If we are inputting the value of the last coordinate compute the result and hide the keyboard
             if(i == total - 1){
@@ -291,10 +322,23 @@ public class CoordCalculator extends AppCompatActivity
                 row4.addView(tempValue);
                 row4.addView(blankSpace);
             }
-            else {
+            else if(r == 5) {
+                row5.setVisibility(View.VISIBLE);
                 row5.addView(temp);
                 row5.addView(tempValue);
                 row5.addView(blankSpace);
+            }
+            else if(r == 6) {
+                row6.setVisibility(View.VISIBLE);
+                row6.addView(temp);
+                row6.addView(tempValue);
+                row6.addView(blankSpace);
+            }
+            else {
+                row7.setVisibility(View.VISIBLE);
+                row7.addView(temp);
+                row7.addView(tempValue);
+                row7.addView(blankSpace);
             }
         }
 
@@ -342,7 +386,10 @@ public class CoordCalculator extends AppCompatActivity
         if (r == 2){ row2.setVisibility(View.VISIBLE); row2.addView(compute);}
         else if(r == 3) { row3.setVisibility(View.VISIBLE); row3.addView(compute);}
         else if(r == 4) { row4.setVisibility(View.VISIBLE); row4.addView(compute);}
-        else { row5.addView(compute); }
+        else if(r == 5) { row5.setVisibility(View.VISIBLE); row5.addView(compute);}
+        else { row6.setVisibility(View.VISIBLE); row6.addView(compute);}
+
+        lastRowUsed = r;
 
     }
 
@@ -577,9 +624,27 @@ public class CoordCalculator extends AppCompatActivity
 
         tokenizedCoord = evaluate(tokenizedCoord);
 
-        TextView result = (TextView) findViewById(R.id.result);
-        result.setVisibility(View.VISIBLE);
+        lastRowUsed += 1;
+        LinearLayout resultSpace;
+
+        if(lastRowUsed == 2) resultSpace = findViewById(R.id.row2);
+        else if(lastRowUsed == 3) resultSpace = findViewById(R.id.row3);
+        else if(lastRowUsed == 4) resultSpace = findViewById(R.id.row4);
+        else if(lastRowUsed == 5) resultSpace = findViewById(R.id.row5);
+        else if(lastRowUsed == 6) resultSpace = findViewById(R.id.row6);
+        else resultSpace = findViewById(R.id.row7);
+
+        // TextView result = (TextView) findViewById(R.id.result);
+        // result.setVisibility(View.VISIBLE);
+        // result.setText("The final coordinates are " + tokenizedCoord);
+
+        resultSpace.setVisibility(View.VISIBLE);
+        TextView result = new TextView(this);
         result.setText("The final coordinates are " + tokenizedCoord);
+        result.setTextSize(18);
+        result.setTextColor(getResources().getColor(R.color.gray));
+
+        resultSpace.addView(result);
 
     }
 }

@@ -1,11 +1,14 @@
 package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,10 +32,10 @@ public class VigenereCipher extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vigenere_cipher);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -40,7 +44,7 @@ public class VigenereCipher extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(VigenereCipher.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Vignère Cipher: </i></b>" + getString(R.string.vignere_info)));
+                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Vigenère Cipher: </i></b>" + getString(R.string.vigenere_info)));
 
                 // Add OK button
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -56,19 +60,35 @@ public class VigenereCipher extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Set background
+        ConstraintLayout base_layout = findViewById(R.id.base_layout);
+        Resources res = getResources();
+
+        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        Display display = window.getDefaultDisplay();
+
+        int num = display.getRotation();
+        if (num == 0){
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+        }else if (num == 1 || num == 3){
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.landscape_background));
+        }else{
+            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+        }
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -118,7 +138,7 @@ public class VigenereCipher extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -225,6 +245,7 @@ public class VigenereCipher extends AppCompatActivity
 
         TextView textView = findViewById(R.id.result);
         textView.setVisibility(View.VISIBLE);
-        textView.setText("Encoded text: " + String.valueOf(decryptedMsg));
+        String message = "Decoded text: " + String.valueOf(decryptedMsg);
+        textView.setText(message);
     }
 }
