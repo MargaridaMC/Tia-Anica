@@ -299,7 +299,7 @@ public class CoordCalculator extends AppCompatActivity
         }
 
         // For each of the input fields we want to move on to the next one when pushing the enter button on the keyboard
-        for(int i = 0; i < 1; i++){
+        for(int i = 0; i < total - 1; i++){
 
             int id = CoordCalculator.this.getResources().getIdentifier(
                     String.valueOf(i + 1),
@@ -553,8 +553,25 @@ public class CoordCalculator extends AppCompatActivity
             );
 
             TextView valueField = (TextView) findViewById(id);
-            int value = Integer.parseInt(valueField.getText().toString());
+            String valueString = valueField.getText().toString();
 
+            if(valueString.equals("")){
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                builder.setTitle("Error")
+                        .setMessage("Please fill in the values for all the variables. If the letters N, S, E or W are used as variables, please replace them with other letters.")
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+
+                builder.create().show();
+                return;
+            }
+
+            int value = Integer.parseInt(valueString);
             this.variables.put(neededLetters.get(i), value);
         }
 

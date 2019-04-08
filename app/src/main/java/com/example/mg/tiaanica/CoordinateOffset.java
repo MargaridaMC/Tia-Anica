@@ -205,24 +205,43 @@ public class CoordinateOffset extends AppCompatActivity
 
         EditText latitude = findViewById(R.id.latitude);
         String initialLatitudeString = latitude.getText().toString();
-        Double intialLatitude = degreesMinutesToDegrees(initialLatitudeString);
+
+        EditText longitude = findViewById(R.id.longitude);
+        String initialLongitudeString = longitude.getText().toString();
+
+        EditText angle = findViewById(R.id.angle);
+        String angleString = angle.getText().toString();
+
+        EditText distance = findViewById(R.id.distance);
+        String distanceString = distance.getText().toString();
+
+        if(initialLatitudeString.equals("") || initialLongitudeString.equals("") || angleString.equals("") || distanceString.equals("")){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+            builder.setTitle("Error")
+                    .setMessage("Please fill in all the values.")
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            builder.create().show();
+
+            return;
+        }
 
         if(initialLatitudeString.substring(0,1).matches("[NS]"))
             this.latitudeCardinalDirection = initialLatitudeString.substring(0, 1);
 
-        EditText longitude = findViewById(R.id.longitude);
-        String initialLongitudeString = longitude.getText().toString();
-        Double initialLongitude = degreesMinutesToDegrees(initialLongitudeString);
-
         if(initialLongitudeString.substring(0,1).matches("[EW]"))
             this.longitudeCardinalDirection = initialLongitudeString.substring(0, 1);
 
-        EditText angle = findViewById(R.id.angle);
-        Double angleDeg = Double.parseDouble(angle.getText().toString());
-
-        EditText distance = findViewById(R.id.distance);
-        Double distanceInMeters = Double.parseDouble(distance.getText().toString());
-
+        Double intialLatitude = degreesMinutesToDegrees(initialLatitudeString);
+        Double initialLongitude = degreesMinutesToDegrees(initialLongitudeString);
+        Double angleDeg = Double.parseDouble(angleString);
+        Double distanceInMeters = Double.parseDouble(distanceString);
 
         Offset(intialLatitude, initialLongitude,  angleDeg, distanceInMeters);
 
