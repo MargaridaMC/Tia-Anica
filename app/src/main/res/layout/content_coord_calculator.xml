@@ -43,6 +43,7 @@
                 android:onClick="parseCoordFormula"
                 android:text="Enter"
                 android:theme="@style/AppTheme.Button"
+                android:focusable="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/formula"
@@ -114,7 +115,7 @@
                     android:layout_height="@dimen/text_height"
                     android:orientation="horizontal"
                     android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible"></LinearLayout>
+                    android:visibility="invisible"/>
 
                 <LinearLayout
                     android:id="@+id/row3"
@@ -122,7 +123,7 @@
                     android:layout_height="@dimen/text_height"
                     android:orientation="horizontal"
                     android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible"></LinearLayout>
+                    android:visibility="invisible"/>
 
                 <LinearLayout
                     android:id="@+id/row4"
@@ -130,25 +131,31 @@
                     android:layout_height="@dimen/text_height"
                     android:orientation="horizontal"
                     android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible"></LinearLayout>
+                    android:visibility="invisible"/>
 
                 <LinearLayout
                     android:id="@+id/row5"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:theme="@style/AppTheme.TextField"
+                    android:orientation="horizontal"
+                    android:visibility="invisible" />
 
                 <LinearLayout
                     android:id="@+id/row6"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:theme="@style/AppTheme.TextField"
+                    android:orientation="horizontal"
+                    android:visibility="invisible"/>
 
                 <LinearLayout
                     android:id="@+id/row7"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:theme="@style/AppTheme.TextField"
+                    android:orientation="horizontal"
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 

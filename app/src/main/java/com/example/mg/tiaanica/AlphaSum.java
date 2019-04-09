@@ -1,12 +1,11 @@
 package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.Display;
@@ -27,8 +26,6 @@ import android.widget.TextView;
 
 public class AlphaSum extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +70,7 @@ public class AlphaSum extends AppCompatActivity
 
         // Help button
         final EditText finalTextField = findViewById(R.id.editText);
-        final InputMethodManager mgr = (InputMethodManager) getSystemService(AlphaSum.this.INPUT_METHOD_SERVICE);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         finalTextField.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -82,6 +79,7 @@ public class AlphaSum extends AppCompatActivity
                         && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
                     calculateAlphaSum(v); // parse the coordinate
+                    assert mgr != null;
                     mgr.hideSoftInputFromWindow(finalTextField.getWindowToken(), 0); // make the keyboard disappear
                     return true;
                 }
@@ -94,6 +92,7 @@ public class AlphaSum extends AppCompatActivity
         Resources res = getResources();
 
         WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        assert window != null;
         Display display = window.getDefaultDisplay();
 
         int num = display.getRotation();
@@ -141,7 +140,7 @@ public class AlphaSum extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 

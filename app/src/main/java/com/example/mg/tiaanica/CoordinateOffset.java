@@ -3,9 +3,9 @@ package com.example.mg.tiaanica;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.Display;
@@ -78,7 +78,7 @@ public class CoordinateOffset extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final EditText finalTextField = findViewById(R.id.distance);
-        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordinateOffset.this.INPUT_METHOD_SERVICE);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         finalTextField.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -87,6 +87,7 @@ public class CoordinateOffset extends AppCompatActivity
                         && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
                     compute(v); // parse the coordinate
+                    assert mgr != null;
                     mgr.hideSoftInputFromWindow(finalTextField.getWindowToken(), 0); // make the keyboard disappear
                     return true;
                 }
@@ -99,6 +100,7 @@ public class CoordinateOffset extends AppCompatActivity
         Resources res = getResources();
 
         WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        assert window != null;
         Display display = window.getDefaultDisplay();
 
         int num = display.getRotation();
@@ -146,7 +148,7 @@ public class CoordinateOffset extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -258,10 +260,10 @@ public class CoordinateOffset extends AppCompatActivity
         if(initialLongitudeString.substring(0,1).matches("[EW]"))
             this.longitudeCardinalDirection = initialLongitudeString.substring(0, 1);
 
-        Double initialLatitude = degreesMinutesToDegrees(initialLatitudeString);
-        Double initialLongitude = degreesMinutesToDegrees(initialLongitudeString);
-        Double angleDeg = Double.parseDouble(angleString);
-        Double distanceInMeters = Double.parseDouble(distanceString);
+        double initialLatitude = degreesMinutesToDegrees(initialLatitudeString);
+        double initialLongitude = degreesMinutesToDegrees(initialLongitudeString);
+        double angleDeg = Double.parseDouble(angleString);
+        double distanceInMeters = Double.parseDouble(distanceString);
 
         Offset(initialLatitude, initialLongitude,  angleDeg, distanceInMeters);
 

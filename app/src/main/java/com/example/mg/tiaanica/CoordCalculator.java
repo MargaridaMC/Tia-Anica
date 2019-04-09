@@ -2,6 +2,7 @@ package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -9,7 +10,6 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.KeyEvent;
 import android.text.Html;
@@ -24,13 +24,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.widget.LinearLayout;
 import android.content.res.Resources;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,14 +38,18 @@ import java.util.regex.Pattern;
 import java.util.Collections;
 
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_NONE;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_SEND;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_UNSPECIFIED;
 
 public class CoordCalculator extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String coord;
-    List<String> neededLetters = new ArrayList<String>();
-    Map<String, Integer> variables = new HashMap<String, Integer>();
+    List<String> neededLetters = new ArrayList<>();
+    Map<String, Integer> variables = new HashMap<>();
     int lastRowUsed;
     int orientation;
 
@@ -56,10 +57,10 @@ public class CoordCalculator extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coord_calculator);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,27 +85,27 @@ public class CoordCalculator extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // When pushing enter on the keyboard on the formula text field, it parses the coordinates right away (as if pushing the enter button)
-        final EditText formula = (EditText) findViewById(R.id.formula);
-        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordCalculator.this.INPUT_METHOD_SERVICE);
+        final EditText formula = findViewById(R.id.formula);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        formula.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+        formula.setImeOptions(IME_ACTION_GO);
+        formula.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event){
                 // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                        && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
                     // Perform action on key press
-                    parseCoordFormula(v); // parse the coordinate
-                    mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0); // make the keyboard disappear
+                    parseCoordFormula(view); // parse the coordinate
+                    mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0);// make the keyboard disappear
                     return true;
                 }
                 return false;
@@ -117,6 +118,7 @@ public class CoordCalculator extends AppCompatActivity
         Resources res = getResources();
 
         WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        assert window != null;
         Display display = window.getDefaultDisplay();
 
         orientation = display.getRotation();
@@ -133,7 +135,7 @@ public class CoordCalculator extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -165,7 +167,7 @@ public class CoordCalculator extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -183,7 +185,7 @@ public class CoordCalculator extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -191,7 +193,10 @@ public class CoordCalculator extends AppCompatActivity
     public void parseCoordFormula(View view){
 
         // Keyboard manager -- allows keyboard to disappear
-        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordCalculator.this.INPUT_METHOD_SERVICE);
+        final InputMethodManager mgr;
+        mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        assert mgr != null;
+        mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         LinearLayout row0 = findViewById(R.id.row0);
         row0.removeAllViews();
@@ -219,7 +224,7 @@ public class CoordCalculator extends AppCompatActivity
 
 
         // Obtain required letters for solution. For now, N, S, W and E are not allowed
-        List<String> neededLetters = new ArrayList<String>();
+        List<String> neededLetters = new ArrayList<>();
 
         Pattern p = Pattern.compile("[A-Z&&[^NSEW]]");
         Matcher m = p.matcher(coord);
@@ -235,10 +240,12 @@ public class CoordCalculator extends AppCompatActivity
 
         TextView textView = findViewById(R.id.textView2);
         textView.setVisibility(View.VISIBLE);
-        textView.setText("The required variables are: " + list.substring(1, list.length() - 1));
+        String message = "The required variables are: " + list.substring(1, list.length() - 1);
+        textView.setText(message);
 
         TextView inputSentence = new TextView(this);
-        inputSentence.setText("Input the values for each variable.");
+        String inputString = "Input the values for each variable.";
+        inputSentence.setText(inputString);
         inputSentence.setTextSize(18);
         inputSentence.setTextColor(getResources().getColor(R.color.gray));
         row0.setVisibility(View.VISIBLE);
@@ -350,7 +357,7 @@ public class CoordCalculator extends AppCompatActivity
                     "id",
                     CoordCalculator.this.getPackageName()
             );
-            final TextView valueField = (TextView) findViewById(id);
+            final TextView valueField = findViewById(id);
 
             int nextId = CoordCalculator.this.getResources().getIdentifier(
                     String.valueOf(i + 1),
@@ -358,7 +365,7 @@ public class CoordCalculator extends AppCompatActivity
                     CoordCalculator.this.getPackageName()
             );
 
-            final TextView nextValueField = (TextView) findViewById(nextId);
+            final TextView nextValueField = findViewById(nextId);
             valueField.setOnKeyListener(new View.OnKeyListener() {
                                             public boolean onKey(View view, int keyCode, KeyEvent event){
 
@@ -374,12 +381,13 @@ public class CoordCalculator extends AppCompatActivity
         }
 
         Button compute = new Button(this);
-        compute.setText("Compute");
+        compute.setText(R.string.compute);
         compute.setRight(0);
         compute.setOnClickListener(new View.OnClickListener(){ public void onClick(View view) { computeCoordinates(view);}});
         compute.setBackgroundResource(R.drawable.bt_style);
         compute.setTextColor(Color.parseColor("#ffffff"));
         compute.setTypeface(null, Typeface.BOLD);
+        compute.setTextSize(15);
 
         r++;
 
@@ -457,11 +465,22 @@ public class CoordCalculator extends AppCompatActivity
                     while (ch >= 'a' && ch <= 'z') nextChar();
                     String func = str.substring(startPos, this.pos);
                     x = parseFactor();
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
-                    else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
-                    else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
-                    else throw new RuntimeException("Unknown function: " + func);
+                    switch (func) {
+                        case "sqrt":
+                            x = Math.sqrt(x);
+                            break;
+                        case "sin":
+                            x = Math.sin(Math.toRadians(x));
+                            break;
+                        case "cos":
+                            x = Math.cos(Math.toRadians(x));
+                            break;
+                        case "tan":
+                            x = Math.tan(Math.toRadians(x));
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown function: " + func);
+                    }
                 } else {
                     throw new RuntimeException("Unexpected: " + (char)ch);
                 }
@@ -475,7 +494,7 @@ public class CoordCalculator extends AppCompatActivity
 
     public static String tokenize(String coord) {
 
-        String tokenizedCoord = "";
+        StringBuilder tokenizedCoord = new StringBuilder();
         String[] parts = coord.split("");
         int maxLength = coord.length() + 1;
 
@@ -483,34 +502,34 @@ public class CoordCalculator extends AppCompatActivity
         String currentChar;
         String nextChar;
         String nextToNextChar;
-        String toAdd;
+        StringBuilder toAdd;
 
         while(i < maxLength) {
 
             currentChar = parts[i];
-            toAdd = "";
+            toAdd = new StringBuilder();
 
             if(currentChar.equals("(")) {
 
-                toAdd += "(";
+                toAdd.append("(");
 
                 i += 1;
                 currentChar = parts[i];
-                toAdd += currentChar;
+                toAdd.append(currentChar);
 
                 while(!currentChar.equals(")")){
                     i += 1;
                     currentChar = parts[i];
-                    toAdd += currentChar;
+                    toAdd.append(currentChar);
                 }
             }
             else if(currentChar.matches("[0-9\\.°NSEW]")){
-                toAdd = currentChar;
+                toAdd = new StringBuilder(currentChar);
             }
             else if(currentChar.matches("[A-Z]")) {
 
-                toAdd += "(";
-                toAdd += currentChar;
+                toAdd.append("(");
+                toAdd.append(currentChar);
 
                 if(i + 2 < maxLength) {
 
@@ -519,8 +538,8 @@ public class CoordCalculator extends AppCompatActivity
 
                     while(i + 2 < maxLength && nextChar.matches("[+\\-\\/\\*÷]") && nextToNextChar.matches("[A-Z0-9]")) {
 
-                        toAdd += nextChar;
-                        toAdd += nextToNextChar;
+                        toAdd.append(nextChar);
+                        toAdd.append(nextToNextChar);
 
                         if(nextToNextChar.matches("[0-9]")) { // if it is a number with more than one digit we need to add them all
 
@@ -529,12 +548,12 @@ public class CoordCalculator extends AppCompatActivity
                             if(j < maxLength) {
 
                                 String theOneAfterThat = parts[j];
-                                toAdd += theOneAfterThat;
+                                toAdd.append(theOneAfterThat);
                                 j += 1;
 
                                 while(j < maxLength  && theOneAfterThat.matches("[0-9]")) {
                                     theOneAfterThat = parts[j];
-                                    toAdd += theOneAfterThat;
+                                    toAdd.append(theOneAfterThat);
                                     j += 1;
                                 }
                             }
@@ -551,15 +570,15 @@ public class CoordCalculator extends AppCompatActivity
                     }
                 }
 
-                toAdd += ")";
+                toAdd.append(")");
             }
 
-            tokenizedCoord += toAdd;
+            tokenizedCoord.append(toAdd);
 
             i += 1;
         }
 
-        return tokenizedCoord;
+        return tokenizedCoord.toString();
 
     }
 
@@ -585,8 +604,9 @@ public class CoordCalculator extends AppCompatActivity
     public void computeCoordinates(View view){
 
         // Keyboard manager -- allows keyboard to disappear
-        final InputMethodManager mgr = (InputMethodManager) getSystemService(CoordCalculator.this.INPUT_METHOD_SERVICE);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
+        assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         String tokenizedCoord = tokenize(coord);
@@ -599,7 +619,7 @@ public class CoordCalculator extends AppCompatActivity
                     CoordCalculator.this.getPackageName()
             );
 
-            TextView valueField = (TextView) findViewById(id);
+            TextView valueField = findViewById(id);
             String valueString = valueField.getText().toString();
 
             if(valueString.equals("")){
@@ -623,26 +643,23 @@ public class CoordCalculator extends AppCompatActivity
         }
 
         tokenizedCoord = evaluate(tokenizedCoord);
-
-        lastRowUsed += 1;
         LinearLayout resultSpace;
 
-        if(lastRowUsed == 2) resultSpace = findViewById(R.id.row2);
-        else if(lastRowUsed == 3) resultSpace = findViewById(R.id.row3);
-        else if(lastRowUsed == 4) resultSpace = findViewById(R.id.row4);
-        else if(lastRowUsed == 5) resultSpace = findViewById(R.id.row5);
-        else if(lastRowUsed == 6) resultSpace = findViewById(R.id.row6);
+        if(lastRowUsed == 1) resultSpace = findViewById(R.id.row2);
+        else if(lastRowUsed == 2) resultSpace = findViewById(R.id.row3);
+        else if(lastRowUsed == 3) resultSpace = findViewById(R.id.row4);
+        else if(lastRowUsed == 4) resultSpace = findViewById(R.id.row5);
+        else if(lastRowUsed == 5) resultSpace = findViewById(R.id.row6);
         else resultSpace = findViewById(R.id.row7);
 
-        // TextView result = (TextView) findViewById(R.id.result);
-        // result.setVisibility(View.VISIBLE);
-        // result.setText("The final coordinates are " + tokenizedCoord);
-
         resultSpace.setVisibility(View.VISIBLE);
+        resultSpace.removeAllViews();
         TextView result = new TextView(this);
-        result.setText("The final coordinates are " + tokenizedCoord);
+        String resultString = "The final coordinates are " + tokenizedCoord;
+        result.setText(resultString);
         result.setTextSize(18);
         result.setTextColor(getResources().getColor(R.color.gray));
+        result.setTextIsSelectable(true);
 
         resultSpace.addView(result);
 

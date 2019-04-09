@@ -3,9 +3,9 @@ package com.example.mg.tiaanica;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.Display;
@@ -74,6 +74,7 @@ public class VigenereCipher extends AppCompatActivity
         Resources res = getResources();
 
         WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        assert window != null;
         Display display = window.getDefaultDisplay();
 
         int num = display.getRotation();
@@ -120,7 +121,7 @@ public class VigenereCipher extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
