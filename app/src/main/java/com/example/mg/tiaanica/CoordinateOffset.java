@@ -1,6 +1,7 @@
 package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -152,18 +153,21 @@ public class CoordinateOffset extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_alpha_sum) {
+            Intent intent = new Intent(this, AlphaSum.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_vigenere) {
+            Intent intent = new Intent(this, VigenereCipher.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_coord_calculator) {
+            Intent intent = new Intent(this, CoordCalculator.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_coord_offset) {
+            Intent intent = new Intent(this, CoordinateOffset.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

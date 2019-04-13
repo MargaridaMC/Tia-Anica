@@ -5,21 +5,20 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Home" />
+            android:id="@+id/nav_home"
+            android:title="@string/home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="AlphaSum Calculator" />
+            android:id="@+id/nav_alpha_sum"
+            android:title="@string/title_activity_alpha_sum" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Vigenère Cipher" />
+            android:id="@+id/nav_vigenere"
+            android:title="@string/title_activity_vigenere_cipher" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Notes" />
+            android:id="@+id/nav_coord_calculator"
+            android:title="@string/title_activity_coord_calculator" />
+        <item
+            android:id="@+id/nav_coord_offset"
+            android:title="@string/title_activity_coordinate_offset" />
     </group>
 <!--
     <item android:title="Communicate">

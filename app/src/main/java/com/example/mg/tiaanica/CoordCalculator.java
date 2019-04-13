@@ -1,6 +1,7 @@
 package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -29,27 +30,17 @@ import android.graphics.Typeface;
 import android.widget.LinearLayout;
 import android.content.res.Resources;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.Collections;
 
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
-import static android.view.inputmethod.EditorInfo.IME_ACTION_NONE;
-import static android.view.inputmethod.EditorInfo.IME_ACTION_SEND;
-import static android.view.inputmethod.EditorInfo.IME_ACTION_UNSPECIFIED;
 
 public class CoordCalculator extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String coord;
-    List<String> neededLetters = new ArrayList<>();
-    Map<String, Integer> variables = new HashMap<>();
+    Coordinate coordinate;
+    HashMap<String, Integer> variables;
     int lastRowUsed;
     int orientation;
 
@@ -105,7 +96,7 @@ public class CoordCalculator extends AppCompatActivity
                 if (actionId == EditorInfo.IME_ACTION_GO) {
                     // Perform action on key press
                     parseCoordFormula(view); // parse the coordinate
-                    mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0);// make the keyboard disappear
+                    if (mgr != null) mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0);// make the keyboard disappear
                     return true;
                 }
                 return false;
@@ -130,8 +121,6 @@ public class CoordCalculator extends AppCompatActivity
             base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
         }
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -171,18 +160,21 @@ public class CoordCalculator extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_alpha_sum) {
+            Intent intent = new Intent(this, AlphaSum.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_vigenere) {
+            Intent intent = new Intent(this, VigenereCipher.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_coord_calculator) {
+            Intent intent = new Intent(this, CoordCalculator.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_coord_offset) {
+            Intent intent = new Intent(this, CoordinateOffset.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -216,31 +208,17 @@ public class CoordCalculator extends AppCompatActivity
         row7.removeAllViews();
 
         EditText editText = findViewById(R.id.formula);
+
+
         String coord = editText.getText().toString();
+        coordinate = new Coordinate(coord);
 
-        coord = coord.toUpperCase();
-        coord = coord.replaceAll(" ", "");
-        coord = coord.replaceAll("÷", "/");
-
-
-        // Obtain required letters for solution. For now, N, S, W and E are not allowed
-        List<String> neededLetters = new ArrayList<>();
-
-        Pattern p = Pattern.compile("[A-Z&&[^NSEW]]");
-        Matcher m = p.matcher(coord);
-        while (m.find())
-            if(!neededLetters.contains(m.group()))
-                neededLetters.add(m.group());
-
-        this.coord = coord;
-        this.neededLetters = neededLetters;
-        Collections.sort(this.neededLetters);
-
-        String list = neededLetters.toString();
+        variables = new HashMap<>();
 
         TextView textView = findViewById(R.id.textView2);
         textView.setVisibility(View.VISIBLE);
-        String message = "The required variables are: " + list.substring(1, list.length() - 1);
+
+        String message = "The required variables are: " + coordinate.getNeededVariables();
         textView.setText(message);
 
         TextView inputSentence = new TextView(this);
@@ -252,7 +230,7 @@ public class CoordCalculator extends AppCompatActivity
         row0.addView(inputSentence);
 
 
-        int total = neededLetters.size();
+        int total = coordinate.neededLetters.size();
         int columns;
 
         // In landscape mode put 5 fields in each row
@@ -273,7 +251,7 @@ public class CoordCalculator extends AppCompatActivity
             }
 
             temp = new TextView(this);
-            temp.setText(neededLetters.get(i));
+            temp.setText(coordinate.neededLetters.get(i));
             temp.setTextSize(18);
             temp.setWidth(80);
             temp.setTextColor(getResources().getColor(R.color.gray));
@@ -401,206 +379,6 @@ public class CoordCalculator extends AppCompatActivity
 
     }
 
-    public static double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
-
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
-
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
-                return x;
-            }
-
-            // Grammar:
-            // expression = term | expression `+` term | expression `-` term
-            // term = factor | term `*` factor | term `/` factor
-            // factor = `+` factor | `-` factor | `(` expression `)`
-            //        | number | functionName factor | factor `^` factor
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (;;) {
-                    if      (eat('+')) x += parseTerm(); // addition
-                    else if (eat('-')) x -= parseTerm(); // subtraction
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (;;) {
-                    if      (eat('*')) x *= parseFactor(); // multiplication
-                    else if (eat('/')) x /= parseFactor(); // division
-                    else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) { // parentheses
-                    x = parseExpression();
-                    eat(')');
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    x = Double.parseDouble(str.substring(startPos, this.pos));
-                } else if (ch >= 'a' && ch <= 'z') { // functions
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    x = parseFactor();
-                    switch (func) {
-                        case "sqrt":
-                            x = Math.sqrt(x);
-                            break;
-                        case "sin":
-                            x = Math.sin(Math.toRadians(x));
-                            break;
-                        case "cos":
-                            x = Math.cos(Math.toRadians(x));
-                            break;
-                        case "tan":
-                            x = Math.tan(Math.toRadians(x));
-                            break;
-                        default:
-                            throw new RuntimeException("Unknown function: " + func);
-                    }
-                } else {
-                    throw new RuntimeException("Unexpected: " + (char)ch);
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation
-
-                return x;
-            }
-        }.parse();
-    }
-
-    public static String tokenize(String coord) {
-
-        StringBuilder tokenizedCoord = new StringBuilder();
-        String[] parts = coord.split("");
-        int maxLength = coord.length() + 1;
-
-        int i = 0;
-        String currentChar;
-        String nextChar;
-        String nextToNextChar;
-        StringBuilder toAdd;
-
-        while(i < maxLength) {
-
-            currentChar = parts[i];
-            toAdd = new StringBuilder();
-
-            if(currentChar.equals("(")) {
-
-                toAdd.append("(");
-
-                i += 1;
-                currentChar = parts[i];
-                toAdd.append(currentChar);
-
-                while(!currentChar.equals(")")){
-                    i += 1;
-                    currentChar = parts[i];
-                    toAdd.append(currentChar);
-                }
-            }
-            else if(currentChar.matches("[0-9\\.°NSEW]")){
-                toAdd = new StringBuilder(currentChar);
-            }
-            else if(currentChar.matches("[A-Z]")) {
-
-                toAdd.append("(");
-                toAdd.append(currentChar);
-
-                if(i + 2 < maxLength) {
-
-                    nextChar = parts[i+1];
-                    nextToNextChar = parts[i+2]; //Check for length
-
-                    while(i + 2 < maxLength && nextChar.matches("[+\\-\\/\\*÷]") && nextToNextChar.matches("[A-Z0-9]")) {
-
-                        toAdd.append(nextChar);
-                        toAdd.append(nextToNextChar);
-
-                        if(nextToNextChar.matches("[0-9]")) { // if it is a number with more than one digit we need to add them all
-
-                            int j = i + 3;
-
-                            if(j < maxLength) {
-
-                                String theOneAfterThat = parts[j];
-                                toAdd.append(theOneAfterThat);
-                                j += 1;
-
-                                while(j < maxLength  && theOneAfterThat.matches("[0-9]")) {
-                                    theOneAfterThat = parts[j];
-                                    toAdd.append(theOneAfterThat);
-                                    j += 1;
-                                }
-                            }
-                            i = j - 3;
-                        }
-
-                        i += 2;
-
-                        if(i + 2 < maxLength) {
-                            nextChar = parts[i+1];
-                            nextToNextChar = parts[i+2];
-                        }
-
-                    }
-                }
-
-                toAdd.append(")");
-            }
-
-            tokenizedCoord.append(toAdd);
-
-            i += 1;
-        }
-
-        return tokenizedCoord.toString();
-
-    }
-
-    public String evaluate(String tokenizedCoord){
-
-        for (Map.Entry<String, Integer> pair : variables.entrySet()) {
-            String key = pair.getKey();
-            String value = Integer.toString(pair.getValue());
-            tokenizedCoord = tokenizedCoord.replaceAll(key, value);
-        }
-
-
-        Pattern token = Pattern.compile("\\((.*?)\\)");
-        Matcher latTokens = token.matcher(tokenizedCoord);
-        while (latTokens.find()) {
-            String toEval = latTokens.group(1);
-            tokenizedCoord = tokenizedCoord.replace(latTokens.group(), Integer.toString((int) eval(toEval)));
-        }
-
-        return tokenizedCoord;
-    }
-
     public void computeCoordinates(View view){
 
         // Keyboard manager -- allows keyboard to disappear
@@ -609,9 +387,7 @@ public class CoordCalculator extends AppCompatActivity
         assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        String tokenizedCoord = tokenize(coord);
-
-        for(int i = 0; i < this.neededLetters.size(); i++){
+        for(int i = 0; i < coordinate.neededLetters.size(); i++){
 
             int id = CoordCalculator.this.getResources().getIdentifier(
                     String.valueOf(i),
@@ -626,7 +402,7 @@ public class CoordCalculator extends AppCompatActivity
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
                 builder.setTitle("Error")
-                        .setMessage("Please fill in the values for all the variables. If the letters N, S, E or W are used as variables, please replace them with other letters.")
+                        .setMessage("Please fill in the values for all the variables.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -639,10 +415,12 @@ public class CoordCalculator extends AppCompatActivity
             }
 
             int value = Integer.parseInt(valueString);
-            this.variables.put(neededLetters.get(i), value);
+            this.variables.put(coordinate.neededLetters.get(i), value);
         }
 
-        tokenizedCoord = evaluate(tokenizedCoord);
+        coordinate.setVariables(variables);
+        coordinate.evaluate();
+
         LinearLayout resultSpace;
 
         if(lastRowUsed == 1) resultSpace = findViewById(R.id.row2);
@@ -655,7 +433,8 @@ public class CoordCalculator extends AppCompatActivity
         resultSpace.setVisibility(View.VISIBLE);
         resultSpace.removeAllViews();
         TextView result = new TextView(this);
-        String resultString = "The final coordinates are " + tokenizedCoord;
+        String resultString = "The final coordiantes are:" + coordinate.getFinalCoordinates();
+
         result.setText(resultString);
         result.setTextSize(18);
         result.setTextColor(getResources().getColor(R.color.gray));
