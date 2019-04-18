@@ -7,6 +7,8 @@
     <string name="alphasum">Alpha Sum Calculator</string>
     <string name="vigenere">Vigenère Cipher</string>
 
+    <string name="search">Search</string>
+    <string name="search_location">Search Location Here</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -30,6 +32,10 @@
     <string name="vigenere_info">Encodes and Decodes a message using the Vignère Cipher.</string>
     <string name="coord_calculator_info">Taking a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG) this replaces the letter with the appropriate values and computes the final coordinates.</string>
     <string name="coord_offset_info">Calculates the coordinates you end up with if you move in a certain angle (in degrees) and a certain distance (in metres) from some initial coordinates.</string>
+
+    <string name="title_location_permission">Location</string>
+    <string name="text_location_permission">We need your location to display the map of your area.</string>
+
     <string name="nav_header_title">Tia Anica</string>
     <string name="nav_header_subtitle">https://github.com/MargaridaMC/Tia-Anica</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -38,4 +44,6 @@
     <string name="angle_in_degrees">Angle (in degrees):</string>
     <string name="distance_in_m">Distance (in m):</string>
     <string name="compute">Compute</string>
+    <string name="title_activity_map">Attack Map</string>
+    <string name="attack_map">Attack Map</string>
 </resources>

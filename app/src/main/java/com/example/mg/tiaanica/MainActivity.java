@@ -1,11 +1,13 @@
 package com.example.mg.tiaanica;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,9 +18,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    private static final String TAG = "MainActivity";
+    private static final int ERROR_DIALOG_REQUEST = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +125,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_coord_offset) {
             Intent intent = new Intent(this, CoordinateOffset.class);
             startActivity(intent);
+        } else if (id == R.id.nav_map) {
+            Intent intent = new Intent(this, Map.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -140,5 +153,40 @@ public class MainActivity extends AppCompatActivity
     public void goToCoordOffset(View view){
         Intent intent = new Intent (this, CoordinateOffset.class);
         startActivity(intent);
+    }
+
+    public void goToMap(View view){
+        boolean available = isServicesOK();
+
+        if(available){
+            Intent intent = new Intent (this, Map.class);
+            startActivity(intent);
+        }
+        else{
+            Toast.makeText(this,"You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // The user has to have a Google Play services installed and up from a certain version
+    public  boolean isServicesOK(){
+        Log.d(TAG, "isServiceOK: checking Google Services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occurred but we can fix it
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }
+        else{
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+
+        return false;
     }
 }

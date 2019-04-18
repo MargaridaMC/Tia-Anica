@@ -32,6 +32,20 @@ public class AlphaSum extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alpha_sum);
+
+        CharSequence text = getIntent()
+                .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+        String value = Integer.toString(sum(text.toString()));
+        final EditText finalTextField = findViewById(R.id.editText);
+        finalTextField.setText(text);
+
+        String message = "The alpha sum value of '" + text + "' is " + value;
+        TextView textView = findViewById(R.id.textView);
+        textView.setVisibility(View.VISIBLE);
+        textView.setText(message);
+        // process the text
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -70,7 +84,6 @@ public class AlphaSum extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // Help button
-        final EditText finalTextField = findViewById(R.id.editText);
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         finalTextField.setOnKeyListener(new View.OnKeyListener() {
@@ -160,28 +173,18 @@ public class AlphaSum extends AppCompatActivity
         } else if (id == R.id.nav_coord_offset) {
             Intent intent = new Intent(this, CoordinateOffset.class);
             startActivity(intent);
+        } else if (id == R.id.nav_map) {
+            Intent intent = new Intent(this, Map.class);
+            startActivity(intent);
         }
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void calculateAlphaSum(View view){
-        //An Intent is something that binds together separate components, such as two activities
-        /*This takes two parameters:
-         * 1. a context (activity class is a subclass of context
-         * 2. the class of the app component to which the system should deliver the intent (in this case the activity that should be started
-         */
-
-        EditText editText = findViewById(R.id.editText);
-        String text= editText.getText().toString();
-        //putExtra adds the editText value to the intent
-        //basicamente estamos a guardar o valor que foi inserido para depois poder ser recuperado na próxima actividade
-        /*
-        It's a good practice to define keys for intent extras using your app's package name as a prefix. This ensures the keys are unique, in case your app interacts with other apps.
-         */
-
+    private int sum(String text){
         int value = 0;
 
         for (int i = 0; i < text.length(); i++){
@@ -361,7 +364,15 @@ public class AlphaSum extends AppCompatActivity
 
         }
 
-        String message = "The alpha sum value of '" + text + "' is " + Integer.toString(value);
+        return (value);
+    }
+
+    public void calculateAlphaSum(View view){
+
+        EditText editText = findViewById(R.id.editText);
+        String text= editText.getText().toString();
+
+        String message = "The alpha sum value of '" + text + "' is " + Integer.toString(sum(text));
 
         // intent.putExtra(EXTRA_MESSAGE,message);
         //startActivity vai começar a actividade DisplayMessageActivity especificada pelo Intent

@@ -36,14 +36,14 @@
 
             <Button
                 android:id="@+id/enter"
-                android:layout_width="@dimen/one_third_width"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
-                android:onClick="parseCoordFormula"
-                android:text="Enter"
-                android:theme="@style/AppTheme.Button"
                 android:focusable="false"
+                android:onClick="parseCoordFormula"
+                android:text="@string/enter"
+                android:theme="@style/AppTheme.Button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/formula"

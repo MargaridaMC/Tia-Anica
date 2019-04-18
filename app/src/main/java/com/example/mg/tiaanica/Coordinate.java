@@ -8,28 +8,33 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Coordinate {
+class Coordinate {
 
-    Coordinate coordinate;
-    String originalCoord = "";
-    String latitude = "";
-    String longitude = "";
-    String latitudeCardinalDirection = "";
-    String longitudeCardinalDirection = "";
+    private String originalCoord = "";
+    private String latitude = "";
+    private String longitude = "";
+    private String latitudeCardinalDirection = "";
+    private String longitudeCardinalDirection = "";
 
     List<String> neededLetters;
-    static Map<String, Integer> variables;
+    private static Map<String, Integer> variables;
 
-    /*public Coordinate(String lat, String lon) {
+    public Coordinate(String lat, String lon) {
 
-        latitudeCardinalDirection = lat.substring(0,1);
-        longitudeCardinalDirection = lon.substring(0,1);
+        if(lat.substring(0,1).matches("[NS]")){
+            this.latitudeCardinalDirection = lat.substring(0, 1);
+            setLatitude(lat.substring(1));
+        }
+        else setLatitude(lat);
 
-        setLatitude(lat.substring(1));
-        setLongitude(lon.substring(1));
+        if(lon.substring(0,1).matches("[EW]")){
+            this.longitudeCardinalDirection = lon.substring(0, 1);
+            setLongitude(lon.substring(1));
+        }
+        else setLongitude(lon);
 
     }
-*/
+
     public Coordinate(String coord) {
 
         coord = coord.toUpperCase();

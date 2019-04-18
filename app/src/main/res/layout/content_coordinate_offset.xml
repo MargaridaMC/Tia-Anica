@@ -201,7 +201,7 @@
 
             <Button
                 android:id="@+id/offset"
-                android:layout_width="@dimen/one_third_width"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginTop="16dp"
                 android:onClick="compute"

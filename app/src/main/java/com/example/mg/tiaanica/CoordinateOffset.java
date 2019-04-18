@@ -25,17 +25,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class CoordinateOffset extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String finalLatitude;
-    String finalLongitude;
-
-    String latitudeCardinalDirection = "";
-    String longitudeCardinalDirection = "";
+    Coordinate coordinate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,63 +161,14 @@ public class CoordinateOffset extends AppCompatActivity
         } else if (id == R.id.nav_coord_offset) {
             Intent intent = new Intent(this, CoordinateOffset.class);
             startActivity(intent);
+        } else if (id == R.id.nav_map) {
+            Intent intent = new Intent(this, Map.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public static double degreesMinutesToDegrees(String coordinates) {
-
-        double degrees = 0;
-        double minutes = 0;
-        coordinates = coordinates.replaceAll(" ", "");
-
-        Matcher m = Pattern.compile("[A-Z](.*?)°(.*)").matcher(coordinates);
-
-        while(m.find()) {
-            degrees = Double.parseDouble(m.group(1));
-            minutes = Double.parseDouble(m.group(2));
-        }
-
-        return degrees + minutes/60.0;
-
-    }
-
-    public static String degreesToDegreesMinutes(double coordinates) {
-
-        int degrees = (int) coordinates;
-        double minutes = (coordinates - degrees) * 60;
-        minutes = Math.round(minutes * 1000d) / 1000d;
-
-        if(minutes==60.0) {
-            degrees += 1;
-            minutes = 0.0;
-        }
-
-        return degrees + "° " + minutes;
-    }
-
-
-    public void Offset(double X, double Y, double angle, double distanceInMeters)
-    {
-        double rad = Math.PI * angle / 180;
-
-        double xRad = Math.PI * X / 180; // convert to radians
-        double yRad = Math.PI * Y / 180;
-
-        double R = 6378100; //Radius of the Earth in meters
-        double x = Math.asin(Math.sin(xRad) * Math.cos(distanceInMeters/ R)
-                + Math.cos(xRad) * Math.sin(distanceInMeters/ R) * Math.cos(rad));
-
-        double y = yRad + Math.atan2(Math.sin(rad) * Math.sin(distanceInMeters/ R) * Math.cos(xRad), Math.cos(distanceInMeters/ R) - Math.sin(xRad) * Math.sin(x));
-
-        x = x * 180 / Math.PI; // convert back to degrees
-        y = y * 180 / Math.PI;
-
-        this.finalLatitude = degreesToDegreesMinutes(x);
-        this.finalLongitude = degreesToDegreesMinutes(y);
     }
 
     public void compute(View view){
@@ -258,22 +202,16 @@ public class CoordinateOffset extends AppCompatActivity
             return;
         }
 
-        if(initialLatitudeString.substring(0,1).matches("[NS]"))
-            this.latitudeCardinalDirection = initialLatitudeString.substring(0, 1);
+        coordinate = new Coordinate(initialLatitudeString, initialLongitudeString);
 
-        if(initialLongitudeString.substring(0,1).matches("[EW]"))
-            this.longitudeCardinalDirection = initialLongitudeString.substring(0, 1);
-
-        double initialLatitude = degreesMinutesToDegrees(initialLatitudeString);
-        double initialLongitude = degreesMinutesToDegrees(initialLongitudeString);
         double angleDeg = Double.parseDouble(angleString);
         double distanceInMeters = Double.parseDouble(distanceString);
 
-        Offset(initialLatitude, initialLongitude,  angleDeg, distanceInMeters);
+        coordinate.Offset(angleDeg, distanceInMeters);
 
         TextView result = findViewById(R.id.result);
         result.setVisibility(View.VISIBLE);
-        String message = "The final coordinates are: " + this.latitudeCardinalDirection + this.finalLatitude + " " + this.longitudeCardinalDirection + this.finalLongitude;
+        String message = "The final coordinates are: \n" + coordinate.getFinalCoordinates();
         result.setText(message);
 
     }

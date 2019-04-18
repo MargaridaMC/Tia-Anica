@@ -175,6 +175,9 @@ public class CoordCalculator extends AppCompatActivity
         } else if (id == R.id.nav_coord_offset) {
             Intent intent = new Intent(this, CoordinateOffset.class);
             startActivity(intent);
+        } else if (id == R.id.nav_map) {
+            Intent intent = new Intent(this, Map.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

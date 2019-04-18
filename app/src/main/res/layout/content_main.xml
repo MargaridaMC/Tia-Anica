@@ -81,4 +81,21 @@
         app:layout_constraintStart_toEndOf="@+id/button6"
         app:layout_constraintTop_toBottomOf="@+id/button5" />
 
+    <Button
+        android:id="@+id/button8"
+        android:text="@string/attack_map"
+        android:layout_width="@dimen/half_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:onClick="goToMap"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="@dimen/text_size"
+        android:theme="@style/AppTheme.Button"
+        android:typeface="normal"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/button6"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
 </android.support.constraint.ConstraintLayout>
