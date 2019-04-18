@@ -7,7 +7,7 @@ At the moment the included functionalities are:
 
 2. Vignère Cipher: Encodes and Decodes a message using the Vignère Cipher.
 
-3. Coordinate Calculator: Taking a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG) this replaces the letter with the appropriate values and computes the final coordinates. Note: at the moment it does not allow N, S, W and E to be used as variables. If these lettters show up in the formula please replace them with other ones.
+3. Coordinate Calculator: Taking a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG) this replaces the letter with the appropriate values and computes the final coordinates. It also works with just simple formulas (not formatted like coordinates) like c*2 + 10.
 
 4. Coordinate offset calculator: Calculates the coordinates you end up with if you move in a certain angle (in degrees) and a certain distance (in metres) from some intial coordinates.
 
