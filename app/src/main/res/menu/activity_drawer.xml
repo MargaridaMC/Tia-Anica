@@ -6,18 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_home"
             android:title="@string/home" />
         <item
             android:id="@+id/nav_alpha_sum"
+            android:icon="@drawable/plus"
             android:title="@string/title_activity_alpha_sum" />
         <item
             android:id="@+id/nav_vigenere"
+            android:icon="@drawable/encryption"
             android:title="@string/title_activity_vigenere_cipher" />
         <item
             android:id="@+id/nav_coord_calculator"
+            android:icon="@drawable/calculator"
             android:title="@string/title_activity_coord_calculator" />
         <item
             android:id="@+id/nav_coord_offset"
+            android:icon="@drawable/compass"
             android:title="@string/title_activity_coordinate_offset" />
     </group>
 <!--
