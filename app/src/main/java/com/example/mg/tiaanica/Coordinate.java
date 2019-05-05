@@ -1,5 +1,7 @@
 package com.example.mg.tiaanica;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +14,8 @@ public class Coordinate {
 
     Coordinate coordinate;
     String originalCoord = "";
+    String originalLatitude = "";
+    String originalLongitude = "";
     String latitude = "";
     String longitude = "";
     String latitudeCardinalDirection = "";
@@ -20,16 +24,25 @@ public class Coordinate {
     List<String> neededLetters;
     static Map<String, Integer> variables;
 
-    /*public Coordinate(String lat, String lon) {
+    public Coordinate(String lat, String lon) {
 
-        latitudeCardinalDirection = lat.substring(0,1);
-        longitudeCardinalDirection = lon.substring(0,1);
+        lat = lat.toUpperCase();
+        lon = lon.toUpperCase();
 
-        setLatitude(lat.substring(1));
-        setLongitude(lon.substring(1));
+        if(lat.substring(0,1).matches("[A-Z]")){
+            latitudeCardinalDirection = lat.substring(0,1);
+            setLatitude(lat.substring(1));
+        }
+        else setLatitude(lat);
+
+        if(lon.substring(0,1).matches("[A-Z]")){
+            longitudeCardinalDirection = lon.substring(0,1);
+            setLongitude(lon.substring(1));
+        }
+        else setLongitude(lon);
 
     }
-*/
+
     public Coordinate(String coord) {
 
         coord = coord.toUpperCase();
@@ -42,21 +55,29 @@ public class Coordinate {
         neededLetters = new ArrayList<String>();
 
         Pattern p = Pattern.compile("[A-Z]");
-        Matcher m = p.matcher(latitude);
+        Matcher m = p.matcher(originalLatitude);
         while (m.find()) {
             if (!neededLetters.contains(m.group()))
                 neededLetters.add(m.group());
         }
-        m = p.matcher(longitude);
+        m = p.matcher(originalLongitude);
         while (m.find())
             if(!neededLetters.contains(m.group()))
                 neededLetters.add(m.group());
 
         Collections.sort(neededLetters);
-        setLatitude(tokenize(latitude));
-        setLongitude(tokenize(longitude));
+        setOriginalLatitude(tokenize(originalLatitude));
+        setOriginalLongitude(tokenize(originalLongitude));
         variables = new HashMap<>();
 
+    }
+
+    private void setOriginalLatitude(String lat){
+        originalLatitude = lat;
+    }
+
+    private void setOriginalLongitude(String lon){
+        originalLongitude = lon;
     }
 
     private void setLatitude(String lat) {
@@ -88,21 +109,21 @@ public class Coordinate {
         Matcher matcher = Pattern.compile("(.*?)E(\\d{2}°(.*))").matcher(originalCoord);
         while(matcher.find()) {
 
-            setLatitude(matcher.group(1));
-            setLongitude(matcher.group(2));
+            setOriginalLatitude(matcher.group(1));
+            setOriginalLongitude(matcher.group(2));
             longitudeCardinalDirection = "E";
         }
 
-        if(latitude.equals("") && longitude.equals("")) {
+        if(originalLatitude.equals("") && originalLongitude.equals("")) {
 
             matcher = Pattern.compile("(.*?)W(\\d{2}°(.*))").matcher(originalCoord);
             while(matcher.find()) {
-                setLatitude(matcher.group(1));
-                setLongitude(matcher.group(2));
+                setOriginalLatitude(matcher.group(1));
+                setOriginalLongitude(matcher.group(2));
                 longitudeCardinalDirection = "W";
             }
 
-            if(latitude.equals("") && longitude.equals("")) setLatitude(originalCoord);
+            if(originalLatitude.equals("") && originalLongitude.equals("")) setOriginalLatitude(originalCoord);
         }
     }
 
@@ -288,12 +309,14 @@ public class Coordinate {
 
     public void evaluate(){
 
+        setLatitude(originalLatitude);
+        setLongitude(originalLongitude);
+
         for (Map.Entry<String, Integer> pair : variables.entrySet()) {
             String key = pair.getKey();
             String value = Integer.toString(pair.getValue());
             setLatitude(latitude.replaceAll(key, value));
             setLongitude(longitude.replaceAll(key, value));
-
         }
 
 

@@ -213,7 +213,7 @@
             <TextView
                 android:id="@+id/result"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/text_height"
+                android:layout_height = "wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="16dp"

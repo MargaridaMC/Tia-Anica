@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -415,12 +416,11 @@ public class CoordCalculator extends AppCompatActivity
             }
 
             int value = Integer.parseInt(valueString);
-            this.variables.put(coordinate.neededLetters.get(i), value);
+            variables.put(coordinate.neededLetters.get(i), value);
         }
 
         coordinate.setVariables(variables);
         coordinate.evaluate();
-
         LinearLayout resultSpace;
 
         if(lastRowUsed == 1) resultSpace = findViewById(R.id.row2);
@@ -433,7 +433,7 @@ public class CoordCalculator extends AppCompatActivity
         resultSpace.setVisibility(View.VISIBLE);
         resultSpace.removeAllViews();
         TextView result = new TextView(this);
-        String resultString = "The final coordiantes are:" + coordinate.getFinalCoordinates();
+        String resultString = "The final coordinates are:\n" + coordinate.getFinalCoordinates();
 
         result.setText(resultString);
         result.setTextSize(18);
