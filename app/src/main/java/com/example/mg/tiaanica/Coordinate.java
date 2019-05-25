@@ -106,7 +106,7 @@ public class Coordinate {
             originalCoord = originalCoord.substring(1);
         }
 
-        Matcher matcher = Pattern.compile("(.*?)E(\\d{2}°(.*))").matcher(originalCoord);
+        Matcher matcher = Pattern.compile("(.*?)E(\\d{1,3}°(.*))").matcher(originalCoord);
         while(matcher.find()) {
 
             setOriginalLatitude(matcher.group(1));
@@ -116,7 +116,7 @@ public class Coordinate {
 
         if(originalLatitude.equals("") && originalLongitude.equals("")) {
 
-            matcher = Pattern.compile("(.*?)W(\\d{2}°(.*))").matcher(originalCoord);
+            matcher = Pattern.compile("(.*?)W(\\d{1,3}°(.*))").matcher(originalCoord);
             while(matcher.find()) {
                 setOriginalLatitude(matcher.group(1));
                 setOriginalLongitude(matcher.group(2));
