@@ -9,83 +9,176 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 public class Coordinate {
 
     Coordinate coordinate;
     String originalCoord = "";
-    String originalLatitude = "";
-    String originalLongitude = "";
-    String latitude = "";
-    String longitude = "";
-    String latitudeCardinalDirection = "";
-    String longitudeCardinalDirection = "";
+    private Map<String, String> latitude = new HashMap<String, String>();
+    private Map<String, String> longitude = new HashMap<String, String>();
+    private Map<String, String> originalLatitude = new HashMap<String, String>();
+    private Map<String, String> originalLongitude = new HashMap<String, String>();
+
+    String[] fields = {"CardinalDirection", "Degrees", "Minutes", "MinuteDecimals"};
 
     List<String> neededLetters;
     static Map<String, Integer> variables;
+    boolean fullCoordinates = false;
 
     public Coordinate(String lat, String lon) {
 
+        for(String f: fields) {
+            latitude.put(f, "");
+            longitude.put(f, "");
+            originalLatitude.put(f, "");
+            originalLongitude.put(f, "");
+        }
+
         lat = lat.toUpperCase();
         lon = lon.toUpperCase();
+        lat = lat.replaceAll(" ", "");
+        lon = lon.replaceAll(" ", "");
 
-        if(lat.substring(0,1).matches("[A-Z]")){
-            latitudeCardinalDirection = lat.substring(0,1);
-            setLatitude(lat.substring(1));
-        }
-        else setLatitude(lat);
+        // Interpret Latitude
+        Matcher m = Pattern.compile("([NS])(.*?)°(.*)").matcher(lat);
 
-        if(lon.substring(0,1).matches("[A-Z]")){
-            longitudeCardinalDirection = lon.substring(0,1);
-            setLongitude(lon.substring(1));
+        if(m.find()) {
+
+            fullCoordinates = true;
+            originalLatitude.put("CardinalDirection", m.group(1));
+            originalLatitude.put("Degrees", m.group(2));
+
+            String minutes = m.group(3);
+            Matcher minMatcher = Pattern.compile("(.*?)\\.(.*)").matcher(minutes);
+            if(minMatcher.find()) {
+                originalLatitude.put("Minutes", minMatcher.group(1));
+                originalLatitude.put("MinuteDecimals", minMatcher.group(2));
+            }
+
+            else originalLatitude.put("Minutes", minutes);
+
         }
-        else setLongitude(lon);
+
+        // Interpret Longitude
+        m = Pattern.compile("([WE])(.*?)°(.*)").matcher(lon);
+
+        if(fullCoordinates && m.find()) { // that is if the latitude also matched the desired formating
+
+            originalLongitude.put("CardinalDirection", m.group(1));
+            originalLongitude.put("Degrees", m.group(2));
+
+            String minutes = m.group(3);
+            Matcher minMatcher = Pattern.compile("(.*?)\\.(.*)").matcher(minutes);
+            if(minMatcher.find()) {
+                originalLongitude.put("Minutes", minMatcher.group(1));
+                originalLongitude.put("MinuteDecimals", minMatcher.group(2));
+            }
+
+            else originalLongitude.put("Minutes", minutes);
+
+        }
+        else fullCoordinates = false;
+
+        if(!fullCoordinates) {
+            System.out.println("WARNING: the input coordinates are not in the expected formatting");
+            return;
+        }
+
+        latitude = originalLatitude;
+        longitude = originalLongitude;
 
     }
 
     public Coordinate(String coord) {
 
+
+        for(String f: fields) {
+            latitude.put(f, "");
+            longitude.put(f, "");
+            originalLatitude.put(f, "");
+            originalLongitude.put(f, "");
+        }
+
         coord = coord.toUpperCase();
         coord = coord.replaceAll(" ", "");
         coord = coord.replaceAll("÷", "/");
+        coord = coord.replaceAll("\\[", "(");
+        coord = coord.replaceAll("\\]", ")");
 
         originalCoord = coord;
-        separateCoordinates();
+
+        // Check if input String matches a full set of coordinates
+        Matcher matcher = Pattern.compile("([NS])(.*?)°(.*?)([EW])(.*?)°(.*)").matcher(originalCoord);
+        if(matcher.find()) {
+
+            fullCoordinates = true;
+
+            // Read Latitude
+            originalLatitude.put("CardinalDirection", matcher.group(1));
+            originalLatitude.put("Degrees", tokenize(matcher.group(2)));
+
+            String latMinutes = matcher.group(3);
+            Matcher m = Pattern.compile("(.*?)\\.(.*)").matcher(latMinutes);
+            if(m.find()) {
+                originalLatitude.put("Minutes", tokenize(m.group(1)));
+                originalLatitude.put("MinuteDecimals", tokenize(m.group(2)));
+            }
+            else originalLatitude.put("Minutes", tokenize(latMinutes));
+
+            // Read Longitude
+            originalLongitude.put("CardinalDirection", matcher.group(4));
+            originalLongitude.put("Degrees", tokenize(matcher.group(5)));
+
+            String lonMinutes = matcher.group(6);
+            m = Pattern.compile("(.*?)\\.(.*)").matcher(lonMinutes);
+            if(m.find()) {
+                originalLongitude.put("Minutes", tokenize(m.group(1)));
+                originalLongitude.put("MinuteDecimals", tokenize(m.group(2)));
+            }
+            else originalLongitude.put("Minutes", tokenize(lonMinutes));
+        }
+        //here we can allow the coordinates not to be in coordinate format;
+        //in this case we just work directly with the full input string
+        else {
+            originalLatitude.put("Degrees", tokenize(originalCoord));
+        }
+
 
         neededLetters = new ArrayList<String>();
-
         Pattern p = Pattern.compile("[A-Z]");
-        Matcher m = p.matcher(originalLatitude);
-        while (m.find()) {
-            if (!neededLetters.contains(m.group()))
-                neededLetters.add(m.group());
+        Matcher m;
+
+        // Look for letters in latitude
+        for (Map.Entry<String, String> entry : originalLatitude.entrySet()) {
+
+            if(!entry.getKey().matches("CardinalDirection")) {
+                m = p.matcher(entry.getValue());
+                while(m.find()) {
+                    if (!neededLetters.contains(m.group()))
+                        neededLetters.add(m.group());
+                }
+
+            }
         }
-        m = p.matcher(originalLongitude);
-        while (m.find())
-            if(!neededLetters.contains(m.group()))
-                neededLetters.add(m.group());
+
+        // Look for letters in longitude
+        for (Map.Entry<String, String> entry : originalLongitude.entrySet()) {
+
+            if(!entry.getKey().matches("CardinalDirection")) {
+                m = p.matcher(entry.getValue());
+
+                while(m.find()) {
+                    if (!neededLetters.contains(m.group()))
+                        neededLetters.add(m.group());
+                }
+
+            }
+        }
 
         Collections.sort(neededLetters);
-        setOriginalLatitude(tokenize(originalLatitude));
-        setOriginalLongitude(tokenize(originalLongitude));
         variables = new HashMap<>();
 
-    }
-
-    private void setOriginalLatitude(String lat){
-        originalLatitude = lat;
-    }
-
-    private void setOriginalLongitude(String lon){
-        originalLongitude = lon;
-    }
-
-    private void setLatitude(String lat) {
-        latitude = lat;
-    }
-
-    private  void setLongitude(String lon) {
-        longitude = lon;
     }
 
     public void setVariables(Map<String, Integer> vars) {
@@ -99,132 +192,76 @@ public class Coordinate {
 
     }
 
-    private void separateCoordinates() {
-
-        if(originalCoord.substring(0,1).matches("[NS]")) {
-            latitudeCardinalDirection = originalCoord.substring(0,1);
-            originalCoord = originalCoord.substring(1);
-        }
-
-        Matcher matcher = Pattern.compile("(.*?)E(\\d{1,3}°(.*))").matcher(originalCoord);
-        while(matcher.find()) {
-
-            setOriginalLatitude(matcher.group(1));
-            setOriginalLongitude(matcher.group(2));
-            longitudeCardinalDirection = "E";
-        }
-
-        if(originalLatitude.equals("") && originalLongitude.equals("")) {
-
-            matcher = Pattern.compile("(.*?)W(\\d{1,3}°(.*))").matcher(originalCoord);
-            while(matcher.find()) {
-                setOriginalLatitude(matcher.group(1));
-                setOriginalLongitude(matcher.group(2));
-                longitudeCardinalDirection = "W";
-            }
-
-            if(originalLatitude.equals("") && originalLongitude.equals("")) setOriginalLatitude(originalCoord);
-        }
+    public Map<String, String> getLatitude() {
+        return latitude;
     }
 
-    private String tokenize(String coordinates) {
+    public Map<String, String> getLongitude() {
+        return longitude;
+    }
 
-        StringBuilder tokenizedCoord = new StringBuilder();
+    public Map<String, String> getOriginalLatitude() {
+        return originalLatitude;
+    }
 
-        String[] parts = coordinates.split("");
-        int maxLength = coordinates.length() + 1;
+    public Map<String, String> getOriginalLongitude() {
+        return originalLongitude;
+    }
 
-        int i = 0;
-        String currentChar;
-        String nextChar;
-        String nextToNextChar;
-        StringBuilder toAdd;
-        int extraParenthesis = 0;
+    private void setValue(Map<String, String> coordinates,  String[] values, boolean pad) {
 
-        while(i < maxLength) {
+        setValue(coordinates, "Degrees", values[0], pad);
+        setValue(coordinates, "Minutes", values[1], pad);
+        setValue(coordinates, "MinuteDecimals", values[2], pad);
+    }
 
-            currentChar = parts[i];
-            toAdd = new StringBuilder();
+    private void setValue(Map<String, String> coordinates, String key, String value, boolean pad) {
 
-            if(currentChar.equals("(")) {
+        if(pad) {
+            int l = value.length();
 
-                toAdd.append("(");
+            switch(key) {
+                case "Degrees":
+                    // The value for degrees should have at least two digits
+                    coordinates.put("Degrees", StringUtils.leftPad(value, 2, '0'));
+                    break;
 
-                i += 1;
-                currentChar = parts[i];
-                toAdd.append(currentChar);
+                case "Minutes":
+                    // The value for minutes should either have two digits (e.g. 08) or 5 (or six characters, including the decimals e.g. 08.473)
+                    if(l > 2 && l <=5) coordinates.put("Minutes", StringUtils.leftPad(value, 5, '0'));
+                    else coordinates.put("Minutes", StringUtils.leftPad(value, 2, '0'));
+                    break;
 
-                while(!currentChar.equals(")")){
-                    i += 1;
-                    currentChar = parts[i];
-                    toAdd.append(currentChar);
-                }
+                case "MinuteDecimals":
+                    // The value for minute decimals should be zero (in case these are included in the minutes value) or 3
+                    if(l > 0 && l <=3) coordinates.put("MinuteDecimals", StringUtils.leftPad(value, 3, '0'));
+                    else coordinates.put("MinuteDecimals", value);
+                    break;
+
+
             }
-            else if(currentChar.matches("[0-9\\.°]")){
-                toAdd.append(currentChar);
-            }
-            else if(currentChar.matches("[A-Z]")) {
-
-                toAdd.append("(");
-                toAdd.append(currentChar);
-
-                if(i + 2 < maxLength) {
-
-                    nextChar = parts[i+1];
-                    nextToNextChar = parts[i+2]; //Check for length
-
-                    while(i + 2 < maxLength && nextChar.matches("[+\\-\\/\\*÷]") && nextToNextChar.matches("[A-Z0-9\\(\\)]")) {
-
-                        toAdd.append(nextChar);
-                        toAdd.append(nextToNextChar);
-
-                        if(nextToNextChar.equals("(")) {
-                            i += 1;
-                            nextToNextChar = parts[i+2];
-                            toAdd.append(nextToNextChar);
-                            extraParenthesis += 1;
-                        }
-
-                        if(nextToNextChar.matches("[0-9]")) { // if it is a number with more than one digit we need to add them all
-
-                            int j = i + 3;
-
-                            if(j < maxLength) {
-
-                                String theOneAfterThat;
-
-                                while(j < maxLength) {
-                                    theOneAfterThat = parts[j];
-                                    if(theOneAfterThat.matches("[0-9]")) toAdd.append(theOneAfterThat);
-                                    else break;
-                                    j += 1;
-                                }
-                            }
-                            i = j - 3;
-                        }
-
-                        i += 2;
-
-                        if(i + 2 < maxLength) {
-                            nextChar = parts[i+1];
-                            nextToNextChar = parts[i+2];
-                        }
-
-                    }
-
-                    for(int j = 0; j < extraParenthesis; j++) toAdd.append(")");
-
-                }
-
-                toAdd.append(")");
-            }
-
-            tokenizedCoord.append(toAdd);
-
-            i += 1;
         }
-        return tokenizedCoord.toString();
+        else coordinates.put(key, value);
 
+    }
+
+    private String tokenize(String coord){
+
+        Matcher matcher = Pattern.compile("[A-Z]|[0-9]+").matcher(coord);
+
+        while(matcher.find()) {
+            String m = matcher.group(0);
+            coord = coord.replaceAll(m, "(" + m + ")");
+        }
+
+        matcher = Pattern.compile("\\)([+-\\\\/\\\\*÷]){1}\\(").matcher(coord);
+
+        while(matcher.find()) {
+            String m = matcher.group(0);
+            coord = coord.replace(m, m.substring(1,2));
+        }
+
+        return coord;
     }
 
     public static double eval(final String str) {
@@ -309,57 +346,84 @@ public class Coordinate {
 
     public void evaluate(){
 
-        setLatitude(originalLatitude);
-        setLongitude(originalLongitude);
+        latitude = originalLatitude;
+        longitude = originalLongitude;
+
 
         for (Map.Entry<String, Integer> pair : variables.entrySet()) {
             String key = pair.getKey();
             String value = Integer.toString(pair.getValue());
-            setLatitude(latitude.replaceAll(key, value));
-            setLongitude(longitude.replaceAll(key, value));
+
+            setValue(latitude, "Degrees", latitude.get("Degrees").replaceAll(key, value), false);
+            setValue(latitude, "Minutes", latitude.get("Minutes").replaceAll(key, value), false);
+            setValue(latitude, "MinuteDecimals", latitude.get("MinuteDecimals").replaceAll(key, value), false);
+            setValue(longitude, "Degrees", longitude.get("Degrees").replaceAll(key, value), false);
+            setValue(longitude, "Minutes", longitude.get("Minutes").replaceAll(key, value), false);
+            setValue(longitude, "MinuteDecimals", longitude.get("MinuteDecimals").replaceAll(key, value), false);
+
         }
 
 
         Pattern token = Pattern.compile("\\(((?![\\)\\(]).)*\\)");
-        Matcher latTokens = token.matcher(latitude);
+        Matcher matchedTokens;
 
-        while (latTokens.find()) {
-            String toEval = latTokens.group();
-            setLatitude(latitude.replace(toEval, Integer.toString((int) eval(toEval))));
-            latTokens = token.matcher(latitude);
+        // evaluate latitude expression
+        for(String key:latitude.keySet()) {
+
+            if(!key.equals("CardinalDirection")) {
+
+                String value = latitude.get(key);
+                matchedTokens = token.matcher(value);
+
+                while (matchedTokens.find()) {
+                    String toEval = matchedTokens.group(0);
+                    String replacement = Integer.toString((int) eval(toEval));
+                    value = value.replace( toEval  , replacement);
+                    matchedTokens = token.matcher(value);
+                }
+
+                setValue(latitude, key, value, true);
+
+            }
 
         }
 
-        Matcher lonTokens = token.matcher(longitude);
-        while (lonTokens.find()) {
-            String toEval = lonTokens.group();
-            setLongitude(longitude.replace(toEval, Integer.toString((int) eval(toEval))));
-            lonTokens = token.matcher(longitude);
+        //evaluate longitude expression
+        for(String key:longitude.keySet()) {
 
+            if(!key.equals("CardinalDirection")) {
+
+                String value = longitude.get(key);
+                matchedTokens = token.matcher(value);
+
+                while (matchedTokens.find()) {
+                    String toEval = matchedTokens.group(0);
+                    String replacement = Integer.toString((int) coordinate.eval(toEval));
+                    value = value.replace(toEval, replacement);
+                    matchedTokens = token.matcher(value);
+                }
+
+                setValue(longitude, key, value, true);
+            }
         }
+
+
     }
 
-    public static double degreesMinutesToDegrees(String coordinates) {
+    public static double degreesMinutesToDegrees(Map<String, String> coordinates) {
 
-        double degrees = 0;
-        double minutes = 0;
-        coordinates = coordinates.replaceAll(" ", "");
-
-        Matcher m = Pattern.compile("(.*?)°(.*)").matcher(coordinates);
-
-        while(m.find()) {
-            degrees = Double.parseDouble(m.group(1));
-            minutes = Double.parseDouble(m.group(2));
-        }
+        double degrees = Double.parseDouble(coordinates.get("Degrees"));
+        double minutes = Double.parseDouble(coordinates.get("Minutes")) + Double.parseDouble(coordinates.get("MinuteDecimals")) / 1000;
 
         return degrees + minutes/60.0;
 
     }
 
-    public static String degreesToDegreesMinutes(double coordinates) {
+    public static String[] degreesToDegreesMinutes(double coordinates) {
 
         int degrees = (int) coordinates;
         double minutes = (coordinates - degrees) * 60;
+        double minuteDecimals;
         minutes = Math.round(minutes * 1000d) / 1000d;
 
         if(minutes==60.0) {
@@ -367,7 +431,11 @@ public class Coordinate {
             minutes = 0.0;
         }
 
-        return degrees + "° " + minutes;
+        minuteDecimals = (minutes - (int) minutes) * 1000;
+
+        String[] values = {Integer.toString(degrees), Integer.toString((int) minutes), Integer.toString((int) minuteDecimals)};
+
+        return values;
     }
 
     public void Offset(double angle, double distanceInMeters){
@@ -389,12 +457,39 @@ public class Coordinate {
         x = x * 180 / Math.PI; // convert back to degrees
         y = y * 180 / Math.PI;
 
-        setLatitude(degreesToDegreesMinutes(x));
-        setLongitude(degreesToDegreesMinutes(y));
+        String[] latVals = degreesToDegreesMinutes(x);
+        String[] lonVals = degreesToDegreesMinutes(y);
+
+        setValue(latitude, latVals, true);
+        setValue(longitude, lonVals, true);
     }
 
-    public String getFinalCoordinates() {
+    String getFinalCoordinates() {
 
-        return latitudeCardinalDirection + " " + latitude + "  " + longitudeCardinalDirection + " " + longitude;
+        if(fullCoordinates){
+
+        String latMinutes = latitude.get("Minutes");
+        int l = latMinutes.length();
+        if(l > 2) {
+            latMinutes = latMinutes.substring(0,l - 3) + "." + latMinutes.substring(l-3);
+        }
+        else {
+            latMinutes = latMinutes + "." + latitude.get("MinuteDecimals");
+
+        }
+
+        String lonMinutes = longitude.get("Minutes");
+        l = lonMinutes.length();
+        if(l > 2) {
+            lonMinutes = lonMinutes.substring(0, l-3) + "." + lonMinutes.substring(l-3);
+        }
+        else {
+            lonMinutes = lonMinutes + "." + longitude.get("MinuteDecimals");
+        }
+
+        return latitude.get("CardinalDirection") + " " + latitude.get("Degrees") + "° " + latMinutes + " " + longitude.get("CardinalDirection") + " " + longitude.get("Degrees") + "° " + lonMinutes;
+        }
+
+        else return latitude.get("Degrees");
     }
 }
