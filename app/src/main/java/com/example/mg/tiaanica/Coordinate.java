@@ -28,6 +28,9 @@ public class Coordinate {
 
     public Coordinate(String lat, String lon) {
 
+
+        boolean fullCoordinates = false;
+
         for(String f: fields) {
             latitude.put(f, "");
             longitude.put(f, "");
@@ -253,14 +256,6 @@ public class Coordinate {
             String m = matcher.group(0);
             coord = coord.replaceAll(m, "(" + m + ")");
         }
-
-        matcher = Pattern.compile("\\)([+-\\\\/\\\\*÷]){1}\\(").matcher(coord);
-
-        while(matcher.find()) {
-            String m = matcher.group(0);
-            coord = coord.replace(m, m.substring(1,2));
-        }
-
         return coord;
     }
 
