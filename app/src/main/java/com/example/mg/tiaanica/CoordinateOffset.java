@@ -21,14 +21,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CoordinateOffset extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -141,7 +136,6 @@ public class CoordinateOffset extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
@@ -234,7 +228,7 @@ public class CoordinateOffset extends AppCompatActivity
 
         TextView result = findViewById(R.id.result);
         result.setVisibility(View.VISIBLE);
-        String message = "The final coordinates are: \n" + coordinate.getFinalCoordinates();
+        String message = "The final coordinates are: \n" + coordinate.getFullCoordinates();
         result.setText(message);
 
     }

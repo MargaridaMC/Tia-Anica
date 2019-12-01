@@ -139,7 +139,6 @@ public class AlphaSum extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
@@ -361,7 +360,7 @@ public class AlphaSum extends AppCompatActivity
 
         }
 
-        String message = "The alpha sum value of '" + text + "' is " + Integer.toString(value);
+        String message = "The alpha sum value of '" + text + "' is " + value;
 
         // intent.putExtra(EXTRA_MESSAGE,message);
         //startActivity vai começar a actividade DisplayMessageActivity especificada pelo Intent

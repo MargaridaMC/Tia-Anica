@@ -1,424 +1,299 @@
 package com.example.mg.tiaanica;
 
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 
-public class Coordinate {
+class Coordinate {
 
-    Coordinate coordinate;
-    String originalCoord = "";
-    private Map<String, String> latitude = new HashMap<String, String>();
-    private Map<String, String> longitude = new HashMap<String, String>();
-    private Map<String, String> originalLatitude = new HashMap<String, String>();
-    private Map<String, String> originalLongitude = new HashMap<String, String>();
+    private Double lat = null;
+    private Double lon = null;
 
-    String[] fields = {"CardinalDirection", "Degrees", "Minutes", "MinuteDecimals"};
+    private Double latDeg = null;
+    private Double latMin = null;
+    private Double latSec = null;
+    private String latDir = "N";
 
-    List<String> neededLetters;
-    static Map<String, Integer> variables;
-    boolean fullCoordinates = false;
+    private Double lonDeg = null;
+    private Double lonMin = null;
+    private Double lonSec = null;
+    private String lonDir = "E";
 
-    public Coordinate(String lat, String lon) {
+    Coordinate(String coord) {
 
-
-        boolean fullCoordinates = false;
-
-        for(String f: fields) {
-            latitude.put(f, "");
-            longitude.put(f, "");
-            originalLatitude.put(f, "");
-            originalLongitude.put(f, "");
+        boolean success = parse(coord);
+        if(!success) {
+            System.out.println("Couldn't parse coordinates");
         }
-
-        lat = lat.toUpperCase();
-        lon = lon.toUpperCase();
-        lat = lat.replaceAll(" ", "");
-        lon = lon.replaceAll(" ", "");
-
-        // Interpret Latitude
-        Matcher m = Pattern.compile("([NS])(.*?)°(.*)").matcher(lat);
-
-        if(m.find()) {
-
-            fullCoordinates = true;
-            originalLatitude.put("CardinalDirection", m.group(1));
-            originalLatitude.put("Degrees", m.group(2));
-
-            String minutes = m.group(3);
-            Matcher minMatcher = Pattern.compile("(.*?)\\.(.*)").matcher(minutes);
-            if(minMatcher.find()) {
-                originalLatitude.put("Minutes", minMatcher.group(1));
-                originalLatitude.put("MinuteDecimals", minMatcher.group(2));
-            }
-
-            else originalLatitude.put("Minutes", minutes);
-
-        }
-
-        // Interpret Longitude
-        m = Pattern.compile("([WE])(.*?)°(.*)").matcher(lon);
-
-        if(fullCoordinates && m.find()) { // that is if the latitude also matched the desired formating
-
-            originalLongitude.put("CardinalDirection", m.group(1));
-            originalLongitude.put("Degrees", m.group(2));
-
-            String minutes = m.group(3);
-            Matcher minMatcher = Pattern.compile("(.*?)\\.(.*)").matcher(minutes);
-            if(minMatcher.find()) {
-                originalLongitude.put("Minutes", minMatcher.group(1));
-                originalLongitude.put("MinuteDecimals", minMatcher.group(2));
-            }
-
-            else originalLongitude.put("Minutes", minutes);
-
-        }
-        else fullCoordinates = false;
-
-        if(!fullCoordinates) {
-            System.out.println("WARNING: the input coordinates are not in the expected formatting");
-            return;
-        }
-
-        latitude = originalLatitude;
-        longitude = originalLongitude;
-
     }
 
-    public Coordinate(String coord) {
+     Coordinate(String lat, String lon) {
 
+        boolean success = parseLatitude(lat) && parseLongitude(lon);
+        if(!success) {
+            System.out.println("Couldn't parse coordinates");
+        }
+    }
 
-        for(String f: fields) {
-            latitude.put(f, "");
-            longitude.put(f, "");
-            originalLatitude.put(f, "");
-            originalLongitude.put(f, "");
+    private Boolean parse(String input){
+
+        input = input.trim();
+
+        Pattern p = Pattern.compile(
+                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)" +
+                        "\\s+" + "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Matcher m = p.matcher(input);
+
+        if(m.matches()){
+            if(m.group(1) != null)
+                latDir = m.group(1);
+            if(m.group(2) != null)
+                latDeg = parseDouble(m.group(2));
+            if(m.group(3) != null)
+                latMin = parseDouble(m.group(3));
+            if(m.group(4) != null)
+                latSec = parseDouble(m.group(4));
+            if(m.group(5) != null)
+                lonDir = m.group(5);
+            if(m.group(6) != null)
+                lonDeg = parseDouble(m.group(6));
+            if(m.group(7) != null)
+                lonMin = parseDouble(m.group(7));
+            if(m.group(8) != null)
+                lonSec = parseDouble(m.group(8));
+
+            if(latDeg != null && latMin != null && latSec != null) {
+                lat = DMS2Decimal(latDeg, latMin, latSec, latDir);
+                lon = DMS2Decimal(lonDeg, lonMin, lonSec, lonDir);
+
+                return true;
+            } else if(latDeg != null && latMin != null && latSec == null) {
+                lat = DM2Decimal(latDeg, latMin, latDir);
+                lon = DM2Decimal(lonDeg, lonMin, lonDir);
+
+                return true;
+            } else if (latDeg != null && latMin == null && latSec == null){
+
+                lat = latDeg;
+                if(
+                        latDir.equalsIgnoreCase("S")
+                                ||
+                                latDir.equalsIgnoreCase("-")
+                ) lat = -lat;
+
+                lon = lonDeg;
+                if(
+                        lonDir.equalsIgnoreCase("W")
+                                ||
+                                lonDir.equalsIgnoreCase("-")
+                ) lon = -lon;
+
+                return true;
+            }
+
+        } else  {
+            // bad input format
         }
 
-        coord = coord.toUpperCase();
-        coord = coord.replaceAll(" ", "");
-        coord = coord.replaceAll("÷", "/");
-        coord = coord.replaceAll("\\[", "(");
-        coord = coord.replaceAll("\\]", ")");
+        return false;
+    }
 
-        originalCoord = coord;
+    private Boolean parseLatitude(String input) {
+        input = input.trim();
 
-        // Check if input String matches a full set of coordinates
-        Matcher matcher = Pattern.compile("([NS])(.*?)°(.*?)([EW])(.*?)°(.*)").matcher(originalCoord);
-        if(matcher.find()) {
+        Pattern p;
+        p = Pattern.compile(
+                "([NS]{1})?\\s?([0-9]{1,})[°\\s]{1,}([0-9]{1,})[\\.\\s]{1,}([0-9]{1,})",
+                Pattern.CASE_INSENSITIVE);
 
-            fullCoordinates = true;
+        Matcher m = p.matcher(input);
 
-            // Read Latitude
-            originalLatitude.put("CardinalDirection", matcher.group(1));
-            originalLatitude.put("Degrees", tokenize(matcher.group(2)));
+        if(m.matches()){
+            if(m.group(1) != null)
+                latDir = m.group(1);
+            if(m.group(2) != null)
+                latDeg = parseDouble(m.group(2));
+            if(m.group(3) != null)
+                latMin = parseDouble(m.group(3));
+            if(m.group(4) != null)
+                latSec = parseDouble(m.group(4));
 
-            String latMinutes = matcher.group(3);
-            Matcher m = Pattern.compile("(.*?)\\.(.*)").matcher(latMinutes);
-            if(m.find()) {
-                originalLatitude.put("Minutes", tokenize(m.group(1)));
-                originalLatitude.put("MinuteDecimals", tokenize(m.group(2)));
+            if(latDeg != null && latMin != null && latSec != null) {
+                lat = DMS2Decimal(latDeg, latMin, latSec, latDir);
+
+                return true;
+            } else if(latDeg != null && latMin != null && latSec == null) {
+                lat = DM2Decimal(latDeg, latMin, latDir);
+
+                return true;
+            } else if (latDeg != null && latMin == null && latSec == null){
+
+                lat = latDeg;
+                if(
+                        latDir.equalsIgnoreCase("S")
+                                ||
+                                latDir.equalsIgnoreCase("-")
+                ) lat = -lat;
+
+                return true;
             }
-            else originalLatitude.put("Minutes", tokenize(latMinutes));
 
-            // Read Longitude
-            originalLongitude.put("CardinalDirection", matcher.group(4));
-            originalLongitude.put("Degrees", tokenize(matcher.group(5)));
-
-            String lonMinutes = matcher.group(6);
-            m = Pattern.compile("(.*?)\\.(.*)").matcher(lonMinutes);
-            if(m.find()) {
-                originalLongitude.put("Minutes", tokenize(m.group(1)));
-                originalLongitude.put("MinuteDecimals", tokenize(m.group(2)));
-            }
-            else originalLongitude.put("Minutes", tokenize(lonMinutes));
-        }
-        //here we can allow the coordinates not to be in coordinate format;
-        //in this case we just work directly with the full input string
-        else {
-            originalLatitude.put("Degrees", tokenize(originalCoord));
-        }
-
-
-        neededLetters = new ArrayList<String>();
-        Pattern p = Pattern.compile("[A-Z]");
-        Matcher m;
-
-        // Look for letters in latitude
-        for (Map.Entry<String, String> entry : originalLatitude.entrySet()) {
-
-            if(!entry.getKey().matches("CardinalDirection")) {
-                m = p.matcher(entry.getValue());
-                while(m.find()) {
-                    if (!neededLetters.contains(m.group()))
-                        neededLetters.add(m.group());
-                }
-
-            }
+        } else  {
+            // bad input format
         }
 
-        // Look for letters in longitude
-        for (Map.Entry<String, String> entry : originalLongitude.entrySet()) {
+        return false;
+    }
 
-            if(!entry.getKey().matches("CardinalDirection")) {
-                m = p.matcher(entry.getValue());
+    private Boolean parseLongitude(String input) {
+        input = input.trim();
 
-                while(m.find()) {
-                    if (!neededLetters.contains(m.group()))
-                        neededLetters.add(m.group());
-                }
+        Pattern p = Pattern.compile(
+                "([EW]{1})?\\s?([0-9]{1,})[°\\s]{1,}([0-9]{1,})[\\.\\s]{1,}([0-9]{1,})",
+                Pattern.CASE_INSENSITIVE
+        );
 
+        Matcher m = p.matcher(input);
+
+        if(m.matches()){
+            if(m.group(1) != null)
+                lonDir = m.group(1);
+            if(m.group(2) != null)
+                lonDeg = parseDouble(m.group(2));
+            if(m.group(3) != null)
+                lonMin = parseDouble(m.group(3));
+            if(m.group(4) != null)
+                lonSec = parseDouble(m.group(4));
+
+            if(lonDeg != null && lonMin != null && lonSec != null) {
+                lon = DMS2Decimal(lonDeg, lonMin, lonSec, lonDir);
+
+                return true;
+            } else if(lonDeg != null && lonMin != null && lonSec == null) {
+                lon = DM2Decimal(lonDeg, lonMin, lonDir);
+
+                return true;
+            } else if (lonDeg != null && lonMin == null && lonSec == null){
+
+                lon = lonDeg;
+                if(
+                        lonDir.equalsIgnoreCase("W")
+                                ||
+                                lonDir.equalsIgnoreCase("-")
+                ) lon = -lon;
+
+                return true;
             }
+
+        } else  {
+            // bad input format
         }
 
-        Collections.sort(neededLetters);
-        variables = new HashMap<>();
-
+        return false;
     }
 
-    public void setVariables(Map<String, Integer> vars) {
-        variables = vars;
-    }
-
-    public String getNeededVariables(){
-
-        String neededLettersString = neededLetters.toString();
-        return neededLettersString.substring(1, neededLettersString.length() - 1);
-
-    }
-
-    public Map<String, String> getLatitude() {
-        return latitude;
-    }
-
-    public Map<String, String> getLongitude() {
-        return longitude;
-    }
-
-    public Map<String, String> getOriginalLatitude() {
-        return originalLatitude;
-    }
-
-    public Map<String, String> getOriginalLongitude() {
-        return originalLongitude;
-    }
-
-    private void setValue(Map<String, String> coordinates,  String[] values, boolean pad) {
-
-        setValue(coordinates, "Degrees", values[0], pad);
-        setValue(coordinates, "Minutes", values[1], pad);
-        setValue(coordinates, "MinuteDecimals", values[2], pad);
-    }
-
-    private void setValue(Map<String, String> coordinates, String key, String value, boolean pad) {
-
-        if(pad) {
-            int l = value.length();
-
-            switch(key) {
-                case "Degrees":
-                    // The value for degrees should have at least two digits
-                    coordinates.put("Degrees", StringUtils.leftPad(value, 2, '0'));
-                    break;
-
-                case "Minutes":
-                    // The value for minutes should either have two digits (e.g. 08) or 5 (or six characters, including the decimals e.g. 08.473)
-                    if(l > 2 && l <=5) coordinates.put("Minutes", StringUtils.leftPad(value, 5, '0'));
-                    else coordinates.put("Minutes", StringUtils.leftPad(value, 2, '0'));
-                    break;
-
-                case "MinuteDecimals":
-                    // The value for minute decimals should be zero (in case these are included in the minutes value) or 3
-                    if(l > 0 && l <=3) coordinates.put("MinuteDecimals", StringUtils.leftPad(value, 3, '0'));
-                    else coordinates.put("MinuteDecimals", value);
-                    break;
-
-
-            }
+    private Double parseDouble(String numberStr){
+        try {
+            return Double.parseDouble(numberStr);
+        } catch (Exception e){
+            return 0.0;
         }
-        else coordinates.put(key, value);
-
     }
 
-    private String tokenize(String coord){
+    private String getLatitude() {
 
-        Matcher matcher = Pattern.compile("[A-Z]|[0-9]+").matcher(coord);
+        String latDegInt = String.format("%02d", latDeg.intValue());
+        String latMinInt = String.format("%02d", latMin.intValue());
+        String latSecInt = String.format("%03d", latSec.intValue());
 
-        while(matcher.find()) {
-            String m = matcher.group(0);
-            coord = coord.replaceAll(m, "(" + m + ")");
-        }
-        return coord;
+        return latDir + latDegInt + " " + latMinInt + "." + latSecInt;
     }
 
-    public static double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
+    private String getLongitude() {
 
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
+        String lonDegInt = String.format("%02d", lonDeg.intValue());
+        String lonMinInt = String.format("%02d", lonMin.intValue());
+        String lonSecInt = String.format("%03d", lonSec.intValue());
 
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
-                return x;
-            }
-
-            // Grammar:
-            // expression = term | expression `+` term | expression `-` term
-            // term = factor | term `*` factor | term `/` factor
-            // factor = `+` factor | `-` factor | `(` expression `)`
-            //        | number | functionName factor | factor `^` factor
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (;;) {
-                    if      (eat('+')) x += parseTerm(); // addition
-                    else if (eat('-')) x -= parseTerm(); // subtraction
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (;;) {
-                    if      (eat('*')) x *= parseFactor(); // multiplication
-                    else if (eat('/')) x /= parseFactor(); // division
-                    else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) { // parentheses
-                    x = parseExpression();
-                    eat(')');
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    x = Double.parseDouble(str.substring(startPos, this.pos));
-                } else if (ch >= 'a' && ch <= 'z') { // functions
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    x = parseFactor();
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
-                    else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
-                    else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
-                    else throw new RuntimeException("Unknown function: " + func);
-                } else {
-                    throw new RuntimeException("Unexpected: " + (char)ch);
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation
-
-                return x;
-            }
-        }.parse();
+        return lonDir + lonDegInt + " " + lonMinInt + "." + lonSecInt;
     }
 
-    public void evaluate(){
-
-        latitude = originalLatitude;
-        longitude = originalLongitude;
-
-
-        for (Map.Entry<String, Integer> pair : variables.entrySet()) {
-            String key = pair.getKey();
-            String value = Integer.toString(pair.getValue());
-
-            setValue(latitude, "Degrees", latitude.get("Degrees").replaceAll(key, value), false);
-            setValue(latitude, "Minutes", latitude.get("Minutes").replaceAll(key, value), false);
-            setValue(latitude, "MinuteDecimals", latitude.get("MinuteDecimals").replaceAll(key, value), false);
-            setValue(longitude, "Degrees", longitude.get("Degrees").replaceAll(key, value), false);
-            setValue(longitude, "Minutes", longitude.get("Minutes").replaceAll(key, value), false);
-            setValue(longitude, "MinuteDecimals", longitude.get("MinuteDecimals").replaceAll(key, value), false);
-
-        }
-
-
-        Pattern token = Pattern.compile("\\(((?![\\)\\(]).)*\\)");
-        Matcher matchedTokens;
-
-        // evaluate latitude expression
-        for(String key:latitude.keySet()) {
-
-            if(!key.equals("CardinalDirection")) {
-
-                String value = latitude.get(key);
-                matchedTokens = token.matcher(value);
-
-                while (matchedTokens.find()) {
-                    String toEval = matchedTokens.group(0);
-                    String replacement = Integer.toString((int) eval(toEval));
-                    value = value.replace( toEval  , replacement);
-                    matchedTokens = token.matcher(value);
-                }
-
-                setValue(latitude, key, value, true);
-
-            }
-
-        }
-
-        //evaluate longitude expression
-        for(String key:longitude.keySet()) {
-
-            if(!key.equals("CardinalDirection")) {
-
-                String value = longitude.get(key);
-                matchedTokens = token.matcher(value);
-
-                while (matchedTokens.find()) {
-                    String toEval = matchedTokens.group(0);
-                    String replacement = Integer.toString((int) coordinate.eval(toEval));
-                    value = value.replace(toEval, replacement);
-                    matchedTokens = token.matcher(value);
-                }
-
-                setValue(longitude, key, value, true);
-            }
-        }
-
-
+    private void setLatitude(Double lat) {
+        this.lat = lat;
     }
 
-    public static double degreesMinutesToDegrees(Map<String, String> coordinates) {
-
-        double degrees = Double.parseDouble(coordinates.get("Degrees"));
-        double minutes = Double.parseDouble(coordinates.get("Minutes")) + Double.parseDouble(coordinates.get("MinuteDecimals")) / 1000;
-
-        return degrees + minutes/60.0;
-
+    private void setLongitude(Double lon) {
+        this.lon = lon;
     }
 
-    public static String[] degreesToDegreesMinutes(double coordinates) {
+    private void setLatDeg(Double latDeg) {
+        this.latDeg = latDeg;
+    }
 
-        int degrees = (int) coordinates;
+    private void setLonDeg(Double lonDeg) {
+        this.lonDeg = lonDeg;
+    }
+
+    private void setLatMin(Double latVals) {
+        this.latMin = latVals;
+    }
+
+    private void setLonMin(Double lonMin) {
+        this.lonMin = lonMin;
+    }
+
+    private void setLatSec(Double latSec) {
+        this.latSec = latSec;
+    }
+
+    private void setLonSec(Double lonSec) {
+        this.lonSec = lonSec;
+    }
+    private static double DM2Decimal(Double latDeg2, Double latMin2, String dir){
+        double _d; double _m;
+
+        _d = latDeg2 == null ? 0. : latDeg2;
+        _m = latMin2 == null ? 0. : latMin2;
+
+        double result = _d + _m / 60.0;
+
+        if(
+                dir.equalsIgnoreCase("S")
+                        ||
+                        dir.equalsIgnoreCase("W")
+                        ||
+                        dir.equalsIgnoreCase("-")
+        ) result = -result;
+
+        return result;
+    }
+
+    private static double DMS2Decimal(Double lonDeg2, Double lonMin2, Double lonSec2, String dir){
+        double _d; double _m; double _s;
+
+        _d = lonDeg2 == null ? 0. : lonDeg2;
+        _m = lonMin2 == null ? 0. : lonMin2;
+        _s = lonSec2 == null ? 0. : lonSec2;
+
+        double result = _d + _m / 60.0 + _s / 3600;
+        if(
+                dir.equalsIgnoreCase("S")
+                        ||
+                        dir.equalsIgnoreCase("W")
+                        ||
+                        dir.equalsIgnoreCase("-")
+        ) result = -result;
+
+        return result;
+    }
+
+    private static double[] Decimal2DMS(Double coordinates){
+
+        double degrees = (double) coordinates.intValue();
         double minutes = (coordinates - degrees) * 60;
-        double minuteDecimals;
+        double seconds;
         minutes = Math.round(minutes * 1000d) / 1000d;
 
         if(minutes==60.0) {
@@ -426,17 +301,16 @@ public class Coordinate {
             minutes = 0.0;
         }
 
-        minuteDecimals = (minutes - (int) minutes) * 1000;
+        seconds = (minutes - (int) minutes) * 1000;
 
-        String[] values = {Integer.toString(degrees), Integer.toString((int) minutes), Integer.toString((int) minuteDecimals)};
+        return new double[] {degrees, minutes, seconds};
 
-        return values;
     }
 
-    public void Offset(double angle, double distanceInMeters){
+     void Offset(double angle, double distanceInMeters){
 
-        double X = degreesMinutesToDegrees(latitude);
-        double Y = degreesMinutesToDegrees(longitude);
+        double X = lat;
+        double Y = lon;
 
         double rad = Math.PI * angle / 180;
 
@@ -452,39 +326,23 @@ public class Coordinate {
         x = x * 180 / Math.PI; // convert back to degrees
         y = y * 180 / Math.PI;
 
-        String[] latVals = degreesToDegreesMinutes(x);
-        String[] lonVals = degreesToDegreesMinutes(y);
+        double[] latVals = Decimal2DMS(x);
+        double[] lonVals = Decimal2DMS(y);
 
-        setValue(latitude, latVals, true);
-        setValue(longitude, lonVals, true);
+        this.setLatitude(x);
+        this.setLongitude(y);
+
+        this.setLatDeg(latVals[0]);
+        this.setLatMin(latVals[1]);
+        this.setLatSec(latVals[2]);
+
+        this.setLonDeg(lonVals[0]);
+        this.setLonMin(lonVals[1]);
+        this.setLonSec(lonVals[2]);
+
     }
 
-    String getFinalCoordinates() {
-
-        if(fullCoordinates){
-
-        String latMinutes = latitude.get("Minutes");
-        int l = latMinutes.length();
-        if(l > 2) {
-            latMinutes = latMinutes.substring(0,l - 3) + "." + latMinutes.substring(l-3);
-        }
-        else {
-            latMinutes = latMinutes + "." + latitude.get("MinuteDecimals");
-
-        }
-
-        String lonMinutes = longitude.get("Minutes");
-        l = lonMinutes.length();
-        if(l > 2) {
-            lonMinutes = lonMinutes.substring(0, l-3) + "." + lonMinutes.substring(l-3);
-        }
-        else {
-            lonMinutes = lonMinutes + "." + longitude.get("MinuteDecimals");
-        }
-
-        return latitude.get("CardinalDirection") + " " + latitude.get("Degrees") + "° " + latMinutes + " " + longitude.get("CardinalDirection") + " " + longitude.get("Degrees") + "° " + lonMinutes;
-        }
-
-        else return latitude.get("Degrees");
+    String getFullCoordinates() {
+        return this.getLatitude() + " " + this.getLongitude();
     }
 }

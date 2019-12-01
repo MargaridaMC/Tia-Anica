@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -40,7 +39,7 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
 public class CoordCalculator extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Coordinate coordinate;
+    CoordinateFormula coordinate;
     HashMap<String, Integer> variables;
     int lastRowUsed;
     int orientation;
@@ -155,7 +154,6 @@ public class CoordCalculator extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
@@ -212,7 +210,7 @@ public class CoordCalculator extends AppCompatActivity
 
 
         String coord = editText.getText().toString();
-        coordinate = new Coordinate(coord);
+        coordinate = new CoordinateFormula(coord);
 
         variables = new HashMap<>();
 
@@ -433,7 +431,7 @@ public class CoordCalculator extends AppCompatActivity
         resultSpace.setVisibility(View.VISIBLE);
         resultSpace.removeAllViews();
         TextView result = new TextView(this);
-        String resultString = "The final coordinates are:\n" + coordinate.getFinalCoordinates();
+        String resultString = "The final coordinates are:\n" + coordinate.getFullCoordinates();
 
         result.setText(resultString);
         result.setTextSize(18);
