@@ -1,5 +1,7 @@
 package com.example.mg.tiaanica;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +28,7 @@ class Coordinate {
         }
     }
 
-     Coordinate(String lat, String lon) {
+    Coordinate(String lat, String lon) {
 
         boolean success = parseLatitude(lat) && parseLongitude(lon);
         if(!success) {
@@ -34,13 +36,30 @@ class Coordinate {
         }
     }
 
+    Coordinate(double lat, double lon){
+
+        setLatitude(lat);
+        setLongitude(lon);
+
+        double[] latValues = Decimal2DMS(lat);
+        double[] lonValues = Decimal2DMS(lon);
+
+        setLatDeg(latValues[0]);
+        setLatMin(latValues[1]);
+        setLatSec(latValues[2]);
+
+        setLonDeg(lonValues[0]);
+        setLonMin(lonValues[1]);
+        setLonSec(lonValues[2]);
+    }
+
     private Boolean parse(String input){
 
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)" +
-                        "\\s+" + "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)" +
+                        "\\s+" + "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -93,9 +112,9 @@ class Coordinate {
                 return true;
             }
 
-        } else  {
+        } //else  {
             // bad input format
-        }
+     //   }
 
         return false;
     }
@@ -105,7 +124,7 @@ class Coordinate {
 
         Pattern p;
         p = Pattern.compile(
-                "([NS]{1})?\\s?([0-9]{1,})[°\\s]{1,}([0-9]{1,})[\\.\\s]{1,}([0-9]{1,})",
+                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
                 Pattern.CASE_INSENSITIVE);
 
         Matcher m = p.matcher(input);
@@ -140,9 +159,9 @@ class Coordinate {
                 return true;
             }
 
-        } else  {
+        } //else  {
             // bad input format
-        }
+        //}
 
         return false;
     }
@@ -151,7 +170,7 @@ class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([EW]{1})?\\s?([0-9]{1,})[°\\s]{1,}([0-9]{1,})[\\.\\s]{1,}([0-9]{1,})",
+                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -187,9 +206,9 @@ class Coordinate {
                 return true;
             }
 
-        } else  {
+        } //else  {
             // bad input format
-        }
+       // }
 
         return false;
     }
@@ -204,18 +223,18 @@ class Coordinate {
 
     private String getLatitude() {
 
-        String latDegInt = String.format("%02d", latDeg.intValue());
-        String latMinInt = String.format("%02d", latMin.intValue());
-        String latSecInt = String.format("%03d", latSec.intValue());
+        String latDegInt = StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2);
+        String latMinInt = StringUtils.leftPad(Integer.toString(latMin.intValue()), 2);
+        String latSecInt = StringUtils.leftPad(Integer.toString(latSec.intValue()), 3);
 
         return latDir + latDegInt + " " + latMinInt + "." + latSecInt;
     }
 
     private String getLongitude() {
 
-        String lonDegInt = String.format("%02d", lonDeg.intValue());
-        String lonMinInt = String.format("%02d", lonMin.intValue());
-        String lonSecInt = String.format("%03d", lonSec.intValue());
+        String lonDegInt = StringUtils.leftPad(Integer.toString(lonDeg.intValue()), 2);
+        String lonMinInt = StringUtils.leftPad(Integer.toString(lonMin.intValue()), 2);
+        String lonSecInt = StringUtils.leftPad(Integer.toString(lonSec.intValue()), 3);
 
         return lonDir + lonDegInt + " " + lonMinInt + "." + lonSecInt;
     }
@@ -251,6 +270,7 @@ class Coordinate {
     private void setLonSec(Double lonSec) {
         this.lonSec = lonSec;
     }
+
     private static double DM2Decimal(Double latDeg2, Double latMin2, String dir){
         double _d; double _m;
 

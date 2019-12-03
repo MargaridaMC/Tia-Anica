@@ -1,14 +1,24 @@
 package com.example.mg.tiaanica;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,10 +35,40 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 public class CoordinateOffset extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Coordinate coordinate;
+    LocationManager locationManager;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            //your code here
+            TextView txtLat = findViewById(R.id.coordinates);
+            String fullCoordinates = "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude();
+            txtLat.setText(fullCoordinates);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.d("Latitude", "status");
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.d("Latitude", "enable");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.d("Latitude", "disable");
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,30 +77,14 @@ public class CoordinateOffset extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(infoFabListener);
 
-                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
-
-                // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Coordinate Offset: </i></b>" + getString(R.string.coord_offset_info), Html.FROM_HTML_MODE_LEGACY));
-
-                // Add OK button
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-
-                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+        FloatingActionButton locationFab = findViewById(R.id.myLocationButton);
+        locationFab.setAlpha(0.9f);
+        locationFab.setOnClickListener(locationFabListener);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -170,11 +194,8 @@ public class CoordinateOffset extends AppCompatActivity
         assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        EditText latitude = findViewById(R.id.latitude);
-        String initialLatitudeString = latitude.getText().toString();
-
-        EditText longitude = findViewById(R.id.longitude);
-        String initialLongitudeString = longitude.getText().toString();
+        EditText coordinates = findViewById(R.id.coordinates);
+        String initialCoordinatesString = coordinates.getText().toString();
 
         EditText angle = findViewById(R.id.angle);
         String angleString = angle.getText().toString();
@@ -182,7 +203,7 @@ public class CoordinateOffset extends AppCompatActivity
         EditText distance = findViewById(R.id.distance);
         String distanceString = distance.getText().toString();
 
-        if(initialLatitudeString.equals("") || initialLongitudeString.equals("") || angleString.equals("") || distanceString.equals("")){
+        if(initialCoordinatesString.equals("") || angleString.equals("") || distanceString.equals("")){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
             builder.setTitle("Error")
@@ -223,7 +244,7 @@ public class CoordinateOffset extends AppCompatActivity
             return;
         }
 
-        coordinate = new Coordinate(initialLatitudeString, initialLongitudeString);
+        coordinate = new Coordinate(initialCoordinatesString);
         coordinate.Offset(angleDeg, distanceInMeters);
 
         TextView result = findViewById(R.id.result);
@@ -233,4 +254,128 @@ public class CoordinateOffset extends AppCompatActivity
 
     }
 
+    void requestLocationAccessPermission(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestLocationAccessPermission();
+            }
+        }
+    }
+
+    void requestGPSEnable(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+        builder.setMessage(R.string.gps_network_not_enabled);
+        builder.setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                CoordinateOffset.this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        });
+        builder.setNegativeButton(R.string.Cancel,null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    void locationNotAccessibleAlert(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(Html.fromHtml("<b>Error</b>"));
+        builder.setMessage("Sorry.. Can't access your location.");
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    View.OnClickListener infoFabListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info)));
+
+            // Add OK button
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+
+
+            // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    };
+
+    View.OnClickListener locationFabListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            boolean locationAccessPermitted = ContextCompat.checkSelfPermission(CoordinateOffset.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+            if(!locationAccessPermitted) requestLocationAccessPermission();
+
+            boolean gpsSignalAvailable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            if(!gpsSignalAvailable) requestGPSEnable();
+
+            if (locationAccessPermitted && gpsSignalAvailable) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if(location == null){
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    if(location == null){
+                        locationNotAccessibleAlert();
+                    }
+                    else{
+                        TextView txtLat = findViewById(R.id.coordinates);
+                        coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
+                        txtLat.setText(coordinate.getFullCoordinates());
+
+                        new AlertDialog.Builder(CoordinateOffset.this)
+                                .setMessage("Used coordinates from Network signal.")
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                }).show();
+                    }
+                }
+                else{
+                    TextView txtLat = findViewById(R.id.coordinates);
+                    coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
+                    txtLat.setText(coordinate.getFullCoordinates());
+
+                    new AlertDialog.Builder(CoordinateOffset.this)
+                            .setMessage("Used coordinates from GPS signal.")
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    }).show();
+                }
+            }
+
+        }
+    };
 }

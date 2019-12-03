@@ -60,7 +60,7 @@ public class CoordCalculator extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Coordinate Calculator: </i></b>" + getString(R.string.coord_calculator_info), Html.FROM_HTML_MODE_LEGACY));
+                builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));
 
                 // Add OK button
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -211,6 +211,38 @@ public class CoordCalculator extends AppCompatActivity
 
         String coord = editText.getText().toString();
         coordinate = new CoordinateFormula(coord);
+
+        if(!coordinate.successfulParsing) {
+            if (coordinate.Es != 1) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                builder.setTitle("Error")
+                        .setMessage("The letter E shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+
+                builder.create().show();
+                return;
+            }
+
+            if (coordinate.Ws != 1) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                builder.setTitle("Error")
+                        .setMessage("The letter W shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+
+                builder.create().show();
+                return;
+            }
+        }
 
         variables = new HashMap<>();
 

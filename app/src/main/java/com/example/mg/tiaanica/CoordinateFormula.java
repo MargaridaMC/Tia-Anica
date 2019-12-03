@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CoordinateFormula {
+class CoordinateFormula {
 
     private String lat = "";
     private String lon = "";
@@ -20,18 +20,23 @@ public class CoordinateFormula {
     List<String> neededLetters;
     private static Map<String, Integer> variables;
 
+    long Es;
+    long Ws;
+
+    boolean successfulParsing = true;
+
     CoordinateFormula(String coord) {
 
         coord = coord.toUpperCase();
         coord = coord.trim();
         coord = coord.replaceAll("÷", "/");
         coord = coord.replaceAll("\\[", "(");
-        coord = coord.replaceAll("\\]", ")");
+        coord = coord.replaceAll("]", ")");
 
         long Ns = StringUtils.countMatches(coord, "N");
         long Ss = StringUtils.countMatches(coord, "S");
-        long Es = StringUtils.countMatches(coord, "E");
-        long Ws = StringUtils.countMatches(coord, "W");
+        Es = StringUtils.countMatches(coord, "E");
+        Ws = StringUtils.countMatches(coord, "W");
 
         if(coord.substring(0, 1).equals("N") || coord.substring(0, 1).equals("S"))  {
 
@@ -50,6 +55,7 @@ public class CoordinateFormula {
                 else {
                     //either E or W occur more than once
                     System.out.println("The cardinal direction of the latitude (E or W) shows up in the formula. Please replace theses instances with another letter");
+                    successfulParsing = false;
                     return;
                 }
             }
@@ -68,6 +74,7 @@ public class CoordinateFormula {
                 else {
                     //either E or W occur more than once
                     System.out.println("The cardinal direction of the latitude (E or W) shows up in the formula. Please replace theses instances with another letter");
+                    successfulParsing = false;
                     return;
                 }
 
@@ -119,12 +126,12 @@ public class CoordinateFormula {
     }
 
     String getNeededVariables(){
-
+        if(neededLetters == null) return null;
         String neededLettersString = neededLetters.toString();
         return neededLettersString.substring(1, neededLettersString.length() - 1);
 
     }
-
+/*
     public String getLatitude() {
         return lat;
     }
@@ -132,7 +139,7 @@ public class CoordinateFormula {
     public String getLongitude() {
         return lon;
     }
-
+*/
     private static double eval(final String str) {
         return new Object() {
             int pos = -1, ch;
@@ -253,16 +260,32 @@ public class CoordinateFormula {
         }
 
         // Check if there are still sections with operation signs (+, -, /, *)
-        Pattern operationPattern = Pattern.compile("([\\d]+([+\\-/*\\s]+[\\s\\d]+)+)");
+        Pattern operationPattern = Pattern.compile("([\\d]+\\s?([+\\-/*]+\\s?[\\s\\d]+)+)");
         Matcher operationMatcher = operationPattern.matcher(lat);
         while(operationMatcher.find()) {
             String group = operationMatcher.group(0);
             lat = lat.replace(group, Integer.toString((int)eval(group)));
         }
+
+        operationMatcher = operationPattern.matcher(lon);
+        while(operationMatcher.find()) {
+            String group = operationMatcher.group(0);
+            lon = lon.replace(group, Integer.toString((int)eval(group)));
+        }
     }
 
     String getFullCoordinates() {
-        Coordinate coordinate = new Coordinate(this.latDir + this.lat + " " + this.lonDir + this.lon);
-        return coordinate.getFullCoordinates();
+
+        String returnStr;
+        if(lon.equals("")){
+            // This formula wasn't for "proper" coordinates
+            returnStr = this.lat;
+        }
+        else{
+            Coordinate coordinate = new Coordinate(this.latDir + this.lat, this.lonDir + this.lon);
+            returnStr = coordinate.getFullCoordinates();
+        }
+
+        return returnStr;
     }
 }

@@ -45,7 +45,7 @@ public class VigenereCipher extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(VigenereCipher.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml("<b><i>Vigenère Cipher: </i></b>" + getString(R.string.vigenere_info)));
+                builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.vigenere_info)));
 
                 // Add OK button
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
