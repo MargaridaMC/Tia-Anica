@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -68,8 +69,6 @@ public class CoordinateOffset extends AppCompatActivity
         }
     };
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +82,12 @@ public class CoordinateOffset extends AppCompatActivity
         fab.setOnClickListener(infoFabListener);
 
         FloatingActionButton locationFab = findViewById(R.id.myLocationButton);
-        locationFab.setAlpha(0.9f);
+        //locationFab.setAlpha(0.9f);
         locationFab.setOnClickListener(locationFabListener);
+
+        FloatingActionButton directionsFab = findViewById(R.id.direction);
+        directionsFab.hide();
+        directionsFab.setOnClickListener(directionsFabListener);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -252,6 +255,9 @@ public class CoordinateOffset extends AppCompatActivity
         String message = "The final coordinates are: \n" + coordinate.getFullCoordinates();
         result.setText(message);
 
+        FloatingActionButton directionsFab = findViewById(R.id.direction);
+        directionsFab.show();
+
     }
 
     void requestLocationAccessPermission(){
@@ -311,7 +317,7 @@ public class CoordinateOffset extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
 
             // 2. Chain together various setter methods to set the dialog characteristics
-            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info)));
+            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info) + "<br></br><br></br><b>Note: </b>you can also use the location button to use your current location."));
 
             // Add OK button
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -322,8 +328,7 @@ public class CoordinateOffset extends AppCompatActivity
 
 
             // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            builder.show();
         }
     };
 
@@ -341,7 +346,7 @@ public class CoordinateOffset extends AppCompatActivity
             if (locationAccessPermitted && gpsSignalAvailable) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
                 Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
+                //TODO check directions
                 if(location == null){
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     if(location == null){
@@ -378,4 +383,34 @@ public class CoordinateOffset extends AppCompatActivity
 
         }
     };
+
+    View.OnClickListener directionsFabListener;
+
+    {
+        directionsFabListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                //        Uri.parse("https://www.google.com/maps/dir/?api=1?destination=" + coordinate.getLatitude() + "," + coordinate.getLongitude()));
+                //startActivity(intent);
+
+                // Create a Uri from an intent string. Use the result to create an Intent.
+                //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
+                Uri gmmIntentUri = Uri.parse(String.format("geo:0,0?q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
+
+                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+                // Make the Intent explicit by setting the Google Maps package
+                // If this is not set the user will be asked to choose between available apps
+                //mapIntent.setPackage("com.google.android.apps.maps");
+
+                // Attempt to start an activity that can handle the Intent
+                startActivity(mapIntent);
+            }
+        };
+    }
+
+
 }

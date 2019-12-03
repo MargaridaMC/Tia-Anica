@@ -115,7 +115,8 @@
                     android:layout_height="@dimen/text_height"
                     android:orientation="horizontal"
                     android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible">
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/row3"
@@ -123,7 +124,9 @@
                     android:layout_height="@dimen/text_height"
                     android:orientation="horizontal"
                     android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible">
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/row4"
@@ -131,7 +134,9 @@
                     android:layout_height="@dimen/text_height"
                     android:orientation="horizontal"
                     android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible">
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/row5"
@@ -139,7 +144,9 @@
                     android:layout_height="@dimen/text_height"
                     android:theme="@style/AppTheme.TextField"
                     android:orientation="horizontal"
-                    android:visibility="invisible" />
+                    android:visibility="invisible" >
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/row6"
@@ -147,7 +154,9 @@
                     android:layout_height="@dimen/text_height"
                     android:theme="@style/AppTheme.TextField"
                     android:orientation="horizontal"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible">
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/row7"
@@ -155,7 +164,9 @@
                     android:layout_height="@dimen/text_height"
                     android:theme="@style/AppTheme.TextField"
                     android:orientation="horizontal"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible">
+
+                </LinearLayout>
 
             </LinearLayout>
 

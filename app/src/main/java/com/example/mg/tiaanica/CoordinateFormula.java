@@ -14,8 +14,8 @@ class CoordinateFormula {
 
     private String lat = "";
     private String lon = "";
-    private String latDir = "N";
-    private String lonDir = "E";
+    private String latDir = "";
+    private String lonDir = "";
 
     List<String> neededLetters;
     private static Map<String, Integer> variables;
@@ -43,8 +43,10 @@ class CoordinateFormula {
             Pattern p;
             if(Ns == 1) {
                 // we are definitely in the north
+                latDir = "N";
                 if(Es == 1) {
                     // we are to the east
+                    lonDir = "E";
                     p = Pattern.compile("N(.*?)E(.*)", Pattern.CASE_INSENSITIVE);
                 }
                 else if(Ws == 1) {
@@ -64,6 +66,7 @@ class CoordinateFormula {
                 latDir = "S";
                 if(Es == 1) {
                     // we are to the east
+                    lonDir = "E";
                     p = Pattern.compile("S(.*?)E(.*)", Pattern.CASE_INSENSITIVE);
                 }
                 else if(Ws == 1) {
@@ -131,15 +134,23 @@ class CoordinateFormula {
         return neededLettersString.substring(1, neededLettersString.length() - 1);
 
     }
-/*
-    public String getLatitude() {
+
+    String getLatitude() {
         return lat;
     }
 
-    public String getLongitude() {
+    String getLongitude() {
         return lon;
     }
-*/
+
+    String getLatDir(){
+        return latDir;
+    }
+
+    String getLonDir(){
+        return lonDir;
+    }
+
     private static double eval(final String str) {
         return new Object() {
             int pos = -1, ch;
@@ -277,9 +288,19 @@ class CoordinateFormula {
     String getFullCoordinates() {
 
         String returnStr;
-        if(lon.equals("")){
+
+        // TODO: check if anything is wrong with the output coordinates
+        // Check if any value is negative
+        boolean resultIfOff = false;
+        Pattern signs = Pattern.compile("[+-/*]");
+        Matcher signsInFormula = signs.matcher(this.lat);
+        if(signsInFormula.find()) resultIfOff = true;
+        signsInFormula = signs.matcher(this.lon);
+        if(signsInFormula.find()) resultIfOff = true;
+
+        if(lon.equals("") || resultIfOff){
             // This formula wasn't for "proper" coordinates
-            returnStr = this.lat;
+            returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
         }
         else{
             Coordinate coordinate = new Coordinate(this.latDir + this.lat, this.lonDir + this.lon);

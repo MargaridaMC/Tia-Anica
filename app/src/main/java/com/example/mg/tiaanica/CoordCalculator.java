@@ -2,15 +2,18 @@ package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.view.Display;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.KeyEvent;
 import android.text.Html;
@@ -472,5 +475,50 @@ public class CoordCalculator extends AppCompatActivity
 
         resultSpace.addView(result);
 
+        FloatingActionButton directionsFab = new FloatingActionButton(this);
+        directionsFab.setImageResource(R.drawable.ic_directions_black_24dp);
+        directionsFab.setSize(android.support.design.widget.FloatingActionButton.SIZE_MINI);
+        directionsFab.setFocusable(true);
+        directionsFab.setOnClickListener(directionsFabListener);
+        resultSpace.addView(directionsFab);
+
+        //FloatingActionButton directionsFab = findViewById(R.id.direction);
+        //directionsFab.show();
+        /*RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        lay.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lay.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        lay.setMargins(2,2,2,2);
+        directionsFab.setLayoutParams(lay);*/
+
+    }
+
+    View.OnClickListener directionsFabListener;
+
+    {
+        directionsFabListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                //        Uri.parse("https://www.google.com/maps/dir/?api=1?destination=" + coordinate.getLatitude() + "," + coordinate.getLongitude()));
+                //startActivity(intent);
+
+                // Create a Uri from an intent string. Use the result to create an Intent.
+                //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
+                Coordinate c = new Coordinate(coordinate.getLatDir() + coordinate.getLatitude(), coordinate.getLonDir() + coordinate.getLongitude());
+                Uri gmmIntentUri = Uri.parse(String.format("geo:0,0?q=%f,0%f", c.getLatitude(), c.getLongitude()));
+
+                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+                // Make the Intent explicit by setting the Google Maps package
+                // If this is not set the user will be asked to choose between available apps
+                //mapIntent.setPackage("com.google.android.apps.maps");
+
+                // Attempt to start an activity that can handle the Intent
+                startActivity(mapIntent);
+            }
+        };
     }
 }

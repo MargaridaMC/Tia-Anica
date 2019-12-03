@@ -5,19 +5,17 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Coordinate {
+public class Coordinate {
 
     private Double lat = null;
     private Double lon = null;
 
     private Double latDeg = null;
     private Double latMin = null;
-    private Double latSec = null;
     private String latDir = "N";
 
     private Double lonDeg = null;
     private Double lonMin = null;
-    private Double lonSec = null;
     private String lonDir = "E";
 
     Coordinate(String coord) {
@@ -41,16 +39,14 @@ class Coordinate {
         setLatitude(lat);
         setLongitude(lon);
 
-        double[] latValues = Decimal2DMS(lat);
-        double[] lonValues = Decimal2DMS(lon);
+        double[] latValues = Decimal2DM(lat);
+        double[] lonValues = Decimal2DM(lon);
 
         setLatDeg(latValues[0]);
         setLatMin(latValues[1]);
-        setLatSec(latValues[2]);
 
         setLonDeg(lonValues[0]);
         setLonMin(lonValues[1]);
-        setLonSec(lonValues[2]);
     }
 
     private Boolean parse(String input){
@@ -58,42 +54,45 @@ class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)" +
-                        "\\s+" + "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
+                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)\\s+"+
+                        "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
                 Pattern.CASE_INSENSITIVE
         );
 
         Matcher m = p.matcher(input);
+
+        String latMinStr = "0";
+        String lonMinStr = "0";
 
         if(m.matches()){
             if(m.group(1) != null)
                 latDir = m.group(1);
             if(m.group(2) != null)
                 latDeg = parseDouble(m.group(2));
-            if(m.group(3) != null)
+            if(m.group(3) != null) {
+                latMinStr = m.group(3);
                 latMin = parseDouble(m.group(3));
-            if(m.group(4) != null)
-                latSec = parseDouble(m.group(4));
+            }
+            if(m.group(4) != null) {
+                latMin = parseDouble(latMinStr + "." + m.group(4));
+            }
             if(m.group(5) != null)
                 lonDir = m.group(5);
             if(m.group(6) != null)
                 lonDeg = parseDouble(m.group(6));
-            if(m.group(7) != null)
+            if(m.group(7) != null) {
+                lonMinStr = m.group(7);
                 lonMin = parseDouble(m.group(7));
-            if(m.group(8) != null)
-                lonSec = parseDouble(m.group(8));
-
-            if(latDeg != null && latMin != null && latSec != null) {
-                lat = DMS2Decimal(latDeg, latMin, latSec, latDir);
-                lon = DMS2Decimal(lonDeg, lonMin, lonSec, lonDir);
-
-                return true;
-            } else if(latDeg != null && latMin != null && latSec == null) {
+            }
+            if(m.group(8) != null) {
+                lonMin  = parseDouble(lonMinStr + "." + m.group(8));
+            }
+            if(latDeg != null && latMin != null) {
                 lat = DM2Decimal(latDeg, latMin, latDir);
                 lon = DM2Decimal(lonDeg, lonMin, lonDir);
 
                 return true;
-            } else if (latDeg != null && latMin == null && latSec == null){
+            } else if (latDeg != null && latMin == null){
 
                 lat = latDeg;
                 if(
@@ -101,6 +100,98 @@ class Coordinate {
                                 ||
                                 latDir.equalsIgnoreCase("-")
                 ) lat = -lat;
+
+                lon = lonDeg;
+                if(
+                        lonDir.equalsIgnoreCase("W")
+                                ||
+                                lonDir.equalsIgnoreCase("-")
+                ) lon = -lon;
+
+                return true;
+            }
+
+        } //else  {// bad input format }
+
+        return false;
+    }
+
+    private Boolean parseLatitude(String input) {
+        input = input.trim();
+
+        Pattern p = Pattern.compile(
+                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Matcher m = p.matcher(input);
+        String latMinStr = "0";
+
+        if(m.matches()){
+            if(m.group(1) != null)
+                latDir = m.group(1);
+            if(m.group(2) != null)
+                latDeg = parseDouble(m.group(2));
+            if(m.group(3) != null){
+                latMinStr = m.group(3);
+                latMin = parseDouble(m.group(3));
+            }
+            if(m.group(4) != null) {
+                latMin = parseDouble(latMinStr + "." + m.group(4));
+            }
+
+            if(latDeg != null && latMin != null) {
+                lat = DM2Decimal(latDeg, latMin, latDir);
+
+                return true;
+            } else if (latDeg != null && latMin == null){
+
+                lat = latDeg;
+                if(
+                        latDir.equalsIgnoreCase("S")
+                                ||
+                                latDir.equalsIgnoreCase("-")
+                ) lat = -lat;
+
+                return true;
+            }
+
+        } //else  {
+            // bad input format
+       // }
+
+        return false;
+    }
+
+    private Boolean parseLongitude(String input) {
+        input = input.trim();
+
+        Pattern p = Pattern.compile(
+                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Matcher m = p.matcher(input);
+        String lonMinStr = "0";
+
+        if(m.matches()){
+            if(m.group(1) != null)
+                lonDir = m.group(1);
+            if(m.group(2) != null)
+                lonDeg = parseDouble(m.group(2));
+            if(m.group(3) != null){
+                lonMinStr = m.group(3);
+                lonMin = parseDouble(m.group(3));
+            }
+            if(m.group(4) != null){
+                lonMin = parseDouble(lonMinStr + "." + m.group(4));
+            }
+
+            if(lonDeg != null && lonMin != null) {
+                lon = DM2Decimal(lonDeg, lonMin, lonDir);
+
+                return true;
+            } else if (lonDeg != null && lonMin == null){
 
                 lon = lonDeg;
                 if(
@@ -119,100 +210,6 @@ class Coordinate {
         return false;
     }
 
-    private Boolean parseLatitude(String input) {
-        input = input.trim();
-
-        Pattern p;
-        p = Pattern.compile(
-                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
-                Pattern.CASE_INSENSITIVE);
-
-        Matcher m = p.matcher(input);
-
-        if(m.matches()){
-            if(m.group(1) != null)
-                latDir = m.group(1);
-            if(m.group(2) != null)
-                latDeg = parseDouble(m.group(2));
-            if(m.group(3) != null)
-                latMin = parseDouble(m.group(3));
-            if(m.group(4) != null)
-                latSec = parseDouble(m.group(4));
-
-            if(latDeg != null && latMin != null && latSec != null) {
-                lat = DMS2Decimal(latDeg, latMin, latSec, latDir);
-
-                return true;
-            } else if(latDeg != null && latMin != null && latSec == null) {
-                lat = DM2Decimal(latDeg, latMin, latDir);
-
-                return true;
-            } else if (latDeg != null && latMin == null && latSec == null){
-
-                lat = latDeg;
-                if(
-                        latDir.equalsIgnoreCase("S")
-                                ||
-                                latDir.equalsIgnoreCase("-")
-                ) lat = -lat;
-
-                return true;
-            }
-
-        } //else  {
-            // bad input format
-        //}
-
-        return false;
-    }
-
-    private Boolean parseLongitude(String input) {
-        input = input.trim();
-
-        Pattern p = Pattern.compile(
-                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
-                Pattern.CASE_INSENSITIVE
-        );
-
-        Matcher m = p.matcher(input);
-
-        if(m.matches()){
-            if(m.group(1) != null)
-                lonDir = m.group(1);
-            if(m.group(2) != null)
-                lonDeg = parseDouble(m.group(2));
-            if(m.group(3) != null)
-                lonMin = parseDouble(m.group(3));
-            if(m.group(4) != null)
-                lonSec = parseDouble(m.group(4));
-
-            if(lonDeg != null && lonMin != null && lonSec != null) {
-                lon = DMS2Decimal(lonDeg, lonMin, lonSec, lonDir);
-
-                return true;
-            } else if(lonDeg != null && lonMin != null && lonSec == null) {
-                lon = DM2Decimal(lonDeg, lonMin, lonDir);
-
-                return true;
-            } else if (lonDeg != null && lonMin == null && lonSec == null){
-
-                lon = lonDeg;
-                if(
-                        lonDir.equalsIgnoreCase("W")
-                                ||
-                                lonDir.equalsIgnoreCase("-")
-                ) lon = -lon;
-
-                return true;
-            }
-
-        } //else  {
-            // bad input format
-       // }
-
-        return false;
-    }
-
     private Double parseDouble(String numberStr){
         try {
             return Double.parseDouble(numberStr);
@@ -221,22 +218,14 @@ class Coordinate {
         }
     }
 
-    private String getLatitude() {
+    double getLatitude() {
 
-        String latDegInt = StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2);
-        String latMinInt = StringUtils.leftPad(Integer.toString(latMin.intValue()), 2);
-        String latSecInt = StringUtils.leftPad(Integer.toString(latSec.intValue()), 3);
-
-        return latDir + latDegInt + " " + latMinInt + "." + latSecInt;
+        return this.lat;
     }
 
-    private String getLongitude() {
+    double getLongitude() {
 
-        String lonDegInt = StringUtils.leftPad(Integer.toString(lonDeg.intValue()), 2);
-        String lonMinInt = StringUtils.leftPad(Integer.toString(lonMin.intValue()), 2);
-        String lonSecInt = StringUtils.leftPad(Integer.toString(lonSec.intValue()), 3);
-
-        return lonDir + lonDegInt + " " + lonMinInt + "." + lonSecInt;
+        return this.lon;
     }
 
     private void setLatitude(Double lat) {
@@ -263,14 +252,6 @@ class Coordinate {
         this.lonMin = lonMin;
     }
 
-    private void setLatSec(Double latSec) {
-        this.latSec = latSec;
-    }
-
-    private void setLonSec(Double lonSec) {
-        this.lonSec = lonSec;
-    }
-
     private static double DM2Decimal(Double latDeg2, Double latMin2, String dir){
         double _d; double _m;
 
@@ -290,30 +271,10 @@ class Coordinate {
         return result;
     }
 
-    private static double DMS2Decimal(Double lonDeg2, Double lonMin2, Double lonSec2, String dir){
-        double _d; double _m; double _s;
-
-        _d = lonDeg2 == null ? 0. : lonDeg2;
-        _m = lonMin2 == null ? 0. : lonMin2;
-        _s = lonSec2 == null ? 0. : lonSec2;
-
-        double result = _d + _m / 60.0 + _s / 3600;
-        if(
-                dir.equalsIgnoreCase("S")
-                        ||
-                        dir.equalsIgnoreCase("W")
-                        ||
-                        dir.equalsIgnoreCase("-")
-        ) result = -result;
-
-        return result;
-    }
-
-    private static double[] Decimal2DMS(Double coordinates){
+    private static double[] Decimal2DM(Double coordinates){
 
         double degrees = (double) coordinates.intValue();
         double minutes = (coordinates - degrees) * 60;
-        double seconds;
         minutes = Math.round(minutes * 1000d) / 1000d;
 
         if(minutes==60.0) {
@@ -321,13 +282,11 @@ class Coordinate {
             minutes = 0.0;
         }
 
-        seconds = (minutes - (int) minutes) * 1000;
-
-        return new double[] {degrees, minutes, seconds};
+        return new double[] {degrees, minutes};
 
     }
 
-     void Offset(double angle, double distanceInMeters){
+    void Offset(double angle, double distanceInMeters){
 
         double X = lat;
         double Y = lon;
@@ -346,23 +305,33 @@ class Coordinate {
         x = x * 180 / Math.PI; // convert back to degrees
         y = y * 180 / Math.PI;
 
-        double[] latVals = Decimal2DMS(x);
-        double[] lonVals = Decimal2DMS(y);
+        System.out.println(x);
+        System.out.println(y);
+
+        double[] latVals = Decimal2DM(x);
+        double[] lonVals = Decimal2DM(y);
 
         this.setLatitude(x);
         this.setLongitude(y);
 
         this.setLatDeg(latVals[0]);
         this.setLatMin(latVals[1]);
-        this.setLatSec(latVals[2]);
 
         this.setLonDeg(lonVals[0]);
         this.setLonMin(lonVals[1]);
-        this.setLonSec(lonVals[2]);
 
     }
 
     String getFullCoordinates() {
-        return this.getLatitude() + " " + this.getLongitude();
+
+        String latDegInt = StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2);
+        String latMinStr = StringUtils.leftPad(Double.toString(latMin), 5);
+        String latitude = latDir + latDegInt + " " + latMinStr;
+
+        String lonDegInt = StringUtils.leftPad(Integer.toString(lonDeg.intValue()), 2);
+        String lonMinStr = StringUtils.leftPad(Double.toString(lonMin), 5);
+        String longitude = lonDir + lonDegInt + " " + lonMinStr;
+
+        return latitude + " " + longitude;
     }
 }
