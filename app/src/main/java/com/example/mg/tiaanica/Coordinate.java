@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Coordinate {
+class Coordinate {
 
     private Double lat = null;
     private Double lon = null;
@@ -326,12 +326,14 @@ public class Coordinate {
     String getFullCoordinates() {
 
         String latDegInt = StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2);
-        String latMinStr = StringUtils.leftPad(Double.toString(latMin), 5);
-        String latitude = latDir + latDegInt + " " + latMinStr;
+        String latMinStr = String.format("%.3f", latMin);
+        latMinStr = StringUtils.leftPad(latMinStr, 6, "0");
+        String latitude = latDir + latDegInt + "°" + " " + latMinStr;
 
         String lonDegInt = StringUtils.leftPad(Integer.toString(lonDeg.intValue()), 2);
-        String lonMinStr = StringUtils.leftPad(Double.toString(lonMin), 5);
-        String longitude = lonDir + lonDegInt + " " + lonMinStr;
+        String lonMinStr = String.format("%.3f", lonMin);
+        lonMinStr = StringUtils.leftPad(lonMinStr, 6, "0");
+        String longitude = lonDir + lonDegInt + "°" + " " + lonMinStr;
 
         return latitude + " " + longitude;
     }
