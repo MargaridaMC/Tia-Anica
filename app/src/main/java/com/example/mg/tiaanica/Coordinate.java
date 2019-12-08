@@ -120,7 +120,7 @@ public class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]?([0-9]*)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -135,14 +135,14 @@ public class Coordinate {
             if(m.group(3) != null){
                 latMinStr = m.group(3);
                 latMin = parseDouble(m.group(3));
+                if(latMinStr.length() > 2) latMin /= 1000;
             }
-            if(m.group(4) != null) {
+            if(m.group(4) != null && !m.group(4).equals("")) {
                 latMin = parseDouble(latMinStr + "." + m.group(4));
             }
 
             if(latDeg != null && latMin != null) {
                 lat = DM2Decimal(latDeg, latMin, latDir);
-
                 return true;
             } else if (latDeg != null && latMin == null){
 
@@ -167,7 +167,7 @@ public class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]?([0-9]*)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -182,8 +182,9 @@ public class Coordinate {
             if(m.group(3) != null){
                 lonMinStr = m.group(3);
                 lonMin = parseDouble(m.group(3));
+                if(lonMinStr.length() > 2) lonMin /= 1000;
             }
-            if(m.group(4) != null){
+            if(m.group(4) != null && !m.group(4).equals("")){
                 lonMin = parseDouble(lonMinStr + "." + m.group(4));
             }
 
