@@ -1,3 +1,5 @@
+[![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/build/status/Tia%20Anica-Android-CI)](https://dev.azure.com/joamart/Tia%20Anica/_build/latest?definitionId=5)
+
 # Tia-Anica
 Simple Android app with on-the-go Geocaching tools
 
