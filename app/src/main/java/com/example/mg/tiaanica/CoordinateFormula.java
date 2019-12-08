@@ -32,6 +32,8 @@ class CoordinateFormula {
         coord = coord.replaceAll("÷", "/");
         coord = coord.replaceAll("\\[", "(");
         coord = coord.replaceAll("]", ")");
+        //coord = coord.replaceAll("\\{", "(");
+        //coord = coord.replaceAll("}", ")");
         coord = coord.replaceAll("\n", " ");
 
         long Ns = StringUtils.countMatches(coord, "N");
@@ -292,21 +294,15 @@ class CoordinateFormula {
 
         // TODO: check if anything is wrong with the output coordinates
         // Check if any value is negative
-        boolean resultIfOff = false;
-        Pattern signs = Pattern.compile("[+-/*]");
-        Matcher signsInFormula = signs.matcher(this.lat);
-        if(signsInFormula.find()) resultIfOff = true;
-        signsInFormula = signs.matcher(this.lon);
-        if(signsInFormula.find()) resultIfOff = true;
+        try{
 
-        if(lon.equals("") || resultIfOff){
-            // This formula wasn't for "proper" coordinates
-            returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
-        }
-        else{
             Coordinate coordinate = new Coordinate(this.latDir + this.lat, this.lonDir + this.lon);
             returnStr = coordinate.getFullCoordinates();
+
+        } catch(Exception e) {
+            returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
         }
+
 
         return returnStr;
     }
