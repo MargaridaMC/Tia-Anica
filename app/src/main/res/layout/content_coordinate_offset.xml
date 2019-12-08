@@ -59,7 +59,6 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="12dp"
-                    android:layout_marginLeft="12dp"
                     android:ems="10"
                     android:importantForAutofill="no"
                     android:inputType="textPersonName"
@@ -91,18 +90,10 @@
                 <TextView
                     android:id="@+id/angleID"
                     android:layout_width="@dimen/one_third_width"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="31dp"
-                    android:layout_marginEnd="211dp"
-                    android:layout_marginRight="211dp"
+                    android:layout_height="match_parent"
                     android:text="@string/angle_in_degrees"
                     android:theme="@style/AppTheme.TextField"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/angle"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -111,16 +102,13 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="12dp"
-                    android:layout_marginLeft="12dp"
                     android:ems="10"
-                    android:importantForAutofill="no"
                     android:inputType="numberSigned"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/angleID"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="LabelFor,UnusedAttribute" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -157,7 +145,6 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="12dp"
-                    android:layout_marginLeft="12dp"
                     android:ems="10"
                     android:importantForAutofill="no"
                     android:inputType="numberSigned"
@@ -186,10 +173,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:layout_marginRight="32dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginBottom="32dp"
                 android:src="@android:drawable/ic_menu_mylocation"

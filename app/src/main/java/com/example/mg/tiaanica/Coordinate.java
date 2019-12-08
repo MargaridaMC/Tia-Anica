@@ -54,8 +54,8 @@ class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)\\s+"+
-                        "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]+([0-9]+)",
+                "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)\\s+"+
+                        "([NSEW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]+([0-9]+)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -92,7 +92,7 @@ class Coordinate {
                 lon = DM2Decimal(lonDeg, lonMin, lonDir);
 
                 return true;
-            } else if (latDeg != null && latMin == null){
+            } else {// if (latDeg != null && latMin == null){
 
                 lat = latDeg;
                 if(
@@ -120,7 +120,7 @@ class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]?([0-9]*)",
+                "([NS])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]?([0-9]*)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -144,7 +144,7 @@ class Coordinate {
             if(latDeg != null && latMin != null) {
                 lat = DM2Decimal(latDeg, latMin, latDir);
                 return true;
-            } else if (latDeg != null && latMin == null){
+            } else {//if (latDeg != null && latMin == null){
 
                 lat = latDeg;
                 if(
@@ -167,7 +167,7 @@ class Coordinate {
         input = input.trim();
 
         Pattern p = Pattern.compile(
-                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[\\.\\s]?([0-9]*)",
+                "([EW])?\\s?([0-9]+)[°\\s]+([0-9]+)[.\\s]?([0-9]*)",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -192,7 +192,7 @@ class Coordinate {
                 lon = DM2Decimal(lonDeg, lonMin, lonDir);
 
                 return true;
-            } else if (lonDeg != null && lonMin == null){
+            } else {// if (lonDeg != null && lonMin == null){
 
                 lon = lonDeg;
                 if(
