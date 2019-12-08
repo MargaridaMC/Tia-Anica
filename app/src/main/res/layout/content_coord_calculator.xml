@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".CoordCalculator"
+    tools:context=".CoordinateCalculator"
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_coord_calculator">
 
@@ -53,13 +53,14 @@
                 android:id="@+id/formula"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/button_height"
+                android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
                 android:ems="10"
                 android:hint="@string/coord_formula_hint"
                 android:inputType="textPersonName"
                 android:singleLine="false"
                 android:textSize="@dimen/text_size"
-                app:layout_constraintEnd_toStartOf="@+id/enter"
-                app:layout_constraintHorizontal_bias="0.5"
+
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
@@ -75,12 +76,11 @@
                 android:theme="@style/AppTheme.TextField"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/resultAndVariableLayout"
                 android:layout_width="0dp"
                 android:layout_height="400dp"
                 android:layout_marginTop="8dp"
@@ -89,92 +89,9 @@
                 app:layout_constraintStart_toStartOf="@+id/textView2"
                 app:layout_constraintTop_toBottomOf="@+id/textView2">
 
-                <LinearLayout
-                    android:id="@+id/row0"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"
-                    android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row1"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"
-                    android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row2"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"
-                    android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible">
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row3"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"
-                    android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row4"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:orientation="horizontal"
-                    android:theme="@style/AppTheme.TextField"
-                    android:visibility="invisible">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row5"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:theme="@style/AppTheme.TextField"
-                    android:orientation="horizontal"
-                    android:visibility="invisible" >
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row6"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:theme="@style/AppTheme.TextField"
-                    android:orientation="horizontal"
-                    android:visibility="invisible">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row7"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_height"
-                    android:theme="@style/AppTheme.TextField"
-                    android:orientation="horizontal"
-                    android:visibility="invisible">
-
-                </LinearLayout>
-
             </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
-
-
-
-
 
 </android.support.constraint.ConstraintLayout>

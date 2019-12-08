@@ -1,10 +1,15 @@
 package com.example.mg.tiaanica;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -13,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.KeyEvent;
@@ -26,10 +32,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.widget.LinearLayout;
 import android.content.res.Resources;
 
@@ -39,12 +42,15 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
 
-public class CoordCalculator extends AppCompatActivity
+public class CoordinateCalculator extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     CoordinateFormula coordinate;
+    String originalCoordinate;
     HashMap<String, Integer> variables;
-    int lastRowUsed;
+    LinearLayout resultAndVariableLayout;
+    LinearLayout variableLayout;
+    LinearLayout resultLine;
     int orientation;
 
     @Override
@@ -60,7 +66,7 @@ public class CoordCalculator extends AppCompatActivity
             public void onClick(View view) {
 
                 // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
                 builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));
@@ -94,6 +100,7 @@ public class CoordCalculator extends AppCompatActivity
 
         formula.setImeOptions(IME_ACTION_GO);
         formula.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             public boolean onEditorAction(TextView view, int actionId, KeyEvent event){
                 // If the event is a key-down event on the "enter" button
                 if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -123,6 +130,9 @@ public class CoordCalculator extends AppCompatActivity
         }else{
             base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
         }
+
+        resultAndVariableLayout = findViewById(R.id.resultAndVariableLayout);
+        variables = new HashMap<>();
     }
 
     @Override
@@ -172,7 +182,7 @@ public class CoordCalculator extends AppCompatActivity
             Intent intent = new Intent(this, VigenereCipher.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_calculator) {
-            Intent intent = new Intent(this, CoordCalculator.class);
+            Intent intent = new Intent(this, CoordinateCalculator.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_offset) {
             Intent intent = new Intent(this, CoordinateOffset.class);
@@ -184,7 +194,8 @@ public class CoordCalculator extends AppCompatActivity
         return true;
     }
 
-    public void parseCoordFormula(View view){
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void parseCoordFormula(View view) {
 
         // Keyboard manager -- allows keyboard to disappear
         final InputMethodManager mgr;
@@ -192,32 +203,16 @@ public class CoordCalculator extends AppCompatActivity
         assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        LinearLayout row0 = findViewById(R.id.row0);
-        row0.removeAllViews();
-        LinearLayout row1 = findViewById(R.id.row1);
-        row1.removeAllViews();
-        LinearLayout row2 = findViewById(R.id.row2);
-        row2.removeAllViews();
-        LinearLayout row3 = findViewById(R.id.row3);
-        row3.removeAllViews();
-        LinearLayout row4 = findViewById(R.id.row4);
-        row4.removeAllViews();
-        LinearLayout row5 = findViewById(R.id.row5);
-        row5.removeAllViews();
-        LinearLayout row6 = findViewById(R.id.row6);
-        row6.removeAllViews();
-        LinearLayout row7 = findViewById(R.id.row7);
-        row7.removeAllViews();
-
         EditText editText = findViewById(R.id.formula);
-
-
         String coord = editText.getText().toString();
+        originalCoordinate = coord;
         coordinate = new CoordinateFormula(coord);
 
-        if(!coordinate.successfulParsing) {
+        resultAndVariableLayout.removeAllViews();
+
+        if (!coordinate.successfulParsing) {
             if (coordinate.Es != 1) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
                 builder.setTitle("Error")
                         .setMessage("The letter E shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -232,7 +227,7 @@ public class CoordCalculator extends AppCompatActivity
             }
 
             if (coordinate.Ws != 1) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
                 builder.setTitle("Error")
                         .setMessage("The letter W shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -247,8 +242,6 @@ public class CoordCalculator extends AppCompatActivity
             }
         }
 
-        variables = new HashMap<>();
-
         TextView textView = findViewById(R.id.textView2);
         textView.setVisibility(View.VISIBLE);
 
@@ -260,11 +253,9 @@ public class CoordCalculator extends AppCompatActivity
         inputSentence.setText(inputString);
         inputSentence.setTextSize(18);
         inputSentence.setTextColor(getResources().getColor(R.color.gray));
-        row0.setVisibility(View.VISIBLE);
-        row0.addView(inputSentence);
 
-
-        int total = coordinate.neededLetters.size();
+        resultAndVariableLayout.addView(inputSentence);
+        int nNeededLetters = coordinate.neededLetters.size();
         int columns;
 
         // In landscape mode put 5 fields in each row
@@ -275,17 +266,37 @@ public class CoordCalculator extends AppCompatActivity
         TextView temp;
         EditText tempValue;
         TextView blankSpace;
-        int r = 1;
 
-        for(int i = 0, c = 0; i < total; i++, c++){
+        LinearLayout horizontalLine = new LinearLayout(this);
+        horizontalLine.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
+        horizontalLine.setAlpha(0.9f);
+        horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
+        horizontalLine.setPadding(32,32,32,32);
+
+        int i= 0;
+        int c = 0;
+
+        while(i < nNeededLetters) {
+
+            String currentLetter = coordinate.neededLetters.get(i);
 
             if (c == columns) {
                 c = 0;
-                r++;
+
+                // Add this line to the view and get a new one
+                resultAndVariableLayout.addView(horizontalLine);
+
+                horizontalLine = new LinearLayout(this);
+                horizontalLine.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
+                horizontalLine.setAlpha(0.9f);
+                horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
+                horizontalLine.setPadding(32,32,32,32);
             }
 
             temp = new TextView(this);
-            temp.setText(coordinate.neededLetters.get(i));
+            temp.setText(currentLetter);
             temp.setTextSize(18);
             temp.setWidth(80);
             temp.setTextColor(getResources().getColor(R.color.gray));
@@ -298,14 +309,18 @@ public class CoordCalculator extends AppCompatActivity
             tempValue.setWidth(150);
             tempValue.setId(i);
             tempValue.setTextColor(getResources().getColor(R.color.gray));
+            if(variables.keySet().contains(currentLetter)){
+                int keyValue = variables.get(currentLetter);
+                tempValue.setText(Integer.toString(keyValue));
+            }
 
             // If we are inputting the value of the last coordinate compute the result and hide the keyboard
-            if(i == total - 1){
+            if (i == nNeededLetters - 1) {
                 tempValue.setImeOptions(IME_ACTION_DONE);
                 tempValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
                         // If the event is a key-down event on the "enter" button
-                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        if (actionId == IME_ACTION_DONE) {
                             // Perform action on key press
                             computeCoordinates(view); // parse the coordinate
                             mgr.hideSoftInputFromWindow(view.getWindowToken(), 0); // make the keyboard disappear
@@ -314,83 +329,20 @@ public class CoordCalculator extends AppCompatActivity
                         return false;
                     }
                 });
+            } else {
+                tempValue.setImeOptions(IME_ACTION_NEXT);
             }
-            else tempValue.setImeOptions(IME_ACTION_NEXT);
 
-            if(r == 1){
-                row1.setVisibility(View.VISIBLE);
-                row1.addView(temp);
-                row1.addView(tempValue);
-                row1.addView(blankSpace);
-            }
-            else if (r == 2){
-                row2.setVisibility(View.VISIBLE);
-                row2.addView(temp);
-                row2.addView(tempValue);
-                row2.addView(blankSpace);
-            }
-            else if(r == 3) {
-                row3.setVisibility(View.VISIBLE);
-                row3.addView(temp);
-                row3.addView(tempValue);
-                row3.addView(blankSpace);
-            }
-            else if(r == 4) {
-                row4.setVisibility(View.VISIBLE);
-                row4.addView(temp);
-                row4.addView(tempValue);
-                row4.addView(blankSpace);
-            }
-            else if(r == 5) {
-                row5.setVisibility(View.VISIBLE);
-                row5.addView(temp);
-                row5.addView(tempValue);
-                row5.addView(blankSpace);
-            }
-            else if(r == 6) {
-                row6.setVisibility(View.VISIBLE);
-                row6.addView(temp);
-                row6.addView(tempValue);
-                row6.addView(blankSpace);
-            }
-            else {
-                row7.setVisibility(View.VISIBLE);
-                row7.addView(temp);
-                row7.addView(tempValue);
-                row7.addView(blankSpace);
-            }
+            horizontalLine.addView(temp);
+            horizontalLine.addView(tempValue);
+            horizontalLine.addView(blankSpace);
+
+            i++;c++;
+
         }
 
-        // For each of the input fields we want to move on to the next one when pushing the enter button on the keyboard
-        for(int i = 0; i < total - 1; i++){
-
-            int id = CoordCalculator.this.getResources().getIdentifier(
-                    String.valueOf(i + 1),
-                    "id",
-                    CoordCalculator.this.getPackageName()
-            );
-            final TextView valueField = findViewById(id);
-
-            int nextId = CoordCalculator.this.getResources().getIdentifier(
-                    String.valueOf(i + 1),
-                    "id",
-                    CoordCalculator.this.getPackageName()
-            );
-
-            final TextView nextValueField = findViewById(nextId);
-            valueField.setOnKeyListener(new View.OnKeyListener() {
-                                            public boolean onKey(View view, int keyCode, KeyEvent event){
-
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                            && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        nextValueField.requestFocus();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            });
-        }
+        // Add the final one
+        resultAndVariableLayout.addView(horizontalLine);
 
         Button compute = new Button(this);
         compute.setText(R.string.compute);
@@ -400,33 +352,30 @@ public class CoordCalculator extends AppCompatActivity
         compute.setTextColor(Color.parseColor("#ffffff"));
         compute.setTypeface(null, Typeface.BOLD);
         compute.setTextSize(15);
+        compute.setWidth((int) getResources().getDimension(R.dimen.one_third_width));
 
-        r++;
-
-        if (r == 2){ row2.setVisibility(View.VISIBLE); row2.addView(compute);}
-        else if(r == 3) { row3.setVisibility(View.VISIBLE); row3.addView(compute);}
-        else if(r == 4) { row4.setVisibility(View.VISIBLE); row4.addView(compute);}
-        else if(r == 5) { row5.setVisibility(View.VISIBLE); row5.addView(compute);}
-        else { row6.setVisibility(View.VISIBLE); row6.addView(compute);}
-
-        lastRowUsed = r;
+        resultAndVariableLayout.addView(compute);
 
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void computeCoordinates(View view){
 
         // Keyboard manager -- allows keyboard to disappear
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        coordinate = new CoordinateFormula(originalCoordinate);
+        resultAndVariableLayout.removeView(resultLine);
 
         assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         for(int i = 0; i < coordinate.neededLetters.size(); i++){
 
-            int id = CoordCalculator.this.getResources().getIdentifier(
+            int id = CoordinateCalculator.this.getResources().getIdentifier(
                     String.valueOf(i),
                     "id",
-                    CoordCalculator.this.getPackageName()
+                    CoordinateCalculator.this.getPackageName()
             );
 
             TextView valueField = findViewById(id);
@@ -434,7 +383,7 @@ public class CoordCalculator extends AppCompatActivity
 
             if(valueString.equals("")){
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
                 builder.setTitle("Error")
                         .setMessage("Please fill in the values for all the variables.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -454,17 +403,13 @@ public class CoordCalculator extends AppCompatActivity
 
         coordinate.setVariables(variables);
         coordinate.evaluate();
-        LinearLayout resultSpace;
 
-        if(lastRowUsed == 1) resultSpace = findViewById(R.id.row2);
-        else if(lastRowUsed == 2) resultSpace = findViewById(R.id.row3);
-        else if(lastRowUsed == 3) resultSpace = findViewById(R.id.row4);
-        else if(lastRowUsed == 4) resultSpace = findViewById(R.id.row5);
-        else if(lastRowUsed == 5) resultSpace = findViewById(R.id.row6);
-        else resultSpace = findViewById(R.id.row7);
+        resultLine = new LinearLayout(this);
+        resultLine.setOrientation(LinearLayout.HORIZONTAL);
+        resultLine.setAlpha(0.9f);
+        resultLine.setBackground(this.getDrawable(R.drawable.text_field));
+        resultLine.setPadding(8, 8, 8, 8);
 
-        resultSpace.setVisibility(View.VISIBLE);
-        resultSpace.removeAllViews();
         TextView result = new TextView(this);
         String resultString = "The final coordinates are:\n" + coordinate.getFullCoordinates();
 
@@ -472,25 +417,23 @@ public class CoordCalculator extends AppCompatActivity
         result.setTextSize(18);
         result.setTextColor(getResources().getColor(R.color.gray));
         result.setTextIsSelectable(true);
-
-        resultSpace.addView(result);
+        resultLine.addView(result);
 
         FloatingActionButton directionsFab = new FloatingActionButton(this);
         directionsFab.setImageResource(R.drawable.ic_directions_black_24dp);
         directionsFab.setSize(android.support.design.widget.FloatingActionButton.SIZE_MINI);
         directionsFab.setFocusable(true);
         directionsFab.setOnClickListener(directionsFabListener);
-        resultSpace.addView(directionsFab);
 
-        //FloatingActionButton directionsFab = findViewById(R.id.direction);
-        //directionsFab.show();
-        /*RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         lay.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lay.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        lay.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
         lay.setMargins(2,2,2,2);
-        directionsFab.setLayoutParams(lay);*/
+        directionsFab.setLayoutParams(lay);
+        resultLine.addView(directionsFab);
 
+        resultAndVariableLayout.addView(resultLine);
     }
 
     View.OnClickListener directionsFabListener;

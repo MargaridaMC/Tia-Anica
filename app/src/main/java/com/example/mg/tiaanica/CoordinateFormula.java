@@ -32,6 +32,7 @@ class CoordinateFormula {
         coord = coord.replaceAll("÷", "/");
         coord = coord.replaceAll("\\[", "(");
         coord = coord.replaceAll("]", ")");
+        coord = coord.replaceAll("\n", " ");
 
         long Ns = StringUtils.countMatches(coord, "N");
         long Ss = StringUtils.countMatches(coord, "S");

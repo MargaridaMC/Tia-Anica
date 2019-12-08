@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, VigenereCipher.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_calculator) {
-            Intent intent = new Intent(this, CoordCalculator.class);
+            Intent intent = new Intent(this, CoordinateCalculator.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_offset) {
             Intent intent = new Intent(this, CoordinateOffset.class);
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void goToCoordCalculator(View view){
-        Intent intent = new Intent(this, CoordCalculator.class);
+        Intent intent = new Intent(this, CoordinateCalculator.class);
         startActivity(intent);
     }
 
