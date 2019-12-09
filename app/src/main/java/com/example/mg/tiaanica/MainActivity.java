@@ -2,6 +2,7 @@ package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -33,6 +35,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
+        TextView version = findViewById(R.id.version);
+        String versionName = null;
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        version.setText("Version: " + versionName);
+
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);

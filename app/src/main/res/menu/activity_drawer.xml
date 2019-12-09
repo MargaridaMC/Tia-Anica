@@ -24,6 +24,7 @@
             android:id="@+id/nav_coord_offset"
             android:icon="@drawable/ic_compass"
             android:title="@string/title_activity_coordinate_offset" />
+
     </group>
 <!--
     <item android:title="Communicate">
@@ -39,4 +40,16 @@
         </menu>
     </item>
 -->
+
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="8dp"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/text_size"
+        android:theme="@style/AppTheme.TextField"
+        android:text="Version"
+      />
+
 </menu>

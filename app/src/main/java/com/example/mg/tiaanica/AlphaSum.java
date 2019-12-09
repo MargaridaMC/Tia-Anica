@@ -2,7 +2,7 @@ package com.example.mg.tiaanica;
 
 class AlphaSum {
 
-    int sum = 0;
+    private int sum = 0;
 
     AlphaSum(String text){
         
@@ -17,6 +17,10 @@ class AlphaSum {
                 sum += letter - '0';  // '0' = 0
         }
 
+    }
+
+    int getSum(){
+        return sum;
     }
 
 }

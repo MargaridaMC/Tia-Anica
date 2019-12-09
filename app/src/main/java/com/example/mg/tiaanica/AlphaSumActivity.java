@@ -150,7 +150,7 @@ public class AlphaSumActivity extends AppCompatActivity
         String text= editText.getText().toString();
 
         AlphaSum s = new AlphaSum(text);
-        String message = "The alpha sum value of '" + text + "' is " + s.sum;
+        String message = "The alpha sum value of '" + text + "' is " + s.getSum();
 
         TextView textView = findViewById(R.id.textView);
         textView.setVisibility(View.VISIBLE);
