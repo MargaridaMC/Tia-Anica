@@ -93,16 +93,10 @@
                     android:layout_width="@dimen/one_third_width"
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="31dp"
-                    android:layout_marginEnd="211dp"
-                    android:layout_marginRight="211dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/angle_in_degrees"
                     android:theme="@style/AppTheme.TextField"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/angle"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

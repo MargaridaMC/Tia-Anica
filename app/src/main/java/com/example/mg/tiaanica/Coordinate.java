@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 class Coordinate {
 
-    private Double lat = null;
-    private Double lon = null;
+    private Double lat = 0.0;
+    private Double lon = 0.0;
 
     private Double latDeg = null;
     private Double latMin = null;
