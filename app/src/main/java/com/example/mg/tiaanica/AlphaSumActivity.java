@@ -2,12 +2,16 @@ package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,54 +20,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
-
-public class MainActivity extends AppCompatActivity
+public class AlphaSumActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        AppCenter.start(getApplication(), "b6eb2ef6-9019-4853-b38f-8ae81b672605",
-                Analytics.class, Crashes.class);
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_alpha_sum);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(infoFabListener);
 
-                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
-                // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info) +
-                        "<br><br>" + getString(R.string.vigenere_info) +
-                        "<br><br>" + getString(R.string.coord_calculator_info) +
-                        "<br><br>" + getString(R.string.coord_offset_info)));
-
-                // Add OK button
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-
-                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
-
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -71,6 +46,43 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Help button
+        final EditText finalTextField = findViewById(R.id.editText);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        finalTextField.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                        && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    calculateAlphaSum(v); // parse the coordinate
+                    assert mgr != null;
+                    mgr.hideSoftInputFromWindow(finalTextField.getWindowToken(), 0); // make the keyboard disappear
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // Set background
+        ConstraintLayout base_layout = findViewById(R.id.base_layout);
+        Resources res = getResources();
+
+        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
+        assert window != null;
+        Display display = window.getDefaultDisplay();
+
+        int num = display.getRotation();
+        if (num == 0){
+            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
+        }else if (num == 1 || num == 3){
+            base_layout.setBackground(res.getDrawable(R.drawable.landscape_background));
+        }else{
+            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
+        }
+
     }
 
     @Override
@@ -86,7 +98,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.alpha_sum, menu);
         return true;
     }
 
@@ -132,23 +144,33 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void goToAlphaSum(View view){
-        Intent intent = new Intent(this, AlphaSumActivity.class);
-        startActivity(intent);
+    public void calculateAlphaSum(View view){
+
+        EditText editText = findViewById(R.id.editText);
+        String text= editText.getText().toString();
+
+        AlphaSum s = new AlphaSum(text);
+        String message = "The alpha sum value of '" + text + "' is " + s.sum;
+
+        TextView textView = findViewById(R.id.textView);
+        textView.setVisibility(View.VISIBLE);
+        textView.setText(message);
+
     }
 
-    public void goToVigenereCipher(View view){
-        Intent intent = new Intent(this, VigenereCipherActivity.class);
-        startActivity(intent);
-    }
+    View.OnClickListener infoFabListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
 
-    public void goToCoordCalculator(View view){
-        Intent intent = new Intent(this, CoordinateFormulaActivity.class);
-        startActivity(intent);
-    }
-
-    public void goToCoordOffset(View view){
-        Intent intent = new Intent (this, CoordinateOffsetActivity.class);
-        startActivity(intent);
-    }
+            AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSumActivity.this);
+            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info)));
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    };
 }

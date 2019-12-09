@@ -42,14 +42,13 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
 
-public class CoordinateCalculator extends AppCompatActivity
+public class CoordinateFormulaActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     CoordinateFormula coordinate;
     String originalCoordinate;
     HashMap<String, Integer> variables;
     LinearLayout resultAndVariableLayout;
-    LinearLayout variableLayout;
     LinearLayout resultLine;
     int orientation;
 
@@ -66,7 +65,7 @@ public class CoordinateCalculator extends AppCompatActivity
             public void onClick(View view) {
 
                 // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
                 builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));
@@ -124,11 +123,11 @@ public class CoordinateCalculator extends AppCompatActivity
 
         orientation = display.getRotation();
         if (orientation == 0){
-            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
         }else if (orientation == 1 || orientation == 3){
-            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.landscape_background));
+            base_layout.setBackground(res.getDrawable(R.drawable.landscape_background));
         }else{
-            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
         }
 
         resultAndVariableLayout = findViewById(R.id.resultAndVariableLayout);
@@ -176,16 +175,16 @@ public class CoordinateCalculator extends AppCompatActivity
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_alpha_sum) {
-            Intent intent = new Intent(this, AlphaSum.class);
+            Intent intent = new Intent(this, AlphaSumActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_vigenere) {
-            Intent intent = new Intent(this, VigenereCipher.class);
+            Intent intent = new Intent(this, VigenereCipherActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_calculator) {
-            Intent intent = new Intent(this, CoordinateCalculator.class);
+            Intent intent = new Intent(this, CoordinateFormulaActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_offset) {
-            Intent intent = new Intent(this, CoordinateOffset.class);
+            Intent intent = new Intent(this, CoordinateOffsetActivity.class);
             startActivity(intent);
         }
 
@@ -212,7 +211,7 @@ public class CoordinateCalculator extends AppCompatActivity
 
         if (!coordinate.successfulParsing) {
             if (coordinate.Es != 1) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
                 builder.setTitle("Error")
                         .setMessage("The letter E shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -227,7 +226,7 @@ public class CoordinateCalculator extends AppCompatActivity
             }
 
             if (coordinate.Ws != 1) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
                 builder.setTitle("Error")
                         .setMessage("The letter W shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -372,10 +371,10 @@ public class CoordinateCalculator extends AppCompatActivity
 
         for(int i = 0; i < coordinate.neededLetters.size(); i++){
 
-            int id = CoordinateCalculator.this.getResources().getIdentifier(
+            int id = CoordinateFormulaActivity.this.getResources().getIdentifier(
                     String.valueOf(i),
                     "id",
-                    CoordinateCalculator.this.getPackageName()
+                    CoordinateFormulaActivity.this.getPackageName()
             );
 
             TextView valueField = findViewById(id);
@@ -383,7 +382,7 @@ public class CoordinateCalculator extends AppCompatActivity
 
             if(valueString.equals("")){
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateCalculator.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
                 builder.setTitle("Error")
                         .setMessage("Please fill in the values for all the variables.")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

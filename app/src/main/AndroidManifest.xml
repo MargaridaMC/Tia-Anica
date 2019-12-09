@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".CoordinateOffset"
+            android:name=".CoordinateOffsetActivity"
             android:label="@string/title_activity_coordinate_offset"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -27,7 +27,7 @@
                 android:value="com.example.mg.tiaanica.MainActivity" />
         </activity>
         <activity
-            android:name=".CoordinateCalculator"
+            android:name=".CoordinateFormulaActivity"
             android:label="@string/title_activity_coord_calculator"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -49,11 +49,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AlphaSum"
+            android:name=".AlphaSumActivity"
             android:label="@string/title_activity_alpha_sum"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".VigenereCipher"
+            android:name=".VigenereCipherActivity"
             android:label="@string/title_activity_vigenere_cipher"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

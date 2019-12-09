@@ -37,7 +37,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
-public class CoordinateOffset extends AppCompatActivity
+public class CoordinateOffsetActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Coordinate coordinate;
@@ -122,11 +122,11 @@ public class CoordinateOffset extends AppCompatActivity
 
         int num = display.getRotation();
         if (num == 0){
-            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
         }else if (num == 1 || num == 3){
-            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.landscape_background));
+            base_layout.setBackground(res.getDrawable(R.drawable.landscape_background));
         }else{
-            base_layout.setBackgroundDrawable(res.getDrawable(R.drawable.portrait_background));
+            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
         }
 
     }
@@ -172,16 +172,16 @@ public class CoordinateOffset extends AppCompatActivity
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_alpha_sum) {
-            Intent intent = new Intent(this, AlphaSum.class);
+            Intent intent = new Intent(this, AlphaSumActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_vigenere) {
-            Intent intent = new Intent(this, VigenereCipher.class);
+            Intent intent = new Intent(this, VigenereCipherActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_calculator) {
-            Intent intent = new Intent(this, CoordinateCalculator.class);
+            Intent intent = new Intent(this, CoordinateFormulaActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_coord_offset) {
-            Intent intent = new Intent(this, CoordinateOffset.class);
+            Intent intent = new Intent(this, CoordinateOffsetActivity.class);
             startActivity(intent);
         }
 
@@ -208,7 +208,7 @@ public class CoordinateOffset extends AppCompatActivity
 
         if(initialCoordinatesString.equals("") || angleString.equals("") || distanceString.equals("")){
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
             builder.setTitle("Error")
                     .setMessage("Please fill in all the values.")
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -232,7 +232,7 @@ public class CoordinateOffset extends AppCompatActivity
         }
         catch(NumberFormatException e){
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
             builder.setTitle("Error")
                     .setMessage("The angle and the distance should be numbers.")
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -283,12 +283,12 @@ public class CoordinateOffset extends AppCompatActivity
     }
 
     void requestGPSEnable(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
         builder.setMessage(R.string.gps_network_not_enabled);
         builder.setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                CoordinateOffset.this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                CoordinateOffsetActivity.this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             }
         });
         builder.setNegativeButton(R.string.Cancel,null);
@@ -314,7 +314,7 @@ public class CoordinateOffset extends AppCompatActivity
         public void onClick(View view) {
 
             // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffset.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
 
             // 2. Chain together various setter methods to set the dialog characteristics
             builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info) + "<br></br><br></br><b>Note: </b>you can also use the location button to use your current location."));
@@ -336,7 +336,7 @@ public class CoordinateOffset extends AppCompatActivity
         @Override
         public void onClick(View view) {
 
-            boolean locationAccessPermitted = ContextCompat.checkSelfPermission(CoordinateOffset.this,
+            boolean locationAccessPermitted = ContextCompat.checkSelfPermission(CoordinateOffsetActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
             if(!locationAccessPermitted) requestLocationAccessPermission();
 
@@ -357,7 +357,7 @@ public class CoordinateOffset extends AppCompatActivity
                         coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
                         txtLat.setText(coordinate.getFullCoordinates());
 
-                        new AlertDialog.Builder(CoordinateOffset.this)
+                        new AlertDialog.Builder(CoordinateOffsetActivity.this)
                                 .setMessage("Used coordinates from Network signal.")
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -371,7 +371,7 @@ public class CoordinateOffset extends AppCompatActivity
                     coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
                     txtLat.setText(coordinate.getFullCoordinates());
 
-                    new AlertDialog.Builder(CoordinateOffset.this)
+                    new AlertDialog.Builder(CoordinateOffsetActivity.this)
                             .setMessage("Used coordinates from GPS signal.")
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
