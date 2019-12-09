@@ -25,16 +25,17 @@
         <TextView
             android:id="@+id/version"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/text_height"
+            android:layout_height="match_parent"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="8dp"
             android:textSize="@dimen/text_size"
             android:textAlignment="center"
+            android:gravity="bottom"
             app:layout_constraintBottom_toBottomOf="@+id/nav_view"
             app:layout_constraintEnd_toEndOf="@+id/nav_view"
-            app:layout_constraintStart_toStartOf="@+id/nav_view" />
+            app:layout_constraintStart_toStartOf="@+id/nav_view"  />
 
     </android.support.design.widget.NavigationView>
 
