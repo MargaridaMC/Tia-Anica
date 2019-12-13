@@ -1,11 +1,13 @@
 package com.example.mg.tiaanica;
 
+import android.annotation.SuppressLint;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Coordinate {
+class Coordinate implements CoordinateOffset{
 
     private Double lat = 0.0;
     private Double lon = 0.0;
@@ -36,17 +38,17 @@ class Coordinate {
 
     Coordinate(double lat, double lon){
 
-        setLatitude(lat);
-        setLongitude(lon);
+        this.lat = lat;
+        this.lon = lon;
 
         double[] latValues = Decimal2DM(lat);
         double[] lonValues = Decimal2DM(lon);
 
-        setLatDeg(latValues[0]);
-        setLatMin(latValues[1]);
+        this.latDeg = latValues[0];
+        this.latMin = latValues[1];
 
-        setLonDeg(lonValues[0]);
-        setLonMin(lonValues[1]);
+        this.lonDeg = lonValues[0];
+        this.lonMin = lonValues[1];
     }
 
     private Boolean parse(String input){
@@ -229,29 +231,6 @@ class Coordinate {
         return this.lon;
     }
 
-    private void setLatitude(Double lat) {
-        this.lat = lat;
-    }
-
-    private void setLongitude(Double lon) {
-        this.lon = lon;
-    }
-
-    private void setLatDeg(Double latDeg) {
-        this.latDeg = latDeg;
-    }
-
-    private void setLonDeg(Double lonDeg) {
-        this.lonDeg = lonDeg;
-    }
-
-    private void setLatMin(Double latVals) {
-        this.latMin = latVals;
-    }
-
-    private void setLonMin(Double lonMin) {
-        this.lonMin = lonMin;
-    }
 
     private static double DM2Decimal(Double latDeg2, Double latMin2, String dir){
         double _d; double _m;
@@ -287,7 +266,7 @@ class Coordinate {
 
     }
 
-    void Offset(double angle, double distanceInMeters){
+    public void Offset(double angle, double distanceInMeters){
 
         double X = lat;
         double Y = lon;
@@ -312,26 +291,26 @@ class Coordinate {
         double[] latVals = Decimal2DM(x);
         double[] lonVals = Decimal2DM(y);
 
-        this.setLatitude(x);
-        this.setLongitude(y);
+        this.lat = x;
+        this.lon = y;
 
-        this.setLatDeg(latVals[0]);
-        this.setLatMin(latVals[1]);
+        this.latDeg = latVals[0];
+        this.latMin = latVals[1];
 
-        this.setLonDeg(lonVals[0]);
-        this.setLonMin(lonVals[1]);
+        this.lonDeg = lonVals[0];
+        this.lonMin = lonVals[1];
 
     }
 
     String getFullCoordinates() {
 
         String latDegInt = StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2);
-        String latMinStr = String.format("%.3f", latMin);
+        @SuppressLint("DefaultLocale") String latMinStr = String.format("%.3f", latMin);
         latMinStr = StringUtils.leftPad(latMinStr, 6, "0");
         String latitude = latDir + latDegInt + "°" + " " + latMinStr;
 
         String lonDegInt = StringUtils.leftPad(Integer.toString(lonDeg.intValue()), 2);
-        String lonMinStr = String.format("%.3f", lonMin);
+        @SuppressLint("DefaultLocale") String lonMinStr = String.format("%.3f", lonMin);
         lonMinStr = StringUtils.leftPad(lonMinStr, 6, "0");
         String longitude = lonDir + lonDegInt + "°" + " " + lonMinStr;
 
