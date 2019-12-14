@@ -9,212 +9,145 @@
     tools:context=".CoordinateOffsetActivity"
     tools:showIn="@layout/app_bar_coordinate_offset">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_border_margin"
+        android:layout_marginTop="@dimen/activity_border_margin"
+        android:layout_marginEnd="@dimen/activity_border_margin"
+        android:alpha="0.9"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/base2"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/InitialCoordinates"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/initial_coordinates"
+            android:theme="@style/AppTheme.TextField"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/coordinatesConstraint"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/text_height"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:alpha="0.9"
-                android:theme="@style/AppTheme.TextField"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+        <EditText
+            android:id="@+id/coordinates"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:ems="10"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:theme="@style/AppTheme.TextField"
+            app:layout_constraintBottom_toBottomOf="@+id/InitialCoordinates"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/InitialCoordinates"
+            app:layout_constraintTop_toTopOf="@+id/InitialCoordinates"
+            tools:ignore="LabelFor"
+            tools:targetApi="o" />
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="@dimen/one_third_width"
-                    android:layout_height="0dp"
-                    android:text="@string/initial_coordinates"
-                    android:theme="@style/AppTheme.TextField"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/coordinates"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/angleID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/angle_in_degrees"
+            android:theme="@style/AppTheme.TextField"
+            app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
+            app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
+            app:layout_constraintTop_toBottomOf="@+id/InitialCoordinates" />
 
-                <EditText
-                    android:id="@+id/coordinates"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="12dp"
-                    android:ems="10"
-                    android:importantForAutofill="no"
-                    android:inputType="textPersonName"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/textView4"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="LabelFor"
-                    tools:targetApi="o" />
+        <EditText
+            android:id="@+id/angle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.9"
+            android:ems="10"
+            android:inputType="numberSigned"
+            app:layout_constraintBottom_toBottomOf="@+id/angleID"
+            app:layout_constraintEnd_toEndOf="@+id/coordinates"
+            app:layout_constraintStart_toStartOf="@+id/coordinates"
+            app:layout_constraintTop_toTopOf="@+id/angleID" />
 
-            </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/distanceID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/distance_in_m"
+            android:theme="@style/AppTheme.TextField"
+            app:layout_constraintEnd_toEndOf="@+id/angleID"
+            app:layout_constraintStart_toStartOf="@+id/angleID"
+            app:layout_constraintTop_toBottomOf="@+id/angleID" />
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/angleConstraint"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/text_height"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:alpha="0.9"
-                android:theme="@style/AppTheme.TextField"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/coordinatesConstraint">
+        <EditText
+            android:id="@+id/distance"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ems="10"
+            android:importantForAutofill="no"
+            android:inputType="numberSigned"
+            android:theme="@style/AppTheme.TextField"
+            app:layout_constraintBottom_toBottomOf="@+id/distanceID"
+            app:layout_constraintEnd_toEndOf="@+id/angle"
+            app:layout_constraintStart_toStartOf="@+id/angle"
+            app:layout_constraintTop_toTopOf="@+id/distanceID"
+            tools:ignore="LabelFor,UnusedAttribute" />
 
-                <TextView
-                    android:id="@+id/angleID"
-                    android:layout_width="@dimen/one_third_width"
-                    android:layout_height="match_parent"
-                    android:text="@string/angle_in_degrees"
-                    android:theme="@style/AppTheme.TextField"
-                    app:layout_constraintEnd_toStartOf="@+id/angle"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/offset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="compute"
+            android:text="@string/compute"
+            style="@style/AppTheme.Button"
+            app:layout_constraintBottom_toBottomOf="@+id/myLocationButton"
+            app:layout_constraintEnd_toEndOf="@+id/distance"
+            app:layout_constraintTop_toTopOf="@+id/myLocationButton" />
 
-                <EditText
-                    android:id="@+id/angle"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="12dp"
-                    android:ems="10"
-                    android:inputType="numberSigned"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/angleID"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/myLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:src="@android:drawable/ic_menu_mylocation"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:fabSize="mini"
+            app:layout_constraintStart_toStartOf="@+id/distanceID"
+            app:layout_constraintTop_toBottomOf="@+id/distanceID"
+            app:pressedTranslationZ="12dp" />
 
-            </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:theme="@style/AppTheme.TextField"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/direction"
+            app:layout_constraintEnd_toStartOf="@+id/direction"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/direction" />
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/distanceConstraint"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/text_height"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:alpha="0.9"
-                android:theme="@style/AppTheme.TextField"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/angleConstraint">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="8dp"
+            android:src="@android:drawable/ic_menu_directions"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/offset"
+            app:layout_constraintTop_toBottomOf="@+id/offset"
+            app:pressedTranslationZ="12dp" />
 
-                <TextView
-                    android:id="@+id/distanceID"
-                    android:layout_width="@dimen/one_third_width"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/distance_in_m"
-                    android:theme="@style/AppTheme.TextField"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/distance"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-                <EditText
-                    android:id="@+id/distance"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="12dp"
-                    android:ems="10"
-                    android:importantForAutofill="no"
-                    android:inputType="numberSigned"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/distanceID"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="LabelFor,UnusedAttribute" />
 
-            </android.support.constraint.ConstraintLayout>
-
-            <Button
-                android:id="@+id/offset"
-                android:layout_width="@dimen/one_third_width"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginTop="16dp"
-                android:onClick="compute"
-                android:text="@string/compute"
-                android:theme="@style/AppTheme.Button"
-                app:layout_constraintEnd_toEndOf="@+id/distanceConstraint"
-                app:layout_constraintTop_toBottomOf="@+id/distanceConstraint" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/myLocationButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
-                android:src="@android:drawable/ic_menu_mylocation"
-                app:borderWidth="0dp"
-                app:elevation="0dp"
-                app:fabSize="mini"
-                app:layout_constraintStart_toStartOf="@id/distanceConstraint"
-                app:layout_constraintTop_toBottomOf="@+id/distanceConstraint"
-                app:pressedTranslationZ="12dp" />
-
-            <TextView
-                android:id="@+id/result"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:theme="@style/AppTheme.TextField"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/offset" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/direction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@android:drawable/ic_menu_directions"
-                app:borderWidth="0dp"
-                app:elevation="0dp"
-                app:fabSize="mini"
-                app:layout_constraintEnd_toEndOf="@id/offset"
-                app:layout_constraintTop_toTopOf="@+id/result"
-                app:layout_constraintBottom_toBottomOf="@+id/result"
-                app:pressedTranslationZ="12dp" />
-
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

@@ -41,13 +41,13 @@
 
         <Button
             android:id="@+id/EnterButton"
-            style="@style/AppTheme.Button"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:onClick="calculateAlphaSum"
             android:text="@string/enter"
+            style="@style/AppTheme.Button"
             app:layout_constraintBottom_toBottomOf="@+id/editText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/editText"

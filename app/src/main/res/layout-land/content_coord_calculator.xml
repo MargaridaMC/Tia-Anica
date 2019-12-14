@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_layout"
@@ -9,6 +9,7 @@
     tools:context=".CoordinateFormulaActivity"
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_coord_calculator">
+
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"

@@ -1,10 +1,9 @@
 package com.example.mg.tiaanica;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -20,6 +20,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.KeyEvent;
 import android.text.Html;
@@ -113,8 +114,8 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         });
 
         // Set background
-        ConstraintLayout base_layout = findViewById(R.id.base_layout);
-        // ScrollView base_layout = findViewById(R.id.scroll_layout);
+        //ConstraintLayout base_layout = findViewById(R.id.base_layout);
+        ScrollView base_layout = findViewById(R.id.base_layout);
         Resources res = getResources();
 
         WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
@@ -193,6 +194,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         return true;
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void parseCoordFormula(View view) {
 
@@ -241,7 +243,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             }
         }
 
-        TextView textView = findViewById(R.id.textView2);
+        TextView textView = findViewById(R.id.NeededLetters);
         textView.setVisibility(View.VISIBLE);
 
         String message = "The required variables are: " + coordinate.getNeededVariables();
@@ -271,7 +273,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
         horizontalLine.setAlpha(0.9f);
         horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
-        horizontalLine.setPadding(32,32,32,32);
+        horizontalLine.setPadding(0,32,0,32);
 
         int i= 0;
         int c = 0;
@@ -291,7 +293,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
                 horizontalLine.setAlpha(0.9f);
                 horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
-                horizontalLine.setPadding(32,32,32,32);
+                horizontalLine.setPadding(0,32,32,0);
             }
 
             temp = new TextView(this);
@@ -299,15 +301,17 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             temp.setTextSize(18);
             temp.setWidth(80);
             temp.setTextColor(getResources().getColor(R.color.gray));
+            temp.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             blankSpace = new TextView(this);
-            blankSpace.setWidth(100);
+            blankSpace.setWidth(50);
 
             tempValue = new EditText(this);
             tempValue.setInputType(3);
             tempValue.setWidth(150);
             tempValue.setId(i);
             tempValue.setTextColor(getResources().getColor(R.color.gray));
+            //tempValue.setHint(currentLetter);
             if(variables.keySet().contains(currentLetter)){
                 int keyValue = variables.get(currentLetter);
                 tempValue.setText(Integer.toString(keyValue));
@@ -343,15 +347,13 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         // Add the final one
         resultAndVariableLayout.addView(horizontalLine);
 
-        Button compute = new Button(this);
+        //Button compute = new Button(this);
+        int buttonStyle = R.style.AppTheme_Button;
+        Button compute = new Button(new ContextThemeWrapper(this, buttonStyle), null, buttonStyle);
         compute.setText(R.string.compute);
         compute.setRight(0);
         compute.setOnClickListener(new View.OnClickListener(){ public void onClick(View view) { computeCoordinates(view);}});
         compute.setBackgroundResource(R.drawable.bt_style);
-        compute.setTextColor(Color.parseColor("#ffffff"));
-        compute.setTypeface(null, Typeface.BOLD);
-        compute.setTextSize(15);
-        compute.setWidth((int) getResources().getDimension(R.dimen.one_third_width));
 
         resultAndVariableLayout.addView(compute);
 
@@ -449,7 +451,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 // Create a Uri from an intent string. Use the result to create an Intent.
                 //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
                 Coordinate c = new Coordinate(coordinate.getLatDir() + coordinate.getLatitude(), coordinate.getLonDir() + coordinate.getLongitude());
-                Uri gmmIntentUri = Uri.parse(String.format("geo:0,0?q=%f,0%f", c.getLatitude(), c.getLongitude()));
+                @SuppressLint("DefaultLocale") Uri gmmIntentUri = Uri.parse(String.format("geo:0,0?q=%f,0%f", c.getLatitude(), c.getLongitude()));
 
                 // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
