@@ -18,7 +18,6 @@
         android:layout_marginTop="@dimen/activity_border_margin"
         android:onClick="goToAlphaSum"
         android:text="@string/alphasum"
-        android:textSize="@dimen/text_size"
         android:theme="@style/AppTheme.Button"
         app:layout_constraintBottom_toTopOf="@+id/CoordinateCalculatorButton"
         app:layout_constraintEnd_toStartOf="@+id/VigenereCipherButton"

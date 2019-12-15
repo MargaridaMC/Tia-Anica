@@ -48,32 +48,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
-                // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info) +
-                        "<br><br>" + getString(R.string.vigenere_info) +
-                        "<br><br>" + getString(R.string.coord_calculator_info) +
-                        "<br><br>" + getString(R.string.coord_offset_info)));
-
-                // Add OK button
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-
-                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+        fab.setOnClickListener(helpFabOnClickListener);
 
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -163,4 +138,31 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent (this, CoordinateOffsetActivity.class);
         startActivity(intent);
     }
+
+    View.OnClickListener helpFabOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info) +
+                    "<br><br>" + getString(R.string.vigenere_info) +
+                    "<br><br>" + getString(R.string.coord_calculator_info) +
+                    "<br><br>" + getString(R.string.coord_offset_info)));
+
+            // Add OK button
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+
+
+            // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    };
 }

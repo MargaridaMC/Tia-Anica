@@ -7,9 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".CoordinateFormulaActivity"
-    tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_coord_calculator">
-
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -52,7 +50,7 @@
             <TextView
                 android:id="@+id/NeededLetters"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:ems="10"
                 android:visibility="invisible"
@@ -62,19 +60,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/formula" />
 
-
-            <LinearLayout
-                android:id="@+id/resultAndVariableLayout"
-                android:layout_width="0dp"
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/direction"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:orientation="vertical"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="8dp"
+                android:src="@android:drawable/ic_menu_directions"
+                android:visibility="invisible"
+                app:borderWidth="0dp"
+                app:elevation="0dp"
+                app:fabSize="mini"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/NeededLetters"
-                app:layout_constraintStart_toStartOf="@+id/NeededLetters"
-                app:layout_constraintTop_toBottomOf="@+id/NeededLetters">
-
-            </LinearLayout>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:pressedTranslationZ="12dp" />
 
         </android.support.constraint.ConstraintLayout>
 

@@ -2,7 +2,7 @@
     <string name="app_name">Tia Anica</string>
     <string name="title_activity_alpha_sum">Alpha Sum</string>
     <string name="title_activity_vigenere_cipher">Vigenère Cipher</string>
-    <string name="title_activity_coord_calculator">Coordinate Calculator</string>
+    <string name="title_activity_coord_calculator">Coordinate Formula Calculator</string>
     <string name="title_activity_coordinate_offset">Coordinate Offset</string>
     <string name="alphasum">Alpha Sum Calculator</string>
     <string name="vigenere">Vigenère Cipher</string>
@@ -28,7 +28,7 @@
     <string name="home">Home</string>
     <string name="alphasum_info">&lt;b>&lt;i>Alpha Sum: &lt;/i>&lt;/b>Calculates the sum of the letters in a word, when these are converted to letter, e.g. A = 1, B = 2, C = 3 ...</string>
     <string name="vigenere_info">&lt;b>&lt;i>Vigenère Cipher: &lt;/i>&lt;/b>Encodes and Decodes a message using the Vignère Cipher.</string>
-    <string name="coord_calculator_info">&lt;b>&lt;i>Coordinate Calculator: &lt;/i>&lt;/b>Takes a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG or B*2 + 10) this replaces the letter with the appropriate values and computes the final coordinates.</string>
+    <string name="coord_calculator_info">&lt;b>&lt;i>Coordinate Formula Calculator: &lt;/i>&lt;/b>Takes a formula for the coordinates of a geocache (such as N48º 34.A(B + C)D E 10º 52.(D * 2)FG or B*2 + 10) this replaces the letter with the appropriate values and computes the final coordinates.</string>
     <string name="coord_offset_info">&lt;b>&lt;i>Coordinate Offset: &lt;/i>&lt;/b>Calculates the coordinates you end up with if you move in a certain angle (in degrees) and a certain distance (in metres) from some initial coordinates.</string>
     <string name="nav_header_title">Tia Anica</string>
     <string name="nav_header_subtitle">https://github.com/MargaridaMC/Tia-Anica</string>

@@ -24,6 +24,7 @@ class CoordinateFormula {
     long Ws;
 
     boolean successfulParsing = true;
+    private String returnStr;
 
     CoordinateFormula(String coord) {
 
@@ -44,7 +45,7 @@ class CoordinateFormula {
         if(coord.substring(0, 1).equals("N") || coord.substring(0, 1).equals("S"))  {
 
             Pattern p;
-            if(Ns == 1) {
+            if(Ns >= 1) {
                 // we are definitely in the north
                 latDir = "N";
                 if(Es == 1) {
@@ -64,7 +65,7 @@ class CoordinateFormula {
                     return;
                 }
             }
-            else if(Ss == 1) {
+            else if(Ss >= 1) {
                 // We are south
                 latDir = "S";
                 if(Es == 1) {
@@ -274,7 +275,7 @@ class CoordinateFormula {
         }
 
         // Check if there are still sections with operation signs (+, -, /, *)
-        Pattern operationPattern = Pattern.compile("([\\d]+\\s?([+\\-/*]+\\s?[\\s\\d]+)+)");
+        Pattern operationPattern = Pattern.compile("([\\d]+\\s*([+\\-/*]+\\s*[\\s\\d]+)+)");
         Matcher operationMatcher = operationPattern.matcher(lat);
         while(operationMatcher.find()) {
             String group = operationMatcher.group(0);
@@ -288,12 +289,8 @@ class CoordinateFormula {
         }
     }
 
-    String getFullCoordinates() {
+    boolean resultAreProperCoordinates(){
 
-        String returnStr;
-
-        // TODO: check if anything is wrong with the output coordinates
-        // Check if any value is negative
         try{
 
             Coordinate coordinate = new Coordinate(this.latDir + this.lat, this.lonDir + this.lon);
@@ -301,9 +298,18 @@ class CoordinateFormula {
 
         } catch(Exception e) {
             returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
+            return false;
         }
 
+        return true;
 
+    }
+
+    String getFullCoordinates() {
+
+        // TODO: check if anything is wrong with the output coordinates
+        // Check if any value is negative
+        resultAreProperCoordinates();
         return returnStr;
     }
 }

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.view.ContextThemeWrapper;
@@ -19,7 +20,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.KeyEvent;
@@ -37,8 +37,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.content.res.Resources;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static android.view.View.generateViewId;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
@@ -49,8 +53,12 @@ public class CoordinateFormulaActivity extends AppCompatActivity
     CoordinateFormula coordinate;
     String originalCoordinate;
     HashMap<String, Integer> variables;
-    LinearLayout resultAndVariableLayout;
-    LinearLayout resultLine;
+    ConstraintLayout constraintLayout;
+
+    List<Integer> variableViewIDs = new ArrayList<>();
+    List<Integer> resultViewIDs = new ArrayList<>();
+    HashMap<String, Integer> neededLetterIds = new HashMap<>();
+
     int orientation;
 
     @Override
@@ -114,7 +122,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         });
 
         // Set background
-        //ConstraintLayout base_layout = findViewById(R.id.base_layout);
         ScrollView base_layout = findViewById(R.id.base_layout);
         Resources res = getResources();
 
@@ -131,7 +138,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
         }
 
-        resultAndVariableLayout = findViewById(R.id.resultAndVariableLayout);
+        constraintLayout = findViewById(R.id.constraintLayout);
         variables = new HashMap<>();
     }
 
@@ -209,7 +216,14 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         originalCoordinate = coord;
         coordinate = new CoordinateFormula(coord);
 
-        resultAndVariableLayout.removeAllViews();
+        //constraintLayout.removeAllViews();
+        for(Integer id:variableViewIDs){
+            constraintLayout.removeView(findViewById(id));
+        }
+        for(Integer id:resultViewIDs){
+            constraintLayout.removeView(findViewById(id));
+        }
+
 
         if (!coordinate.successfulParsing) {
             if (coordinate.Es != 1) {
@@ -246,16 +260,10 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         TextView textView = findViewById(R.id.NeededLetters);
         textView.setVisibility(View.VISIBLE);
 
-        String message = "The required variables are: " + coordinate.getNeededVariables();
+        String message = "The required variables are: " + coordinate.getNeededVariables() +
+                "\n\nPlease fill in the value for each variable.";
         textView.setText(message);
 
-        TextView inputSentence = new TextView(this);
-        String inputString = "Input the values for each variable.";
-        inputSentence.setText(inputString);
-        inputSentence.setTextSize(18);
-        inputSentence.setTextColor(getResources().getColor(R.color.gray));
-
-        resultAndVariableLayout.addView(inputSentence);
         int nNeededLetters = coordinate.neededLetters.size();
         int columns;
 
@@ -278,22 +286,24 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         int i= 0;
         int c = 0;
 
+        ArrayList<LinearLayout> inputLetterLayout = new ArrayList<>();
+
         while(i < nNeededLetters) {
 
             String currentLetter = coordinate.neededLetters.get(i);
+            int letterId = generateViewId();
+            neededLetterIds.put(currentLetter, letterId);
 
             if (c == columns) {
                 c = 0;
 
                 // Add this line to the view and get a new one
-                resultAndVariableLayout.addView(horizontalLine);
+                inputLetterLayout.add(horizontalLine);
 
                 horizontalLine = new LinearLayout(this);
-                horizontalLine.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
                 horizontalLine.setAlpha(0.9f);
                 horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
-                horizontalLine.setPadding(0,32,32,0);
             }
 
             temp = new TextView(this);
@@ -309,9 +319,10 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             tempValue = new EditText(this);
             tempValue.setInputType(3);
             tempValue.setWidth(150);
-            tempValue.setId(i);
+            tempValue.setId(letterId);
             tempValue.setTextColor(getResources().getColor(R.color.gray));
             //tempValue.setHint(currentLetter);
+
             if(variables.keySet().contains(currentLetter)){
                 int keyValue = variables.get(currentLetter);
                 tempValue.setText(Integer.toString(keyValue));
@@ -345,17 +356,49 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         }
 
         // Add the final one
-        resultAndVariableLayout.addView(horizontalLine);
+        inputLetterLayout.add(horizontalLine);
 
-        //Button compute = new Button(this);
+        for(LinearLayout hv : inputLetterLayout) {
+            int id = generateViewId();
+            hv.setId(id); // Views must have IDs in order to add them to chain later.
+            constraintLayout.addView(hv);
+            variableViewIDs.add(id);
+        }
+
         int buttonStyle = R.style.AppTheme_Button;
         Button compute = new Button(new ContextThemeWrapper(this, buttonStyle), null, buttonStyle);
         compute.setText(R.string.compute);
         compute.setRight(0);
         compute.setOnClickListener(new View.OnClickListener(){ public void onClick(View view) { computeCoordinates(view);}});
         compute.setBackgroundResource(R.drawable.bt_style);
+        compute.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        resultAndVariableLayout.addView(compute);
+        int buttonId = generateViewId();
+        compute.setId(buttonId);
+
+        constraintLayout.addView(compute);
+        variableViewIDs.add(buttonId);
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
+
+        View previousItem = null;
+        for(LinearLayout hv : inputLetterLayout) {
+            boolean lastItem =inputLetterLayout.indexOf(hv) ==inputLetterLayout.size() - 1;
+            if(previousItem == null) {
+                constraintSet.connect(hv.getId(), ConstraintSet.TOP, R.id.NeededLetters, ConstraintSet.BOTTOM, 16);
+            } else {
+                constraintSet.connect(hv.getId(), ConstraintSet.TOP, previousItem.getId(), ConstraintSet.BOTTOM, 16);
+            }
+            if(lastItem) {
+                // constrain button
+                constraintSet.connect(compute.getId(), ConstraintSet.TOP, hv.getId(), ConstraintSet.BOTTOM, 16);
+                constraintSet.connect(compute.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 16);
+            }
+            previousItem = hv;
+        }
+
+        constraintSet.applyTo(constraintLayout);
 
     }
 
@@ -366,18 +409,18 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         coordinate = new CoordinateFormula(originalCoordinate);
-        resultAndVariableLayout.removeView(resultLine);
+        for(Integer id:resultViewIDs){
+            constraintLayout.removeView(findViewById(id));
+        }
 
         assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        for(int i = 0; i < coordinate.neededLetters.size(); i++){
 
-            int id = CoordinateFormulaActivity.this.getResources().getIdentifier(
-                    String.valueOf(i),
-                    "id",
-                    CoordinateFormulaActivity.this.getPackageName()
-            );
+        for (Map.Entry<String, Integer> entry : neededLetterIds.entrySet()) {
+
+            String letter = entry.getKey();
+            Integer id = entry.getValue();
 
             TextView valueField = findViewById(id);
             String valueString = valueField.getText().toString();
@@ -399,42 +442,56 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             }
 
             int value = Integer.parseInt(valueString);
-            variables.put(coordinate.neededLetters.get(i), value);
+            variables.put(letter, value);
         }
 
         coordinate.setVariables(variables);
         coordinate.evaluate();
 
-        resultLine = new LinearLayout(this);
-        resultLine.setOrientation(LinearLayout.HORIZONTAL);
-        resultLine.setAlpha(0.9f);
-        resultLine.setBackground(this.getDrawable(R.drawable.text_field));
-        resultLine.setPadding(8, 8, 8, 8);
-
         TextView result = new TextView(this);
         String resultString = "The final coordinates are:\n" + coordinate.getFullCoordinates();
-
         result.setText(resultString);
         result.setTextSize(18);
         result.setTextColor(getResources().getColor(R.color.gray));
         result.setTextIsSelectable(true);
-        resultLine.addView(result);
+        result.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        int resultId = generateViewId();
+        result.setId(resultId);
 
-        FloatingActionButton directionsFab = new FloatingActionButton(this);
-        directionsFab.setImageResource(R.drawable.ic_directions_black_24dp);
-        directionsFab.setSize(android.support.design.widget.FloatingActionButton.SIZE_MINI);
-        directionsFab.setFocusable(true);
-        directionsFab.setOnClickListener(directionsFabListener);
+        resultViewIDs.add(resultId);
+        constraintLayout.addView(result);
 
-        RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lay.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lay.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        lay.setMargins(2,2,2,2);
-        directionsFab.setLayoutParams(lay);
-        resultLine.addView(directionsFab);
+        ConstraintSet constraintSet;
+        boolean resultAreProperCoordinates = coordinate.resultAreProperCoordinates();
 
-        resultAndVariableLayout.addView(resultLine);
+        if(resultAreProperCoordinates){
+            FloatingActionButton directionsFab = findViewById(R.id.direction);
+            directionsFab.setOnClickListener(directionsFabListener);
+            directionsFab.setVisibility(View.VISIBLE);
+
+            constraintSet = new ConstraintSet();
+            constraintSet.clone(constraintLayout);
+            // Get the last object in the variable section (should be the "compute" button and constrain the result to the bottom of this)
+            constraintSet.connect(variableViewIDs.get(variableViewIDs.size() - 1), ConstraintSet.BOTTOM, resultId, ConstraintSet.TOP, 16);
+            constraintSet.connect(resultId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 16);
+
+            if (orientation == 1 || orientation == 3){ // If display is in landscape mode this button will clash with the help button if margin is 0
+                constraintSet.connect(R.id.direction, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 112);
+            } else{
+                constraintSet.connect(R.id.direction, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
+            }
+            constraintSet.connect(R.id.direction, ConstraintSet.BOTTOM, resultId, ConstraintSet.BOTTOM, 0);
+            constraintSet.connect(R.id.direction, ConstraintSet.TOP, resultId, ConstraintSet.TOP, 0);
+        } else {
+            constraintSet = new ConstraintSet();
+            constraintSet.clone(constraintLayout);
+            // Get the last object in the variable section (should be the "compute" button and constrain the result to the bottom of this)
+            constraintSet.connect(variableViewIDs.get(variableViewIDs.size() - 1), ConstraintSet.BOTTOM, resultId, ConstraintSet.TOP, 16);
+            constraintSet.connect(resultId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 16);
+        }
+
+        constraintSet.applyTo(constraintLayout);
+
     }
 
     View.OnClickListener directionsFabListener;
