@@ -1,0 +1,8 @@
+INDEX VERSION 1.131+C:\Users\guidi\Documents\Android\TiaAnica\.metadata\.plugins\org.eclipse.jdt.core
+2751751848.index
+2971701134.index
+1521594219.index
+1955814234.index
+2528167643.index
+138913250.index
+4015016909.index
