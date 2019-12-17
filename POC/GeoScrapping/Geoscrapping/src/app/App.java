@@ -16,10 +16,16 @@ public class App {
         // System.setProperty("javax.net.ssl.trustStorePassword","banana");
 
         GeocachingScrapper gs = new GeocachingScrapper("lokijota", "geojota#");
-        System.out.println("Login result = " + gs.Login());
+        System.out.println("Login result = " + gs.login());
 
-        Geocache gc = gs.GetGeocacheDetails("GC6B4AK");
-        System.out.println("Latitude: " + gc.latitude);
-        System.out.println("Longitude: " + gc.longitude);
+        Geocache gc = gs.getGeocacheDetails("GC6VZ9C"); // GC1RG9M"); // GC37M58");
+        System.out.println(" Name: " + gc.name);
+        System.out.println(" Latitude: " + gc.latitude);
+        System.out.println(" Longitude: " + gc.longitude);
+        System.out.println(" Size: " + gc.size);
+        System.out.println(" Difficulty: " + gc.difficulty);
+        System.out.println(" Terrain: " + gc.terrain);
+        System.out.println(" Type: " + gc.type);
+        System.out.println(" Found It? " + gc.foundIt);
     }
 }

@@ -36,7 +36,7 @@ public class GeocachingScrapper {
     * User-Agent is passed because otherwise Java SDK sends "Java something"
     * groundspeak token is sent as a response to the auth / follow redirects has to be disabled otherwise I can't capture that cookie
     */
-    public Boolean Login() throws IOException
+    public Boolean login() throws IOException
     {
         // 01. get the login page and extract the relevant information from it
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
@@ -48,13 +48,13 @@ public class GeocachingScrapper {
  
         int status = httpConnection.getResponseCode(); // this causes the request to be done
 
-        StringBuffer pageContent = ReadHttpRequest(httpConnection);
-        String tokenValue = GetTokenFromHtmlBody(pageContent);
+        StringBuffer pageContent = readHttpRequest(httpConnection);
+        String tokenValue = getTokenFromHtmlBody(pageContent);
         _requestVerificationCookie = httpConnection.getHeaderField("Set-Cookie").split(";")[0];
 
-        System.out.println("status GET= " + status);
-        System.out.println("Token in HTML = " + tokenValue);
-        System.out.println("RV Cookie token = " + _requestVerificationCookie);
+        // System.out.println("status GET= " + status);
+        // System.out.println("Token in HTML = " + tokenValue);
+        // System.out.println("RV Cookie token = " + _requestVerificationCookie);
 
         httpConnection.disconnect();
 
@@ -76,7 +76,7 @@ public class GeocachingScrapper {
         // write to body of message request
         httpConnection.setDoOutput(true);
         DataOutputStream out = new DataOutputStream(httpConnection.getOutputStream());
-        out.writeBytes(GetParamsString(parameters));
+        out.writeBytes(getParamsString(parameters));
         out.flush();
         out.close();
         
@@ -84,9 +84,9 @@ public class GeocachingScrapper {
         status = httpConnection.getResponseCode();
 
         _groundspeakAuthCookie = httpConnection.getHeaderField("Set-Cookie");
-        System.out.println("Groundspeak cookie received after post: " + _groundspeakAuthCookie);
+        // System.out.println("Groundspeak cookie received after post: " + _groundspeakAuthCookie);
 
-        System.out.println("status POST= " + status);
+        // System.out.println("status POST= " + status);
         
         httpConnection.disconnect();
         
@@ -99,7 +99,7 @@ public class GeocachingScrapper {
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
         status = httpConnection.getResponseCode();
-        System.out.println("status GET= " + status);
+        // System.out.println("status GET= " + status);
 
         // PrintWriter pw = new PrintWriter("output.html", "UTF-8");
         // pw.write(ReadHttpRequest(httpConnection).toString());
@@ -110,10 +110,12 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public Geocache GetGeocacheDetails(String geocacheCode) throws IOException
+    public Geocache getGeocacheDetails(String geocacheCode) throws IOException
     {
+        System.out.println("Getting cache " + geocacheCode);
         Geocache gc = new Geocache();
 
+        // Obtain the HTML of the page, sending the authentication cookie
         URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + geocacheCode);
         HttpURLConnection httpConnection = (HttpURLConnection) geocachePage.openConnection();
 
@@ -124,23 +126,88 @@ public class GeocachingScrapper {
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
         int status = httpConnection.getResponseCode();
-        System.out.println("Status GetGeocacheDetails GET= " + status);
+        // System.out.println("Status GetGeocacheDetails GET= " + status);
 
-        String pageContents = ReadHttpRequest(httpConnection).toString();
+        String pageContents = readHttpRequest(httpConnection).toString();
 
-        // Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span> 
-        String regexLatLongPattern = "<span id=\"uxLatLon\">([NS] [0-9]+° [0-9]+.[0-9]+) ([EW] [0-9]+° [0-9]+.[0-9]+)</span>";
-        Pattern pattern = Pattern.compile(regexLatLongPattern);
+        // 1. Get cache name
+        String regexNamePattern = "<span id=\"ctl00_ContentBody_CacheName\">(.+?)</span>";
+        Pattern pattern = Pattern.compile(regexNamePattern);
         Matcher matcher = pattern.matcher(pageContents);
 
         if (matcher.find( )) {
+            gc.name = matcher.group(1);
+        } else {
+             gc.latitude = "NO MATCH";
+        }
+
+        // 2. Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span> 
+        String regexLatLongPattern = "<span id=\"uxLatLon\">([NS] [0-9]+° [0-9]+.[0-9]+) ([EW] [0-9]+° [0-9]+.[0-9]+)</span>";
+        pattern = Pattern.compile(regexLatLongPattern);
+        matcher = pattern.matcher(pageContents);
+
+        if (matcher.find()) {
             gc.latitude = matcher.group(1);
             gc.longitude = matcher.group(2);
-         } else {
+        } else {
              gc.latitude = "NO MATCH";
              gc.longitude = "NO MATCH";
-         }
+        }
 
+        // 3. Get Size
+        String regexSize = "/images/icons/container/(.+?).gif";
+        pattern = Pattern.compile(regexSize);
+        matcher = pattern.matcher(pageContents);
+
+        if (matcher.find()) {
+            gc.size = matcher.group(1);
+            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1, gc.size.length());
+        } else {
+             gc.size = "NO MATCH";
+        }
+
+        // 4. Get Difficulty and Terrain (both use the same regex, repeated instances)
+        String regexDifficulty = "<img src=\"/images/stars/stars[_0-9]+.gif\" alt=\"(.*?) out of 5\" />";
+
+        pattern = Pattern.compile(regexDifficulty);
+        matcher = pattern.matcher(pageContents);
+
+        if (matcher.find()) {
+            gc.difficulty = matcher.group(1);
+
+            if(matcher.find()) {
+                gc.terrain = matcher.group(1);
+            }
+            else {
+                gc.terrain = "NO MATCH";
+            }
+        } else {
+             gc.difficulty = "NO MATCH";
+             gc.terrain = "NO MATCH";
+        }
+
+        // 5. Get the cache type
+        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z]+).*?\" class=\"cacheImage\">";
+        pattern = Pattern.compile(regexType);
+        matcher = pattern.matcher(pageContents);
+
+        if (matcher.find()) {
+            gc.type = matcher.group(1);
+        } else {
+             gc.type = "NO MATCH";
+        }
+        
+        // 6. Have I found it?
+        String regexFound = "<strong id=\"ctl00_ContentBody_GeoNav_logText\">(Did Not Find|Found It!)</strong>";
+        pattern = Pattern.compile(regexFound);
+        matcher = pattern.matcher(pageContents);
+
+        if (matcher.find()) {
+            gc.foundIt = matcher.group(1).contains("Found It!") ? 2 : 1;
+        } else {
+             gc.foundIt = 0;
+        }
+        
         // PrintWriter pw = new PrintWriter(geocacheCode + ".html", "UTF-8");
         // pw.write(ReadHttpRequest(httpConnection).toString());
         // pw.close();
@@ -150,7 +217,7 @@ public class GeocachingScrapper {
         return gc;
     }
 
-    private String GetTokenFromHtmlBody(StringBuffer htmlPage)
+    private String getTokenFromHtmlBody(StringBuffer htmlPage)
     {
         // The relevant HTML snipet is:
         // <form action="/account/signin" id="SignupSignin" method="post"><input name="__RequestVerificationToken" type="hidden" value="3smnw46ATdX1c__TgiNxUAnPQ50MPeXaJet0DrUUEaww7ttLR_gIL3Z1G0dZimKQ3maWXTHNOPdOhNJP1cLDLNntWS01" /><input Length="5" id="ReturnUrl" name="ReturnUrl" type="hidden" value="/play" />            <div class="margin-center" style="max-width: 90%">
@@ -163,7 +230,7 @@ public class GeocachingScrapper {
     }
 
     // from: https://github.com/eugenp/tutorials/blob/master/core-java-modules/core-java-networking-2/src/main/java/com/baeldung/httprequest/ParameterStringBuilder.java
-    public static String GetParamsString(Map<String, String> params) throws UnsupportedEncodingException {
+    public static String getParamsString(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -177,7 +244,7 @@ public class GeocachingScrapper {
         return resultString.length() > 0 ? resultString.substring(0, resultString.length() - 1) : resultString;
     }
     
-    private StringBuffer ReadHttpRequest(HttpURLConnection httpConnection) throws IOException
+    private StringBuffer readHttpRequest(HttpURLConnection httpConnection) throws IOException
     {
         BufferedReader in = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
         
