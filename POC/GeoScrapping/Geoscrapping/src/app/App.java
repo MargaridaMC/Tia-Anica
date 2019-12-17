@@ -15,7 +15,11 @@ public class App {
         // System.setProperty("javax.net.ssl.trustStore","C:\\PROJECTOS\\Tia-Anica\\POC\\GeoScrapping\\Geoscrapping\\FiddlerKeystore");
         // System.setProperty("javax.net.ssl.trustStorePassword","banana");
 
-        GeocachingScrapper gs = new GeocachingScrapper("uuuu", "pppp");
+        GeocachingScrapper gs = new GeocachingScrapper("lokijota", "geojota#");
         System.out.println("Login result = " + gs.Login());
+
+        Geocache gc = gs.GetGeocacheDetails("GC6B4AK");
+        System.out.println("Latitude: " + gc.latitude);
+        System.out.println("Longitude: " + gc.longitude);
     }
 }

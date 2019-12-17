@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * GeocachingScrapper
@@ -20,6 +22,7 @@ public class GeocachingScrapper {
 
     private static final String GEOCACHING_URL = "https://www.geocaching.com";
     private static final String LOGIN_PAGE = "/account/signin";
+    private static final String GEOCACHE_PAGE = "/geocache/"; // eg, https://www.geocaching.com/geocache/GC6B4AK
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3980.0 Safari/537.36 Edg/80.0.355.1";
     private String _requestVerificationCookie;
     private String _groundspeakAuthCookie;
@@ -102,14 +105,49 @@ public class GeocachingScrapper {
         // pw.write(ReadHttpRequest(httpConnection).toString());
         // pw.close();
 
+        httpConnection.disconnect();
+
         return status == 200;
     }
 
-    public Geocache GetGeocacheDetails(String geocacheCode)
+    public Geocache GetGeocacheDetails(String geocacheCode) throws IOException
     {
-        // TO-DO
+        Geocache gc = new Geocache();
+
+        URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + geocacheCode);
+        HttpURLConnection httpConnection = (HttpURLConnection) geocachePage.openConnection();
+
+        httpConnection.setRequestMethod("GET");
+        httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+
+        // header - cookie
+        httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
+        httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+        int status = httpConnection.getResponseCode();
+        System.out.println("Status GetGeocacheDetails GET= " + status);
+
+        String pageContents = ReadHttpRequest(httpConnection).toString();
+
+        // Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span> 
+        String regexLatLongPattern = "<span id=\"uxLatLon\">([NS] [0-9]+° [0-9]+.[0-9]+) ([EW] [0-9]+° [0-9]+.[0-9]+)</span>";
+        Pattern pattern = Pattern.compile(regexLatLongPattern);
+        Matcher matcher = pattern.matcher(pageContents);
+
+        if (matcher.find( )) {
+            gc.latitude = matcher.group(1);
+            gc.longitude = matcher.group(2);
+         } else {
+             gc.latitude = "NO MATCH";
+             gc.longitude = "NO MATCH";
+         }
+
+        // PrintWriter pw = new PrintWriter(geocacheCode + ".html", "UTF-8");
+        // pw.write(ReadHttpRequest(httpConnection).toString());
+        // pw.close();
+
         // Refactor Login() as appropriate
-        return new Geocache();
+        httpConnection.disconnect();
+        return gc;
     }
 
     private String GetTokenFromHtmlBody(StringBuffer htmlPage)
