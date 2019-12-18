@@ -30,6 +30,7 @@ public class App {
         System.out.println(" Type: " + gc.type);
         System.out.println(" Found It? " + gc.foundIt);
         System.out.println(" Hint: " + gc.hint);
+        System.out.println(" Favourites: " + gc.favourites);
 
         long endTime = System.currentTimeMillis();
 

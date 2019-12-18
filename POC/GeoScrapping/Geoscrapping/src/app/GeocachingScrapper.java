@@ -219,6 +219,18 @@ public class GeocachingScrapper {
              gc.hint = "NO MATCH";
         }
 
+        // 8. Favourites
+        String regexFavourites = "<span class=\"favorite-value\">\\s*(.*?)\\s*</span>";
+        pattern = Pattern.compile(regexFavourites);
+        matcher = pattern.matcher(pageContents);
+
+        if (matcher.find()) {
+            gc.favourites = Integer.parseInt(matcher.group(1));
+        } else {
+             gc.favourites = 0;
+        }
+
+
         // PrintWriter pw = new PrintWriter(geocacheCode + ".html", "UTF-8");
         // pw.write(ReadHttpRequest(httpConnection).toString());
         // pw.close();
