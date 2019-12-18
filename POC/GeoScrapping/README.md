@@ -2,6 +2,18 @@
 
 Code to do screenscrapping of authenticated pages of geocaching.com .
 
+Currently getting:
+
+    public String name;
+    public String latitude;
+    public String longitude;
+    public String size; // ex: Other, Small
+    public String difficulty; // eg, 1.5
+    public String terrain; // eg, 2.5
+    public String type; // Normal, etc.
+
+    public int foundIt; // 0 - no, 1 - DNF, 2 - yes
+
 The following pages were very useful:
 
 To explain the atrociously bad HTTP classes:
