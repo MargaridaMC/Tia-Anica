@@ -18,7 +18,9 @@ public class App {
         GeocachingScrapper gs = new GeocachingScrapper("lokijota", "geojota#");
         System.out.println("Login result = " + gs.login());
 
-        Geocache gc = gs.getGeocacheDetails("GC6VZ9C"); // GC1RG9M"); // GC37M58");
+        long startTime = System.currentTimeMillis();
+
+        Geocache gc = gs.getGeocacheDetails("GC3YA65"); // GC1RG9M"); // GC6VZ9C"); // GC37M58");
         System.out.println(" Name: " + gc.name);
         System.out.println(" Latitude: " + gc.latitude);
         System.out.println(" Longitude: " + gc.longitude);
@@ -27,5 +29,12 @@ public class App {
         System.out.println(" Terrain: " + gc.terrain);
         System.out.println(" Type: " + gc.type);
         System.out.println(" Found It? " + gc.foundIt);
+        System.out.println(" Hint: " + gc.hint);
+
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("\nGet cache details took " + (endTime - startTime) + " ms");
+
+        // TODO: remove HTML tags from Hint in case it has them.
     }
 }

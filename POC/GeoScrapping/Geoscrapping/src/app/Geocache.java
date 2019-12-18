@@ -10,7 +10,9 @@ public class Geocache {
     public String difficulty;
     public String terrain;
     public String type; // Normal, etc.
-
     public int foundIt; // 0 - no, 1 - DNF, 2 - yes
+    public String hint;
+
+    public int favourites;
     public Date lastLogDate; // ou LastFound + LastLogType
 }
