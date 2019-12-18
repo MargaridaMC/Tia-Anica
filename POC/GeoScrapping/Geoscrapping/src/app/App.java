@@ -19,8 +19,10 @@ public class App {
         System.out.println("Login result = " + gs.login());
 
         long startTime = System.currentTimeMillis();
-
         Geocache gc = gs.getGeocacheDetails("GC3YA65"); // GC1RG9M"); // GC6VZ9C"); // GC37M58");
+        long endTime = System.currentTimeMillis();
+        System.out.println("\nGet cache details took " + (endTime - startTime) + " ms\n");
+
         System.out.println(" Name: " + gc.name);
         System.out.println(" Latitude: " + gc.latitude);
         System.out.println(" Longitude: " + gc.longitude);
@@ -33,9 +35,8 @@ public class App {
         System.out.println(" Favourites: " + gc.favourites);
         System.out.println(" Nb logs: " + gc.recentLogs.size());
 
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("\nGet cache details took " + (endTime - startTime) + " ms");
+        System.out.println(" Days since last log: "+ gc.CountDaysSinceLastFind());
+        System.out.println(" Average days between finds: "+ gc.AverageDaysBetweenFinds());
 
         // TODO: remove HTML tags from Hint in case it has them.
     }
