@@ -1,6 +1,6 @@
 package app;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 public class Geocache {
     public String name;
@@ -12,7 +12,6 @@ public class Geocache {
     public String type; // Normal, etc.
     public int foundIt; // 0 - no, 1 - DNF, 2 - yes
     public String hint;
-
     public int favourites;
-    public Date lastLogDate; // ou LastFound + LastLogType
+    public ArrayList<GeocacheLog> recentLogs = new ArrayList<GeocacheLog>();
 }

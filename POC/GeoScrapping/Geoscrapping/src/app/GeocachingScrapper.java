@@ -7,14 +7,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * GeocachingScrapper
- * Useful site: https://www.baeldung.com/java-http-request
+ * GeocachingScrapper Useful site: https://www.baeldung.com/java-http-request
  */
 public class GeocachingScrapper {
 
@@ -33,11 +34,11 @@ public class GeocachingScrapper {
     }
 
     /*
-    * User-Agent is passed because otherwise Java SDK sends "Java something"
-    * groundspeak token is sent as a response to the auth / follow redirects has to be disabled otherwise I can't capture that cookie
-    */
-    public Boolean login() throws IOException
-    {
+     * User-Agent is passed because otherwise Java SDK sends "Java something"
+     * groundspeak token is sent as a response to the auth / follow redirects has to
+     * be disabled otherwise I can't capture that cookie
+     */
+    public Boolean login() throws IOException {
         // 01. get the login page and extract the relevant information from it
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
@@ -45,7 +46,7 @@ public class GeocachingScrapper {
         httpConnection.setRequestMethod("GET");
 
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
- 
+
         int status = httpConnection.getResponseCode(); // this causes the request to be done
 
         StringBuffer pageContent = readHttpRequest(httpConnection);
@@ -72,24 +73,26 @@ public class GeocachingScrapper {
         parameters.put("ReturnUrl", "/play");
         parameters.put("UsernameOrEmail", _username);
         parameters.put("Password", _password);
-        
+
         // write to body of message request
         httpConnection.setDoOutput(true);
         DataOutputStream out = new DataOutputStream(httpConnection.getOutputStream());
         out.writeBytes(getParamsString(parameters));
         out.flush();
         out.close();
-        
-        httpConnection.setInstanceFollowRedirects(false); // or else we're redirected to ReturnUrl and loose the gspkauth cookie
+
+        httpConnection.setInstanceFollowRedirects(false); // or else we're redirected to ReturnUrl and loose the
+                                                          // gspkauth cookie
         status = httpConnection.getResponseCode();
 
         _groundspeakAuthCookie = httpConnection.getHeaderField("Set-Cookie");
-        // System.out.println("Groundspeak cookie received after post: " + _groundspeakAuthCookie);
+        // System.out.println("Groundspeak cookie received after post: " +
+        // _groundspeakAuthCookie);
 
         // System.out.println("status POST= " + status);
-        
+
         httpConnection.disconnect();
-        
+
         // 03 - validate by getting the profile page
         URL profilepage = new URL(GEOCACHING_URL + "/account/settings/profile");
         httpConnection = (HttpURLConnection) profilepage.openConnection();
@@ -110,7 +113,7 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public Geocache getGeocacheDetails(String geocacheCode) throws IOException
+    public Geocache getGeocacheDetails(String geocacheCode) throws IOException, ParseException
     {
         System.out.println("Getting cache " + geocacheCode);
         Geocache gc = new Geocache();
@@ -229,6 +232,29 @@ public class GeocachingScrapper {
         } else {
              gc.favourites = 0;
         }
+
+        // 9. Last logs and their dates
+        int logsParsed = 0, maxLogsToParse = 25;
+        String regexLogType = "\"LogType\":\"([a-zA-Z ]+)\"";
+        String regexLogDate = "\"Visited\":\"([a-zA-Z0-9\\.]+)\"";
+
+        pattern = Pattern.compile(regexLogType);
+        matcher = pattern.matcher(pageContents);
+        
+        Pattern patternDates = Pattern.compile(regexLogDate);
+        Matcher matcherDates = patternDates.matcher(pageContents);
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMM.yyyy"); // log dates are in format "05.Dec.2019"
+        while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
+        {
+            GeocacheLog log = new GeocacheLog();
+            log.logType = matcher.group(1);
+            log.logDate = dateFormatter.parse(matcherDates.group(1));
+
+            gc.recentLogs.add(log);
+            logsParsed++;
+        }
+        // else do nothing -- the collection will be non-null but empty
 
 
         // PrintWriter pw = new PrintWriter(geocacheCode + ".html", "UTF-8");

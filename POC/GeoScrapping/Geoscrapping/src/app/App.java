@@ -31,6 +31,7 @@ public class App {
         System.out.println(" Found It? " + gc.foundIt);
         System.out.println(" Hint: " + gc.hint);
         System.out.println(" Favourites: " + gc.favourites);
+        System.out.println(" Nb logs: " + gc.recentLogs.size());
 
         long endTime = System.currentTimeMillis();
 
