@@ -1,7 +1,7 @@
 [![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/build/status/Tia%20Anica-Android-CI)](https://dev.azure.com/joamart/Tia%20Anica/_build/latest?definitionId=5)
 
-# Tia Anica
-## Your friendly geocaching auntie
+# Tia Anica and Ti'Aires
+## Your friendly geocaching aunts
 *Simple Android app with on-the-go Geocaching tools*
 
 At the moment the included functionalities are:
