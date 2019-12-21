@@ -1,0 +1,14 @@
+What else can I do:
+
+a) class GeocachingTour
+
+Add cache(s)
+Remove cache(s)
+Count
+List (by distance to coordinates, bool putDoneAtTop = true)
+mark as done 
+add a note
+
+
+
+b) Parse a list of caches and get their data

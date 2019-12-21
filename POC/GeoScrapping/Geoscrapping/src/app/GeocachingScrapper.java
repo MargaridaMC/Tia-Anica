@@ -113,13 +113,17 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public Geocache getGeocacheDetails(String geocacheCode) throws IOException, ParseException
+    public Geocache getGeocacheDetails(String code) throws IOException, ParseException
     {
-        System.out.println("Getting cache " + geocacheCode);
+        code = code.toUpperCase();
+
+        System.out.println("Getting cache " + code);
         Geocache gc = new Geocache();
 
+        gc.code = code;
+
         // Obtain the HTML of the page, sending the authentication cookie
-        URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + geocacheCode);
+        URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
         HttpURLConnection httpConnection = (HttpURLConnection) geocachePage.openConnection();
 
         httpConnection.setRequestMethod("GET");

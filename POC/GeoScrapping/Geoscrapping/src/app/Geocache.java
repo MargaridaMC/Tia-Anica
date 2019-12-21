@@ -2,11 +2,11 @@ package app;
 
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Geocache {
+    public String code;
     public String name;
     public String latitude;
     public String longitude;
