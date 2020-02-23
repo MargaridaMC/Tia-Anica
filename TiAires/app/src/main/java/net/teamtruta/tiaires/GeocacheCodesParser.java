@@ -1,4 +1,4 @@
-package app;
+package net.teamtruta.tiaires;
 
 import java.util.List;
 

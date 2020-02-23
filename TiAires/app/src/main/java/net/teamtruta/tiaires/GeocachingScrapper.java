@@ -1,10 +1,11 @@
-package app;
+package net.teamtruta.tiaires;
+
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.text.ParseException;
@@ -28,9 +29,12 @@ public class GeocachingScrapper {
     private String _requestVerificationCookie;
     private String _groundspeakAuthCookie;
 
-    public GeocachingScrapper(String user, String password) {
+    GeocachingScrapper(String user, String password) {
         _username = user;
         _password = password;
+
+        Log.d("TAG", "Created GS object");
+
     }
 
     /*
@@ -38,8 +42,11 @@ public class GeocachingScrapper {
      * groundspeak token is sent as a response to the auth / follow redirects has to
      * be disabled otherwise I can't capture that cookie
      */
-    public Boolean login() throws IOException {
+    Boolean login() throws IOException {
         // 01. get the login page and extract the relevant information from it
+
+        Log.d("TAG", "Logging into GS");
+
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 
@@ -48,6 +55,8 @@ public class GeocachingScrapper {
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
 
         int status = httpConnection.getResponseCode(); // this causes the request to be done
+
+        Log.d("TAG", Integer.toString(status));
 
         StringBuffer pageContent = readHttpRequest(httpConnection);
         String tokenValue = getTokenFromHtmlBody(pageContent);
@@ -168,7 +177,7 @@ public class GeocachingScrapper {
 
         if (matcher.find()) {
             gc.size = matcher.group(1);
-            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1, gc.size.length());
+            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1);
         } else {
              gc.size = "NO MATCH";
         }
@@ -283,7 +292,7 @@ public class GeocachingScrapper {
     }
 
     // from: https://github.com/eugenp/tutorials/blob/master/core-java-modules/core-java-networking-2/src/main/java/com/baeldung/httprequest/ParameterStringBuilder.java
-    public static String getParamsString(Map<String, String> params) throws UnsupportedEncodingException {
+    private static String getParamsString(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {

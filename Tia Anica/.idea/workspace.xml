@@ -74,6 +74,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Bug fix on Coordinate Formula: it didn't allow for power function">
+      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/font/futura.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/font/futura_light.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/font/futura_light_italic.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -190,7 +196,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
+            <state relative-caret-position="423">
               <caret line="269" selection-start-line="269" selection-end-line="269" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -415,7 +421,7 @@
     <property name="device.picker.selection" value="acfde05b" />
     <property name="last.edited.regexp" value="N 48° 07.997 E 011° 34.380 " />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../TiAires" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -845,7 +851,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582299807446</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Bug fix on Coordinate Formula: it didn't allow for power function">
+      <created>1582457554843</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1582457554843</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TodoView">
@@ -859,6 +872,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7431694" visible="true" weight="0.18835099" />
       <window_info id="Structure" order="1" sideWeight="0.25" side_tool="true" weight="0.25340393" />
@@ -1411,7 +1425,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
+        <state relative-caret-position="423">
           <caret line="269" selection-start-line="269" selection-end-line="269" />
           <folding>
             <element signature="imports" expanded="true" />
