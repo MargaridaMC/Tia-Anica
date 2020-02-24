@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.text.ParseException;
@@ -88,6 +89,9 @@ public class GeocachingScrapper {
                                                           // gspkauth cookie
         status = httpConnection.getResponseCode();
 
+        String pageContents = readHttpRequest(httpConnection).toString();
+        if(pageContents.contains("Your password is incorrect")) return false;
+
         _groundspeakAuthCookie = httpConnection.getHeaderField("Set-Cookie");
         // System.out.println("Groundspeak cookie received after post: " +
         // _groundspeakAuthCookie);
@@ -104,6 +108,7 @@ public class GeocachingScrapper {
         // header - cookie
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+
         status = httpConnection.getResponseCode();
         // System.out.println("status GET= " + status);
 

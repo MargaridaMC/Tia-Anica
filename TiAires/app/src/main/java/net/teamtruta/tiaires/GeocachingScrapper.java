@@ -54,7 +54,7 @@ public class GeocachingScrapper {
 
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
 
-        int status = httpConnection.getResponseCode(); // this causes the request to be done
+        httpConnection.getResponseCode(); // this causes the request to be done
 
         StringBuffer pageContent = readHttpRequest(httpConnection);
         String tokenValue = getTokenFromHtmlBody(pageContent);
@@ -90,7 +90,7 @@ public class GeocachingScrapper {
 
         httpConnection.setInstanceFollowRedirects(false); // or else we're redirected to ReturnUrl and loose the
         // gspkauth cookie
-        status = httpConnection.getResponseCode();
+        httpConnection.getResponseCode();
 
         String pageContents = readHttpRequest(httpConnection).toString();
         if(pageContents.contains("Your password is incorrect")) return false;
@@ -111,8 +111,8 @@ public class GeocachingScrapper {
         // header - cookie
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
-        status = httpConnection.getResponseCode();
-        pageContents = readHttpRequest(httpConnection).toString();
+        int status = httpConnection.getResponseCode();
+        // pageContents = readHttpRequest(httpConnection).toString();
         // System.out.println("status GET= " + status);
 
         // PrintWriter pw = new PrintWriter("output.html", "UTF-8");

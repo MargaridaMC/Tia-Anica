@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/medium_padding"
+    android:paddingTop="@dimen/medium_padding">
+
+    <ImageView
+        android:id="@+id/tour_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/map" />
+
+    <TextView
+        android:id="@+id/tour_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space"
+        android:textAppearance="@style/MainText"
+        app:layout_constraintBottom_toBottomOf="@+id/tour_symbol"
+        app:layout_constraintStart_toEndOf="@+id/tour_symbol"
+        app:layout_constraintTop_toTopOf="@+id/tour_symbol"/>
+
+
+    <ProgressBar
+        android:id="@+id/tour_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:scaleY="7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tour_progress_text" />
+
+    <TextView
+        android:id="@+id/tour_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space"
+        android:background="#00000000"
+        android:text="0 + 5 / 5"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/tour_title"
+        app:layout_constraintEnd_toEndOf="@+id/tour_progress"
+        app:layout_constraintTop_toTopOf="@+id/tour_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

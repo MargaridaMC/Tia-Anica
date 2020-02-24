@@ -23,6 +23,11 @@
         <item name="android:textSize">@dimen/main_text_size</item>
     </style>
 
+    <style name="SmallText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">@dimen/small_text</item>
+    </style>
+
     <style name="EditText">
         <item name="colorControlNormal">@color/colorLight</item>
         <item name="colorControlActivated">@color/colorLight</item>

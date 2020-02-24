@@ -1,5 +1,5 @@
 package net.teamtruta.tiaires;
 
 public interface GeocachingLogin {
-    void geocachingLogin(boolean success, String authCookie);
+    void geocachingLogin(String username, boolean success, String authCookie);
 }

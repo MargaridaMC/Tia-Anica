@@ -10,8 +10,11 @@ public class GeocachingTour {
 
     private String _name;
     private ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
+    boolean isCurrentTour = false;
+    int _numFound = 0;
+    int _numDNF = 0;
 
-    public GeocachingTour(String name) {
+    GeocachingTour(String name) {
         if(name == null)
         {
             _name = new Date().toString();
@@ -22,12 +25,12 @@ public class GeocachingTour {
         }
     }
 
-    public int size()
+    int size()
     {
         return _tourCaches.size();
     }
 
-    private int addToTour(Geocache gc)
+    int addToTour(Geocache gc)
     {
         // TODO: se gc = null ou gc.code == null, estoirar
 
@@ -76,6 +79,23 @@ public class GeocachingTour {
 
         return null;
     }
+
+    public void makeCurrentTour(){
+        isCurrentTour = true;
+    }
+
+    public String getName(){
+        return _name;
+    }
+
+    int getNumFound(){
+        return _numFound;
+    }
+
+    int getNumDNF(){
+        return _numDNF;
+    }
+
 }
 
 // TODO: I need some unit tests on this

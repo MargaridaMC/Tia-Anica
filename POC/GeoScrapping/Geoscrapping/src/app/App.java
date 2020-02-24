@@ -43,16 +43,18 @@ public class App {
 
         //return;
 
-        System.out.println("** TEST GETTING CACHE DATA **");
+        //System.out.println("** TEST GETTING CACHE DATA **");
 
-        GeocachingScrapper gs = new GeocachingScrapper("gspkauth=o43gsoeqknyRROoCPZCHw0CO4LdrL7onbXRCNC0KceIK8PXB5OhIMoQrudQQWqLvVJyS8cKn9FBXkqm01pqQxJUzUqWnEGR7-7Gr5DwRtgpzE6PI00P9BVxaDL_nZwTwymL66qBJc2GBcop3BKw9YNk0C2F8mFlQXZDpfbZP0hA1; domain=.geocaching.com; expires=Wed, 25-Mar-2020 10:26:08 GMT; path=/; secure; HttpOnly");
-        System.out.println("Login result from Authentication Cookie = " + gs.login());
+        //GeocachingScrapper gs = new GeocachingScrapper("gspkauth=o43gsoeqknyRROoCPZCHw0CO4LdrL7onbXRCNC0KceIK8PXB5OhIMoQrudQQWqLvVJyS8cKn9FBXkqm01pqQxJUzUqWnEGR7-7Gr5DwRtgpzE6PI00P9BVxaDL_nZwTwymL66qBJc2GBcop3BKw9YNk0C2F8mFlQXZDpfbZP0hA1; domain=.geocaching.com; expires=Wed, 25-Mar-2020 10:26:08 GMT; path=/; secure; HttpOnly");
+        //System.out.println("Login result from Authentication Cookie = " + gs.login());
         
         // Should be false, since object doesn't have an authentication cookie yet
         // System.out.println("Login result from Authentication Cookie = " + gs.login());
 
+        GeocachingScrapper gs = new GeocachingScrapper();
         // Logging in with username and password retrieves an authentication cookie
         // System.out.println("Login result = " + gs.login("lokijota", "geojota#"));
+        System.out.println("Login result = " + gs.login("mgthesilversardine", "gre"));
 
         // Now we should be able to access the page using only the authentication cookie
         // System.out.println("Login result from Authentication Cookie = " + gs.login());

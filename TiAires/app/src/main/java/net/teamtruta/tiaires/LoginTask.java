@@ -49,7 +49,7 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
     protected void onPostExecute(Integer result){
 
         if(result == 1){
-            _delegate.geocachingLogin(_success, gs.getAuthenticationCookie());
+            _delegate.geocachingLogin(_username, _success, gs.getAuthenticationCookie());
         }
 
     }

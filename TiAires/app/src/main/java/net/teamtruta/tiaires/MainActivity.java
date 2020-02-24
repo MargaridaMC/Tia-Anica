@@ -10,13 +10,31 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
+
+    private RecyclerView tourListView;
+    private RecyclerView.Adapter tourListAdapter;
+
+    // For now our dataset is defined here
+    // TODO: dataset is to be read from internal storage
+
+    String username = "MgTheSilverSardine";
+    String password = "12142guida";
+
+    GeocachingScrapper scrapper = new GeocachingScrapper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +69,51 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+/*
+        // Login is done
+        try{
+            boolean loginSuccess = scrapper.login();
+        } catch (Exception e){
+            e.fillInStackTrace();
+            Log.d("TAG", "Couldn't Login");
+            return;
+        }
+*/
 
+        GeocachingTour tour0 = new GeocachingTour("My tour 0");
+        Geocache gc = new Geocache();
+        gc.code = "GC63TAD";
+        tour0._numFound = 1;
+        tour0.addToTour(gc);
+        tour0.isCurrentTour = true;
+
+        GeocachingTour tour1 = new GeocachingTour("My tour 1");
+        tour1.addToTour(gc);
+        gc = new Geocache();
+        gc.code = "GC269NB";
+        tour1.addToTour(gc);
+        gc = new Geocache();
+        gc.code = "GC2RK1V";
+        tour1.addToTour(gc);
+        tour1._numDNF = 1;
+        tour1._numFound = 1;
+
+        ArrayList<GeocachingTour> tourList = new ArrayList<>();
+        tourList.add(tour0);
+        tourList.add(tour1);
+
+        tourListView = findViewById(R.id.tour_list);
+        tourListView.setLayoutManager(new LinearLayoutManager(this));
+        tourListAdapter = new TourListAdapter(this, tourList, this);
+        tourListView.setAdapter(tourListAdapter);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
+        tourListView.addItemDecoration(dividerItemDecoration);
+
+        // Put username on toolbar
+        if(!username.equals("")){
+            getSupportActionBar().setTitle(username);
+        }
 
     }
 
@@ -77,5 +139,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(this, "You clicked on row number " + position, Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,7 +1,9 @@
 package net.teamtruta.tiaires;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,7 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 
 public class LoginActivity extends AppCompatActivity implements  GeocachingLogin{
@@ -41,6 +42,20 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
          */
+
+
+        // Set version
+        TextView version = findViewById(R.id.version);
+        String versionName = null;
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String versionString = "Version: " + versionName;
+        version.setText(versionString);
+
 
         final EditText passwordField = findViewById(R.id.password);
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -77,8 +92,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         if(mgr!=null) mgr.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
 
         // First check if we already have an authentication cookie in the shared preferences
-        Context context = this;//getActivity();
-        SharedPreferences sharedPref = context.getSharedPreferences(
+        SharedPreferences sharedPref = this.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
@@ -139,37 +153,59 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
 
     }
 
-    public void geocachingLogin(boolean success, String authCookie){
+    public void geocachingLogin(String username, boolean success, String authCookie){
 
         TextView failedLoginMessage = findViewById(R.id.failed_login_message);
 
         if(success){
             // Login successful!
 
-            Toast t = Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT);
+            Toast t = Toast.makeText(this, "Login Successful.", Toast.LENGTH_SHORT);
             t.show();
 
             failedLoginMessage.setVisibility(View.INVISIBLE);
 
             // Save authentication cookie in shared preferences
-            Context context = this;//getActivity();
-            SharedPreferences sharedPref = context.getSharedPreferences(
+            SharedPreferences sharedPref = this.getSharedPreferences(
                     getString(R.string.preference_file_key), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString(getString(R.string.authentication_cookie_key), authCookie);
+
+            if(!username.equals("")){
+                editor.putString("username", username);
+            }
+
             editor.apply();
 
             Log.d("TAG", "Saved authentication key to shared preferences");
+
+
+            // Open home page
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
 
         } else {
 
             failedLoginMessage.setVisibility(View.VISIBLE);
 
-            Toast t = Toast.makeText(this, "Login NOT Successful", Toast.LENGTH_SHORT);
+            Toast t = Toast.makeText(this, "Login NOT Successful.", Toast.LENGTH_SHORT);
             t.show();
 
         }
 
+
+    }
+
+    public void logout(View view){
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("username");
+        editor.remove(getString(R.string.authentication_cookie_key));
+        editor.apply();
+
+        Toast t = Toast.makeText(this, "Logout Successful.", Toast.LENGTH_SHORT);
+        t.show();
 
     }
 
