@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
 
-    private boolean success = false;
+    private boolean _success = false;
     private GeocachingLogin _delegate;
     private GeocachingScrapper gs;
 
@@ -31,10 +31,10 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
             Log.d("TAG", "Here we are in Async");
             // Login can be done either with username and password or with an authentication cookie
             if(_username != null && _password != null){
-                this.success = gs.login(_username, _password);
+                _success = gs.login(_username, _password);
             } else {
                 // Assume that login with username and password has already been done and we can use the Authentication Cookie to do the login
-                this.success = gs.login();
+               _success = gs.login();
             }
 
             return 1;
@@ -49,7 +49,7 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
     protected void onPostExecute(Integer result){
 
         if(result == 1){
-            _delegate.geocachingLogin(success, gs.getAuthenticationCookie());
+            _delegate.geocachingLogin(_success, gs.getAuthenticationCookie());
         }
 
     }

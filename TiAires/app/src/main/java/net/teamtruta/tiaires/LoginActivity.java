@@ -11,11 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 
 public class LoginActivity extends AppCompatActivity implements  GeocachingLogin{
 
@@ -36,6 +41,25 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
          */
+
+        final EditText passwordField = findViewById(R.id.password);
+        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        passwordField.setImeOptions(IME_ACTION_GO);
+        passwordField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+
+                if(event.getAction() == KeyEvent.ACTION_DOWN && actionId == EditorInfo.IME_ACTION_UNSPECIFIED){
+                    if(mgr!=null) mgr.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
+                    login(v);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
     }
 
 
@@ -52,24 +76,25 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if(mgr!=null) mgr.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
 
-        Log.d("TAG", "username: " + username);
-        Log.d("TAG", "pass: " + password);
-
         // First check if we already have an authentication cookie in the shared preferences
         Context context = this;//getActivity();
         SharedPreferences sharedPref = context.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
+        Log.d("TAG", "Cookie: " + authCookie);
 
-        if(! authCookie.equals("")){
-            login(authCookie);
-            return;
-        }
-
+        Log.d("TAG", "username: " + username);
+        Log.d("TAG", "pass: " + password);
 
         if(username.equals("") || password.equals("")){
             //One of the input fields is empty. Request filling up the fields
+
+            if(!authCookie.equals("")){
+                Log.d("TAG", authCookie);
+                login(authCookie);
+                return;
+            }
 
             TextView failedLoginText = findViewById(R.id.failed_login_message);
             failedLoginText.setVisibility(View.VISIBLE);
