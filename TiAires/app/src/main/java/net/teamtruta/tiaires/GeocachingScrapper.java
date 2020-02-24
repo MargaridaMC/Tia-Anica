@@ -2,6 +2,7 @@ package net.teamtruta.tiaires;
 
 import android.util.Log;
 
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,9 +33,11 @@ public class GeocachingScrapper {
     GeocachingScrapper() {
         //_username = user;
         //_password = password;
+    }
 
-        Log.d("TAG", "Created GS object");
-
+    // For saving and reading purposes
+    GeocachingScrapper(String AuthCookie) {
+        _groundspeakAuthCookie = AuthCookie;
     }
 
     /*
@@ -44,9 +47,6 @@ public class GeocachingScrapper {
      */
     Boolean login(String username, String password) throws IOException {
         // 01. get the login page and extract the relevant information from it
-
-        Log.d("TAG", "Logging into GS");
-
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 
@@ -55,8 +55,6 @@ public class GeocachingScrapper {
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
 
         int status = httpConnection.getResponseCode(); // this causes the request to be done
-
-        Log.d("TAG", Integer.toString(status));
 
         StringBuffer pageContent = readHttpRequest(httpConnection);
         String tokenValue = getTokenFromHtmlBody(pageContent);
@@ -91,7 +89,7 @@ public class GeocachingScrapper {
         out.close();
 
         httpConnection.setInstanceFollowRedirects(false); // or else we're redirected to ReturnUrl and loose the
-                                                          // gspkauth cookie
+        // gspkauth cookie
         status = httpConnection.getResponseCode();
 
         _groundspeakAuthCookie = httpConnection.getHeaderField("Set-Cookie");
@@ -111,6 +109,38 @@ public class GeocachingScrapper {
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
         status = httpConnection.getResponseCode();
+        // System.out.println("status GET= " + status);
+
+        // PrintWriter pw = new PrintWriter("output.html", "UTF-8");
+        // pw.write(ReadHttpRequest(httpConnection).toString());
+        // pw.close();
+
+        httpConnection.disconnect();
+
+        return status == 200;
+    }
+
+    Boolean login() throws IOException{
+        // Added my Mg
+        // Login using the Authentication Cookie (or rather, check that this authentication cookie is valid)
+
+        // Check that this object does have an Authetication Token
+        if (_groundspeakAuthCookie == null) return false;
+
+        URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
+        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+        httpConnection.setRequestMethod("POST");
+
+        // Copied from previous method
+        // 03 - validate by getting the profile page
+        URL profilepage = new URL(GEOCACHING_URL + "/account/settings/profile");
+        httpConnection = (HttpURLConnection) profilepage.openConnection();
+        httpConnection.setRequestMethod("GET");
+
+        // header - cookie
+        httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
+        httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+        int status = httpConnection.getResponseCode();
         // System.out.println("status GET= " + status);
 
         // PrintWriter pw = new PrintWriter("output.html", "UTF-8");
@@ -318,5 +348,9 @@ public class GeocachingScrapper {
 
         in.close();
         return content;
+    }
+
+    String getAuthenticationCookie(){
+        return _groundspeakAuthCookie;
     }
 }

@@ -32,6 +32,10 @@ public class GeocachingScrapper {
         //_password = password;
     }
 
+    public GeocachingScrapper(String AuthCookie){
+        _groundspeakAuthCookie = AuthCookie;
+    }
+
     /*
      * User-Agent is passed because otherwise Java SDK sends "Java something"
      * groundspeak token is sent as a response to the auth / follow redirects has to
@@ -140,6 +144,8 @@ public class GeocachingScrapper {
         // pw.close();
 
         httpConnection.disconnect();
+
+        System.out.println("AuthCookie: " + _groundspeakAuthCookie);
 
         return status == 200;
     }

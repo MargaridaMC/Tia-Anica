@@ -1,8 +1,7 @@
 package net.teamtruta.tiaires;
 
-import android.Manifest;
-import android.app.Dialog;
-import android.content.pm.PackageManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -10,8 +9,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.View;
@@ -19,10 +16,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity implements  GeocachingLogin{
 
@@ -62,6 +55,19 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         Log.d("TAG", "username: " + username);
         Log.d("TAG", "pass: " + password);
 
+        // First check if we already have an authentication cookie in the shared preferences
+        Context context = this;//getActivity();
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
+
+        if(! authCookie.equals("")){
+            login(authCookie);
+            return;
+        }
+
+
         if(username.equals("") || password.equals("")){
             //One of the input fields is empty. Request filling up the fields
 
@@ -76,24 +82,39 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
 
     }
 
-    private void login(String username, String password){
-        //Login to geocaching.com
+    private void login(String authCookie){
+        // Login to geocaching.com using authentication cookie
 
-        Log.d("TAG", "Trying to Login");
+        Log.d("TAG", "Trying to Login using authentication cookie");
 
         Toast t = Toast.makeText(this, "Trying to Login", Toast.LENGTH_SHORT);
         t.show();
 
-        GeocachingScrapper gs = new GeocachingScrapper(username, password);
+        GeocachingScrapper gs = new GeocachingScrapper(authCookie);
 
         // Run AsynTask to do login
-        LoginTask loginTask = new LoginTask();
-        loginTask.delegate = this;
+        LoginTask loginTask = new LoginTask(this);
         loginTask.execute(gs);
 
     }
 
-    public void geocachingLogin(boolean success){
+    private void login(String username, String password){
+        //Login to geocaching.com using username and password
+
+        Log.d("TAG", "Trying to Login using username and password");
+
+        Toast t = Toast.makeText(this, "Trying to Login", Toast.LENGTH_SHORT);
+        t.show();
+
+        GeocachingScrapper gs = new GeocachingScrapper();
+
+        // Run AsynTask to do login
+        LoginTask loginTask = new LoginTask(username, password,this);
+        loginTask.execute(gs);
+
+    }
+
+    public void geocachingLogin(boolean success, String authCookie){
 
         TextView failedLoginMessage = findViewById(R.id.failed_login_message);
 
@@ -104,6 +125,16 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
             t.show();
 
             failedLoginMessage.setVisibility(View.INVISIBLE);
+
+            // Save authentication cookie in shared preferences
+            Context context = this;//getActivity();
+            SharedPreferences sharedPref = context.getSharedPreferences(
+                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(getString(R.string.authentication_cookie_key), authCookie);
+            editor.apply();
+
+            Log.d("TAG", "Saved authentication key to shared preferences");
 
         } else {
 

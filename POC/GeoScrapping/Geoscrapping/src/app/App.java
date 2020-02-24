@@ -45,24 +45,25 @@ public class App {
 
         System.out.println("** TEST GETTING CACHE DATA **");
 
-        GeocachingScrapper gs = new GeocachingScrapper();
-
-        // Should be false, since object doesn't have an authentication cookie yet
+        GeocachingScrapper gs = new GeocachingScrapper("gspkauth=o43gsoeqknyRROoCPZCHw0CO4LdrL7onbXRCNC0KceIK8PXB5OhIMoQrudQQWqLvVJyS8cKn9FBXkqm01pqQxJUzUqWnEGR7-7Gr5DwRtgpzE6PI00P9BVxaDL_nZwTwymL66qBJc2GBcop3BKw9YNk0C2F8mFlQXZDpfbZP0hA1; domain=.geocaching.com; expires=Wed, 25-Mar-2020 10:26:08 GMT; path=/; secure; HttpOnly");
         System.out.println("Login result from Authentication Cookie = " + gs.login());
+        
+        // Should be false, since object doesn't have an authentication cookie yet
+        // System.out.println("Login result from Authentication Cookie = " + gs.login());
 
         // Logging in with username and password retrieves an authentication cookie
-        System.out.println("Login result = " + gs.login("lokijota", "geojota#"));
+        // System.out.println("Login result = " + gs.login("lokijota", "geojota#"));
 
         // Now we should be able to access the page using only the authentication cookie
-        System.out.println("Login result from Authentication Cookie = " + gs.login());
+        // System.out.println("Login result from Authentication Cookie = " + gs.login());
 
         // long startTime = System.currentTimeMillis();
-        Geocache gc = gs.getGeocacheDetails("GC3YA65"); // GC1RG9M"); // GC6VZ9C"); // GC37M58");
+        // Geocache gc = gs.getGeocacheDetails("GC3YA65"); // GC1RG9M"); // GC6VZ9C"); // GC37M58");
         // long endTime = System.currentTimeMillis();
         // System.out.println("\nGet cache details took " + (endTime - startTime) + " ms\n");
 
-        System.out.println(" Name: " + gc.name);
-        System.out.println(" Latitude: " + gc.latitude);
+        // System.out.println(" Name: " + gc.name);
+        // System.out.println(" Latitude: " + gc.latitude);
         // System.out.println(" Longitude: " + gc.longitude);
         // System.out.println(" Size: " + gc.size);
         // System.out.println(" Difficulty: " + gc.difficulty);
