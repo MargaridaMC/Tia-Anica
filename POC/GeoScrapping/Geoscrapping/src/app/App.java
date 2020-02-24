@@ -45,16 +45,24 @@ public class App {
 
         System.out.println("** TEST GETTING CACHE DATA **");
 
-        GeocachingScrapper gs = new GeocachingScrapper("lokijota", "geojota#");
-        System.out.println("Login result = " + gs.login());
+        GeocachingScrapper gs = new GeocachingScrapper();
+
+        // Should be false, since object doesn't have an authentication cookie yet
+        System.out.println("Login result from Authentication Cookie = " + gs.login());
+
+        // Logging in with username and password retrieves an authentication cookie
+        System.out.println("Login result = " + gs.login("lokijota", "geojota#"));
+
+        // Now we should be able to access the page using only the authentication cookie
+        System.out.println("Login result from Authentication Cookie = " + gs.login());
 
         // long startTime = System.currentTimeMillis();
-        // Geocache gc = gs.getGeocacheDetails("GC3YA65"); // GC1RG9M"); // GC6VZ9C"); // GC37M58");
+        Geocache gc = gs.getGeocacheDetails("GC3YA65"); // GC1RG9M"); // GC6VZ9C"); // GC37M58");
         // long endTime = System.currentTimeMillis();
         // System.out.println("\nGet cache details took " + (endTime - startTime) + " ms\n");
 
-        // System.out.println(" Name: " + gc.name);
-        // System.out.println(" Latitude: " + gc.latitude);
+        System.out.println(" Name: " + gc.name);
+        System.out.println(" Latitude: " + gc.latitude);
         // System.out.println(" Longitude: " + gc.longitude);
         // System.out.println(" Size: " + gc.size);
         // System.out.println(" Difficulty: " + gc.difficulty);

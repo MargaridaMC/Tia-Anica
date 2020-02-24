@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class GeocachingScrapper {
 
-    private String _username, _password;
+    //private String _username, _password;
 
     private static final String GEOCACHING_URL = "https://www.geocaching.com";
     private static final String LOGIN_PAGE = "/account/signin";
@@ -29,9 +29,9 @@ public class GeocachingScrapper {
     private String _requestVerificationCookie;
     private String _groundspeakAuthCookie;
 
-    GeocachingScrapper(String user, String password) {
-        _username = user;
-        _password = password;
+    GeocachingScrapper() {
+        //_username = user;
+        //_password = password;
 
         Log.d("TAG", "Created GS object");
 
@@ -42,7 +42,7 @@ public class GeocachingScrapper {
      * groundspeak token is sent as a response to the auth / follow redirects has to
      * be disabled otherwise I can't capture that cookie
      */
-    Boolean login() throws IOException {
+    Boolean login(String username, String password) throws IOException {
         // 01. get the login page and extract the relevant information from it
 
         Log.d("TAG", "Logging into GS");
@@ -80,8 +80,8 @@ public class GeocachingScrapper {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("__RequestVerificationToken", tokenValue);
         parameters.put("ReturnUrl", "/play");
-        parameters.put("UsernameOrEmail", _username);
-        parameters.put("Password", _password);
+        parameters.put("UsernameOrEmail", username);
+        parameters.put("Password", password);
 
         // write to body of message request
         httpConnection.setDoOutput(true);
