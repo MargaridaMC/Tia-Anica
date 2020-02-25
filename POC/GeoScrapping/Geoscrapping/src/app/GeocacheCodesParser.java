@@ -2,8 +2,6 @@ package app;
 
 import java.util.List;
 
-import org.omg.CORBA.portable.ApplicationException;
-
 /**
  * GeocachingTourParser
  */
