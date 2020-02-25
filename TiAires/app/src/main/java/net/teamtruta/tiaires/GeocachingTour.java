@@ -193,14 +193,7 @@ public class GeocachingTour {
             Object obj = jsonParser.parse(contents);
 
             JSONArray newCacheArray = (JSONArray) obj;
-            int size = newCacheArray.length();
-
-            for(int i = 0; i<size; i++){
-                JSONObject cacheObject = (JSONObject) newCacheArray.get(i);
-                Geocache gc = new Geocache();
-                gc.fromJSON(cacheObject);
-                newTour.addToTour(gc);
-            }
+            newTour.fromJSON(newCacheArray);
 
         } catch (Exception e) {
             e.printStackTrace();
