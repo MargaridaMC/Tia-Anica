@@ -112,7 +112,7 @@
         android:layout_marginBottom="@dimen/margin"
         android:text="TextView"
         android:textAlignment="viewStart"
-        android:textSize="@dimen/small_text"
+        android:textSize="@dimen/small_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

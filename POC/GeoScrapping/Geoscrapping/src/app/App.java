@@ -6,6 +6,10 @@ import org.json.simple.parser.JSONParser;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -29,13 +33,6 @@ public class App {
 
         System.out.println(cacheArray.toJSONString());
 
-        GeocachingTour newTour = new GeocachingTour("New tour");
-        newTour.fromJSON(cacheArray);
-
-        System.out.println(newTour.size());
-
-
-/*
         //Write JSON file
         try (FileWriter file = new FileWriter("cacheTour.json")) {
  
@@ -48,22 +45,29 @@ public class App {
 
 
         JSONParser jsonParser = new JSONParser();
-         
+        GeocachingTour newTour = new GeocachingTour("New tour");
+
         try (FileReader reader = new FileReader("cacheTour.json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
  
-            JSONArray employeeList = (JSONArray) obj;
-            System.out.println("From file:");
-            System.out.println(employeeList);
-            
+            JSONArray newCacheArray = (JSONArray) obj;
+            int size = newCacheArray.size();
+
+            for(int i = 0; i<size; i++){
+                JSONObject cacheObject = (JSONObject) newCacheArray.get(i);
+                Geocache gc = new Geocache();
+                gc.fromJSON(cacheObject);
+                newTour.addToTour(gc);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } 
 
-        GeocachingTour newTour = new GeocachingTour("New tour");
-        */
+        
+        System.out.println(newTour.toJSON());
 
         // System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
 

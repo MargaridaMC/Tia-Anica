@@ -16,7 +16,9 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="colorControlNormal">@color/colorLight</item>
+    </style>
 
     <style name="MainText" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/colorPrimaryDark</item>
@@ -25,7 +27,7 @@
 
     <style name="SmallText" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/grey</item>
-        <item name="android:textSize">@dimen/small_text</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
     <style name="EditText">
@@ -40,5 +42,11 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/main_text_size</item>
+    </style>
+
+    <style name="AppBarTextStyle">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/colorLight</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 </resources>

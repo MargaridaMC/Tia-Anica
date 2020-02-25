@@ -71,9 +71,10 @@ public class Geocache {
         difficulty = cacheJSON.get("difficulty").toString();
         terrain = cacheJSON.get("terrain").toString();
         type = cacheJSON.get("type").toString();
-        foundIt = (int) cacheJSON.get("foundIt");
+        String foundItString = cacheJSON.get("foundIt").toString();
+        foundIt = Integer.parseInt(foundItString);
         hint = cacheJSON.get("hint").toString();
-        favourites = (int) cacheJSON.get("favourites");
-        recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs");
+        favourites = Integer.parseInt(cacheJSON.get("favourites").toString());
+        recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
     }
 }
