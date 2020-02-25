@@ -1,22 +1,13 @@
 package net.teamtruta.tiaires;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 /**
  * GeocachingTour
  */
@@ -113,29 +104,54 @@ public class GeocachingTour {
         return _numDNF;
     }
 
-    private JSONArray toJSON(){
+    public JSONObject toJSON(){
 
-        JSONArray tourCacheJSON = new JSONArray();
+        JSONObject tourCacheJSON = new JSONObject();
+        try {
+            tourCacheJSON.put("tourName", _name);
+            tourCacheJSON.put("numDNF", _numDNF);
+            tourCacheJSON.put("numFound", _numFound);
+            tourCacheJSON.put("size", size());
 
-        for(GeocacheInTour gc : _tourCaches){
+            int i = 0;
 
-            JSONObject cacheJSON = gc.geocache.toJSON();
-            tourCacheJSON.put(cacheJSON);
+            for(GeocacheInTour gc : _tourCaches){
+                JSONObject cacheJSON = gc.geocache.toJSON();
+                tourCacheJSON.put(Integer.toString(i), cacheJSON); //gc.geocache.name
+                i++;
+            }
 
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
+
 
         return tourCacheJSON;
 
     }
 
-    void fromJSON(JSONArray tourCacheJSON){
+    void fromJSON(JSONObject tourCacheJSON){
 
-        int size = tourCacheJSON.length();
+        int size = tourCacheJSON.length() - 4;
+
+        try {
+            _name = tourCacheJSON.getString("tourName");
+            _numDNF = tourCacheJSON.getInt("numDNF");
+            _numFound = tourCacheJSON.getInt("numFound");
+            size = tourCacheJSON.getInt("size");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         for(int i = 0; i < size; i++){
 
             JSONObject cacheJSON = null;
             try {
-                cacheJSON =  tourCacheJSON.getJSONObject(i);
+                cacheJSON = tourCacheJSON.getJSONObject(Integer.toString(i));
+                System.out.println(i);
+                System.out.println(cacheJSON);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -150,10 +166,10 @@ public class GeocachingTour {
 
     void toFile(File rootPath){
 
-        JSONArray tourJSON = this.toJSON();
+        JSONObject tourJSON = this.toJSON();
 
         // Save tour to file
-        String filename = _name + "_tour.json";
+        String filename = _name + ".json";
         File file = new File(rootPath, filename);
 
         FileOutputStream stream = null;
@@ -168,10 +184,9 @@ public class GeocachingTour {
 
     static GeocachingTour fromFile(File rootPath, String tourName){
 
-        JSONParser jsonParser = new JSONParser();
         GeocachingTour newTour = new GeocachingTour(tourName);
 
-        String filename = tourName + "_tour.json";
+        String filename = tourName + ".json";
         File file = new File(rootPath, filename);
 
         int length = (int) file.length();
@@ -190,11 +205,8 @@ public class GeocachingTour {
         String contents = new String(bytes);
 
         try {
-            //Read JSON file
-            Object obj = jsonParser.parse(contents);
-
-            JSONArray newCacheArray = (JSONArray) obj;
-            newTour.fromJSON(newCacheArray);
+            JSONObject newCacheTour = new JSONObject(contents);
+            newTour.fromJSON(newCacheTour);
 
         } catch (Exception e) {
             e.printStackTrace();

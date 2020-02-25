@@ -1,7 +1,7 @@
 package app;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import java.io.FileWriter;
 import java.io.File;
@@ -31,7 +31,24 @@ public class App {
         tour.addToTour(gc1);
         tour.addToTour(gc2);
 
-        System.out.println("Recent Logs: " + gc1.toJSON());
+        // Test to and from JSON
+        /*
+        JSONObject tourJSON = tour.toJSON();
+
+        System.out.println(tourJSON.toString());
+
+        GeocachingTour tourFromJSON = new GeocachingTour("New Tour");
+        tourFromJSON.fromJSON(tourJSON);
+
+        System.out.println("From JSON: " + tourFromJSON.toString());
+        */ 
+
+        // Test to and from file
+        File file = new File(".");
+        tour.toFile(file);
+
+        GeocachingTour newTour = GeocachingTour.fromFile(file, name);
+        System.out.println(newTour.toJSON());
 
         // System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
 

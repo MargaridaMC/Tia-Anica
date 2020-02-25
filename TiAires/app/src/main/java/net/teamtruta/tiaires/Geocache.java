@@ -58,7 +58,7 @@ public class Geocache {
             cacheJSON.put("foundIt", foundIt);
             cacheJSON.put("hint", hint);
             cacheJSON.put("favourites", favourites);
-            cacheJSON.put("recentLogs", recentLogs);
+            //cacheJSON.put("recentLogs", recentLogs);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -68,19 +68,20 @@ public class Geocache {
 
     void fromJSON(JSONObject cacheJSON){
 
+        // TODO: check for null
+
         try {
-            code = cacheJSON.get("code").toString();
-            name = cacheJSON.get("name").toString();
-            latitude = cacheJSON.get("latitude").toString();
-            longitude = cacheJSON.get("longitude").toString();
-            size = cacheJSON.get("size").toString();
-            difficulty = cacheJSON.get("difficulty").toString();
-            terrain = cacheJSON.get("terrain").toString();
-            type = cacheJSON.get("type").toString();
-            String foundItString = cacheJSON.get("foundIt").toString();
-            foundIt = Integer.parseInt(foundItString);
-            hint = cacheJSON.get("hint").toString();
-            favourites = Integer.parseInt(cacheJSON.get("favourites").toString());
+            code = cacheJSON.getString("code");
+            name = cacheJSON.getString("name");
+            latitude = cacheJSON.getString("latitude");
+            longitude = cacheJSON.getString("longitude");
+            size = cacheJSON.getString("size");
+            difficulty = cacheJSON.getString("difficulty");
+            terrain = cacheJSON.getString("terrain");
+            type = cacheJSON.getString("type");
+            foundIt = cacheJSON.getInt("foundIt");
+            hint = cacheJSON.getString("hint");
+            favourites = cacheJSON.getInt("favourites");
             //recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
         } catch (JSONException e) {
             e.printStackTrace();

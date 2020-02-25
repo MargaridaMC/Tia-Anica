@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.w3c.dom.Text;
@@ -33,17 +34,15 @@ public class TourActivity extends AppCompatActivity {
         //GeocachingTour tour = GeocachingTour.fromFile(rootPath, tourName);
 
         String tourName = "Limpar Schwabing";
-        GeocachingTour tour = new GeocachingTour(tourName);
-        String tourString = "[{\"difficulty\":\"4\",\"code\":\"GC3AK7Y\",\"recentLogs\":[],\"size\":\"Micro\",\"foundIt\":2,\"favourites\":67,\"latitude\":\"N 48° 08.556\",\"hint\":\"NO MATCH\",\"name\":\"Letzter Halt Sophienplatz?!\",\"type\":\"Mystery\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.872\"},{\"difficulty\":\"2\",\"code\":\"GC3443H\",\"recentLogs\":[],\"size\":\"Small\",\"foundIt\":2,\"favourites\":12,\"latitude\":\"N 48° 08.751\",\"hint\":\"NO MATCH\",\"name\":\"U-Bahn2 #12 (U2): Königsplatz\",\"type\":\"Traditional\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.810\"}]";
-
-        JSONArray newCacheArray = null;
+        String tourString = "{\"0\":{\"difficulty\":\"2\",\"code\":\"GC3AK7Y\",\"size\":\"Micro\",\"foundIt\":2,\"favourites\":67,\"latitude\":\"N 48° 08.556\",\"hint\":\"NO MATCH\",\"name\":\"Letzter Halt Sophienplatz?!\",\"type\":\"Mystery\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.872\"},\"1\":{\"difficulty\":\"2\",\"code\":\"GC3443H\",\"size\":\"Small\",\"foundIt\":2,\"favourites\":12,\"latitude\":\"N 48° 08.751\",\"hint\":\"NO MATCH\",\"name\":\"U-Bahn2 #12 (U2): Königsplatz\",\"type\":\"Traditional\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.810\"},\"size\":2,\"numFound\":0,\"tourName\":\"Limpar Schwabing\",\"numDNF\":0}";
+        JSONObject newCacheList = null;
         try {
-            newCacheArray = new JSONArray(tourString);
+            newCacheList = new JSONObject(tourString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        tour.fromJSON(newCacheArray);
+        GeocachingTour tour = new GeocachingTour("");
+        tour.fromJSON(newCacheList);
 
         // Set title
         TextView title = findViewById(R.id.tour_name);
