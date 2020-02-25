@@ -98,12 +98,10 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         tourList.add(tour0);
         tourList.add(tour1);
 
-        RecyclerView tourListView;
-        RecyclerView.Adapter tourListAdapter;
 
-        tourListView = findViewById(R.id.tour_list);
+        RecyclerView tourListView = findViewById(R.id.tour_list);
         tourListView.setLayoutManager(new LinearLayoutManager(this));
-        tourListAdapter = new TourListAdapter(this, tourList, this);
+        RecyclerView.Adapter tourListAdapter = new TourListAdapter(this, tourList, this);
         tourListView.setAdapter(tourListAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);

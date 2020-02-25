@@ -25,7 +25,7 @@
         <item name="android:textSize">@dimen/main_text_size</item>
     </style>
 
-    <style name="SmallText" parent="TextAppearance.AppCompat">
+    <style name="SmallText">
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>

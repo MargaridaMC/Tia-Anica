@@ -10,13 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -53,12 +47,16 @@ public class TourCreationActivity extends AppCompatActivity {
             geocacheCodesList.add(m.group());
         }
 
+        File path = this.getFilesDir();
         GeocachingTour tour = createTour(tourName, geocacheCodesList);
-        saveTourToFile(tourName, tour);
+        tour.toFile(path);
 
         // TODO: open tour page
-        Toast t = Toast.makeText(this, "List Created.", Toast.LENGTH_SHORT);
-        t.show();
+        // Toast t = Toast.makeText(this, "List Created.", Toast.LENGTH_SHORT);
+        // t.show();
+        Intent intent = new Intent(this, TourActivity.class);
+        intent.putExtra("tourName", tourName);
+        startActivity(intent);
     }
 
     GeocachingTour createTour(String tourName, List<String> geocacheCodesList){
@@ -87,50 +85,6 @@ public class TourCreationActivity extends AppCompatActivity {
         return tour;
     }
 
-    void saveTourToFile(String tourName, GeocachingTour tour){
 
-        JSONArray tourJSON = tour.toJSON();
-
-        // Save tour to file
-        String filename = tourName + "_tour.json";
-        try (FileWriter file = new FileWriter(filename)) {
-
-            file.write(tourJSON.toString());
-            file.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    GeocachingTour tourFromFile(String tourName){
-
-        JSONParser jsonParser = new JSONParser();
-        GeocachingTour newTour = new GeocachingTour(tourName);
-
-        String filename = tourName + "_tour.json";
-        try (FileReader reader = new FileReader(filename))
-        {
-            //Read JSON file
-            Object obj = jsonParser.parse(reader);
-
-            JSONArray newCacheArray = (JSONArray) obj;
-            int size = newCacheArray.length();
-
-            for(int i = 0; i<size; i++){
-                JSONObject cacheObject = (JSONObject) newCacheArray.get(i);
-                Geocache gc = new Geocache();
-                gc.fromJSON(cacheObject);
-                newTour.addToTour(gc);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return newTour;
-
-    }
 
 }
