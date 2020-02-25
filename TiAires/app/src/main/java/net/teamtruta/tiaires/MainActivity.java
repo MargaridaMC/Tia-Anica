@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         super.onCreate(savedInstanceState);
 
         AppCenter.start(getApplication(), "67d245e6-d08d-4d74-8616-9af6c3471a09", Analytics.class, Crashes.class);
-        
+
         // If Login is required, set contentView to the login page
         // Else go to home page
         Context context = this;//getActivity();
