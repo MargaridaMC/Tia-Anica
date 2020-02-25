@@ -23,6 +23,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
+
 public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
 
     private RecyclerView tourListView;
@@ -40,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        AppCenter.start(getApplication(), "67d245e6-d08d-4d74-8616-9af6c3471a09", Analytics.class, Crashes.class);
+        
         // If Login is required, set contentView to the login page
         // Else go to home page
         Context context = this;//getActivity();
