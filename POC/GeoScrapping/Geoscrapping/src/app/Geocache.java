@@ -5,21 +5,22 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 public class Geocache {
-    public String code;
+    String code;
     public String name;
-    public String latitude;
-    public String longitude;
-    public String size;
-    public String difficulty;
-    public String terrain;
-    public String type; // Normal, etc.
-    public int foundIt; // 0 - no, 1 - DNF, 2 - yes
-    public String hint;
-    public int favourites;
-    public ArrayList<GeocacheLog> recentLogs = new ArrayList<GeocacheLog>();
+    String latitude;
+    String longitude;
+    String size;
+    String difficulty;
+    String terrain;
+    String type; // Normal, etc.
+    int foundIt; // 0 - no, 1 - DNF, 2 - yes
+    String hint;
+    int favourites;
+    ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
 
     public long CountDaysSinceLastFind() {
         if (recentLogs == null || recentLogs.size() == 0)
@@ -41,40 +42,49 @@ public class Geocache {
         return daysDifference / (double) recentLogs.size();
     }
 
-    public JSONObject toJSON(){
+    JSONObject toJSON(){
 
         JSONObject cacheJSON = new JSONObject();
 
-        cacheJSON.put("code", code);
-        cacheJSON.put("name", name);
-        cacheJSON.put("latitude", latitude);
-        cacheJSON.put("longitude", longitude);
-        cacheJSON.put("size", size);
-        cacheJSON.put("difficulty", difficulty);
-        cacheJSON.put("terrain", terrain);
-        cacheJSON.put("type", type);
-        cacheJSON.put("foundIt", foundIt);
-        cacheJSON.put("hint", hint);
-        cacheJSON.put("favourites", favourites);
-        cacheJSON.put("recentLogs", recentLogs);
+        try {
+            cacheJSON.put("code", code);
+            cacheJSON.put("name", name);
+            cacheJSON.put("latitude", latitude);
+            cacheJSON.put("longitude", longitude);
+            cacheJSON.put("size", size);
+            cacheJSON.put("difficulty", difficulty);
+            cacheJSON.put("terrain", terrain);
+            cacheJSON.put("type", type);
+            cacheJSON.put("foundIt", foundIt);
+            cacheJSON.put("hint", hint);
+            cacheJSON.put("favourites", favourites);
+            cacheJSON.put("recentLogs", recentLogs);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return cacheJSON;
     }
 
-    public void fromJSON(JSONObject cacheJSON){
+    void fromJSON(JSONObject cacheJSON){
 
-        code = cacheJSON.get("code").toString();
-        name = cacheJSON.get("name").toString();
-        latitude = cacheJSON.get("latitude").toString();
-        longitude = cacheJSON.get("longitude").toString();
-        size = cacheJSON.get("size").toString();
-        difficulty = cacheJSON.get("difficulty").toString();
-        terrain = cacheJSON.get("terrain").toString();
-        type = cacheJSON.get("type").toString();
-        String foundItString = cacheJSON.get("foundIt").toString();
-        foundIt = Integer.parseInt(foundItString);
-        hint = cacheJSON.get("hint").toString();
-        favourites = Integer.parseInt(cacheJSON.get("favourites").toString());
-        recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
+        try {
+            code = cacheJSON.get("code").toString();
+            name = cacheJSON.get("name").toString();
+            latitude = cacheJSON.get("latitude").toString();
+            longitude = cacheJSON.get("longitude").toString();
+            size = cacheJSON.get("size").toString();
+            difficulty = cacheJSON.get("difficulty").toString();
+            terrain = cacheJSON.get("terrain").toString();
+            type = cacheJSON.get("type").toString();
+            String foundItString = cacheJSON.get("foundIt").toString();
+            foundIt = Integer.parseInt(foundItString);
+            hint = cacheJSON.get("hint").toString();
+            favourites = Integer.parseInt(cacheJSON.get("favourites").toString());
+            //recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -31,9 +31,7 @@ public class App {
         tour.addToTour(gc1);
         tour.addToTour(gc2);
 
-        System.out.println("Size: " + tour.size());
-        
-        System.out.println(gc1.recentLogs);
+        System.out.println("Recent Logs: " + gc1.toJSON());
 
         // System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
 

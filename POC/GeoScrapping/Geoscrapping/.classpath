@@ -4,4 +4,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="output" path="bin"/>
 	<classpathentry exported="true" kind="lib" path="../lib/json-simple.jar"/>
+	<classpathentry exported="true" kind="lib" path="../lib/json.jar"/>
 </classpath>

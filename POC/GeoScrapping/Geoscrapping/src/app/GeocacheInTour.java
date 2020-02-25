@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * GeocacheInTour
  */
-public class TourGeocache 
+public class GeocacheInTour 
 {
     public Geocache geocache;
 
@@ -15,7 +15,7 @@ public class TourGeocache
     private Boolean _needsMaintenance = false;
     private Date _foundDate;
 
-    public TourGeocache(Geocache gc) {
+    public GeocacheInTour(Geocache gc) {
         geocache = gc;
     }
 
