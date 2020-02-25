@@ -35,9 +35,6 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
     // For now our dataset is defined here
     // TODO: dataset is to be read from internal storage
 
-    String username = "MgTheSilverSardine";
-    String password = "12142guida";
-
     GeocachingScrapper scrapper = new GeocachingScrapper();
 
     @Override
@@ -117,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         tourListView.addItemDecoration(dividerItemDecoration);
 
         // Put username on toolbar
+        String username = sharedPref.getString("username", "");
         if(!username.equals("")){
             getSupportActionBar().setTitle(username);
         }

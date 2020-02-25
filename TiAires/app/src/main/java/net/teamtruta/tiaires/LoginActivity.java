@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +30,8 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         /*FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +75,22 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
                 return handled;
             }
         });
+
+        // Check if we already have a authentication cookie
+        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
+        if(authCookie.equals("")){
+            Button logoutButton = findViewById(R.id.logout_button);
+            logoutButton.setVisibility(View.INVISIBLE);
+        }
+
+        // Fill in username field if we already have that info
+        String username = sharedPreferences.getString("username", "");
+        if(!username.equals("")){
+            EditText usernameField = findViewById(R.id.username);
+            usernameField.setText(username);
+            passwordField.setText("aaaaaaaaaaaa");
+        }
 
     }
 
@@ -179,6 +196,9 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
 
             Log.d("TAG", "Saved authentication key to shared preferences");
 
+            // Allow user to logout from now on
+            Button logoutButton = findViewById(R.id.logout_button);
+            logoutButton.setVisibility(View.VISIBLE);
 
             // Open home page
             Intent intent = new Intent(this, MainActivity.class);
@@ -206,6 +226,14 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
 
         Toast t = Toast.makeText(this, "Logout Successful.", Toast.LENGTH_SHORT);
         t.show();
+
+        Button logoutButton = findViewById(R.id.logout_button);
+        logoutButton.setVisibility(View.INVISIBLE);
+
+        EditText usernameField = findViewById(R.id.username);
+        EditText passwordField = findViewById(R.id.password);
+        usernameField.setText("");
+        passwordField.setText("");
 
     }
 
