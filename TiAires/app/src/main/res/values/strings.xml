@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TiAires</string>
-    <string name="action_settings">Login</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="title_activity_login">Login</string>
     <string name="failed_login_message">Login failed, please check input and try again.</string>
     <string name="login_button">Login to geocaching.com</string>

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -28,14 +27,6 @@ import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 
 public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
-
-    private RecyclerView tourListView;
-    private RecyclerView.Adapter tourListAdapter;
-
-    // For now our dataset is defined here
-    // TODO: dataset is to be read from internal storage
-
-    GeocachingScrapper scrapper = new GeocachingScrapper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +55,10 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                Intent intent = new Intent(view.getContext(), TourCreationActivity.class);
+                startActivity(intent);
+
             }
         });
 
@@ -105,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         tourList.add(tour0);
         tourList.add(tour1);
 
+        RecyclerView tourListView;
+        RecyclerView.Adapter tourListAdapter;
+
         tourListView = findViewById(R.id.tour_list);
         tourListView.setLayoutManager(new LinearLayoutManager(this));
         tourListAdapter = new TourListAdapter(this, tourList, this);
@@ -136,10 +132,22 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_login) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             //return true;
+        }
+
+        if (id == R.id.action_logout) {
+
+            SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("username");
+            editor.remove(getString(R.string.authentication_cookie_key));
+            editor.apply();
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
