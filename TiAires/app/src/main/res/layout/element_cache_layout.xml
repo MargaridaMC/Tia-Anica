@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/small_padding"
-    android:paddingTop="@dimen/small_padding">
+    android:paddingBottom="@dimen/medium_padding"
+    android:paddingTop="@dimen/medium_padding">
 
 
     <ImageView
@@ -11,7 +11,6 @@
         android:layout_width="36sp"
         android:layout_height="36sp"
         android:layout_marginStart="@dimen/margin"
-        android:layout_marginTop="@dimen/margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cache_icon_type_traditional" />
@@ -23,9 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space"
-        android:layout_marginTop="@dimen/margin"
         android:layout_marginEnd="@dimen/margin"
-        android:text="Steinlaus u. Geologie_LMU#33"
         android:textAppearance="@style/MainText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cache_symbol"
@@ -37,7 +34,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/SmallText"
-        android:text="GC1ZK9T - D/T: 1.5/1.5 - Size: small"
         app:layout_constraintTop_toBottomOf="@+id/cache_title"
         app:layout_constraintEnd_toEndOf="@+id/cache_title"
         app:layout_constraintStart_toStartOf="@+id/cache_title"
@@ -48,7 +44,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/SmallText"
-        android:text="DNFs in last 10 logs: 7 including last 2"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_0"
         app:layout_constraintEnd_toEndOf="@+id/cache_info_0"
         app:layout_constraintStart_toStartOf="@+id/cache_info_0"
@@ -59,7 +54,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/SmallText"
-        android:text="Found: 23/Mar -       25 - {color:#990000}No Hint{color}"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
         app:layout_constraintEnd_toEndOf="@+id/cache_info_1"
         app:layout_constraintStart_toStartOf="@+id/cache_info_1"

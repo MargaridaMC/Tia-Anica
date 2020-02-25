@@ -4,6 +4,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import java.io.FileWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +19,8 @@ public class App {
         
         System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING AND WRITING TO FILE ****"); 
 
-        GeocachingTour tour = new GeocachingTour("Limpar Schwabing");
+        String name = "Limpar Schwabing";
+        GeocachingTour tour = new GeocachingTour(name);
         GeocachingScrapper scrapper = new GeocachingScrapper();
         boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
         System.out.println("Login = " + loginSuccess);
@@ -28,46 +32,8 @@ public class App {
         tour.addToTour(gc2);
 
         System.out.println("Size: " + tour.size());
-
-        JSONArray cacheArray = tour.toJSON();
-
-        System.out.println(cacheArray.toJSONString());
-
-        //Write JSON file
-        try (FileWriter file = new FileWriter("cacheTour.json")) {
- 
-            file.write(cacheArray.toJSONString());
-            file.flush();
- 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        JSONParser jsonParser = new JSONParser();
-        GeocachingTour newTour = new GeocachingTour("New tour");
-
-        try (FileReader reader = new FileReader("cacheTour.json"))
-        {
-            //Read JSON file
-            Object obj = jsonParser.parse(reader);
- 
-            JSONArray newCacheArray = (JSONArray) obj;
-            int size = newCacheArray.size();
-
-            for(int i = 0; i<size; i++){
-                JSONObject cacheObject = (JSONObject) newCacheArray.get(i);
-                Geocache gc = new Geocache();
-                gc.fromJSON(cacheObject);
-                newTour.addToTour(gc);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-
         
-        System.out.println(newTour.toJSON());
+        System.out.println(gc1.recentLogs);
 
         // System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
 

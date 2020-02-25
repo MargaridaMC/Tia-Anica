@@ -41,6 +41,10 @@ public class GeocacheInTour
     {
         return _needsMaintenance;
     }
+
+    public Date getFoundDate(){
+        return _foundDate;
+    }
 }
 
 // TODO: Java suporta valores default nos parâmetros? se sim qual a sintaxe?

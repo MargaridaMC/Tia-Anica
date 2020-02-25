@@ -45,7 +45,7 @@
     </style>
 
     <style name="AppBarTextStyle">
-        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@color/colorLight</item>
         <item name="android:textSize">@dimen/large_text_size</item>
     </style>

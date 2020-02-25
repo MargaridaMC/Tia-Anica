@@ -42,7 +42,7 @@ public class Geocache {
         return daysDifference / (double) recentLogs.size();
     }
 
-    public JSONObject toJSON(){
+    JSONObject toJSON(){
 
         JSONObject cacheJSON = new JSONObject();
 
@@ -66,7 +66,7 @@ public class Geocache {
         return cacheJSON;
     }
 
-    public void fromJSON(JSONObject cacheJSON){
+    void fromJSON(JSONObject cacheJSON){
 
         try {
             code = cacheJSON.get("code").toString();
@@ -81,7 +81,7 @@ public class Geocache {
             foundIt = Integer.parseInt(foundItString);
             hint = cacheJSON.get("hint").toString();
             favourites = Integer.parseInt(cacheJSON.get("favourites").toString());
-            recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
+            //recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
         } catch (JSONException e) {
             e.printStackTrace();
         }

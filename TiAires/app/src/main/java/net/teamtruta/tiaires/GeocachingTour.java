@@ -1,5 +1,7 @@
 package net.teamtruta.tiaires;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,7 +94,7 @@ public class GeocachingTour {
         return null;
     }
 
-    public GeocacheInTour getCacheInTour(int position){
+    GeocacheInTour getCacheInTour(int position){
         return _tourCaches.get(position);
     }
     public void makeCurrentTour(){
@@ -111,14 +113,13 @@ public class GeocachingTour {
         return _numDNF;
     }
 
-    public JSONArray toJSON(){
+    private JSONArray toJSON(){
 
         JSONArray tourCacheJSON = new JSONArray();
 
         for(GeocacheInTour gc : _tourCaches){
 
-            JSONObject cacheJSON = new JSONObject();
-            cacheJSON = gc.geocache.toJSON();
+            JSONObject cacheJSON = gc.geocache.toJSON();
             tourCacheJSON.put(cacheJSON);
 
         }
@@ -127,14 +128,14 @@ public class GeocachingTour {
 
     }
 
-    public void fromJSON(JSONArray tourCacheJSON){
+    void fromJSON(JSONArray tourCacheJSON){
 
         int size = tourCacheJSON.length();
         for(int i = 0; i < size; i++){
 
             JSONObject cacheJSON = null;
             try {
-                cacheJSON = (JSONObject) tourCacheJSON.get(i);
+                cacheJSON =  tourCacheJSON.getJSONObject(i);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -177,7 +178,7 @@ public class GeocachingTour {
 
         byte[] bytes = new byte[length];
 
-        FileInputStream in = null;
+        FileInputStream in;
         try {
             in = new FileInputStream(file);
             in.read(bytes);
