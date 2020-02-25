@@ -1,4 +1,5 @@
-[![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/build/status/Tia%20Anica-Android-CI)](https://dev.azure.com/joamart/Tia%20Anica/_build/latest?definitionId=5)
+Tia Anica: [![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/build/status/Tia%20Anica-Android-CI)](https://dev.azure.com/joamart/Tia%20Anica/_build/latest?definitionId=5)
+Ti'Aires: [![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/build/status/TiAires%20CICD%20pipeline%20for%20Android)](https://dev.azure.com/joamart/Tia%20Anica/_build/latest?definitionId=6)
 
 # Tia Anica and Ti'Aires
 ## Your friendly geocaching aunts

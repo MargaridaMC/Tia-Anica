@@ -3,6 +3,9 @@ package app;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+
 /**
  * GeocachingTour
  */
@@ -76,7 +79,40 @@ public class GeocachingTour {
 
         return null;
     }
+
+    public JSONArray toJSON(){
+
+        JSONArray tourCacheJSON = new JSONArray();
+
+        for(TourGeocache gc : _tourCaches){
+
+            JSONObject cacheJSON = new JSONObject();
+            cacheJSON = gc.geocache.toJSON();
+            tourCacheJSON.add(cacheJSON);
+
+        }
+
+        return tourCacheJSON;
+    
+    }
+
+    public void fromJSON(JSONArray tourCacheJSON){
+
+        int size = tourCacheJSON.size();
+        for(int i = 0; i < size; i++){
+
+            JSONObject cacheJSON = (JSONObject) tourCacheJSON.get(i);
+            Geocache gc = new Geocache();
+            gc.fromJSON(cacheJSON);
+
+            _tourCaches.add(new TourGeocache(gc));
+
+        }
+
+    }
 }
+
+
 
 // TODO: I need some unit tests on this
 // TODO: add support to say a given trackable was found or left

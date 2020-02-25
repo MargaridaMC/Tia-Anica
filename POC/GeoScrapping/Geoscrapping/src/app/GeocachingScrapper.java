@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class GeocachingScrapper {
 
-    private String _username, _password;
+    //private String _username, _password;
 
     private static final String GEOCACHING_URL = "https://www.geocaching.com";
     private static final String LOGIN_PAGE = "/account/signin";
@@ -28,9 +28,13 @@ public class GeocachingScrapper {
     private String _requestVerificationCookie;
     private String _groundspeakAuthCookie;
 
-    public GeocachingScrapper(String user, String password) {
-        _username = user;
-        _password = password;
+    public GeocachingScrapper() {
+        //_username = user;
+        //_password = password;
+    }
+
+    public GeocachingScrapper(String AuthCookie){
+        _groundspeakAuthCookie = AuthCookie;
     }
 
     /*
@@ -38,7 +42,7 @@ public class GeocachingScrapper {
      * groundspeak token is sent as a response to the auth / follow redirects has to
      * be disabled otherwise I can't capture that cookie
      */
-    public Boolean login() throws IOException {
+    public Boolean login(String username, String password) throws IOException {
         // 01. get the login page and extract the relevant information from it
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
@@ -71,8 +75,8 @@ public class GeocachingScrapper {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("__RequestVerificationToken", tokenValue);
         parameters.put("ReturnUrl", "/play");
-        parameters.put("UsernameOrEmail", _username);
-        parameters.put("Password", _password);
+        parameters.put("UsernameOrEmail", username);
+        parameters.put("Password", password);
 
         // write to body of message request
         httpConnection.setDoOutput(true);
@@ -84,6 +88,9 @@ public class GeocachingScrapper {
         httpConnection.setInstanceFollowRedirects(false); // or else we're redirected to ReturnUrl and loose the
                                                           // gspkauth cookie
         status = httpConnection.getResponseCode();
+
+        String pageContents = readHttpRequest(httpConnection).toString();
+        if(pageContents.contains("Your password is incorrect")) return false;
 
         _groundspeakAuthCookie = httpConnection.getHeaderField("Set-Cookie");
         // System.out.println("Groundspeak cookie received after post: " +
@@ -101,6 +108,7 @@ public class GeocachingScrapper {
         // header - cookie
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+
         status = httpConnection.getResponseCode();
         // System.out.println("status GET= " + status);
 
@@ -109,6 +117,40 @@ public class GeocachingScrapper {
         // pw.close();
 
         httpConnection.disconnect();
+
+        return status == 200;
+    }
+
+    public Boolean login() throws IOException{
+        // Added my Mg
+        // Login using the Authentication Cookie (or rather, check that this authentication cookie is valid)
+
+        // Check that this object does have an Authetication Token
+        if (_groundspeakAuthCookie == null) return false;
+
+        URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
+        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+        httpConnection.setRequestMethod("POST");
+
+        // Copied from previous method
+        // 03 - validate by getting the profile page
+        URL profilepage = new URL(GEOCACHING_URL + "/account/settings/profile");
+        httpConnection = (HttpURLConnection) profilepage.openConnection();
+        httpConnection.setRequestMethod("GET");
+
+        // header - cookie
+        httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
+        httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+        int status = httpConnection.getResponseCode();
+        // System.out.println("status GET= " + status);
+
+        // PrintWriter pw = new PrintWriter("output.html", "UTF-8");
+        // pw.write(ReadHttpRequest(httpConnection).toString());
+        // pw.close();
+
+        httpConnection.disconnect();
+
+        System.out.println("AuthCookie: " + _groundspeakAuthCookie);
 
         return status == 200;
     }

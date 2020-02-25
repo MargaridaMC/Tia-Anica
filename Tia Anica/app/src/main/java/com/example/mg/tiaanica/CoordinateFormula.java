@@ -257,7 +257,7 @@ class CoordinateFormula {
         }
 
         // Look for sections within parenthesis
-        Pattern sectionPattern = Pattern.compile("(\\([0-9+\\-/*\\s]+\\))");
+        Pattern sectionPattern = Pattern.compile("(\\([0-9+\\-/*\\^\\s]+\\))");
         Matcher sectionMatcher = sectionPattern.matcher(lat);
 
         while (sectionMatcher.find()) {
@@ -275,7 +275,7 @@ class CoordinateFormula {
         }
 
         // Check if there are still sections with operation signs (+, -, /, *)
-        Pattern operationPattern = Pattern.compile("([\\d]+\\s*([+\\-/*]+\\s*[\\s\\d]+)+)");
+        Pattern operationPattern = Pattern.compile("([\\d]+\\s*([+\\-/*\\^]+\\s*[\\s\\d]+)+)");
         Matcher operationMatcher = operationPattern.matcher(lat);
         while(operationMatcher.find()) {
             String group = operationMatcher.group(0);

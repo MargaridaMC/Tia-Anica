@@ -5,6 +5,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.simple.JSONObject;
+
 public class Geocache {
     public String code;
     public String name;
@@ -37,5 +39,42 @@ public class Geocache {
         new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
         return daysDifference / (double) recentLogs.size();
+    }
+
+    public JSONObject toJSON(){
+
+        JSONObject cacheJSON = new JSONObject();
+
+        cacheJSON.put("code", code);
+        cacheJSON.put("name", name);
+        cacheJSON.put("latitude", latitude);
+        cacheJSON.put("longitude", longitude);
+        cacheJSON.put("size", size);
+        cacheJSON.put("difficulty", difficulty);
+        cacheJSON.put("terrain", terrain);
+        cacheJSON.put("type", type);
+        cacheJSON.put("foundIt", foundIt);
+        cacheJSON.put("hint", hint);
+        cacheJSON.put("favourites", favourites);
+        cacheJSON.put("recentLogs", recentLogs);
+
+        return cacheJSON;
+    }
+
+    public void fromJSON(JSONObject cacheJSON){
+
+        code = cacheJSON.get("code").toString();
+        name = cacheJSON.get("name").toString();
+        latitude = cacheJSON.get("latitude").toString();
+        longitude = cacheJSON.get("longitude").toString();
+        size = cacheJSON.get("size").toString();
+        difficulty = cacheJSON.get("difficulty").toString();
+        terrain = cacheJSON.get("terrain").toString();
+        type = cacheJSON.get("type").toString();
+        String foundItString = cacheJSON.get("foundIt").toString();
+        foundIt = Integer.parseInt(foundItString);
+        hint = cacheJSON.get("hint").toString();
+        favourites = Integer.parseInt(cacheJSON.get("favourites").toString());
+        recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
     }
 }
