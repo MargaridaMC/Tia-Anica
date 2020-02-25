@@ -1,10 +1,74 @@
 package app;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
+        
+        System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING AND WRITING TO FILE ****"); 
 
-        System.out.println("** TEST OTHER CLASSES **");
+        GeocachingTour tour = new GeocachingTour("Limpar Schwabing");
+        GeocachingScrapper scrapper = new GeocachingScrapper();
+        boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
+        System.out.println("Login = " + loginSuccess);
+
+        Geocache gc1 = scrapper.getGeocacheDetails("GC3AK7Y");
+        Geocache gc2 = scrapper.getGeocacheDetails("GC3443H");
+
+        tour.addToTour(gc1);
+        tour.addToTour(gc2);
+
+        System.out.println("Size: " + tour.size());
+
+        JSONArray cacheArray = tour.toJSON();
+
+        System.out.println(cacheArray.toJSONString());
+
+        GeocachingTour newTour = new GeocachingTour("New tour");
+        newTour.fromJSON(cacheArray);
+
+        System.out.println(newTour.size());
+
+
+/*
+        //Write JSON file
+        try (FileWriter file = new FileWriter("cacheTour.json")) {
+ 
+            file.write(cacheArray.toJSONString());
+            file.flush();
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        JSONParser jsonParser = new JSONParser();
+         
+        try (FileReader reader = new FileReader("cacheTour.json"))
+        {
+            //Read JSON file
+            Object obj = jsonParser.parse(reader);
+ 
+            JSONArray employeeList = (JSONArray) obj;
+            System.out.println("From file:");
+            System.out.println(employeeList);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+
+        GeocachingTour newTour = new GeocachingTour("New tour");
+        */
+
+        // System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
+
+        // System.out.println("** TEST OTHER CLASSES **");
+        
         /*
         GeocachingTour tour = new GeocachingTour("Limpar Schwabing");
 
@@ -25,8 +89,10 @@ public class App {
 
         tour.removeFromTour("gc2");
         System.out.println("gc está na tour?" + tour.getCacheInTour("gc2") != null ? true : false);
-        //#region Uncomment to enable Fiddler    
         */
+
+        //#region Uncomment to enable Fiddler    
+        
         /*
         // System.setProperty("http.proxyHost", "127.0.0.1");
         // System.setProperty("https.proxyHost", "127.0.0.1");
@@ -51,10 +117,10 @@ public class App {
         // Should be false, since object doesn't have an authentication cookie yet
         // System.out.println("Login result from Authentication Cookie = " + gs.login());
 
-        GeocachingScrapper gs = new GeocachingScrapper();
+        // GeocachingScrapper gs = new GeocachingScrapper();
         // Logging in with username and password retrieves an authentication cookie
         // System.out.println("Login result = " + gs.login("lokijota", "geojota#"));
-        System.out.println("Login result = " + gs.login("mgthesilversardine", "gre"));
+        // System.out.println("Login result = " + gs.login("mgthesilversardine", "gre"));
 
         // Now we should be able to access the page using only the authentication cookie
         // System.out.println("Login result from Authentication Cookie = " + gs.login());

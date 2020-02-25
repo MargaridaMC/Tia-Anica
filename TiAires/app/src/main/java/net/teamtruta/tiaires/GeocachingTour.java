@@ -1,7 +1,13 @@
 package net.teamtruta.tiaires;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  * GeocachingTour
@@ -96,6 +102,41 @@ public class GeocachingTour {
         return _numDNF;
     }
 
+    public JSONArray toJSON(){
+
+        JSONArray tourCacheJSON = new JSONArray();
+
+        for(GeocacheInTour gc : _tourCaches){
+
+            JSONObject cacheJSON = new JSONObject();
+            cacheJSON = gc.geocache.toJSON();
+            tourCacheJSON.put(cacheJSON);
+
+        }
+
+        return tourCacheJSON;
+
+    }
+
+    public void fromJSON(JSONArray tourCacheJSON){
+
+        int size = tourCacheJSON.length();
+        for(int i = 0; i < size; i++){
+
+            JSONObject cacheJSON = null;
+            try {
+                cacheJSON = (JSONObject) tourCacheJSON.get(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Geocache gc = new Geocache();
+            gc.fromJSON(cacheJSON);
+
+            _tourCaches.add(new GeocacheInTour(gc));
+
+        }
+
+    }
 }
 
 // TODO: I need some unit tests on this

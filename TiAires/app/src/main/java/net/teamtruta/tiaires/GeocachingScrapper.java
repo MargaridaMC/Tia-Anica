@@ -1,8 +1,5 @@
 package net.teamtruta.tiaires;
 
-import android.util.Log;
-
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
