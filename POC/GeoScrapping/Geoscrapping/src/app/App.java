@@ -19,24 +19,24 @@ public class App {
         
         // Test reading and writting tour list to file
         
-        GeocachingTour tour0 = new GeocachingTour("My tour 0");
-        Geocache gc = new Geocache();
-        gc.code = "GC63TAD";
-        tour0._numFound = 1;
-        tour0.addToTour(gc);
-        tour0.isCurrentTour = true;
+        GeocachingTour tour = new GeocachingTour("My tour");
+        GeocachingScrapper scrapper = new GeocachingScrapper();
+        boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
+        System.out.println("Login = " + loginSuccess);
 
-        GeocachingTour tour1 = new GeocachingTour("My tour 1");
-        tour1.addToTour(gc);
-        gc = new Geocache();
-        gc.code = "GC269NB";
-        tour1.addToTour(gc);
-        gc = new Geocache();
-        gc.code = "GC2RK1V";
-        tour1.addToTour(gc);
-        tour1._numDNF = 1;
-        tour1._numFound = 1;
+        Geocache gc1 = scrapper.getGeocacheDetails("GC3AK7Y");
+        Geocache gc2 = scrapper.getGeocacheDetails("GC3443H");
 
+        tour.addToTour(gc1);
+        tour.addToTour(gc2);
+
+        JSONObject tourJSON = tour.toJSON();
+        System.out.println(tourJSON);
+
+        GeocachingTour newTour = GeocachingTour.fromJSON(tourJSON);
+        System.out.println(newTour.getName());
+
+        /*
         String allTours = tour0.getMetaDataJSON().toString() + ";" + tour1.getMetaDataJSON().toString();
         System.out.print(allTours);
 
@@ -82,7 +82,7 @@ public class App {
         String newTourString = ";" + tour0.getMetaDataJSON().toString();
         os.write(newTourString.getBytes(), 0, newTourString.length());
         os.close();
-
+*/
         /*
         System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING AND WRITING TO FILE ****"); 
         String name = "Limpar Schwabing";

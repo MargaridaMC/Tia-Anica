@@ -66,26 +66,29 @@ public class Geocache {
         return cacheJSON;
     }
 
-    void fromJSON(JSONObject cacheJSON){
+    static Geocache fromJSON(JSONObject cacheJSON){
 
         // TODO: check for null
+        Geocache cache = new Geocache();
 
         try {
-            code = cacheJSON.getString("code");
-            name = cacheJSON.getString("name");
-            latitude = cacheJSON.getString("latitude");
-            longitude = cacheJSON.getString("longitude");
-            size = cacheJSON.getString("size");
-            difficulty = cacheJSON.getString("difficulty");
-            terrain = cacheJSON.getString("terrain");
-            type = cacheJSON.getString("type");
-            foundIt = cacheJSON.getInt("foundIt");
-            hint = cacheJSON.getString("hint");
-            favourites = cacheJSON.getInt("favourites");
+            cache.code = cacheJSON.getString("code");
+            cache.name = cacheJSON.getString("name");
+            cache.latitude = cacheJSON.getString("latitude");
+            cache.longitude = cacheJSON.getString("longitude");
+            cache.size = cacheJSON.getString("size");
+            cache.difficulty = cacheJSON.getString("difficulty");
+            cache.terrain = cacheJSON.getString("terrain");
+            cache.type = cacheJSON.getString("type");
+            cache.foundIt = cacheJSON.getInt("foundIt");
+            cache.hint = cacheJSON.getString("hint");
+            cache.favourites = cacheJSON.getInt("favourites");
             //recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    
+        return cache;
 
     }
 }

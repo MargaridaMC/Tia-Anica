@@ -2,6 +2,9 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import javax.crypto.spec.GCMParameterSpec;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -117,7 +120,7 @@ public class GeocachingTour {
         int i = 0;
 
         for(GeocacheInTour gc : _tourCaches){
-            JSONObject cacheJSON = gc.geocache.toJSON();
+            JSONObject cacheJSON = gc.toJSON();
             tourCacheJSON.put(Integer.toString(i), cacheJSON); //gc.geocache.name
             i++;
         }
@@ -126,16 +129,18 @@ public class GeocachingTour {
 
     }
 
-    void fromJSON(JSONObject tourCacheJSON){
+    static GeocachingTour fromJSON(JSONObject tourCacheJSON){
+
+        GeocachingTour tour = new GeocachingTour("");
 
         int size = tourCacheJSON.length();
 
-        this._name = tourCacheJSON.getString("tourName");
-        this._numDNF = tourCacheJSON.getInt("numDNF");
-        this._numFound = tourCacheJSON.getInt("numFound");
-        this._size = tourCacheJSON.getInt("size");
+        tour._name = tourCacheJSON.getString("tourName");
+        tour._numDNF = tourCacheJSON.getInt("numDNF");
+        tour._numFound = tourCacheJSON.getInt("numFound");
+        tour._size = tourCacheJSON.getInt("size");
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < tour._size; i++){
 
             JSONObject cacheJSON = null;
             try {
@@ -145,12 +150,12 @@ public class GeocachingTour {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Geocache gc = new Geocache();
-            gc.fromJSON(cacheJSON);
-
-            _tourCaches.add(new GeocacheInTour(gc));
+            GeocacheInTour gc = GeocacheInTour.fromJSON(cacheJSON);
+            tour._tourCaches.add(gc);
 
         }
+
+        return tour;
 
     }
 
