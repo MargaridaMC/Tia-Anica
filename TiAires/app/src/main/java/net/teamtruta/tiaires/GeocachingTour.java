@@ -234,6 +234,13 @@ public class GeocachingTour {
 
     }
 
+    public static boolean deleteTourFile(File rootPath, String tourName){
+
+        String filename = tourName + ".json";
+        File file = new File(rootPath, filename);
+
+        return file.delete();
+    }
 
     JSONObject getMetaDataJSON(){
 

@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
             setContentView(R.layout.activity_main);
 
-            ArrayList<GeocachingTour> tourList = readFile(allToursFile);
+            ArrayList<GeocachingTour> tourList = net.teamtruta.tiaires.tourList.fromFile(allToursFile);
 
             tourListView = findViewById(R.id.tour_list);
             tourListView.setLayoutManager(new LinearLayoutManager(this));

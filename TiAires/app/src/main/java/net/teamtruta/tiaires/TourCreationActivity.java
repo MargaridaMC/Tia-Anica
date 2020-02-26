@@ -29,7 +29,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         setContentView(R.layout.activity_tour_creation);
 
         Intent intent = getIntent();
-        String tourName = intent.getStringExtra("tourName");
+        final String tourName = intent.getStringExtra("tourName");
         boolean edit = intent.getBooleanExtra("edit", false);
 
         if(edit && !tourName.equals("")){
@@ -47,7 +47,20 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
             List<String> allCodes = tour.getTourCacheCodes();
             EditText geocacheCodesView = findViewById(R.id.geocache_codes);
-            geocacheCodesView.setText(allCodes.toString().substring(1, -1));
+            String allCodesString = allCodes.toString();
+            geocacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
+
+            // Back button should lead back to Tour Activity
+            Button backButton = findViewById(R.id.back_button);
+            final Context context = this;
+            backButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, TourActivity.class);
+                    intent.putExtra("tourName", tourName);
+                    startActivity(intent);
+                }
+            });
 
         }
 
@@ -103,12 +116,11 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // Append entry to tour list file
         File allToursFile = new File(rootPath, getString(R.string.all_tours_filename));
         String newTourString = ";" + tour.getMetaDataJSON().toString();
-        FileOutputStream os;
 
         if(allToursFile.exists()){
             // If the file already exists just append a new entry to it
             try {
-                os = new FileOutputStream(allToursFile, true);
+                FileOutputStream os = new FileOutputStream(allToursFile, true);
                 os.write(newTourString.getBytes(), 0, newTourString.length());
                 os.close();
             } catch (IOException e) {
@@ -117,13 +129,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
         } else {
             // Else create a tour list file
-            try {
-                os = new FileOutputStream(allToursFile);
-                os.write(newTourString.getBytes());
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            tourList.toFile(newTourString, allToursFile);
         }
 
         Intent intent = new Intent(this, TourActivity.class);
