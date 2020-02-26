@@ -19,6 +19,7 @@ public class GeocachingTour {
     boolean isCurrentTour = false;
     int _numFound = 0;
     int _numDNF = 0;
+    int _size = 0;
 
     GeocachingTour(String name) {
         if(name == null)
@@ -108,9 +109,9 @@ public class GeocachingTour {
     public JSONObject toJSON(){
 
         JSONObject tourCacheJSON = new JSONObject();
-        tourCacheJSON.put("tourName", _name);
-        tourCacheJSON.put("numDNF", _numDNF);
-        tourCacheJSON.put("numFound", _numFound);
+        tourCacheJSON.put("tourName", this._name);
+        tourCacheJSON.put("numDNF", this._numDNF);
+        tourCacheJSON.put("numFound",this._numFound);
         tourCacheJSON.put("size", size());
 
         int i = 0;
@@ -129,10 +130,10 @@ public class GeocachingTour {
 
         int size = tourCacheJSON.length();
 
-        _name = tourCacheJSON.getString("tourName");
-        _numDNF = tourCacheJSON.getInt("numDNF");
-        _numFound = tourCacheJSON.getInt("numFound");
-        size = tourCacheJSON.getInt("size");
+        this._name = tourCacheJSON.getString("tourName");
+        this._numDNF = tourCacheJSON.getInt("numDNF");
+        this._numFound = tourCacheJSON.getInt("numFound");
+        this._size = tourCacheJSON.getInt("size");
 
         for(int i = 0; i < size; i++){
 
@@ -203,6 +204,26 @@ public class GeocachingTour {
 
         return newTour;
 
+    }
+
+    JSONObject getMetaDataJSON(){
+
+        JSONObject metaData = new JSONObject();
+
+        metaData.put("tourName", this._name);
+        metaData.put("numDNF", this._numDNF);
+        metaData.put("numFound", this._numFound);
+        metaData.put("size", this._size);
+        
+        return metaData;
+    }
+
+    void fromMetaDataJSON(JSONObject metaData){
+
+        this._name = metaData.getString("tourName");
+        this._numDNF = metaData.getInt("numDNF");
+        this._numFound = metaData.getInt("numFound");
+        this._size = metaData.getInt("size");
     }
 }
 

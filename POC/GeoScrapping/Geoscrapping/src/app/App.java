@@ -17,8 +17,74 @@ import java.util.regex.Pattern;
 public class App {
     public static void main(String[] args) throws Exception {
         
-        System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING AND WRITING TO FILE ****"); 
+        // Test reading and writting tour list to file
+        
+        GeocachingTour tour0 = new GeocachingTour("My tour 0");
+        Geocache gc = new Geocache();
+        gc.code = "GC63TAD";
+        tour0._numFound = 1;
+        tour0.addToTour(gc);
+        tour0.isCurrentTour = true;
 
+        GeocachingTour tour1 = new GeocachingTour("My tour 1");
+        tour1.addToTour(gc);
+        gc = new Geocache();
+        gc.code = "GC269NB";
+        tour1.addToTour(gc);
+        gc = new Geocache();
+        gc.code = "GC2RK1V";
+        tour1.addToTour(gc);
+        tour1._numDNF = 1;
+        tour1._numFound = 1;
+
+        String allTours = tour0.getMetaDataJSON().toString() + ";" + tour1.getMetaDataJSON().toString();
+        System.out.print(allTours);
+
+        File file = new File("allTours.txt");
+
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(file);
+            stream.write(allTours.getBytes());
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        String allToursFromFile;
+        int length = (int) file.length();
+        byte[] bytes = new byte[length];
+        FileInputStream in;
+        try {
+            in = new FileInputStream(file);
+            in.read(bytes);
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        allToursFromFile = new String(bytes);
+
+        System.out.println(allToursFromFile);
+
+        String[] tours = allToursFromFile.split(";");
+        ArrayList<GeocachingTour> tourList = new ArrayList<>();
+        for(String tourString : tours){
+            JSONObject tourJSON = new JSONObject(tourString);
+            GeocachingTour tour = new GeocachingTour("name");
+            tour.fromMetaDataJSON(tourJSON);
+            tourList.add(tour);
+        }
+
+        System.out.println(tourList);
+
+        FileOutputStream os = new FileOutputStream(file, true);
+        String newTourString = ";" + tour0.getMetaDataJSON().toString();
+        os.write(newTourString.getBytes(), 0, newTourString.length());
+        os.close();
+
+        /*
+        System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING AND WRITING TO FILE ****"); 
         String name = "Limpar Schwabing";
         GeocachingTour tour = new GeocachingTour(name);
         GeocachingScrapper scrapper = new GeocachingScrapper();
@@ -30,7 +96,7 @@ public class App {
 
         tour.addToTour(gc1);
         tour.addToTour(gc2);
-
+        */
         // Test to and from JSON
         /*
         JSONObject tourJSON = tour.toJSON();
@@ -44,11 +110,13 @@ public class App {
         */ 
 
         // Test to and from file
+        /*
         File file = new File(".");
         tour.toFile(file);
 
         GeocachingTour newTour = GeocachingTour.fromFile(file, name);
         System.out.println(newTour.toJSON());
+        */
 
         // System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING ****");
 

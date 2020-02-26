@@ -21,9 +21,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     TourListAdapter(Context context,  ArrayList<GeocachingTour> data, ItemClickListener listener) {
 
         this.mInflater = LayoutInflater.from(context);
-
         _tourList = data;
-        onClickListener = listener;
+        this.onClickListener = listener;
     }
 
     // inflates the row layout from xml when needed
@@ -50,7 +49,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         // Write progress in text
         int numFinds = tour.getNumFound();
         int numDNFS = tour.getNumDNF();
-        int totalCaches = tour.size();
+        int totalCaches = tour._size;
         String progressText = numFinds + " + " + numDNFS + " / " + totalCaches;
         holder.tourProgressText.setText(progressText);
 
@@ -87,7 +86,12 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
 
         @Override
         public void onClick(View view) {
-            if (onClickListener != null) onClickListener.onItemClick(view, getAdapterPosition());
+
+            if (onClickListener != null) {
+                int position = getAdapterPosition();
+                String tourName = _tourList.get(position).getName();
+                onClickListener.onItemClick(view, position, tourName);
+            }
         }
 
     }
@@ -106,6 +110,6 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener  {
-        void onItemClick(View view, int position);
+        void onItemClick(View view, int position, String tourName);
     }
 }

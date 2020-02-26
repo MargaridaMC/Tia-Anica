@@ -8,4 +8,7 @@
     <string name="logout_button">Logout from geocaching.com</string>
     <string name="preference_file_key">tiaires_preference_file</string>
     <string name="authentication_cookie_key">AuthCookie</string>
+    <string name="tour_folder">Tours</string>
+    <string name="nothing_to_show">Nothing show. Please create a tour to view it.</string>
+    <string name="all_tours_filename">allTours.txt</string>
 </resources>

@@ -1,10 +1,17 @@
 package net.teamtruta.tiaires;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +25,7 @@ public class GeocachingTour {
     boolean isCurrentTour = false;
     int _numFound = 0;
     int _numDNF = 0;
+    int _size = 0;
 
     GeocachingTour(String name) {
         if(name == null)
@@ -46,6 +54,7 @@ public class GeocachingTour {
             _tourCaches.add(new GeocacheInTour(gc));
         }
 
+        _size = _tourCaches.size();
         return _tourCaches.size();
     }
 
@@ -55,6 +64,7 @@ public class GeocachingTour {
             addToTour(geocache);
         }
 
+        _size = _tourCaches.size();
         return _tourCaches.size();
     }
 
@@ -70,6 +80,7 @@ public class GeocachingTour {
                 break;
         }
 
+        _size = _tourCaches.size();
         return _tourCaches.size();
     }
     
@@ -104,7 +115,17 @@ public class GeocachingTour {
         return _numDNF;
     }
 
-    public JSONObject toJSON(){
+    List<String> getTourCacheCodes(){
+
+        List<String> codes = new ArrayList<>();
+        for(GeocacheInTour geocache:_tourCaches){
+            codes.add(geocache.geocache.code);
+        }
+
+        return codes;
+    }
+
+    private JSONObject toJSON(){
 
         JSONObject tourCacheJSON = new JSONObject();
         try {
@@ -131,7 +152,7 @@ public class GeocachingTour {
 
     }
 
-    void fromJSON(JSONObject tourCacheJSON){
+    private void fromJSON(JSONObject tourCacheJSON){
 
         int size = tourCacheJSON.length() - 4;
 
@@ -139,7 +160,6 @@ public class GeocachingTour {
             _name = tourCacheJSON.getString("tourName");
             _numDNF = tourCacheJSON.getInt("numDNF");
             _numFound = tourCacheJSON.getInt("numFound");
-            size = tourCacheJSON.getInt("size");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -150,8 +170,6 @@ public class GeocachingTour {
             JSONObject cacheJSON = null;
             try {
                 cacheJSON = tourCacheJSON.getJSONObject(Integer.toString(i));
-                System.out.println(i);
-                System.out.println(cacheJSON);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -161,7 +179,7 @@ public class GeocachingTour {
             _tourCaches.add(new GeocacheInTour(gc));
 
         }
-
+        _size = _tourCaches.size();
     }
 
     void toFile(File rootPath){
@@ -215,6 +233,37 @@ public class GeocachingTour {
         return newTour;
 
     }
+
+
+    JSONObject getMetaDataJSON(){
+
+        JSONObject metaData = new JSONObject();
+
+        try {
+            metaData.put("tourName", this._name);
+            metaData.put("numDNF", this._numDNF);
+            metaData.put("numFound", this._numFound);
+            metaData.put("size", this._size);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return metaData;
+    }
+
+    void fromMetaDataJSON(JSONObject metaData){
+
+        try {
+            this._name = metaData.getString("tourName");
+            this._numDNF = metaData.getInt("numDNF");
+            this._numFound = metaData.getInt("numFound");
+            this._size = metaData.getInt("size");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
 
 // TODO: I need some unit tests on this

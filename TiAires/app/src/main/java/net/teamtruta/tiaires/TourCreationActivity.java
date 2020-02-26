@@ -7,20 +7,49 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TourCreationActivity extends AppCompatActivity {
+public class TourCreationActivity extends AppCompatActivity implements PostGeocachingScrapping {
+
+    String tourName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_creation);
+
+        Intent intent = getIntent();
+        String tourName = intent.getStringExtra("tourName");
+        boolean edit = intent.getBooleanExtra("edit", false);
+
+        if(edit && !tourName.equals("")){
+
+            EditText tourTitleView = findViewById(R.id.tour_name);
+            tourTitleView.setText(tourName);
+
+            Button enterButton = findViewById(R.id.create_tour_button);
+            enterButton.setText("Save Changes");
+            //TODO: enterButton.setOnClickListener(); -- just to do changes and don't get everything again
+
+            String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+            File tourFolder = new File(rootPath);
+            GeocachingTour tour = GeocachingTour.fromFile(tourFolder, tourName);
+
+            List<String> allCodes = tour.getTourCacheCodes();
+            EditText geocacheCodesView = findViewById(R.id.geocache_codes);
+            geocacheCodesView.setText(allCodes.toString().substring(1, -1));
+
+        }
 
     }
 
@@ -33,7 +62,7 @@ public class TourCreationActivity extends AppCompatActivity {
 
         // Get cache codes from UI and save to file
         EditText tourNameField = findViewById(R.id.tour_name);
-        String tourName = tourNameField.getText().toString();
+        tourName = tourNameField.getText().toString();
 
         EditText tourGeocacheCodesField = findViewById(R.id.geocache_codes);
         String tourGeocacheCodes = tourGeocacheCodesField.getText().toString();
@@ -46,44 +75,61 @@ public class TourCreationActivity extends AppCompatActivity {
             geocacheCodesList.add(m.group());
         }
 
-        File path = this.getFilesDir();
-        GeocachingTour tour = createTour(tourName, geocacheCodesList);
-        tour.toFile(path);
-
-        // TODO: open tour page
-        // Toast t = Toast.makeText(this, "List Created.", Toast.LENGTH_SHORT);
-        // t.show();
-        Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra("tourName", tourName);
-        startActivity(intent);
-    }
-
-    GeocachingTour createTour(String tourName, List<String> geocacheCodesList){
-
-        GeocachingTour tour = new GeocachingTour(tourName);
-
         // Check that we are logged in
         SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
         if(authCookie.equals("")){
-
             // TODO: prompt for login
         } else {
             GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
-            for(String code:geocacheCodesList){
+            GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, geocacheCodesList);
+            geocachingScrappingTask.delegate = this;
+            geocachingScrappingTask.execute(tourName);
+        }
 
-                try {
-                    Geocache gc = scrapper.getGeocacheDetails(code);
-                    tour.addToTour(gc);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    }
+
+    @Override
+    public void onGeocachingScrappingTaskResult(GeocachingTour tour) {
+
+        Toast t = Toast.makeText(this, "List created. Saving to file.", Toast.LENGTH_SHORT);
+        t.show();
+
+        // Write tour to file
+        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        File root = new File(rootPath);
+        tour.toFile(root);
+
+        // Append entry to tour list file
+        File allToursFile = new File(rootPath, getString(R.string.all_tours_filename));
+        String newTourString = ";" + tour.getMetaDataJSON().toString();
+        FileOutputStream os;
+
+        if(allToursFile.exists()){
+            // If the file already exists just append a new entry to it
+            try {
+                os = new FileOutputStream(allToursFile, true);
+                os.write(newTourString.getBytes(), 0, newTourString.length());
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            // Else create a tour list file
+            try {
+                os = new FileOutputStream(allToursFile);
+                os.write(newTourString.getBytes());
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        return tour;
+        Intent intent = new Intent(this, TourActivity.class);
+        intent.putExtra("tourName", tourName);
+        startActivity(intent);
+
+        // TODO: open tour page
     }
-
-
-
 }

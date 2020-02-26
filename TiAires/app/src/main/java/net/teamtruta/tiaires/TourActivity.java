@@ -29,21 +29,23 @@ public class TourActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tour);
 
         Intent intent = getIntent();
-        //String tourName = intent.getExtras().getString("tourName");
-        //File rootPath = this.getFilesDir();
-        //GeocachingTour tour = GeocachingTour.fromFile(rootPath, tourName);
+        String tourName = intent.getExtras().getString("tourName");
+        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        File root = new File(rootPath);
 
-        String tourName = "Limpar Schwabing";
-        String tourString = "{\"0\":{\"difficulty\":\"2\",\"code\":\"GC3AK7Y\",\"size\":\"Micro\",\"foundIt\":2,\"favourites\":67,\"latitude\":\"N 48° 08.556\",\"hint\":\"NO MATCH\",\"name\":\"Letzter Halt Sophienplatz?!\",\"type\":\"Mystery\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.872\"},\"1\":{\"difficulty\":\"2\",\"code\":\"GC3443H\",\"size\":\"Small\",\"foundIt\":2,\"favourites\":12,\"latitude\":\"N 48° 08.751\",\"hint\":\"NO MATCH\",\"name\":\"U-Bahn2 #12 (U2): Königsplatz\",\"type\":\"Traditional\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.810\"},\"size\":2,\"numFound\":0,\"tourName\":\"Limpar Schwabing\",\"numDNF\":0}";
-        JSONObject newCacheList = null;
-        try {
+        GeocachingTour tour = GeocachingTour.fromFile(root, tourName);
+
+        //String tourName = "Limpar Schwabing";
+        //String tourString = "{\"0\":{\"difficulty\":\"2\",\"code\":\"GC3AK7Y\",\"size\":\"Micro\",\"foundIt\":2,\"favourites\":67,\"latitude\":\"N 48° 08.556\",\"hint\":\"NO MATCH\",\"name\":\"Letzter Halt Sophienplatz?!\",\"type\":\"Mystery\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.872\"},\"1\":{\"difficulty\":\"2\",\"code\":\"GC3443H\",\"size\":\"Small\",\"foundIt\":2,\"favourites\":12,\"latitude\":\"N 48° 08.751\",\"hint\":\"NO MATCH\",\"name\":\"U-Bahn2 #12 (U2): Königsplatz\",\"type\":\"Traditional\",\"terrain\":\"1.5\",\"longitude\":\"E 011° 33.810\"},\"size\":2,\"numFound\":0,\"tourName\":\"Limpar Schwabing\",\"numDNF\":0}";
+        //JSONObject newCacheList = null;
+        /*try {
             newCacheList = new JSONObject(tourString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         GeocachingTour tour = new GeocachingTour("");
         tour.fromJSON(newCacheList);
-
+*/
         // Set title
         TextView title = findViewById(R.id.tour_name);
         title.setText(tourName);

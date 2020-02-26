@@ -20,13 +20,21 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
+
+    RecyclerView.Adapter tourListAdapter;
+    RecyclerView tourListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +57,36 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             startActivity(intent);
         }
 
-        setContentView(R.layout.activity_main);
+        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        File tourFolder = new File(rootPath);
+        if(!tourFolder.exists()){
+            tourFolder.mkdir();
+        }
+
+        Log.d("TAG", "Folder exists: " + tourFolder.exists());
+
+        File allToursFile = new File(tourFolder, getString(R.string.all_tours_filename));
+        Log.d("TAG", "File exists: " + allToursFile.exists());
+
+
+        if(allToursFile.exists()){
+
+            setContentView(R.layout.activity_main);
+
+            ArrayList<GeocachingTour> tourList = readFile(allToursFile);
+
+            tourListView = findViewById(R.id.tour_list);
+            tourListView.setLayoutManager(new LinearLayoutManager(this));
+            tourListAdapter = new TourListAdapter(this, tourList, this);
+            tourListView.setAdapter(tourListAdapter);
+
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
+            tourListView.addItemDecoration(dividerItemDecoration);
+
+
+        } else {
+            setContentView(R.layout.activity_main_nothing_to_show);
+        }
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -65,47 +102,6 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-/*
-        // Login is done
-        try{
-            boolean loginSuccess = scrapper.login();
-        } catch (Exception e){
-            e.fillInStackTrace();
-            Log.d("TAG", "Couldn't Login");
-            return;
-        }
-*/
-
-        GeocachingTour tour0 = new GeocachingTour("My tour 0");
-        Geocache gc = new Geocache();
-        gc.code = "GC63TAD";
-        tour0._numFound = 1;
-        tour0.addToTour(gc);
-        tour0.isCurrentTour = true;
-
-        GeocachingTour tour1 = new GeocachingTour("My tour 1");
-        tour1.addToTour(gc);
-        gc = new Geocache();
-        gc.code = "GC269NB";
-        tour1.addToTour(gc);
-        gc = new Geocache();
-        gc.code = "GC2RK1V";
-        tour1.addToTour(gc);
-        tour1._numDNF = 1;
-        tour1._numFound = 1;
-
-        ArrayList<GeocachingTour> tourList = new ArrayList<>();
-        tourList.add(tour0);
-        tourList.add(tour1);
-
-
-        RecyclerView tourListView = findViewById(R.id.tour_list);
-        tourListView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter tourListAdapter = new TourListAdapter(this, tourList, this);
-        tourListView.setAdapter(tourListAdapter);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
-        tourListView.addItemDecoration(dividerItemDecoration);
 
         // Put username on toolbar
         String username = sharedPref.getString("username", "");
@@ -152,7 +148,46 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked on row number " + position, Toast.LENGTH_SHORT).show();
+    public void onItemClick(View view, int position, String tourName) {
+        //Toast.makeText(this, "You clicked " + tourName + " on row number " + position, Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(this, TourActivity.class);
+        intent.putExtra("tourName", tourName);
+        startActivity(intent);
     }
+
+    ArrayList<GeocachingTour> readFile(File file){
+
+        String allToursFromFile;
+        int length = (int) file.length();
+        byte[] bytes = new byte[length];
+        FileInputStream in;
+        try {
+            in = new FileInputStream(file);
+            in.read(bytes);
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        allToursFromFile = new String(bytes);
+
+        String[] tours = allToursFromFile.split(";");
+        ArrayList<GeocachingTour> tourList = new ArrayList<>();
+        for(String tourString : tours){
+            if(tourString.equals("")) continue;
+            JSONObject tourJSON = null;
+            try {
+                tourJSON = new JSONObject(tourString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            GeocachingTour tour = new GeocachingTour("name");
+            tour.fromMetaDataJSON(tourJSON);
+            tourList.add(tour);
+        }
+        return tourList;
+    }
+
+
 }
