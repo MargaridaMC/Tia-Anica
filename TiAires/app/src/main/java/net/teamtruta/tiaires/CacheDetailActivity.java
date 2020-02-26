@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +28,9 @@ public class CacheDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cache_detail);
+
+        Toolbar toolbar = findViewById(R.id.toolbar_cache_detail);
+        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
 
@@ -50,10 +54,7 @@ public class CacheDetailActivity extends AppCompatActivity {
         // Set Cache Title
         ActionBar ab = getSupportActionBar();
         ab.setTitle(currentCache.geocache.name);
-
-        // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
-
 
         // Set Found / DNF switches
         Switch foundSwitch = findViewById(R.id.found_switch);

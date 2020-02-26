@@ -8,6 +8,56 @@
     tools:context=".TourCreationActivity"
     tools:showIn="@layout/activity_tour_creation">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@id/action_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@color/colorPrimary"
+                android:paddingBottom="@dimen/small_padding">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:theme="@style/CustomActionBar"/>
+
+                <TextView
+                    android:id="@+id/tour_name_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="Tour name"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/main_text_size"
+                    app:layout_constraintStart_toEndOf="@id/toolbar"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/tour_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:textAppearance="@style/AppBarTextStyle"
+                    android:textColor="@color/colorLight"
+                    android:backgroundTint="@color/colorLight"
+                    android:singleLine="true"
+                    android:text="UBahn Tour"
+                    app:layout_constraintStart_toEndOf="@id/toolbar"
+                    app:layout_constraintTop_toBottomOf="@id/tour_name_view"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+<!--
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -57,7 +107,7 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+-->
     <TextView
         android:id="@+id/geocache_codes_view"
         android:layout_width="wrap_content"
@@ -67,7 +117,7 @@
         android:text="Geocache codes:"
         android:textAppearance="@style/MainText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/action_bar" />
 
     <EditText
         android:id="@+id/geocache_codes"

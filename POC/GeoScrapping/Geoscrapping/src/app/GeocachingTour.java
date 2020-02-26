@@ -133,8 +133,6 @@ public class GeocachingTour {
 
         GeocachingTour tour = new GeocachingTour("");
 
-        int size = tourCacheJSON.length();
-
         tour._name = tourCacheJSON.getString("tourName");
         tour._numDNF = tourCacheJSON.getInt("numDNF");
         tour._numFound = tourCacheJSON.getInt("numFound");
@@ -201,8 +199,8 @@ public class GeocachingTour {
       
         try {
             JSONObject newCacheTour = new JSONObject(contents);
-            newTour.fromJSON(newCacheTour);
-
+            newTour = GeocachingTour.fromJSON(newCacheTour);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

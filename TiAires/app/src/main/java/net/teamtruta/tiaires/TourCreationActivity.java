@@ -1,6 +1,8 @@
 package net.teamtruta.tiaires;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
@@ -31,6 +33,11 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_creation);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+
         Intent intent = getIntent();
         final String tourName = intent.getStringExtra("tourName");
         boolean edit = intent.getBooleanExtra("edit", false);
@@ -54,6 +61,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             geocacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
 
             // Back button should lead back to Tour Activity
+            /*
             Button backButton = findViewById(R.id.back_button);
             final Context context = this;
             backButton.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +72,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
                     startActivity(intent);
                 }
             });
-
+*/
         }
 
     }

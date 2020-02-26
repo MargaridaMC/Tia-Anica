@@ -6,17 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".CacheDetailActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/CustomActionBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_cache_detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <EditText
         android:id="@+id/notes"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/large_padding"
-        android:layout_marginTop="@dimen/space"
-        android:layout_marginEnd="@dimen/large_padding"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         android:background="@drawable/text_box_with_border"
-        android:ems="10"
-        android:inputType="textPersonName"
         android:hint="My Notes"
         android:textColor="@color/white"
         android:textSize="@dimen/main_text_size"
@@ -30,7 +45,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/large_padding"
+        android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
         android:text="Notes:"
         android:textAppearance="@style/MainText"
@@ -58,7 +73,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/notes"
         app:layout_constraintStart_toStartOf="@+id/notes"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/action_bar">
 
         <Switch
             android:id="@+id/found_switch"

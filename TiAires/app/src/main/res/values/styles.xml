@@ -14,10 +14,18 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorControlNormal">@color/colorLight</item>
+    </style>
+
+    <style name="CustomActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/colorLight</item>
+        <item name="android:textColorSecondary">@color/colorLight</item>
+        <item name="android:textColor">@color/colorLight</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 
     <style name="MainText" parent="TextAppearance.AppCompat">

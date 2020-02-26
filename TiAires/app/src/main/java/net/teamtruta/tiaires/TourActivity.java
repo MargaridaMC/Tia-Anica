@@ -1,7 +1,9 @@
 package net.teamtruta.tiaires;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +31,13 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
+
         Intent intent = getIntent();
         tourName = intent.getExtras().getString("tourName");
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
@@ -37,8 +46,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         tour = GeocachingTour.fromFile(root, tourName);
 
         // Set title
-        TextView title = findViewById(R.id.tour_name);
-        title.setText(tourName);
+        ab.setTitle(tourName);
 
         // Set progress
         TextView progressText = findViewById(R.id.tour_progress);
