@@ -78,13 +78,25 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/map_button"
+            android:id="@+id/delete_button"
             android:layout_width="@dimen/large_icon_size"
             android:layout_height="@dimen/large_icon_size"
             android:layout_marginStart="@dimen/large_icon_size"
-            android:background="@drawable/map_dark"
+            android:background="@drawable/delete"
+            android:onClick="deleteTour"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/edit_button"
+            android:layout_width="@dimen/large_icon_size"
+            android:layout_height="@dimen/large_icon_size"
+            android:background="@drawable/pencil_dark"
+            android:onClick="editTour"
+            app:layout_constraintEnd_toStartOf="@id/share_button"
+            app:layout_constraintStart_toEndOf="@id/delete_button"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -92,30 +104,17 @@
             android:layout_width="@dimen/large_icon_size"
             android:layout_height="@dimen/large_icon_size"
             android:background="@drawable/share"
-            app:layout_constraintEnd_toStartOf="@id/edit_button"
-            app:layout_constraintStart_toEndOf="@id/map_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/edit_button"
-            android:layout_width="@dimen/large_icon_size"
-            android:layout_height="@dimen/large_icon_size"
-            android:layout_marginStart="@dimen/margin"
-            android:background="@drawable/pencil_dark"
-            android:onClick="editTour"
-            app:layout_constraintEnd_toStartOf="@id/delete_button"
-            app:layout_constraintStart_toEndOf="@id/share_button"
+            app:layout_constraintEnd_toStartOf="@id/map_button"
+            app:layout_constraintStart_toEndOf="@id/edit_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <Button
-            android:id="@+id/delete_button"
+            android:id="@+id/map_button"
             android:layout_width="@dimen/large_icon_size"
             android:layout_height="@dimen/large_icon_size"
             android:layout_marginEnd="@dimen/large_icon_size"
-            android:background="@drawable/delete"
-            android:onClick="deleteTour"
+            android:background="@drawable/map_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

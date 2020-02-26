@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class tourList extends ArrayList {
+public class TourList extends ArrayList {
 
     ArrayList<GeocachingTour> tours;
 

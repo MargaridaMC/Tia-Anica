@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
             setContentView(R.layout.activity_main);
 
-            ArrayList<GeocachingTour> tourList = net.teamtruta.tiaires.tourList.fromFile(allToursFile);
+            ArrayList<GeocachingTour> tourList = TourList.fromFile(allToursFile);
 
             tourListView = findViewById(R.id.tour_list);
             tourListView.setLayoutManager(new LinearLayoutManager(this));

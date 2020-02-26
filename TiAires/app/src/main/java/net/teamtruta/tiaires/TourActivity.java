@@ -10,18 +10,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.FileObserver;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -92,7 +84,7 @@ public class TourActivity extends AppCompatActivity {
 
                 // Delete tour entry in tour list file
                 File allToursFile = new File(root, getString(R.string.all_tours_filename));
-                ArrayList<GeocachingTour> allTours = tourList.fromFile(allToursFile);
+                ArrayList<GeocachingTour> allTours = TourList.fromFile(allToursFile);
                 Log.d("TAG", "Original size: " + allTours.size());
 
                 for(GeocachingTour tour: allTours){
@@ -104,7 +96,7 @@ public class TourActivity extends AppCompatActivity {
 
                 Log.d("TAG", "New size: " + allTours.size());
 
-                boolean saved = tourList.toFile(allTours, allToursFile);
+                boolean saved = TourList.toFile(allTours, allToursFile);
 
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);

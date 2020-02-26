@@ -1,6 +1,7 @@
 package net.teamtruta.tiaires;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 public class TourCreationActivity extends AppCompatActivity implements PostGeocachingScrapping {
 
     String tourName;
+    ConstraintLayout progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,10 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         if(authCookie.equals("")){
             // TODO: prompt for login
         } else {
+
+            progressBar = findViewById(R.id.progress_layout);
+            progressBar.setVisibility(View.VISIBLE);
+
             GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
             GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, geocacheCodesList);
             geocachingScrappingTask.delegate = this;
@@ -129,7 +136,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
         } else {
             // Else create a tour list file
-            tourList.toFile(newTourString, allToursFile);
+            TourList.toFile(newTourString, allToursFile);
         }
 
         Intent intent = new Intent(this, TourActivity.class);
