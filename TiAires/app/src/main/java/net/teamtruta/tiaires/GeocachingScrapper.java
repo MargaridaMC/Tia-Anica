@@ -185,10 +185,10 @@ public class GeocachingScrapper {
         if (matcher.find( )) {
             gc.name = matcher.group(1);
         } else {
-             gc.latitude = "NO MATCH";
+            gc.latitude = "NO MATCH";
         }
 
-        // 2. Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span> 
+        // 2. Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span>
         String regexLatLongPattern = "<span id=\"uxLatLon\">([NS] [0-9]+° [0-9]+.[0-9]+) ([EW] [0-9]+° [0-9]+.[0-9]+)</span>";
         pattern = Pattern.compile(regexLatLongPattern);
         matcher = pattern.matcher(pageContents);
@@ -197,8 +197,8 @@ public class GeocachingScrapper {
             gc.latitude = matcher.group(1);
             gc.longitude = matcher.group(2);
         } else {
-             gc.latitude = "NO MATCH";
-             gc.longitude = "NO MATCH";
+            gc.latitude = "NO MATCH";
+            gc.longitude = "NO MATCH";
         }
 
         // 3. Get Size
@@ -208,9 +208,9 @@ public class GeocachingScrapper {
 
         if (matcher.find()) {
             gc.size = matcher.group(1);
-            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1);
+            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1, gc.size.length());
         } else {
-             gc.size = "NO MATCH";
+            gc.size = "NO MATCH";
         }
 
         // 4. Get Difficulty and Terrain (both use the same regex, repeated instances)
@@ -229,21 +229,21 @@ public class GeocachingScrapper {
                 gc.terrain = "NO MATCH";
             }
         } else {
-             gc.difficulty = "NO MATCH";
-             gc.terrain = "NO MATCH";
+            gc.difficulty = "NO MATCH";
+            gc.terrain = "NO MATCH";
         }
 
         // 5. Get the cache type
-        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z]+).*?\" class=\"cacheImage\">";
+        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z\\s\\(\\)]+).*?\" class=\"cacheImage\">";
         pattern = Pattern.compile(regexType);
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.type = matcher.group(1);
+            gc.type = CacheTypeEnum.valueOfTypeString(matcher.group(1));
         } else {
-             gc.type = "NO MATCH";
+            gc.type = CacheTypeEnum.Other;
         }
-        
+
         // 6. Have I found it?
         String regexFound = "<strong id=\"ctl00_ContentBody_GeoNav_logText\">(Did Not Find|Found It!)</strong>";
         pattern = Pattern.compile(regexFound);
@@ -254,7 +254,7 @@ public class GeocachingScrapper {
         } else {
             gc.foundIt = 0;
         }
-        
+
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
         String regexHint = "<a id=\"ctl00_ContentBody_lnkDH\" onclick=\"dht\\(this\\);return&#32;false;\" title=\"Decrypt\" href=\"../seek/#\">Decrypt</a>\\) </p><div id=\"div_hint\" class=\"span-8 WrapFix\">\\s*(.*?)</div><div id='dk'";
         pattern = Pattern.compile(regexHint);
@@ -263,7 +263,7 @@ public class GeocachingScrapper {
         if (matcher.find()) {
             gc.hint = Rot13.Decode(matcher.group(1));
         } else {
-             gc.hint = "NO MATCH";
+            gc.hint = "NO MATCH";
         }
 
         // 8. Favourites
@@ -274,7 +274,7 @@ public class GeocachingScrapper {
         if (matcher.find()) {
             gc.favourites = Integer.parseInt(matcher.group(1));
         } else {
-             gc.favourites = 0;
+            gc.favourites = 0;
         }
 
         // 9. Last logs and their dates
@@ -284,7 +284,7 @@ public class GeocachingScrapper {
 
         pattern = Pattern.compile(regexLogType);
         matcher = pattern.matcher(pageContents);
-        
+
         Pattern patternDates = Pattern.compile(regexLogDate);
         Matcher matcherDates = patternDates.matcher(pageContents);
 

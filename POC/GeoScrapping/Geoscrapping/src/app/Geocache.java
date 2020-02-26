@@ -16,7 +16,8 @@ public class Geocache {
     String size;
     String difficulty;
     String terrain;
-    String type; // Normal, etc.
+    //String type; // Normal, etc.
+    CacheTypeEnum type = CacheTypeEnum.Other;
     int foundIt; // 0 - no, 1 - DNF, 2 - yes
     String hint;
     int favourites;
@@ -79,7 +80,8 @@ public class Geocache {
             cache.size = cacheJSON.getString("size");
             cache.difficulty = cacheJSON.getString("difficulty");
             cache.terrain = cacheJSON.getString("terrain");
-            cache.type = cacheJSON.getString("type");
+            String typeString = cacheJSON.get("type").toString();
+            cache.type = CacheTypeEnum.valueOf(typeString);
             cache.foundIt = cacheJSON.getInt("foundIt");
             cache.hint = cacheJSON.getString("hint");
             cache.favourites = cacheJSON.getInt("favourites");

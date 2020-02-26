@@ -38,34 +38,42 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         holder.cacheName.setText(cache.geocache.name);
 
         // Set cache type symbol
-        String cacheType = cache.geocache.type;
-        cacheType = cacheType.toLowerCase();
+        CacheTypeEnum cacheType = cache.geocache.type;
         Drawable cacheSymbolDrawable;
 
         switch (cacheType){
-            case "traditional":
+            case Traditional:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_traditional);
                 break;
-            case "mystery":
+            case Mystery:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_mystery);
                 break;
-            case "multi":
+            case Multi:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_multi);
                 break;
-            case "wherigo":
+            case Wherigo:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_wherigo);
                 break;
-            case "cito":
+            case CITO:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_cito);
                 break;
-            case "earth":
+            case Earth:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_earth);
                 break;
-            case "event":
+            case Event:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_event);
                 break;
-            case "letterbox":
+            case Letterbox:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_letterbox);
+                break;
+            case Virtual:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_virtual);
+                break;
+            case Webcam:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_webcam);
+                break;
+            case Locationless:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_locationless);
                 break;
             default:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_traditional);

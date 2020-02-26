@@ -236,14 +236,14 @@ public class GeocachingScrapper {
         }
 
         // 5. Get the cache type
-        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z]+).*?\" class=\"cacheImage\">";
+        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z\\s\\(\\)]+).*?\" class=\"cacheImage\">";
         pattern = Pattern.compile(regexType);
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.type = matcher.group(1);
+            gc.type = CacheTypeEnum.valueOfTypeString(matcher.group(1));
         } else {
-             gc.type = "NO MATCH";
+             gc.type = CacheTypeEnum.Other;
         }
         
         // 6. Have I found it?

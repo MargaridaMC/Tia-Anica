@@ -1,33 +1,126 @@
 package app;
 
-import org.json.JSONArray;
+import java.time.chrono.JapaneseChronology;
+
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import java.io.FileWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class App {
     public static void main(String[] args) throws Exception {
         
-        // Test reading and writting tour list to file
+        System.out.println("** TEST OBTAINED CACHE TYPES**");
         
         GeocachingTour tour = new GeocachingTour("My tour");
         GeocachingScrapper scrapper = new GeocachingScrapper();
         boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
         System.out.println("Login = " + loginSuccess);
 
-        Geocache gc1 = scrapper.getGeocacheDetails("GC8JEEZ");
-        System.out.println("Type: " + gc1.type);
-        
+        Geocache gc1;
 
+        // Traditional
+        gc1 = scrapper.getGeocacheDetails("GC3443H");
+        System.out.println("Type: " + gc1.type + " - should be Traditional");
+        
+        JSONObject gc1JSON = gc1.toJSON();
+        System.out.println(gc1JSON);
+
+        Geocache newCache = Geocache.fromJSON(gc1JSON);
+        System.out.println(newCache.type);
+
+        /*
+        // Mystery
+        gc1 = scrapper.getGeocacheDetails("GC23EH1");
+        System.out.println("Type: " + gc1.type + " - should be Mystery");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Multi
+        gc1 = scrapper.getGeocacheDetails("GCM2RJ");
+        System.out.println("Type: " + gc1.type + " - should be Multi");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Earth
+        gc1 = scrapper.getGeocacheDetails("GC8F4JH");
+        System.out.println("Type: " + gc1.type + " - should be Earth");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Letterbox
+        gc1 = scrapper.getGeocacheDetails("GC35AKX");
+        System.out.println("Type: " + gc1.type + " - should be Letterbox");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Event
+        gc1 = scrapper.getGeocacheDetails("GC8KFF5");
+        System.out.println("Type: " + gc1.type + " - should be Event");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // CITO
+        gc1 = scrapper.getGeocacheDetails("GC8JEEZ");
+        System.out.println("Type: " + gc1.type + " - should be Cache In Trash Out Event");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Mega
+        gc1 = scrapper.getGeocacheDetails("GC84EA4");
+        System.out.println("Type: " + gc1.type + " - should be Mega Event");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Giga
+        gc1 = scrapper.getGeocacheDetails("GC7WWWW");
+        System.out.println("Type: " + gc1.type + " - should be Giga Event");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Wherigo
+        gc1 = scrapper.getGeocacheDetails("GC5KN51");
+        System.out.println("Type: " + gc1.type + " - should be Wherigo");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Geocaching HQ
+        gc1 = scrapper.getGeocacheDetails("GCK25B");
+        System.out.println("Type: " + gc1.type + " - should be HQ");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // GPS Adventures Maze Exhibit
+        gc1 = scrapper.getGeocacheDetails("GC13A70");
+        System.out.println("Type: " + gc1.type + " - should be  GPS Adventures Maze Exhibit");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Lab
+        //gc1 = scrapper.getGeocacheDetails("GCK25B");
+        //System.out.println("Type: " + gc1.type + " - should be lab");
+
+        // Geocaching HQ Celebration
+        gc1 = scrapper.getGeocacheDetails("GC896PK");
+        System.out.println("Type: " + gc1.type + " - should be Geocaching HQ Celebration");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Geocaching HQ Block Party
+        gc1 = scrapper.getGeocacheDetails("GC5G4X5");
+        System.out.println("Type: " + gc1.type + " - should be Geocaching HQ Block Party");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Community Celebration Event
+        gc1 = scrapper.getGeocacheDetails("GC8K0ZE");
+        System.out.println("Type: " + gc1.type + " - should be Community Celebration Event");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Virtual
+        gc1 = scrapper.getGeocacheDetails("GC7F57");
+        System.out.println("Type: " + gc1.type + " - should be Virtual");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Webcam
+        gc1 = scrapper.getGeocacheDetails("GCHNBF");
+        System.out.println("Type: " + gc1.type + " - should be Webcam");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Project A.P.E. Cache
+        gc1 = scrapper.getGeocacheDetails("GC12AC");
+        System.out.println("Type: " + gc1.type + " - should be Project A.P.E. Cache");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+
+        // Locationless (Reverse) Cache
+        gc1 = scrapper.getGeocacheDetails("GC8FR0G");
+        System.out.println("Type: " + gc1.type + " - should be Locationless (Reverse) Cache");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
+        
         // Test to and from JSON
         /*
         JSONObject tourJSON = tour.toJSON();
