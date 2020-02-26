@@ -19,10 +19,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     private GeocachingTour tour;
     private EditOnClickListener editOnClickListener;
+    private GoToOnClickListener goToOnClickListener;
 
-    CacheListAdapter(GeocachingTour tour, EditOnClickListener listener){
+    CacheListAdapter(GeocachingTour tour, EditOnClickListener editOnClickListener, GoToOnClickListener goToOnClickListener){
         this.tour = tour;
-        this.editOnClickListener = listener;
+        this.editOnClickListener = editOnClickListener;
+        this.goToOnClickListener = goToOnClickListener;
     }
     @Override
     public int getItemCount(){
@@ -133,7 +135,14 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         });
 
         // TODO: set listener for go to button
-
+        holder.goToButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(goToOnClickListener!=null){
+                    goToOnClickListener.onGoToClick(cache.geocache.code);
+                }
+            }
+        });
 
         // Make section grey if cache has been visited
         if(cache.getVisit() == FoundEnumType.Found || cache.getVisit() == FoundEnumType.DNF){
@@ -177,10 +186,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         }
 
-
     }
 
     interface EditOnClickListener {
         void onClick(int position);
+    }
+
+    interface GoToOnClickListener{
+        void onGoToClick(String code);
     }
 }

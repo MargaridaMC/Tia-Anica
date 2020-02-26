@@ -234,7 +234,7 @@ public class GeocachingScrapper {
         }
 
         // 5. Get the cache type
-        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z\\s\\(\\)]+).*?\" class=\"cacheImage\">";
+        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z\\s()]+).*?\" class=\"cacheImage\">";
         pattern = Pattern.compile(regexType);
         matcher = pattern.matcher(pageContents);
 

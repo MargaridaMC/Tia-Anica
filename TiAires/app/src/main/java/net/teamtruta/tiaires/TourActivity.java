@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,9 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 
-public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener {
+public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
 
     String tourName;
     GeocachingTour tour;
@@ -55,7 +58,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         // Set List
         RecyclerView cacheListView = findViewById(R.id.tour_view);
         cacheListView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter cacheListAdapter = new CacheListAdapter(tour, this);
+        RecyclerView.Adapter cacheListAdapter = new CacheListAdapter(tour, this, this);
         cacheListView.setAdapter(cacheListAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
@@ -124,4 +127,16 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         intent.putExtra("currentCacheIndex", position);
         startActivity(intent);
     }
+
+    @Override
+    public void onGoToClick(String code){
+
+        String url = "https://coord.info/" + code;
+        Intent i = new Intent(Intent.ACTION_VIEW);
+
+        i.setData(Uri.parse(url));
+
+        startActivity(i);
+    }
+
 }
