@@ -1,6 +1,5 @@
 package net.teamtruta.tiaires;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 public class GeocacheInTour
 {
-    public Geocache geocache;
+    Geocache geocache;
 
     // the following fields have the "In Tour" semantics. So if a cache was found but not in the tour, _found will be = NotAttempted; same logic applies to other fields.
     private String _userNotes = "";
@@ -21,7 +20,7 @@ public class GeocacheInTour
     private Boolean _needsMaintenance = false;
     private Date _foundDate;
 
-    public GeocacheInTour(Geocache gc) {
+    GeocacheInTour(Geocache gc) {
         geocache = gc;
     }
 
@@ -33,21 +32,21 @@ public class GeocacheInTour
         _userNotes = notes;
     }
 
-    public String getNotes()
+    String getNotes()
     {
         return _userNotes;
     }
 
-    public void setNotes(String notes){
+    void setNotes(String notes){
         this._userNotes = notes;
     }
 
-    public FoundEnumType getVisit() // não gosto deste nome. attempt, visit, ...?
+    FoundEnumType getVisit() // não gosto deste nome. attempt, visit, ...?
     {
         return _found;
     }
 
-    public void setVisit(FoundEnumType visit){
+    void setVisit(FoundEnumType visit){
         _found = visit;
     }
 
@@ -56,7 +55,7 @@ public class GeocacheInTour
         return _needsMaintenance;
     }
 
-    public JSONObject toJSON(){
+    JSONObject toJSON(){
 
         JSONObject cacheJSON = new JSONObject();
 
@@ -79,10 +78,10 @@ public class GeocacheInTour
         return cacheJSON;
     }
 
-    public static GeocacheInTour fromJSON(JSONObject cacheJSON){
+    static GeocacheInTour fromJSON(JSONObject cacheJSON){
 
         GeocacheInTour cacheInTour = null;
-        String foundString = null;
+        String foundString;
         String foundDateString = "";
 
         try {
@@ -98,7 +97,7 @@ public class GeocacheInTour
             e.printStackTrace();
         }
 
-        if(cacheInTour._found == FoundEnumType.Found || cacheInTour._found == FoundEnumType.Found.DNF){
+        if(cacheInTour._found == FoundEnumType.Found || cacheInTour._found == FoundEnumType.DNF){
             try{
                 cacheInTour._foundDate = new SimpleDateFormat("dd/MM/yyyy").parse(foundDateString);
             } catch(ParseException e){

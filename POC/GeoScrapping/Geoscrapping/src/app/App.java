@@ -24,79 +24,10 @@ public class App {
         boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
         System.out.println("Login = " + loginSuccess);
 
-        Geocache gc1 = scrapper.getGeocacheDetails("GC3AK7Y");
-        Geocache gc2 = scrapper.getGeocacheDetails("GC3443H");
-
-        tour.addToTour(gc1);
-        tour.addToTour(gc2);
-
-        JSONObject tourJSON = tour.toJSON();
-        System.out.println(tourJSON);
-
-        GeocachingTour newTour = GeocachingTour.fromJSON(tourJSON);
-        System.out.println(newTour.getName());
-
-        /*
-        String allTours = tour0.getMetaDataJSON().toString() + ";" + tour1.getMetaDataJSON().toString();
-        System.out.print(allTours);
-
-        File file = new File("allTours.txt");
-
-        FileOutputStream stream = null;
-        try {
-            stream = new FileOutputStream(file);
-            stream.write(allTours.getBytes());
-            stream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Geocache gc1 = scrapper.getGeocacheDetails("GC8JEEZ");
+        System.out.println("Type: " + gc1.type);
         
-        String allToursFromFile;
-        int length = (int) file.length();
-        byte[] bytes = new byte[length];
-        FileInputStream in;
-        try {
-            in = new FileInputStream(file);
-            in.read(bytes);
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        allToursFromFile = new String(bytes);
-
-        System.out.println(allToursFromFile);
-
-        String[] tours = allToursFromFile.split(";");
-        ArrayList<GeocachingTour> tourList = new ArrayList<>();
-        for(String tourString : tours){
-            JSONObject tourJSON = new JSONObject(tourString);
-            GeocachingTour tour = new GeocachingTour("name");
-            tour.fromMetaDataJSON(tourJSON);
-            tourList.add(tour);
-        }
-
-        System.out.println(tourList);
-
-        FileOutputStream os = new FileOutputStream(file, true);
-        String newTourString = ";" + tour0.getMetaDataJSON().toString();
-        os.write(newTourString.getBytes(), 0, newTourString.length());
-        os.close();
-*/
-        /*
-        System.out.println("**** TESTER FOR GEOCACHING SCREEN SCRAPPING AND WRITING TO FILE ****"); 
-        String name = "Limpar Schwabing";
-        GeocachingTour tour = new GeocachingTour(name);
-        GeocachingScrapper scrapper = new GeocachingScrapper();
-        boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
-        System.out.println("Login = " + loginSuccess);
-
-        Geocache gc1 = scrapper.getGeocacheDetails("GC3AK7Y");
-        Geocache gc2 = scrapper.getGeocacheDetails("GC3443H");
-
-        tour.addToTour(gc1);
-        tour.addToTour(gc2);
-        */
         // Test to and from JSON
         /*
         JSONObject tourJSON = tour.toJSON();

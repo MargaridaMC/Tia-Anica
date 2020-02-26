@@ -20,15 +20,11 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
 
@@ -154,39 +150,5 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         intent.putExtra("_tourName", tourName);
         startActivity(intent);
     }
-
-    ArrayList<GeocachingTour> readFile(File file){
-
-        String allToursFromFile;
-        int length = (int) file.length();
-        byte[] bytes = new byte[length];
-        FileInputStream in;
-        try {
-            in = new FileInputStream(file);
-            in.read(bytes);
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        allToursFromFile = new String(bytes);
-
-        String[] tours = allToursFromFile.split(";");
-        ArrayList<GeocachingTour> tourList = new ArrayList<>();
-        for(String tourString : tours){
-            if(tourString.equals("")) continue;
-            JSONObject tourJSON = null;
-            try {
-                tourJSON = new JSONObject(tourString);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            GeocachingTour tour = new GeocachingTour("name");
-            tour.fromMetaDataJSON(tourJSON);
-            tourList.add(tour);
-        }
-        return tourList;
-    }
-
 
 }

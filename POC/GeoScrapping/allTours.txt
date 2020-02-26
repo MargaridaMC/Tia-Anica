@@ -1,1 +1,0 @@
-{"size":0,"numFound":1,"tourName":"My tour 0","numDNF":0};{"size":0,"numFound":1,"tourName":"My tour 1","numDNF":1};{"size":0,"numFound":1,"tourName":"My tour 0","numDNF":0}

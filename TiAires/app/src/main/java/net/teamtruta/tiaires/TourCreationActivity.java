@@ -164,19 +164,18 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // Append entry to tour list file or alter it if we just want the tour
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
         File allToursFile = new File(rootPath, getString(R.string.all_tours_filename));
-        ArrayList<GeocachingTour> allTours = TourList.fromFile(allToursFile);
 
-        // Write tour to file -- will  be overwritten is a
+        // Write tour to file -- will  be overwritten if there is a file with same name
         File root = new File(rootPath);
         tour.toFile(root);
 
-        String newTourString = ";" + tour.getMetaDataJSON().toString();
-
+        // Add it to tour list
         if(allToursFile.exists()){
             // If the file already exists just append a new entry to it
             TourList.appendToFile(tour, allToursFile);
         } else {
             // Else create a tour list file
+            String newTourString = ";" + tour.getMetaDataJSON().toString();
             TourList.toFile(newTourString, allToursFile);
         }
 
