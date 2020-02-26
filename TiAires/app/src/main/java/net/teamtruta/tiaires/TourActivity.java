@@ -37,9 +37,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-
         Intent intent = getIntent();
-        tourName = intent.getExtras().getString("tourName");
+        tourName = intent.getExtras().getString("_tourName");
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
         root = new File(rootPath);
 
@@ -64,14 +63,9 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     }
 
-    public void goBack(View view){
-        Intent intent  = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
     public void editTour(View view){
         Intent intent = new Intent(this, TourCreationActivity.class);
-        intent.putExtra("tourName", tourName);
+        intent.putExtra("_tourName", tourName);
         intent.putExtra("edit", true);
         startActivity(intent);
     }

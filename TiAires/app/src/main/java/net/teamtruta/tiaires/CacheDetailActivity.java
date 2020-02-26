@@ -83,11 +83,14 @@ public class CacheDetailActivity extends AppCompatActivity {
         //onBackPressed();
 
         Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra("tourName", tour.getName());
+        intent.putExtra("_tourName", tour.getName());
         startActivity(intent);
 
         return true;
     }
+
+
+
 
     public void cacheFound(View view){
         // Cache was found
@@ -102,33 +105,14 @@ public class CacheDetailActivity extends AppCompatActivity {
             // We want to set this cache as found
             // Can't have both switches on at the same time. The clicked switch will be on automatically
             Switch dnfSwitch = findViewById(R.id.dnf_switch);
-            dnfSwitch.setChecked(false);
+            if(dnfSwitch.isChecked()){
+                tour._numDNF -= 1;
+                dnfSwitch.setChecked(false);
+            }
 
             currentCache.setVisit(FoundEnumType.Found);
             tour._numFound += 1;
         }
-
-       // Replace position of this cache in tour
-        tour.setCacheInTour(currentCacheIndex, currentCache);
-
-        // Finally save changes to file
-        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
-        File root = new File(rootPath);
-        tour.toFile(root);
-
-        File allToursFile = new File(root, getString(R.string.all_tours_filename));
-        ArrayList<GeocachingTour> tourList = TourList.fromFile(allToursFile);
-        for(int i = 0; i< tourList.size(); i++){
-            if(tourList.get(i).getName().equals(tour.getName())){
-                tourList.set(i, tour);
-                break;
-            }
-        }
-        TourList.toFile(tourList, allToursFile);
-
-        Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
-        t.show();
-
 
     }
 
@@ -144,13 +128,24 @@ public class CacheDetailActivity extends AppCompatActivity {
         } else {
             // We want to set this cache as DNF
             // Can't have both switches on at the same time. The clicked switch will be on automatically
-            // Can't have both switches on at the same time. The clicked switch will be on automatically
             Switch foundSwitch = findViewById(R.id.found_switch);
-            foundSwitch.setChecked(false);
+            if(foundSwitch.isChecked()){
+                tour._numFound -= 1;
+                foundSwitch.setChecked(false);
+            }
 
             currentCache.setVisit(FoundEnumType.DNF);
             tour._numDNF += 1;
         }
+
+    }
+
+    public void saveChanges(View view){
+
+        // Get notes and save changes
+        EditText notesView = findViewById(R.id.notes);
+        String myNotes = notesView.getText().toString();
+        currentCache.setNotes(myNotes);
 
         // Replace position of this cache in tour
         tour.setCacheInTour(currentCacheIndex, currentCache);
@@ -172,6 +167,10 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
         t.show();
+
+        Intent intent = new Intent(this, TourActivity.class);
+        intent.putExtra("_tourName", tour.getName());
+        startActivity(intent);
 
     }
 }

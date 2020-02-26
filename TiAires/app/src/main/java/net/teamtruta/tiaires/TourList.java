@@ -78,4 +78,29 @@ public class TourList {
     }
 
 
+    public static void appendToFile(GeocachingTour tour, File file) {
+
+
+        ArrayList<GeocachingTour> allTours = TourList.fromFile(file);
+
+        // Check if this tour is already in the list
+        for (int i = 0; i < allTours.size(); i++) {
+
+            String n = allTours.get(i).getName();
+
+            if (n.equals(tour.getName())) {
+
+                allTours.set(i, tour);
+                TourList.toFile(allTours, file);
+                return;
+            }
+
+        }
+
+        // Else just append it to the list
+        allTours.add(tour);
+        TourList.toFile(allTours, file);
+
+    }
+
 }

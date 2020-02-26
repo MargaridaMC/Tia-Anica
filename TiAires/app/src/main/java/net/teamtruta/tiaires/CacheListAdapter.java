@@ -138,7 +138,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_cache_layout, parent, false);
 
-        return new ViewHolder(v, parent.getContext());
+        return new ViewHolder(v);
     }
 
 
@@ -153,9 +153,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         Button editButton;
         Button goToButton;
         ConstraintLayout layout;
-        Context context;
 
-        ViewHolder(View v, Context context){
+        ViewHolder(View v){
             super(v);
             view = v;
 
@@ -167,7 +166,6 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             editButton = v.findViewById(R.id.edit_button);
             goToButton = v.findViewById(R.id.go_to_button);
             layout = v.findViewById(R.id.element_cache_layout);
-            this.context = context;
 
         }
 

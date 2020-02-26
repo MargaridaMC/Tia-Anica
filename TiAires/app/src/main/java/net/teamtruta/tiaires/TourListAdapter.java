@@ -1,12 +1,15 @@
 package net.teamtruta.tiaires;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -57,6 +60,11 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         double progress = ((double) numFinds + (double) numDNFS) / (double) totalCaches * 100.;
         holder.tourProgress.setProgress((int) progress);
 
+        // Grey out section if tour is done
+        if(numFinds + numDNFS == totalCaches){
+            holder.layout.setBackgroundColor(Color.parseColor("#DCDCDC"));
+        }
+
     }
 
     // total number of rows
@@ -72,6 +80,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         ImageView tourSymbol;
         ProgressBar tourProgress;
         TextView tourProgressText;
+        ConstraintLayout layout;
 
         TourViewHolder(View itemView) {
             super(itemView);
@@ -80,7 +89,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
             tourSymbol = itemView.findViewById(R.id.tour_symbol);
             tourProgress = itemView.findViewById(R.id.tour_progress);
             tourProgressText = itemView.findViewById(R.id.tour_progress_text);
-
+            layout = itemView.findViewById(R.id.constraintLayout);
+            
             itemView.setOnClickListener(this);
         }
 
@@ -95,18 +105,6 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         }
 
     }
-
-
-
-    // convenience method for getting data at click position -- for some reason is not recognized outside, in Main Activity
-    /*public String getItem(int id) {
-        return mData.get(id);
-    }
-*/
-    // allows clicks events to be caught
-   // public void setClickListener(ItemClickListener itemClickListener) {
-    //    this.mClickListener = itemClickListener;
-   // }
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener  {

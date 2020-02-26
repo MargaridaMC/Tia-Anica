@@ -58,9 +58,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:text="Save Notes"
+        android:text="Save Changes"
         android:textAppearance="@style/MainText"
         android:textColor="@color/white"
+        android:onClick="saveChanges"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

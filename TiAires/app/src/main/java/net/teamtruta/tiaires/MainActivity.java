@@ -148,10 +148,10 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
     @Override
     public void onItemClick(View view, int position, String tourName) {
-        //Toast.makeText(this, "You clicked " + tourName + " on row number " + position, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "You clicked " + _tourName + " on row number " + position, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra("tourName", tourName);
+        intent.putExtra("_tourName", tourName);
         startActivity(intent);
     }
 

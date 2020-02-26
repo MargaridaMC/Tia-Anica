@@ -129,7 +129,7 @@ public class GeocachingTour {
 
         JSONObject tourCacheJSON = new JSONObject();
         try {
-            tourCacheJSON.put("tourName", this._name);
+            tourCacheJSON.put("_tourName", this._name);
             tourCacheJSON.put("numDNF", this._numDNF);
             tourCacheJSON.put("numFound",this._numFound);
             tourCacheJSON.put("size", size());
@@ -159,7 +159,7 @@ public class GeocachingTour {
         GeocachingTour tour = new GeocachingTour("");
 
         try {
-            tour._name = tourCacheJSON.getString("tourName");
+            tour._name = tourCacheJSON.getString("_tourName");
             tour._numDNF = tourCacheJSON.getInt("numDNF");
             tour._numFound = tourCacheJSON.getInt("numFound");
             tour._size = tourCacheJSON.getInt("size");
@@ -252,7 +252,7 @@ public class GeocachingTour {
         JSONObject metaData = new JSONObject();
 
         try {
-            metaData.put("tourName", this._name);
+            metaData.put("_tourName", this._name);
             metaData.put("numDNF", this._numDNF);
             metaData.put("numFound", this._numFound);
             metaData.put("size", this._size);
@@ -266,7 +266,7 @@ public class GeocachingTour {
     void fromMetaDataJSON(JSONObject metaData){
 
         try {
-            this._name = metaData.getString("tourName");
+            this._name = metaData.getString("_tourName");
             this._numDNF = metaData.getInt("numDNF");
             this._numFound = metaData.getInt("numFound");
             this._size = metaData.getInt("size");

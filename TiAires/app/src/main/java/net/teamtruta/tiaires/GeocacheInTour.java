@@ -38,6 +38,10 @@ public class GeocacheInTour
         return _userNotes;
     }
 
+    public void setNotes(String notes){
+        this._userNotes = notes;
+    }
+
     public FoundEnumType getVisit() // não gosto deste nome. attempt, visit, ...?
     {
         return _found;
