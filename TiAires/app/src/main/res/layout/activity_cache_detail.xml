@@ -36,6 +36,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/main_text_size"
         android:gravity="top|start"
+        android:textCursorDrawable="@null"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
