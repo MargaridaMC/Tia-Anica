@@ -18,9 +18,10 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-public class TourActivity extends AppCompatActivity {
+public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener {
 
     String tourName;
+    GeocachingTour tour;
     File root;
 
     @Override
@@ -33,7 +34,7 @@ public class TourActivity extends AppCompatActivity {
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
         root = new File(rootPath);
 
-        GeocachingTour tour = GeocachingTour.fromFile(root, tourName);
+        tour = GeocachingTour.fromFile(root, tourName);
 
         // Set title
         TextView title = findViewById(R.id.tour_name);
@@ -47,7 +48,7 @@ public class TourActivity extends AppCompatActivity {
         // Set List
         RecyclerView cacheListView = findViewById(R.id.tour_view);
         cacheListView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter cacheListAdapter = new CacheListAdapter(tour);
+        RecyclerView.Adapter cacheListAdapter = new CacheListAdapter(tour, this);
         cacheListView.setAdapter(cacheListAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
@@ -113,4 +114,12 @@ public class TourActivity extends AppCompatActivity {
         dialog.show();
     }
 
+
+    @Override
+    public void onClick(int position) {
+        Intent intent = new Intent(this, CacheDetailActivity.class);
+        intent.putExtra("currentTour", tour.toJSON().toString());
+        intent.putExtra("currentCacheIndex", position);
+        startActivity(intent);
+    }
 }

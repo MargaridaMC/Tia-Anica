@@ -75,7 +75,9 @@ public class GeocacheInTour
         Geocache geocache = Geocache.fromJSON(geocacheJSON);
      
         GeocacheInTour cacheInTour = new GeocacheInTour(geocache);
-        cacheInTour._found = cacheJSON.getEnum(FoundEnumType.class, "foundIt");
+
+        String foundString = cacheJSON.get("foundIt").toString();
+        cacheInTour._found = FoundEnumType.valueOf(foundString);
         cacheInTour._userNotes = cacheJSON.getString("notes");
         cacheInTour._needsMaintenance = cacheJSON.getBoolean("needsMaintenance");
         String foundDateString = cacheJSON.getString("foundDate");

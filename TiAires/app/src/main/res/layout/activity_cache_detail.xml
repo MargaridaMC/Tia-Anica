@@ -6,4 +6,82 @@
     android:layout_height="match_parent"
     tools:context=".CacheDetailActivity">
 
+    <EditText
+        android:id="@+id/notes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/large_padding"
+        android:layout_marginTop="@dimen/space"
+        android:layout_marginEnd="@dimen/large_padding"
+        android:layout_marginBottom="@dimen/margin"
+        android:background="@drawable/text_box_with_border"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="My Notes"
+        android:textColor="@color/white"
+        android:textSize="@dimen/main_text_size"
+        android:gravity="top|start"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large_padding"
+        android:layout_marginTop="@dimen/margin"
+        android:text="Notes:"
+        android:textAppearance="@style/MainText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:text="Save Notes"
+        android:textAppearance="@style/MainText"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/notes"
+        app:layout_constraintStart_toStartOf="@+id/notes"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Switch
+            android:id="@+id/found_switch"
+            android:layout_width="@dimen/large_icon_size"
+            android:layout_height="wrap_content"
+            android:text="Found"
+            android:textAppearance="@style/MainText"
+            android:layout_weight="1"
+            android:onClick="cacheFound"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"/>
+
+        <Switch
+            android:id="@+id/dnf_switch"
+            android:layout_width="@dimen/large_icon_size"
+            android:layout_height="wrap_content"
+            android:text="DNF"
+            android:textAppearance="@style/MainText"
+            android:layout_weight="1"
+            android:onClick="cacheNotFound"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

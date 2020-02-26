@@ -9,9 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TourList extends ArrayList {
-
-    ArrayList<GeocachingTour> tours;
+public class TourList {
 
     public static ArrayList<GeocachingTour> fromFile (File file){
 
@@ -55,7 +53,7 @@ public class TourList extends ArrayList {
         }
 
         try {
-            FileOutputStream os = new FileOutputStream(file);
+            FileOutputStream os = new FileOutputStream(file, false);
             os.write(newTourString.getBytes());
             os.close();
         } catch (IOException e) {

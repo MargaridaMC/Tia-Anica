@@ -1,26 +1,30 @@
 package net.teamtruta.tiaires;
 
 
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.io.UnsupportedEncodingException;
 
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> {
 
     private GeocachingTour tour;
+    public EditOnClickListener editOnClickListener;
 
-    CacheListAdapter(GeocachingTour tour){
+    CacheListAdapter(GeocachingTour tour, EditOnClickListener listener){
         this.tour = tour;
+        this.editOnClickListener = listener;
     }
     @Override
     public int getItemCount(){
@@ -28,9 +32,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position){
+    public void onBindViewHolder(ViewHolder holder, final int position){
 
-        GeocacheInTour cache = tour.getCacheInTour(position);
+        final GeocacheInTour cache = tour.getCacheInTour(position);
 
         // Set cache name
         holder.cacheName.setText(cache.geocache.name);
@@ -110,13 +114,31 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         info = "DNFs in last 10 logs: ";
         holder.cacheInfo2.setText(info);
 
+        // Set listener for edit button
+        holder.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editOnClickListener!=null){
+                    editOnClickListener.onClick(position);
+                }
+            }
+        });
+
+        // TODO: set listener for go to button
+
+
+        // Make section grey if cache has been visited
+        if(cache.getVisit() == FoundEnumType.Found || cache.getVisit() == FoundEnumType.DNF){
+            holder.layout.setBackgroundColor(Color.parseColor("#DCDCDC"));
+        }
+
     }
 
     public CacheListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_cache_layout, parent, false);
 
-        return new ViewHolder(v);
+        return new ViewHolder(v, parent.getContext());
     }
 
 
@@ -128,8 +150,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         TextView cacheInfo0;
         TextView cacheInfo1;
         TextView cacheInfo2;
+        Button editButton;
+        Button goToButton;
+        ConstraintLayout layout;
+        Context context;
 
-        ViewHolder(View v){
+        ViewHolder(View v, Context context){
             super(v);
             view = v;
 
@@ -138,9 +164,17 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             cacheInfo0 = v.findViewById(R.id.cache_info_0);
             cacheInfo1 = v.findViewById(R.id.cache_info_1);
             cacheInfo2 = v.findViewById(R.id.cache_info_2);
+            editButton = v.findViewById(R.id.edit_button);
+            goToButton = v.findViewById(R.id.go_to_button);
+            layout = v.findViewById(R.id.element_cache_layout);
+            this.context = context;
 
         }
 
 
+    }
+
+    interface EditOnClickListener {
+        void onClick(int position);
     }
 }
