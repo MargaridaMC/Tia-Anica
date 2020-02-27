@@ -9,7 +9,7 @@
     <string name="preference_file_key">tiaires_preference_file</string>
     <string name="authentication_cookie_key">AuthCookie</string>
     <string name="tour_folder">Tours</string>
-    <string name="nothing_to_show">Nothing show. Please create a tour to view it.</string>
+    <string name="nothing_to_show">Nothing show.\nPlease create a tour to view it.\n\n(better than staying home!)</string>
     <string name="all_tours_filename">allTours.txt</string>
     <string name="current_cache_extra">currentCache</string>
 </resources>

@@ -48,7 +48,7 @@
                     android:textColor="@color/colorLight"
                     android:backgroundTint="@color/colorLight"
                     android:singleLine="true"
-                    android:textCursorDrawable="@null"
+                    android:textCursorDrawable="@drawable/textbox_cursor"
                     app:layout_constraintStart_toEndOf="@id/toolbar"
                     app:layout_constraintTop_toBottomOf="@id/tour_name_view"
                     app:layout_constraintEnd_toEndOf="parent"/>
@@ -75,6 +75,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/main_text_size"
         android:background="@drawable/text_box_with_border"
+        android:textCursorDrawable="@drawable/textbox_cursor"
         app:layout_constraintBottom_toTopOf="@id/create_tour_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
