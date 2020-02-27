@@ -256,12 +256,17 @@ public class GeocachingScrapper {
         }
 
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
-        String regexHint = "<a id=\"ctl00_ContentBody_lnkDH\" onclick=\"dht\\(this\\);return&#32;false;\" title=\"Decrypt\" href=\"../seek/#\">Decrypt</a>\\) </p><div id=\"div_hint\" class=\"span-8 WrapFix\">\\s*(.*?)</div><div id='dk'";
+        //String regexHint = "<a id=\"ctl00_ContentBody_lnkDH\" onclick=\"dht\\(this\\);return&#32;false;\" title=\"Decrypt\" href=\"../seek/#\">Decrypt</a>\\) </p><div id=\"div_hint\" class=\"span-8 WrapFix\">\\s*(.*?)</div><div id='dk'";
+        String regexHint = "class=\"span-8 WrapFix\">(.*?)</div><div";
         pattern = Pattern.compile(regexHint);
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.hint = Rot13.Decode(matcher.group(1));
+            String group = matcher.group(1);
+            String temp = group;
+            temp = temp.replaceAll(" ", "");
+            if(temp.length()==0) gc.hint = "NO MATCH";
+            else gc.hint = Rot13.Decode(group);
         } else {
             gc.hint = "NO MATCH";
         }

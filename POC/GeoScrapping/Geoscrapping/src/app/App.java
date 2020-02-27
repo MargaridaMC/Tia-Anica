@@ -17,14 +17,9 @@ public class App {
         Geocache gc1;
 
         // Traditional
-        gc1 = scrapper.getGeocacheDetails("GC3443H");
-        System.out.println("Type: " + gc1.type + " - should be Traditional");
-        
-        JSONObject gc1JSON = gc1.toJSON();
-        System.out.println(gc1JSON);
-
-        Geocache newCache = Geocache.fromJSON(gc1JSON);
-        System.out.println(newCache.type);
+        gc1 = scrapper.getGeocacheDetails("GCHNBF");
+        System.out.println(gc1.hint);
+        System.out.println(gc1.hint.length());
 
         /*
         // Mystery
