@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
             tourListView.addItemDecoration(dividerItemDecoration);
 
-
         } else {
             setContentView(R.layout.activity_main_nothing_to_show);
         }

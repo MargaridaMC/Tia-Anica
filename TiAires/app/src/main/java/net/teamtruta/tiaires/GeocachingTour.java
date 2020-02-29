@@ -11,7 +11,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 /**
- * GeocachingTour
+ * GeocachingTour class, representing a tour to go out and find them gaches. Includes a list of Geocaches in tour, among others.
  */
 public class GeocachingTour {
 
@@ -22,7 +22,8 @@ public class GeocachingTour {
     int _numDNF = 0;
     int _size = 0;
 
-    GeocachingTour(String name) {
+    GeocachingTour(String name)
+    {
         if(name == null)
         {
             _name = new Date().toString();
@@ -38,6 +39,18 @@ public class GeocachingTour {
         return _tourCaches.size();
     }
 
+    /**
+     * Rename a tour
+     * @param newName New name of tour
+     * @return Old name of tour
+     */
+    String setName(String newName)
+    {
+        String oldName = _name;
+        _name = newName;
+        return oldName;
+    }
+
     int addToTour(Geocache gc)
     {
         // TODO: se gc = null ou gc.code == null, estoirar
@@ -50,7 +63,7 @@ public class GeocachingTour {
         }
 
         _size = _tourCaches.size();
-        return _tourCaches.size();
+        return _size;
     }
 
     public int addToTour(Geocache[] gc) // TODO: trocar isto por uma classe básica de todas as collecções?
@@ -60,7 +73,7 @@ public class GeocachingTour {
         }
 
         _size = _tourCaches.size();
-        return _tourCaches.size();
+        return _size;
     }
 
     public int removeFromTour(String code)
@@ -70,16 +83,22 @@ public class GeocachingTour {
         // TODO: trocar isto por um predicado chamado no remove
         for(int j=0; j<_tourCaches.size(); j++)
         {
-            if(_tourCaches.get(j).geocache.code.compareTo(code) == 0)
+            if(_tourCaches.get(j).geocache.code.equals(code)) {
                 _tourCaches.remove(j);
                 break;
+            }
         }
 
         _size = _tourCaches.size();
-        return _tourCaches.size();
+        return _size;
     }
-    
-    private GeocacheInTour getCacheInTour(String code)
+
+    /**
+     * Check if a given cache is in the tour, returning its detailed information, or null if not exists
+     * @param code of geocache, eg. GCxxxx
+     * @return the information about the cache in tour, or null if not exists
+     */
+    GeocacheInTour getCacheInTour(String code)
     {
         code = code.toUpperCase();
 
@@ -115,9 +134,13 @@ public class GeocachingTour {
         return _numDNF;
     }
 
+    /**
+     * Return a list of geocache codes.
+     * @return  List of geocache codes. If there are no codes, it returns a list with size = 0. Doesn't return null.
+     */
     List<String> getTourCacheCodes(){
 
-        List<String> codes = new ArrayList<>();
+        List<String> codes = new ArrayList<String>();
         for(GeocacheInTour geocache:_tourCaches){
             codes.add(geocache.geocache.code);
         }
@@ -125,6 +148,11 @@ public class GeocachingTour {
         return codes;
     }
 
+    /**
+     * Serialize the content of the tour into a JSON object.
+     * TODO: this method and the next should be in a separate class, e.g., GeocachingTourSerializer or something.
+     * @return JSON object with the contents of the Tour, including the cache information
+     */
     public JSONObject toJSON(){
 
         JSONObject tourCacheJSON = new JSONObject();
@@ -154,6 +182,12 @@ public class GeocachingTour {
 
     }
 
+    /**
+     * Deserialize a JSON tour into a GeocachingTour instance.
+     * TODO: this method and the previous should be in a separate class, e.g., GeocachingTourSerializer or something.
+     * @param tourCacheJSON Tour to de-serialize
+     * @return De-serialized GeocachingTour
+     */
     static GeocachingTour fromJSON(JSONObject tourCacheJSON){
 
         GeocachingTour tour = new GeocachingTour("");
@@ -187,6 +221,11 @@ public class GeocachingTour {
 
     }
 
+    /**
+     * Serialize this tour and write it to a file
+     * TODO: put in a separate class, eg GeocachingTourStorage
+     * @param rootPath Path to the tour, which will be saved with the name of the tour and .json extention
+     */
     void toFile(File rootPath){
         // write tour to file, and overwrites the file if one exists
         JSONObject tourJSON = this.toJSON();
@@ -205,6 +244,11 @@ public class GeocachingTour {
         }
     }
 
+    /**
+     * Read a tour from file and deserialize it
+     * TODO: put in a separate class, eg GeocachingTourStorage
+     * @param rootPath Path to the tour and it's name
+     */
     static GeocachingTour fromFile(File rootPath, String tourName){
 
         GeocachingTour newTour = new GeocachingTour(tourName);
@@ -247,12 +291,16 @@ public class GeocachingTour {
         return file.delete();
     }
 
+    /**
+     * Get the metadata about the tour -- (tour name, number of DNFs, Founds, and # of caches)
+     * @return JSON object with the metadata (tour name, number of DNFs, Founds, and # of caches)
+     */
     JSONObject getMetaDataJSON(){
 
         JSONObject metaData = new JSONObject();
 
         try {
-            metaData.put("_tourName", this._name);
+            metaData.put("_tourName", this._name); // TODO: refactor to remove the underscore
             metaData.put("numDNF", this._numDNF);
             metaData.put("numFound", this._numFound);
             metaData.put("size", this._size);

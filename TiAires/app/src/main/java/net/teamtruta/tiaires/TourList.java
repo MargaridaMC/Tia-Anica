@@ -9,8 +9,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Class that represents a list of tours, with methods to read/persist to storage.
+ **/
 public class TourList {
 
+    /**
+     * Read a list of GeoCaching tours from a file and return it as an array list
+     */
     public static ArrayList<GeocachingTour> fromFile (File file){
 
         String allToursFromFile;
@@ -29,7 +35,9 @@ public class TourList {
 
         String[] tours = allToursFromFile.split(";");
         ArrayList<GeocachingTour> tourList = new ArrayList<>();
-        for(String tourString : tours){
+
+        for(String tourString : tours)
+        {
             if(tourString.equals("")) continue;
             JSONObject tourJSON = null;
             try {
@@ -45,6 +53,9 @@ public class TourList {
         return tourList;
     }
 
+    /**
+     * Save a list of caches to a specified file,in Json format
+     */
     public static boolean toFile (ArrayList<GeocachingTour> tourList, File file){
 
         String newTourString = "";
@@ -64,7 +75,8 @@ public class TourList {
     }
 
 
-    public static boolean toFile (String newTourString, File file){
+    public static boolean toFile (String newTourString, File file)
+    {
 
         try {
             FileOutputStream os = new FileOutputStream(file);
@@ -78,9 +90,8 @@ public class TourList {
     }
 
 
-    public static void appendToFile(GeocachingTour tour, File file) {
-
-
+    public static void appendToFile(GeocachingTour tour, File file)
+    {
         ArrayList<GeocachingTour> allTours = TourList.fromFile(file);
 
         // Check if this tour is already in the list
@@ -100,7 +111,6 @@ public class TourList {
         // Else just append it to the list
         allTours.add(tour);
         TourList.toFile(allTours, file);
-
     }
 
 }

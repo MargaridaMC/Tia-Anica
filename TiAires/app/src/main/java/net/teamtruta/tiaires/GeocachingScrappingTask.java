@@ -2,6 +2,9 @@ package net.teamtruta.tiaires;
 
 import android.os.AsyncTask;
 
+import com.microsoft.appcenter.analytics.Analytics;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
@@ -9,7 +12,7 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
     private GeocachingScrapper scrapper;
     private List<String> geocacheCodesList;
     PostGeocachingScrapping delegate;
-    private GeocachingTour tour;
+    private List<Geocache> caches = new ArrayList<Geocache>();
 
     GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geocacheCodesList){
         this.scrapper = scrapper;
@@ -17,8 +20,10 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(String... tourName) {
+    protected Integer doInBackground(String... tourName)
+    {
 
+        Analytics.trackEvent("Geoscrapping caches");
         // Check that we can login
         /*
         try {
@@ -29,15 +34,14 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
         }
         */
 
-        // Create tour and fill it with the data
-        tour = new GeocachingTour(tourName[0]);
-
-        for(String code:geocacheCodesList){
-
+        for(String code : geocacheCodesList)
+        {
             try {
-                Geocache gc = scrapper.getGeocacheDetails(code);
-                tour.addToTour(gc);
-            } catch (Exception e) {
+
+                caches.add(scrapper.getGeocacheDetails(code));
+
+            } catch (Exception e)
+            {
                 e.printStackTrace();
             }
         }
@@ -48,7 +52,7 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if(result == 1){
-            delegate.onGeocachingScrappingTaskResult(tour);
+            delegate.onGeocachingScrappingTaskResult(caches);
         }
     }
 }
