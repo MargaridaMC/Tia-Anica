@@ -11,6 +11,8 @@ import android.widget.Switch;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
+import com.microsoft.appcenter.analytics.Analytics;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -140,8 +142,14 @@ public class CacheDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Handle Saving in the cache in tour activity
+     * @param view
+     */
     public void saveChanges(View view)
     {
+        Analytics.trackEvent("Save cache in tour");
+
         // Get notes and save changes
         EditText notesView = findViewById(R.id.notes);
         String myNotes = notesView.getText().toString();
@@ -152,18 +160,10 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Finally save changes to file
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
-        File root = new File(rootPath);
-        tour.toFile(root);
+        tour.toFile(rootPath);
 
-        File allToursFile = new File(root, getString(R.string.all_tours_filename));
-        ArrayList<GeocachingTourSummary> tourList = TourList.fromFile(allToursFile);
-        for(int i = 0; i< tourList.size(); i++){
-            if(tourList.get(i).getName().equals(tour.getName())){
-                tourList.set(i, tour);
-                break;
-            }
-        }
-        TourList.toFile(tourList, allToursFile);
+        // update the element we just changed
+        TourList.update(rootPath, tour);
 
         Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
         t.show();

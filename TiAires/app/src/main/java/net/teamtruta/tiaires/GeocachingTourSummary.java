@@ -2,7 +2,6 @@ package net.teamtruta.tiaires;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Date;
 
 /**
@@ -46,9 +45,10 @@ public class GeocachingTourSummary
     public int getNumDNF() { return _numDNF; }
 
     public boolean getIsCurrentTour() { return _isCurrentTour; }
-    public void setIsCurrentTourOn() { _isCurrentTour = true; }
-    public void setIsCurrentTourOff() { _isCurrentTour = false; }
 
+    public void setIsCurrentTourOn() { _isCurrentTour = true; }
+
+    public void setIsCurrentTourOff() { _isCurrentTour = false; }
 
     /**
      * Get the metadata about the tour -- (tour name, number of DNFs, Founds, and # of caches)

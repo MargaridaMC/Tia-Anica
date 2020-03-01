@@ -14,22 +14,22 @@ import android.content.Intent;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.File;
-import java.util.ArrayList;
+import com.microsoft.appcenter.analytics.Analytics;
 
 public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
 
     String tourName;
     GeocachingTour tour;
-    File root;
+    String _rootPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Analytics.trackEvent("Entered tour screen with list of caches");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
 
@@ -41,10 +41,9 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         Intent intent = getIntent();
         tourName = intent.getExtras().getString("_tourName");
-        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
-        root = new File(rootPath);
+        _rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
 
-        tour = GeocachingTour.fromFile(root, tourName);
+        tour = GeocachingTour.fromFile(_rootPath, tourName);
 
         // Set title
         ab.setTitle(tourName);
@@ -73,6 +72,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void deleteTour(View view){
+        Analytics.trackEvent("Delete a tour");
 
         final Context context = this;
 
@@ -84,15 +84,16 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             public void onClick(DialogInterface dialog, int which) {
 
                 // Delete tour file
-                GeocachingTour.deleteTourFile(root, tourName);
-                Log.d("TAG", tourName + " should not be in " + root.listFiles());
+                GeocachingTour.deleteTourFile(_rootPath, tourName);
 
+                TourList.removeTour(_rootPath, tourName);
+
+                /*
                 // Delete tour entry in tour list file
-                File allToursFile = new File(root, getString(R.string.all_tours_filename));
-                ArrayList<GeocachingTourSummary> allTours = TourList.fromFile(allToursFile);
+                ArrayList<GeocachingTourSummary> allTours = TourList.read(_rootPath);
                 Log.d("TAG", "Original getSize: " + allTours.size());
 
-                for(GeocachingTourSummary tour: allTours){
+                for(GeocachingTourSummary tour: allTours){ // TODO - usar um predicado
                     if(tour.getName().equals(tourName)){
                         allTours.remove(tour);
                         break;
@@ -101,7 +102,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
                 Log.d("TAG", "New getSize: " + allTours.size());
 
-                boolean saved = TourList.toFile(allTours, allToursFile);
+                boolean saved = TourList.write(_rootPath, allTours);
+                 */
 
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);

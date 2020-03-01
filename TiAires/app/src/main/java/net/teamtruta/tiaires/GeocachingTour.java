@@ -66,16 +66,19 @@ public class GeocachingTour extends GeocachingTourSummary
 
     public int removeFromTour(String code)
     {
-        code = code.toUpperCase();
+        final String upperCode = code.toUpperCase();
 
-        // TODO: trocar isto por um predicado chamado no remove
+        _tourCaches.removeIf(cit -> cit.geocache.code.equals(upperCode));
+
+        /* OBSOLETE
         for(int j=0; j<_tourCaches.size(); j++)
         {
-            if(_tourCaches.get(j).geocache.code.equals(code)) {
+            if(_tourCaches.get(j).geocache.code.equals(codeaa)) {
                 _tourCaches.remove(j);
                 break;
             }
         }
+         */
 
         _size = _tourCaches.size();
         return _size;
@@ -196,15 +199,15 @@ public class GeocachingTour extends GeocachingTourSummary
     /**
      * Serialize this tour and write it to a file
      * TODO: put in a separate class, eg GeocachingTourStorage
-     * @param rootPath Path to the tour, which will be saved with the name of the tour and .json extention
+     * @param folder Path to the tour, which will be saved with the name of the tour and .json extention
      */
-    void toFile(File rootPath){
+    void toFile(String folder){
         // write tour to file, and overwrites the file if one exists
         JSONObject tourJSON = this.toJSON();
 
         // Save tour to file
         String filename = _name + ".json";
-        File file = new File(rootPath, filename);
+        File file = new File(folder, filename);
 
         FileOutputStream stream = null;
         try {
@@ -219,14 +222,15 @@ public class GeocachingTour extends GeocachingTourSummary
     /**
      * Read a tour from file and deserialize it
      * TODO: put in a separate class, eg GeocachingTourStorage
-     * @param rootPath Path to the tour and it's name
+     * @param folder Path to the tour and it's name
+     * @param tourName Name of the tour to read (signals the file)
      */
-    static GeocachingTour fromFile(File rootPath, String tourName){
-
+    static GeocachingTour fromFile(String folder, String tourName)
+    {
         GeocachingTour newTour = new GeocachingTour(tourName);
 
         String filename = tourName + ".json";
-        File file = new File(rootPath, filename);
+        File file = new File(folder, filename);
 
         int length = (int) file.length();
 
@@ -255,11 +259,16 @@ public class GeocachingTour extends GeocachingTourSummary
 
     }
 
-    public static boolean deleteTourFile(File rootPath, String tourName){
-
+    /**
+     * Delete the file with the information about the tour
+     * @param folder Folder where the tours are stored
+     * @param tourName Name of the tour to delete
+     * @return nuthin'
+     */
+    public static boolean deleteTourFile(String folder, String tourName)
+    {
         String filename = tourName + ".json";
-        File file = new File(rootPath, filename);
-
+        File file = new File(folder, filename);
         return file.delete();
     }
 
