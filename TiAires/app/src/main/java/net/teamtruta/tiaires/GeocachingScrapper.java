@@ -266,7 +266,7 @@ public class GeocachingScrapper {
             String temp = group;
             temp = temp.replaceAll(" ", "");
             if(temp.length()==0) gc.hint = "NO MATCH";
-            else gc.hint = Rot13.Decode(group);
+            else gc.hint = Rot13.Decode(group).trim();
         } else {
             gc.hint = "NO MATCH";
         }
