@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TourCreationActivity extends AppCompatActivity implements PostGeocachingScrapping {
-
+public class TourCreationActivity extends AppCompatActivity implements PostGeocachingScrapping
+{
     GeocachingTour _tour = null; // when activity is initially open
     String _originalTourName;
     String _newTourName;
@@ -248,7 +248,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             TourList.write(rootPath, gts);
         }
 
-        Intent intent = new Intent(this, TourActivity.class);
+        Intent intent = new Intent(this, TourDetailActivity.class);
         intent.putExtra("_tourName", _newTourName);
         startActivity(intent);
     }

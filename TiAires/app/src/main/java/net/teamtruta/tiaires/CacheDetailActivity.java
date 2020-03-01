@@ -84,7 +84,7 @@ public class CacheDetailActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         //onBackPressed();
 
-        Intent intent = new Intent(this, TourActivity.class);
+        Intent intent = new Intent(this, TourDetailActivity.class);
         intent.putExtra("_tourName", tour.getName());
         startActivity(intent);
 
@@ -168,7 +168,7 @@ public class CacheDetailActivity extends AppCompatActivity {
         Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
         t.show();
 
-        Intent intent = new Intent(this, TourActivity.class);
+        Intent intent = new Intent(this, TourDetailActivity.class);
         intent.putExtra("_tourName", tour.getName());
         startActivity(intent);
 

@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
-public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
+public class TourDetailActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
 
     String tourName;
     GeocachingTour tour;
@@ -28,7 +28,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Analytics.trackEvent("TourActivity.onCreate");
+        Analytics.trackEvent("TourDetailActivity.onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
@@ -72,7 +72,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void deleteTour(View view){
-        Analytics.trackEvent("TourActivity.deleteTour");
+        Analytics.trackEvent("TourDetailActivity.deleteTour");
 
         final Context context = this;
 
@@ -87,23 +87,6 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
                 GeocachingTour.deleteTourFile(_rootPath, tourName);
 
                 TourList.removeTour(_rootPath, tourName);
-
-                /*
-                // Delete tour entry in tour list file
-                ArrayList<GeocachingTourSummary> allTours = TourList.read(_rootPath);
-                Log.d("TAG", "Original getSize: " + allTours.size());
-
-                for(GeocachingTourSummary tour: allTours){ // TODO - usar um predicado
-                    if(tour.getName().equals(tourName)){
-                        allTours.remove(tour);
-                        break;
-                    }
-                }
-
-                Log.d("TAG", "New getSize: " + allTours.size());
-
-                boolean saved = TourList.write(_rootPath, allTours);
-                 */
 
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
