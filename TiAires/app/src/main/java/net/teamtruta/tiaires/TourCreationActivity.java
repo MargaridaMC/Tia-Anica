@@ -105,8 +105,9 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // Check if there doesn't exist a tour with this name
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
         File allToursFile = new File(rootPath, getString(R.string.all_tours_filename)); // TODO: this functionality should be encapsulated
-        ArrayList<GeocachingTour> allTours = TourList.fromFile(allToursFile);
+        ArrayList<GeocachingTourSummary> allTours = TourList.fromFile(allToursFile);
 
+        /* COMMENTED FOR NOW / HAVE TO DECIDE IF WE DO THIS OR ADD A CLONE FEATURE
         for (int i = 0; i < allTours.size(); i++) {
             String n = allTours.get(i).getName();
             if (n.equals(_newTourName)) {
@@ -116,6 +117,22 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
                 return;
             }
         }
+         */
+
+        // go get the details of each geocache
+        // TODO: only get tour if there are new caches in teh _geocacheCodesList
+        getTour(_newTourName);
+    }
+
+    /**
+     * Use GeocachingScrapper to get information of the caches in the specified tour.
+     * This name can possibly have been changed, from the original name it had when the activity was initially opened.
+     * @param tourName Name of Tour.
+     */
+    public void getTour(String tourName){
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
 
         // Process the deltas from the old list to the new list
         if (_tour != null) {
@@ -135,40 +152,30 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
                     _geocacheCodesList.remove(loadedCache); // don't get the information again
                 }
             }
-
         }
 
-        // go get the details of each geocache
-        getTour(_newTourName);
+        if(_geocacheCodesList.size() > 0) {
+            if (authCookie.equals("")) {
+                // TODO: prompt for login
+            } else {
+
+                progressBar = findViewById(R.id.progress_layout);
+                progressBar.setVisibility(View.VISIBLE);
+
+                GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
+                GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, _geocacheCodesList);
+                geocachingScrappingTask.delegate = this;
+                geocachingScrappingTask.execute(tourName);
+            }
+        }
     }
 
     /**
-     * Use GeocachingScrapper to get information of the caches in the specified tour.
-     * This name can possibly have been changed, from the original name it had when the activity was initially opened.
-     * @param tourName Name of Tour.
+     * Not used. Re-evaluate in the future vs a Tour Clone feature.
      */
-    public void getTour(String tourName){
-
-        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
-
-        if(authCookie.equals("")){
-            // TODO: prompt for login
-        } else {
-
-            progressBar = findViewById(R.id.progress_layout);
-            progressBar.setVisibility(View.VISIBLE);
-
-            GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
-            GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, _geocacheCodesList);
-            geocachingScrappingTask.delegate = this;
-            geocachingScrappingTask.execute(tourName);
-        }
-    }
-
     public void getPermissionOverwrite(){
 
-        final String[] newTourName = {null};
+        // final String[] newTourName = {null};
         android.app.AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = getLayoutInflater();
@@ -183,9 +190,10 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                newTourName[0] = input.getText().toString();
-                Log.d("TAG", "NEW name " + newTourName[0]);
-                getTour(newTourName[0]);
+                // newTourName[0] = input.getText().toString();
+                _newTourName = input.getText().toString();
+                Log.d("TAG", "NEW name " + _newTourName);
+                getTour(_newTourName);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -214,7 +222,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // If this is a new tour we need to create one instance
         if(_tour == null)
         {
-            _tour = new GeocachingTour(_newTourName); // check if this is correct! #TODO TODO TODO TODO TODO TODO
+            _tour = new GeocachingTour(_newTourName);
         }
         else
         {
@@ -234,17 +242,20 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
         // Add it to tour list
         if(allToursFile.exists()){
-            // If the file already exists just append a new entry to it
-            TourList.appendToFile(_tour, allToursFile);
+
+            // if the tour was renamed we need to remove the old name
+            ArrayList<GeocachingTourSummary> gts = TourList.fromFile(allToursFile);
+            gts.removeIf( tour -> tour.getName().equals(_originalTourName));
+            gts.add(_tour);
+            TourList.toFile(gts, allToursFile);
         } else {
             // else create a tour list file
-            String newTourString = ";" + _tour.getMetaDataJSON().toString();
+            String newTourString = ";" + _tour.serialize();
             TourList.toFile(newTourString, allToursFile);
         }
 
         Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra("_tourName", _newTourName);
         startActivity(intent);
-
     }
 }

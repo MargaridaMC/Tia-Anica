@@ -1,8 +1,5 @@
 package net.teamtruta.tiaires;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,13 +9,17 @@ import java.util.ArrayList;
 /**
  * Class that represents a list of tours, with methods to read/persist to storage.
  **/
-public class TourList {
-
+public class TourList
+{
     /**
-     * Read a list of GeoCaching tours from a file and return it as an array list
+     * Read a list of GeoCachingTour Summaries from a file and return it as an array list
+     * The file has the following format:
+     * {"tourName":"Mytour","numDNF":0,"numFound":1,"size":3};{"tourName":"Mytour2","numDNF":0,"numFound":1,"size":3};
+     * TODO: this could be a single json document without the ; separator
      */
-    public static ArrayList<GeocachingTour> fromFile (File file){
-
+    public static ArrayList<GeocachingTourSummary> fromFile (File file)
+    {
+        // Read the full content of the file
         String allToursFromFile;
         int length = (int) file.length();
         byte[] bytes = new byte[length];
@@ -33,21 +34,14 @@ public class TourList {
 
         allToursFromFile = new String(bytes);
 
-        String[] tours = allToursFromFile.split(";");
-        ArrayList<GeocachingTour> tourList = new ArrayList<>();
+        String[] tourSummaryJsons = allToursFromFile.split(";");
+        ArrayList<GeocachingTourSummary> tourList = new ArrayList<>();
 
-        for(String tourString : tours)
+        for(String tourJson : tourSummaryJsons)
         {
-            if(tourString.equals("")) continue;
-            JSONObject tourJSON = null;
-            try {
-                tourJSON = new JSONObject(tourString);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            GeocachingTour tour = new GeocachingTour("name");
-            tour.fromMetaDataJSON(tourJSON);
-            tourList.add(tour);
+            if(tourJson.equals("")) continue;
+
+            tourList.add(GeocachingTourSummary.deserialize(tourJson));
         }
 
         return tourList;
@@ -55,29 +49,38 @@ public class TourList {
 
     /**
      * Save a list of caches to a specified file,in Json format
+     * TODO - return true always?
      */
-    public static boolean toFile (ArrayList<GeocachingTour> tourList, File file){
-
+    public static boolean toFile (ArrayList<GeocachingTourSummary> tourList, File file)
+    {
+        // concatenate all the strings together (TODO: best to save as json object?...)
         String newTourString = "";
-        for(GeocachingTour tour:tourList){
-            newTourString += (tour.getMetaDataJSON().toString() + ";");
+        for(GeocachingTourSummary tourSummary : tourList){
+            newTourString += (tourSummary.serialize() + ";");
         }
 
-        try {
-            FileOutputStream os = new FileOutputStream(file, false);
-            os.write(newTourString.getBytes());
-            os.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        toFile(newTourString, file);
+        // save to file
+        //try {
+        //    FileOutputStream os = new FileOutputStream(file, false);
+        //   os.write(newTourString.getBytes());
+        //    os.close();
+        //} catch (IOException e) {
+        //    e.printStackTrace();
+        //}
 
         return true;
     }
 
-
+    /**
+     * Write the string received as parameter to the specified file
+     * TODO - return true always?
+     * @param newTourString String to write
+     * @param file File to write to
+     * @return Always true
+     */
     public static boolean toFile (String newTourString, File file)
     {
-
         try {
             FileOutputStream os = new FileOutputStream(file);
             os.write(newTourString.getBytes());
@@ -89,10 +92,9 @@ public class TourList {
         return true;
     }
 
-
-    public static void appendToFile(GeocachingTour tour, File file)
+    public static void appendToFile(GeocachingTourSummary tour, File file)
     {
-        ArrayList<GeocachingTour> allTours = TourList.fromFile(file);
+        ArrayList<GeocachingTourSummary> allTours = TourList.fromFile(file);
 
         // Check if this tour is already in the list
         for (int i = 0; i < allTours.size(); i++) {

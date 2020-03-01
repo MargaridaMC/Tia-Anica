@@ -52,7 +52,7 @@ public class Geocache {
             cacheJSON.put("name", name);
             cacheJSON.put("latitude", latitude);
             cacheJSON.put("longitude", longitude);
-            cacheJSON.put("size", size);
+            cacheJSON.put("getSize", size);
             cacheJSON.put("difficulty", difficulty);
             cacheJSON.put("terrain", terrain);
             cacheJSON.put("type", type);
@@ -77,7 +77,7 @@ public class Geocache {
             cache.name = cacheJSON.getString("name");
             cache.latitude = cacheJSON.getString("latitude");
             cache.longitude = cacheJSON.getString("longitude");
-            cache.size = cacheJSON.getString("size");
+            cache.size = cacheJSON.getString("getSize");
             cache.difficulty = cacheJSON.getString("difficulty");
             cache.terrain = cacheJSON.getString("terrain");
             String typeString = cacheJSON.get("type").toString();

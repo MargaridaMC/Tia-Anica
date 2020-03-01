@@ -16,12 +16,12 @@ import java.util.ArrayList;
 
 public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourViewHolder> {
 
-    private ArrayList<GeocachingTour> _tourList;
+    private ArrayList<GeocachingTourSummary> _tourList;
     private LayoutInflater mInflater;
     private ItemClickListener onClickListener;
 
     // data is passed into the constructor
-    TourListAdapter(Context context,  ArrayList<GeocachingTour> data, ItemClickListener listener) {
+    TourListAdapter(Context context,  ArrayList<GeocachingTourSummary> data, ItemClickListener listener) {
 
         this.mInflater = LayoutInflater.from(context);
         _tourList = data;
@@ -39,20 +39,20 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     @Override
     public void onBindViewHolder(TourViewHolder holder, int position) {
         //String animal = mData._tourList(position);
-        GeocachingTour tour = _tourList.get(position);
+        GeocachingTourSummary tour = _tourList.get(position);
 
         // Set tour title
         holder.tourTitle.setText(tour.getName());
 
         // Set tour symbol
-        if(tour.isCurrentTour){
+        if(tour.getIsCurrentTour()){
             holder.tourSymbol.setImageResource(R.drawable.star);
         }
 
         // Write progress in text
         int numFinds = tour.getNumFound();
         int numDNFS = tour.getNumDNF();
-        int totalCaches = tour._size;
+        int totalCaches = tour._size; // # TODO -- this breaks the OO model...
         String progressText = numFinds + " + " + numDNFS + " / " + totalCaches;
         holder.tourProgressText.setText(progressText);
 

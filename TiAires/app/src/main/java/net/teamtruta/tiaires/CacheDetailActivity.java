@@ -140,8 +140,8 @@ public class CacheDetailActivity extends AppCompatActivity {
 
     }
 
-    public void saveChanges(View view){
-
+    public void saveChanges(View view)
+    {
         // Get notes and save changes
         EditText notesView = findViewById(R.id.notes);
         String myNotes = notesView.getText().toString();
@@ -156,7 +156,7 @@ public class CacheDetailActivity extends AppCompatActivity {
         tour.toFile(root);
 
         File allToursFile = new File(root, getString(R.string.all_tours_filename));
-        ArrayList<GeocachingTour> tourList = TourList.fromFile(allToursFile);
+        ArrayList<GeocachingTourSummary> tourList = TourList.fromFile(allToursFile);
         for(int i = 0; i< tourList.size(); i++){
             if(tourList.get(i).getName().equals(tour.getName())){
                 tourList.set(i, tour);

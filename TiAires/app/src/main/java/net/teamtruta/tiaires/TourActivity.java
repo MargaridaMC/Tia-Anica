@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
@@ -52,7 +51,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         // Set progress
         TextView progressText = findViewById(R.id.tour_progress);
-        String progress = tour._numFound + " + " + tour._numDNF + " / " + tour.size();
+        String progress = tour._numFound + " + " + tour._numDNF + " / " + tour.getSize();
         progressText.setText(progress);
 
         // Set List
@@ -90,17 +89,17 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
                 // Delete tour entry in tour list file
                 File allToursFile = new File(root, getString(R.string.all_tours_filename));
-                ArrayList<GeocachingTour> allTours = TourList.fromFile(allToursFile);
-                Log.d("TAG", "Original size: " + allTours.size());
+                ArrayList<GeocachingTourSummary> allTours = TourList.fromFile(allToursFile);
+                Log.d("TAG", "Original getSize: " + allTours.size());
 
-                for(GeocachingTour tour: allTours){
+                for(GeocachingTourSummary tour: allTours){
                     if(tour.getName().equals(tourName)){
                         allTours.remove(tour);
                         break;
                     }
                 }
 
-                Log.d("TAG", "New size: " + allTours.size());
+                Log.d("TAG", "New getSize: " + allTours.size());
 
                 boolean saved = TourList.toFile(allTours, allToursFile);
 

@@ -13,28 +13,16 @@ import org.json.JSONObject;
 /**
  * GeocachingTour class, representing a tour to go out and find them gaches. Includes a list of Geocaches in tour, among others.
  */
-public class GeocachingTour {
-
-    private String _name;
-    private ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
-    boolean isCurrentTour = false;
-    int _numFound = 0;
-    int _numDNF = 0;
-    int _size = 0;
+public class GeocachingTour extends GeocachingTourSummary
+{
+    ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
 
     GeocachingTour(String name)
     {
-        if(name == null)
-        {
-            _name = new Date().toString();
-        }
-        else
-        {
-            _name = name;
-        }
+        super(name);
     }
 
-    int size()
+    int getSize()
     {
         return _tourCaches.size();
     }
@@ -118,25 +106,9 @@ public class GeocachingTour {
         _tourCaches.set(position, cache);
     }
 
-    public void makeCurrentTour(){
-        isCurrentTour = true;
-    }
-
-    public String getName(){
-        return _name;
-    }
-
-    int getNumFound(){
-        return _numFound;
-    }
-
-    int getNumDNF(){
-        return _numDNF;
-    }
-
     /**
      * Return a list of geocache codes.
-     * @return  List of geocache codes. If there are no codes, it returns a list with size = 0. Doesn't return null.
+     * @return  List of geocache codes. If there are no codes, it returns a list with getSize = 0. Doesn't return null.
      */
     List<String> getTourCacheCodes(){
 
@@ -160,7 +132,7 @@ public class GeocachingTour {
             tourCacheJSON.put("_tourName", this._name);
             tourCacheJSON.put("numDNF", this._numDNF);
             tourCacheJSON.put("numFound",this._numFound);
-            tourCacheJSON.put("size", size());
+            tourCacheJSON.put("getSize", getSize());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -196,7 +168,7 @@ public class GeocachingTour {
             tour._name = tourCacheJSON.getString("_tourName");
             tour._numDNF = tourCacheJSON.getInt("numDNF");
             tour._numFound = tourCacheJSON.getInt("numFound");
-            tour._size = tourCacheJSON.getInt("size");
+            tour._size = tourCacheJSON.getInt("getSize");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -291,38 +263,7 @@ public class GeocachingTour {
         return file.delete();
     }
 
-    /**
-     * Get the metadata about the tour -- (tour name, number of DNFs, Founds, and # of caches)
-     * @return JSON object with the metadata (tour name, number of DNFs, Founds, and # of caches)
-     */
-    JSONObject getMetaDataJSON(){
 
-        JSONObject metaData = new JSONObject();
-
-        try {
-            metaData.put("_tourName", this._name); // TODO: refactor to remove the underscore
-            metaData.put("numDNF", this._numDNF);
-            metaData.put("numFound", this._numFound);
-            metaData.put("size", this._size);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return metaData;
-    }
-
-    void fromMetaDataJSON(JSONObject metaData){
-
-        try {
-            this._name = metaData.getString("_tourName");
-            this._numDNF = metaData.getInt("numDNF");
-            this._numFound = metaData.getInt("numFound");
-            this._size = metaData.getInt("size");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 }
 

@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
             setContentView(R.layout.activity_main);
 
-            ArrayList<GeocachingTour> tourList = TourList.fromFile(allToursFile);
+            ArrayList<GeocachingTourSummary> tourList = TourList.fromFile(allToursFile);
 
             tourListView = findViewById(R.id.tour_list);
             tourListView.setLayoutManager(new LinearLayoutManager(this));

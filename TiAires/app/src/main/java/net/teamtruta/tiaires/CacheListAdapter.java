@@ -28,7 +28,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     }
     @Override
     public int getItemCount(){
-        return tour.size();
+        return tour.getSize();
     }
 
     @Override
