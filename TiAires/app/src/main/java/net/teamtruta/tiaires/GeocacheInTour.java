@@ -1,5 +1,7 @@
 package net.teamtruta.tiaires;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +40,7 @@ public class GeocacheInTour
     }
 
     void setNotes(String notes){
-        this._userNotes = notes;
+        _userNotes = notes;
     }
 
     FoundEnumType getVisit() // não gosto deste nome. attempt, visit, ...?
@@ -54,6 +56,9 @@ public class GeocacheInTour
     {
         return _needsMaintenance;
     }
+
+    public void setNeedsMaintenant(boolean needsIt) { _needsMaintenance = needsIt; }
+
 
     JSONObject toJSON(){
 
@@ -102,6 +107,7 @@ public class GeocacheInTour
                 cacheInTour._foundDate = new SimpleDateFormat("dd/MM/yyyy").parse(foundDateString);
             } catch(ParseException e){
                 // There should be date there but it's not parseable
+                Log.d("TAG", "GeocacheInTour.fromJSON - Can't parse FoundDate when de-serializing GeocacheInTour JSON");
                 e.printStackTrace();
             }
         }
@@ -110,5 +116,3 @@ public class GeocacheInTour
 
     }
 }
-
-// TODO: Java suporta valores default nos parâmetros? se sim qual a sintaxe?

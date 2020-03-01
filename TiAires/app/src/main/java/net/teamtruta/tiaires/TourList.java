@@ -1,8 +1,9 @@
 package net.teamtruta.tiaires;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -32,34 +33,15 @@ public class TourList
     public static ArrayList<GeocachingTourSummary> read(String folder)
     {
         // Read the full content of the file
-
-        File file = new File(folder, _allToursFile);
-
-        String allToursFromFile;
-        int length = (int) file.length();
-        byte[] bytes = new byte[length];
-        FileInputStream in;
         try {
-            in = new FileInputStream(file);
-            in.read(bytes);
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return new ObjectMapper().readValue(new File(folder, _allToursFile), new TypeReference<ArrayList<GeocachingTourSummary>>(){});
         }
-
-        allToursFromFile = new String(bytes);
-
-        String[] tourSummaryJsons = allToursFromFile.split(";");
-        ArrayList<GeocachingTourSummary> tourList = new ArrayList<>();
-
-        for(String tourJson : tourSummaryJsons)
+        catch(IOException e)
         {
-            if(tourJson.equals("")) continue;
-
-            tourList.add(GeocachingTourSummary.deserialize(tourJson));
+            e.printStackTrace();
+            return new ArrayList<GeocachingTourSummary>(); // return an empty list
         }
-
-        return tourList;
     }
 
     /**
@@ -70,38 +52,25 @@ public class TourList
      */
     public static boolean write(String folder, ArrayList<GeocachingTourSummary> tourList)
     {
-        // concatenate all the strings together
-        String newTourString = "";
-        for(GeocachingTourSummary tourSummary : tourList){
-            newTourString += (tourSummary.serialize() + ";");
+        try
+        {
+            tourList.sort(new GeocachingTourSummaryNameSorter());
+            new ObjectMapper().writeValue(new File(folder, _allToursFile), tourList);
+            return true;
         }
-
-        write(folder, newTourString);
-
-        return true;
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
-     * Write the string received as parameter to the all tours file
-     * @param folder TODO
-     * @param newTourString TODO
-     * @return Always true
+     * Update a tour in a given tour list, matching them by name.
+     * If the tour doesn't exist with the same name, the method does nothing
+     * @param folder Data file folder
+     * @param gts Tour to update in the TourList
      */
-    public static boolean write(String folder, String newTourString)
-    {
-        File file = new File(folder, _allToursFile);
-
-        try {
-            FileOutputStream os = new FileOutputStream(file, false);
-            os.write(newTourString.getBytes());
-            os.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return true;
-    }
-
     public static void update(String folder, GeocachingTourSummary gts)
     {
         ArrayList<GeocachingTourSummary> tourList = TourList.read(folder);
@@ -116,6 +85,11 @@ public class TourList
         TourList.write(folder, tourList);
     }
 
+    /**
+     * Add a tour to the tour list data store
+     * @param folder Data file folder
+     * @param tour Tour to add in the TourList
+     */
     public static void append(String folder, GeocachingTourSummary tour)
     {
         ArrayList<GeocachingTourSummary> allTours = TourList.read(folder);
@@ -135,6 +109,7 @@ public class TourList
 
         // otherwise, append it to the list
         allTours.add(tour);
+
         TourList.write(folder, allTours);
     }
 

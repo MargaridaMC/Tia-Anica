@@ -22,7 +22,8 @@ public class GeocachingTour extends GeocachingTourSummary
         super(name);
     }
 
-    int getSize()
+    @Override
+    public int getSize()
     {
         return _tourCaches.size();
     }
@@ -32,11 +33,12 @@ public class GeocachingTour extends GeocachingTourSummary
      * @param newName New name of tour
      * @return Old name of tour
      */
-    String setName(String newName)
+    @Override
+    public void setName(String newName)
     {
-        String oldName = _name;
+        // String oldName = _name;
         _name = newName;
-        return oldName;
+        // reurn oldName;
     }
 
     int addToTour(Geocache gc)
