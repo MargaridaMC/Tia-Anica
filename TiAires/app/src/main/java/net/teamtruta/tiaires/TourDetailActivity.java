@@ -123,4 +123,10 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
         startActivity(i);
     }
 
+    @Override
+    public void onBackPressed() {
+        // do what you want to do when the "back" button is pressed.
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
 }

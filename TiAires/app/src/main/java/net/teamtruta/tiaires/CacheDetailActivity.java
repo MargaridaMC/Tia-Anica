@@ -171,6 +171,5 @@ public class CacheDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TourDetailActivity.class);
         intent.putExtra("_tourName", tour.getName());
         startActivity(intent);
-
     }
 }

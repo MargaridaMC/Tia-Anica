@@ -150,4 +150,13 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        // A more recommended way seems to be what is documented here: https://developer.android.com/guide/navigation/navigation-custom-back#java
+        // do what you want to do when the "back" button is pressed.
+        finishAffinity();
+
+        // android.os.Process.killProcess(android.os.Process.myPid());
+        // System.exit(0); // see: https://stackoverflow.com/questions/18292016/difference-between-finish-and-system-exit0
+    }
 }

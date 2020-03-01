@@ -252,4 +252,11 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         intent.putExtra("_tourName", _newTourName);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        // do what you want to do when the "back" button is pressed.
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
 }
