@@ -28,7 +28,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Analytics.trackEvent("Entered tour screen with list of caches");
+        Analytics.trackEvent("TourActivity.onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
@@ -72,7 +72,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void deleteTour(View view){
-        Analytics.trackEvent("Delete a tour");
+        Analytics.trackEvent("TourActivity.deleteTour");
 
         final Context context = this;
 

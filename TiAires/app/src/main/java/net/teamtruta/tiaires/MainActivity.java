@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
         AppCenter.start(getApplication(), "67d245e6-d08d-4d74-8616-9af6c3471a09", Analytics.class, Crashes.class);
 
+        Analytics.trackEvent("MainActivity.onCreate");
+
         // If Login is required, set contentView to the login page
         // Else go to home page
         Context context = this;//getActivity();
@@ -57,13 +59,12 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         if(!tourFolder.exists()){
             tourFolder.mkdir();
         }
+        Log.d("TAG", "Tours data folder exists: " + tourFolder.exists());
 
-        Log.d("TAG", "Folder exists: " + tourFolder.exists());
 
-        File allToursFile = new File(tourFolder, getString(R.string.all_tours_filename)); // TODO - un-needed/remove
-        Log.d("TAG", "File exists: " + allToursFile.exists());
-
-        if(allToursFile.exists()){
+        if(TourList.exists(rootPath))
+        {
+            Log.d("TAG", "TourList file exists: true");
 
             setContentView(R.layout.activity_main);
 

@@ -55,7 +55,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // if editing an existing tour
         if(edit && !_originalTourName.equals(""))
         {
-            Analytics.trackEvent("Entered screen to editing existing tour");
+            Analytics.trackEvent("TourCreationActivity.onCreate - editing existing tour");
             EditText tourTitleView = findViewById(R.id.tour_name);
             tourTitleView.setText(_originalTourName);
 
@@ -75,7 +75,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         }
         else
         {
-            Analytics.trackEvent("Entered screen to create new tour");
+            Analytics.trackEvent("TourCreationActivity.onCreate - new tour");
         }
 
     }
@@ -85,7 +85,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
      * @param view
      */
     public void createTour(View view) {
-        Analytics.trackEvent("User clicked to created/Update tour");
+        Analytics.trackEvent("TourCreationActivity.createTour");
 
         // Get cache codes from UI and save to file
         EditText tourNameField = findViewById(R.id.tour_name);
@@ -101,11 +101,12 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             _geocacheCodesList.add(m.group());
         }
 
+        /* COMMENTED FOR NOW / HAVE TO DECIDE IF WE DO THIS OR ADD A CLONE FEATURE
+
         // Check if there doesn't exist a tour with this name
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
         ArrayList<GeocachingTourSummary> allTours = TourList.read(rootPath);
 
-        /* COMMENTED FOR NOW / HAVE TO DECIDE IF WE DO THIS OR ADD A CLONE FEATURE
         for (int i = 0; i < allTours.size(); i++) {
             String n = allTours.get(i).getName();
             if (n.equals(_newTourName)) {
@@ -126,7 +127,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
      * This name can possibly have been changed, from the original name it had when the activity was initially opened.
      * @param tourName Name of Tour.
      */
-    public void getTour(String tourName){
+    public void getTour(String tourName) {
 
         SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
@@ -142,29 +143,25 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             }
 
             // 2. Remove from the list of caches to fetch, those we already have loaded
-            for (String loadedCache : _tour.getTourCacheCodes() )
-            {
-                if(_geocacheCodesList.contains(loadedCache))
-                {
+            for (String loadedCache : _tour.getTourCacheCodes()) {
+                if (_geocacheCodesList.contains(loadedCache)) {
                     _geocacheCodesList.remove(loadedCache); // don't get the information again
                 }
             }
         }
 
-        // only scrape if there's any new cache in the tour
-        if(_geocacheCodesList.size() > 0) {
-            if (authCookie.equals("")) {
-                // TODO: prompt for login
-            } else {
+        // we need to do this even if there are no new caches, because there's additional code to account for tour rename in the task
+        if (authCookie.equals("")) {
+            // TODO: prompt for login
+        } else {
 
-                _progressBar = findViewById(R.id.progress_layout);
-                _progressBar.setVisibility(View.VISIBLE);
+            _progressBar = findViewById(R.id.progress_layout);
+            _progressBar.setVisibility(View.VISIBLE);
 
-                GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
-                GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, _geocacheCodesList);
-                geocachingScrappingTask.delegate = this;
-                geocachingScrappingTask.execute(tourName);
-            }
+            GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
+            GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, _geocacheCodesList);
+            geocachingScrappingTask.delegate = this;
+            geocachingScrappingTask.execute(tourName);
         }
     }
 
@@ -210,12 +207,12 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
     @Override
     public void onGeocachingScrappingTaskResult(List<Geocache> newlyLoadedCaches) {
 
-        Toast t = Toast.makeText(this, "Tour created. Saving to file.", Toast.LENGTH_SHORT);
+        Toast t = Toast.makeText(this, "Tour created. Saving.", Toast.LENGTH_SHORT);
         t.show();
 
         // Append entry to tour list file or alter it if we just want the tour
         String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
-        File allToursFile = new File(rootPath, getString(R.string.all_tours_filename));
+        //File allToursFile = new File(rootPath, getString(R.string.all_tours_filename));
 
         // If this is a new tour we need to create one instance
         if(_tour == null)
@@ -238,7 +235,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         _tour.toFile(rootPath);
 
         // Add it to tour list
-        if(allToursFile.exists())
+        if(TourList.exists(rootPath))
         {
             // if the tour was renamed we need to remove the old name
             ArrayList<GeocachingTourSummary> gts = TourList.read(rootPath);

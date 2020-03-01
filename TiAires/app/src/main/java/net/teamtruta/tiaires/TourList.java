@@ -14,15 +14,26 @@ public class TourList
     private static String _allToursFile = "alltours.txt";
 
     /**
+     * Check if the TourList file exists
+     * @param folder Folder where the file should be stored
+     * @return true or false according to the file existing or not. If empty but exists, returns True
+     */
+    public static boolean exists(String folder)
+    {
+        File allToursFile = new File(folder, _allToursFile);
+        return allToursFile.exists();
+    }
+
+    /**
      * Read a list of GeoCachingTour Summaries from a file and return it as an array list
      * The file has the following format: note: not final, there may be other fields there
      * {"tourName":"Mytour","numDNF":0,"numFound":1,"size":3};{"tourName":"Mytour2","numDNF":0,"numFound":1,"size":3};
      */
-    public static ArrayList<GeocachingTourSummary> read(String folderPath)
+    public static ArrayList<GeocachingTourSummary> read(String folder)
     {
         // Read the full content of the file
 
-        File file = new File(folderPath, _allToursFile);
+        File file = new File(folder, _allToursFile);
 
         String allToursFromFile;
         int length = (int) file.length();

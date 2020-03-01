@@ -22,8 +22,7 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected Integer doInBackground(String... tourName)
     {
-
-        Analytics.trackEvent("Geoscrapping caches");
+        Analytics.trackEvent("GeocachingScrappingTask.doBackground - geoscrapping caches");
         // Check that we can login
         /*
         try {

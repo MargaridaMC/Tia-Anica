@@ -34,11 +34,11 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
             // Login can be done either with username and password or with an authentication cookie
             if(_username != null && _password != null){
                 _success = gs.login(_username, _password);
-                Analytics.trackEvent(String.format("Login with u/p has result %s", _success));
+                Analytics.trackEvent(String.format("LoginTask.doInBackground - Login with u/p has result %s", _success));
             } else {
                 // Assume that login with username and password has already been done and we can use the Authentication Cookie to do the login
                _success = gs.login();
-                Analytics.trackEvent(String.format("Login with stored authentication cookie had result %s", _success));
+                Analytics.trackEvent(String.format("LoginTask.doInBackground - Login with stored authentication cookie had result %s", _success));
             }
 
             return 1;

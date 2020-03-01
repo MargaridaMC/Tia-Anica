@@ -148,7 +148,7 @@ public class CacheDetailActivity extends AppCompatActivity {
      */
     public void saveChanges(View view)
     {
-        Analytics.trackEvent("Save cache in tour");
+        Analytics.trackEvent("CacheDetailActivity.saveChanges");
 
         // Get notes and save changes
         EditText notesView = findViewById(R.id.notes);
