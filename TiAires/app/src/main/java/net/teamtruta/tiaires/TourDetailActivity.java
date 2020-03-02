@@ -20,6 +20,9 @@ import android.widget.TextView;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TourDetailActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
 
     String tourName;
@@ -28,7 +31,7 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Analytics.trackEvent("TourDetailActivity.onCreate");
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
@@ -41,6 +44,11 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
 
         Intent intent = getIntent();
         tourName = intent.getExtras().getString("_tourName");
+
+        Map<String, String> properties = new HashMap<>();
+        properties.put("TourName", tourName);
+        Analytics.trackEvent("TourDetailActivity.onCreate", properties);
+
         _rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
 
         tour = GeocachingTour.fromFile(_rootPath, tourName);
@@ -72,7 +80,7 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
     }
 
     public void deleteTour(View view){
-        Analytics.trackEvent("TourDetailActivity.deleteTour");
+
 
         final Context context = this;
 
@@ -82,6 +90,11 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                Map<String, String> properties = new HashMap<>();
+                properties.put("TourName", tourName);
+                properties.put("UserConfirmed", "true");
+                Analytics.trackEvent("TourDetailActivity.deleteTour", properties);
 
                 // Delete tour file
                 GeocachingTour.deleteTourFile(_rootPath, tourName);
@@ -96,6 +109,12 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
+
+                Map<String, String> properties = new HashMap<>();
+                properties.put("TourName", tourName);
+                properties.put("UserConfirmed", "false");
+                Analytics.trackEvent("TourDetailActivity.deleteTour", properties);
+
             }
         });
 

@@ -5,7 +5,9 @@ import android.os.AsyncTask;
 import com.microsoft.appcenter.analytics.Analytics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
 
@@ -22,7 +24,11 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected Integer doInBackground(String... tourName)
     {
-        Analytics.trackEvent("GeocachingScrappingTask.doBackground - geoscrapping caches");
+        Map<String, String> properties = new HashMap<>();
+        properties.put("TourName", tourName[0]);
+        properties.put("NumCaches", Integer.toString(geocacheCodesList.size()));
+        Analytics.trackEvent("GeocachingScrappingTask.doBackground", properties);
+
         // Check that we can login
         /*
         try {
@@ -36,10 +42,9 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
         for(String code : geocacheCodesList)
         {
             try {
-
                 caches.add(scrapper.getGeocacheDetails(code));
-
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 e.printStackTrace();
             }

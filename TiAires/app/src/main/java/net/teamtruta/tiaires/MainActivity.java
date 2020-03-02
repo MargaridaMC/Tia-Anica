@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -37,15 +39,17 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
         AppCenter.start(getApplication(), "67d245e6-d08d-4d74-8616-9af6c3471a09", Analytics.class, Crashes.class);
 
-        Analytics.trackEvent("MainActivity.onCreate");
 
         // If Login is required, set contentView to the login page
         // Else go to home page
         Context context = this;//getActivity();
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
+        SharedPreferences sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String username = sharedPref.getString("username", "");
         String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
+
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Username", username);
+        Analytics.trackEvent("MainActivity.onCreate", properties);
 
         Log.d("TAG", "Cookie: " + authCookie);
 
@@ -86,19 +90,15 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(view.getContext(), TourCreationActivity.class);
                 startActivity(intent);
-
             }
         });
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Put username on toolbar
-        String username = sharedPref.getString("username", "");
         if(!username.equals("")){
             getSupportActionBar().setTitle(username);
         }

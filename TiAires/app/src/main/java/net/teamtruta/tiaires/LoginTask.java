@@ -5,6 +5,9 @@ import android.util.Log;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
 
     private boolean _success = false;
@@ -34,11 +37,19 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
             // Login can be done either with username and password or with an authentication cookie
             if(_username != null && _password != null){
                 _success = gs.login(_username, _password);
-                Analytics.trackEvent(String.format("LoginTask.doInBackground - Login with u/p has result %s", _success));
+
+                Map<String, String> properties = new HashMap<>();
+                properties.put("LoginType", "Username/Password");
+                properties.put("Result", Boolean.toString(_success));
+                Analytics.trackEvent("LoginTask.doInBackground", properties);
             } else {
                 // Assume that login with username and password has already been done and we can use the Authentication Cookie to do the login
                _success = gs.login();
-                Analytics.trackEvent(String.format("LoginTask.doInBackground - Login with stored authentication cookie had result %s", _success));
+
+                Map<String, String> properties = new HashMap<>();
+                properties.put("LoginType", "Token Reuse");
+                properties.put("Result", Boolean.toString(_success));
+                Analytics.trackEvent(String.format("LoginTask.doInBackground", properties));
             }
 
             return 1;

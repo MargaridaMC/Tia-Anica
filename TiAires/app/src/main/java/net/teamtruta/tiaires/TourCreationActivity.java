@@ -21,7 +21,9 @@ import com.microsoft.appcenter.analytics.Analytics;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +57,11 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // if editing an existing tour
         if(edit && !_originalTourName.equals(""))
         {
-            Analytics.trackEvent("TourCreationActivity.onCreate - editing existing tour");
+            Map<String, String> properties = new HashMap<>();
+            properties.put("TourName", _originalTourName);
+            properties.put("Operation", "Edit");
+            Analytics.trackEvent("TourCreationActivity.onCreate", properties);
+
             EditText tourTitleView = findViewById(R.id.tour_name);
             tourTitleView.setText(_originalTourName);
 
@@ -75,7 +81,10 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         }
         else
         {
-            Analytics.trackEvent("TourCreationActivity.onCreate - new tour");
+            Map<String, String> properties = new HashMap<>();
+            properties.put("TourName", _originalTourName);
+            properties.put("Operation", "Create");
+            Analytics.trackEvent("TourCreationActivity.onCreate", properties);
         }
 
     }
@@ -85,7 +94,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
      * @param view
      */
     public void createTour(View view) {
-        Analytics.trackEvent("TourCreationActivity.createTour");
+
 
         // Get cache codes from UI and save to file
         EditText tourNameField = findViewById(R.id.tour_name);
@@ -100,6 +109,11 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         while (m.find()) {
             _geocacheCodesList.add(m.group());
         }
+
+        Map<String, String> properties = new HashMap<>();
+        properties.put("TourName", _newTourName);
+        properties.put("NumCaches", Integer.toString(_geocacheCodesList.size()));
+        Analytics.trackEvent("TourCreationActivity.createTour", properties);
 
         /* COMMENTED FOR NOW / HAVE TO DECIDE IF WE DO THIS OR ADD A CLONE FEATURE
 
