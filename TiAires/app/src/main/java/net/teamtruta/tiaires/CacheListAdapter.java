@@ -53,23 +53,41 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             case Multi:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_multi);
                 break;
-            case Wherigo:
-                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_wherigo);
-                break;
-            case CITO:
-                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_cito);
-                break;
             case Earth:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_earth);
-                break;
-            case Event:
-                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_event);
                 break;
             case Letterbox:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_letterbox);
                 break;
+            case Event:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_event);
+                break;
+            case CITO:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_cito);
+                break;
             case Mega:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_mega);
+                break;
+            case Giga:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_giga);
+                break;
+            case Wherigo:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_wherigo);
+                break;
+            case HQ:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_hq);
+                break;
+            case GPSAdventures:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_gps_adventures);
+                break;
+            case HQCelebration:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_hq_celebration);
+                break;
+            case HQBlockParty:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_hq_blockparty);
+                break;
+            case CommunityCelebration:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_community_event);
                 break;
             case Virtual:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_virtual);
@@ -77,11 +95,14 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             case Webcam:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_webcam);
                 break;
+            case ProjectAPE:
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_project_ape);
+                break;
             case Locationless:
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_locationless);
                 break;
             default:
-                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_traditional);
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_unknown);
                 break;
         }
 
@@ -128,22 +149,16 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         holder.cacheInfo2.setText(info);
 
         // Set listener for edit button
-        holder.editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editOnClickListener!=null){
-                    editOnClickListener.onClick(position);
-                }
+        holder.editButton.setOnClickListener(v -> {
+            if(editOnClickListener!=null){
+                editOnClickListener.onClick(position);
             }
         });
 
         // TODO: set listener for go to button
-        holder.goToButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(goToOnClickListener!=null){
-                    goToOnClickListener.onGoToClick(cache.geocache.code);
-                }
+        holder.goToButton.setOnClickListener(v -> {
+            if(goToOnClickListener!=null){
+                goToOnClickListener.onGoToClick(cache.geocache.code);
             }
         });
 
