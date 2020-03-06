@@ -87,12 +87,9 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         }
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), TourCreationActivity.class);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(view.getContext(), TourCreationActivity.class);
+            startActivity(intent);
         });
 
         Toolbar toolbar = findViewById(R.id.toolbar);

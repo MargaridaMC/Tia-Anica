@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * GeocachingScrapper Useful site: https://www.baeldung.com/java-http-request
  */
-public class GeocachingScrapper {
+class GeocachingScrapper {
 
     //private String _username, _password;
 
@@ -153,7 +153,7 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public Geocache getGeocacheDetails(String code) throws IOException, ParseException
+    Geocache getGeocacheDetails(String code) throws IOException, ParseException
     {
         code = code.toUpperCase();
 
@@ -208,7 +208,7 @@ public class GeocachingScrapper {
 
         if (matcher.find()) {
             gc.size = matcher.group(1);
-            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1, gc.size.length());
+            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1);
         } else {
             gc.size = "NO MATCH";
         }
