@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TourDetailActivity"
+    tools:context=".TourActivity"
     android:theme="@style/AppTheme.NoActionBar">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -100,6 +100,7 @@
             android:layout_width="@dimen/small_icon_size"
             android:layout_height="@dimen/small_icon_size"
             android:background="@drawable/share"
+            android:onClick="share"
             app:layout_constraintEnd_toStartOf="@id/map_button"
             app:layout_constraintStart_toEndOf="@id/edit_button"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -111,6 +112,7 @@
             android:layout_height="@dimen/small_icon_size"
             android:layout_marginEnd="@dimen/large_icon_size"
             android:background="@drawable/map_dark"
+            android:onClick="share"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

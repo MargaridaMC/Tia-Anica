@@ -16,9 +16,6 @@ import com.microsoft.appcenter.analytics.Analytics;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.util.ArrayList;
-
 public class CacheDetailActivity extends AppCompatActivity {
 
     GeocachingTour tour;
@@ -84,7 +81,7 @@ public class CacheDetailActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         //onBackPressed();
 
-        Intent intent = new Intent(this, TourDetailActivity.class);
+        Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra("_tourName", tour.getName());
         startActivity(intent);
 
@@ -168,7 +165,7 @@ public class CacheDetailActivity extends AppCompatActivity {
         Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
         t.show();
 
-        Intent intent = new Intent(this, TourDetailActivity.class);
+        Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra("_tourName", tour.getName());
         startActivity(intent);
     }

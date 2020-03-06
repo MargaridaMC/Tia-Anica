@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -158,9 +157,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
             // 2. Remove from the list of caches to fetch, those we already have loaded
             for (String loadedCache : _tour.getTourCacheCodes()) {
-                if (_geocacheCodesList.contains(loadedCache)) {
-                    _geocacheCodesList.remove(loadedCache); // don't get the information again
-                }
+                _geocacheCodesList.remove(loadedCache); // don't get the information again. If the list doens't containt the cache nothing will happen
             }
         }
 
@@ -196,21 +193,13 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         builder.setView(inflatedView);
 
         // Set up the buttons
-        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // newTourName[0] = input.getText().toString();
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
                 _newTourName = input.getText().toString();
                 Log.d("TAG", "NEW name " + _newTourName);
                 getTour(_newTourName);
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+            });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
@@ -257,12 +246,12 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             gts.add(_tour);
             TourList.write(rootPath, gts);
         } else {
-            ArrayList<GeocachingTourSummary> gts = new ArrayList<GeocachingTourSummary>();
+            ArrayList<GeocachingTourSummary> gts = new ArrayList<>();
             gts.add(_tour);
             TourList.write(rootPath, gts);
         }
 
-        Intent intent = new Intent(this, TourDetailActivity.class);
+        Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra("_tourName", _newTourName);
         startActivity(intent);
     }

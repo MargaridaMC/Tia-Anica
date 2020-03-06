@@ -20,10 +20,12 @@ import android.widget.TextView;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class TourDetailActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
+public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
 
     String tourName;
     GeocachingTour tour;
@@ -47,7 +49,7 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
 
         Map<String, String> properties = new HashMap<>();
         properties.put("TourName", tourName);
-        Analytics.trackEvent("TourDetailActivity.onCreate", properties);
+        Analytics.trackEvent("TourActivity.onCreate", properties);
 
         _rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
 
@@ -87,35 +89,30 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete tour?");
         builder.setMessage("This will delete tour " + tourName);
-        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
 
-                Map<String, String> properties = new HashMap<>();
-                properties.put("TourName", tourName);
-                properties.put("UserConfirmed", "true");
-                Analytics.trackEvent("TourDetailActivity.deleteTour", properties);
+            Map<String, String> properties = new HashMap<>();
+            properties.put("TourName", tourName);
+            properties.put("UserConfirmed", "true");
+            Analytics.trackEvent("TourActivity.deleteTour", properties);
 
-                // Delete tour file
-                GeocachingTour.deleteTourFile(_rootPath, tourName);
+            // Delete tour file
+            GeocachingTour.deleteTourFile(_rootPath, tourName);
 
-                TourList.removeTour(_rootPath, tourName);
+            TourList.removeTour(_rootPath, tourName);
 
-                Intent intent = new Intent(context, MainActivity.class);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(context, MainActivity.class);
+            startActivity(intent);
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
+        builder.setNegativeButton("Cancel", (dialog, id) -> {
+            // User cancelled the dialog
 
-                Map<String, String> properties = new HashMap<>();
-                properties.put("TourName", tourName);
-                properties.put("UserConfirmed", "false");
-                Analytics.trackEvent("TourDetailActivity.deleteTour", properties);
+            Map<String, String> properties = new HashMap<>();
+            properties.put("TourName", tourName);
+            properties.put("UserConfirmed", "false");
+            Analytics.trackEvent("TourActivity.deleteTour", properties);
 
-            }
         });
 
         AlertDialog dialog = builder.create();
@@ -147,5 +144,23 @@ public class TourDetailActivity extends AppCompatActivity implements CacheListAd
         // do what you want to do when the "back" button is pressed.
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    public void share(View view){
+
+        List<String> tourCacheCodes = new ArrayList<>();
+        for(GeocacheInTour gc:tour._tourCaches){
+            tourCacheCodes.add(gc.geocache.code);
+        }
+
+        String tourCacheCodesString = tourCacheCodes.toString();
+        tourCacheCodesString = tourCacheCodesString.substring(1, tourCacheCodesString.length() - 1);
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("vnd.android.cursor.dir/email");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, tourName);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, tourCacheCodesString);
+        this.startActivity(shareIntent);
+
     }
 }

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -66,7 +65,7 @@ public class GeocachingTour extends GeocachingTourSummary
         return _size;
     }
 
-    public int removeFromTour(String code)
+    int removeFromTour(String code)
     {
         final String upperCode = code.toUpperCase();
 
@@ -91,7 +90,7 @@ public class GeocachingTour extends GeocachingTourSummary
      * @param code of geocache, eg. GCxxxx
      * @return the information about the cache in tour, or null if not exists
      */
-    GeocacheInTour getCacheInTour(String code)
+    private GeocacheInTour getCacheInTour(String code)
     {
         code = code.toUpperCase();
 
@@ -107,7 +106,7 @@ public class GeocachingTour extends GeocachingTourSummary
         return _tourCaches.get(position);
     }
 
-    public void setCacheInTour(int position, GeocacheInTour cache){
+    void setCacheInTour(int position, GeocacheInTour cache){
         _tourCaches.set(position, cache);
     }
 
@@ -117,7 +116,7 @@ public class GeocachingTour extends GeocachingTourSummary
      */
     List<String> getTourCacheCodes(){
 
-        List<String> codes = new ArrayList<String>();
+        List<String> codes = new ArrayList<>();
         for(GeocacheInTour geocache:_tourCaches){
             codes.add(geocache.geocache.code);
         }
@@ -130,7 +129,7 @@ public class GeocachingTour extends GeocachingTourSummary
      * TODO: this method and the next should be in a separate class, e.g., GeocachingTourSerializer or something.
      * @return JSON object with the contents of the Tour, including the cache information
      */
-    public JSONObject toJSON(){
+    JSONObject toJSON(){
 
         JSONObject tourCacheJSON = new JSONObject();
         try {
@@ -211,7 +210,7 @@ public class GeocachingTour extends GeocachingTourSummary
         String filename = _name + ".json";
         File file = new File(folder, filename);
 
-        FileOutputStream stream = null;
+        FileOutputStream stream;
         try {
             stream = new FileOutputStream(file, false);
             stream.write(tourJSON.toString().getBytes());
@@ -267,7 +266,7 @@ public class GeocachingTour extends GeocachingTourSummary
      * @param tourName Name of the tour to delete
      * @return nuthin'
      */
-    public static boolean deleteTourFile(String folder, String tourName)
+    static boolean deleteTourFile(String folder, String tourName)
     {
         String filename = tourName + ".json";
         File file = new File(folder, filename);
