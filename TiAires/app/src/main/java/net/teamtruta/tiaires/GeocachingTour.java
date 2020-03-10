@@ -4,8 +4,11 @@ package net.teamtruta.tiaires;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,11 +30,27 @@ public class GeocachingTour extends GeocachingTourSummary
         return _tourCaches.size();
     }
 
+    @Override
+    public int getNumFound(){
+
+        int finds = (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.Found).count();
+        return finds;
+
+    }
+
+    @Override
+    public int getNumDNF(){
+
+        int finds = (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.DNF).count();
+        return finds;
+
+    }
     /**
      * Rename a tour
      * @param newName New name of tour
      * @return Old name of tour
      */
+
     @Override
     public void setName(String newName)
     {

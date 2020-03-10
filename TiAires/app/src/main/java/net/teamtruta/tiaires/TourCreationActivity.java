@@ -6,7 +6,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -69,7 +68,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             //TODO: enterButton.setOnClickListener(); -- just to do changes and don't get everything again
 
             // read the tour from file
-            String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+            String rootPath = App.getTourRoot();
             _tour = GeocachingTour.fromFile(rootPath, _originalTourName);
 
             // get the codes of the caches to put in the text field

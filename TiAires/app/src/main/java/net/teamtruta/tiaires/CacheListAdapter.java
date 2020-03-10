@@ -14,12 +14,17 @@ import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 
-class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> {
 
-    private GeocachingTour tour;
+class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
+
+    private static GeocachingTour tour;
     private EditOnClickListener editOnClickListener;
     private GoToOnClickListener goToOnClickListener;
+    private static GeocacheInTour recentlyVisitedCache;
+    private static int recentlyVisitedCachePosition;
+
 
     CacheListAdapter(GeocachingTour tour, EditOnClickListener editOnClickListener, GoToOnClickListener goToOnClickListener){
         this.tour = tour;
@@ -102,7 +107,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
                 cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_locationless);
                 break;
             default:
-                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_unknown);
+                cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.shrug);
                 break;
         }
 
@@ -134,7 +139,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         // Set information line 1: Found: date - \heart nFavs - Hint/No hint
         // TODO: replace Found info with date of last find -- obtain from recent logs
-        info = "Found: " + "ND" + "- \u2764 " + cache.geocache.favourites + " - ";
+        info = "Found: " + "ND" + "- &#9825; " + cache.geocache.favourites + " - ";
         if(cache.geocache.hint.equals("NO MATCH")){
             info += "<font color=\"" + red + "\">NO HINT</font>";
         } else {
@@ -176,6 +181,59 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         return new ViewHolder(v);
     }
 
+    public static void visitItem(int position, FoundEnumType visit){
+
+        // Save the deleted item in case user wants to undo the action;
+        recentlyVisitedCache = tour.getCacheInTour(position);
+        recentlyVisitedCachePosition = position;
+
+        tour.getCacheInTour(position).setVisit(visit);
+
+        String rootPath = App.getTourRoot();
+        tour.toFile(rootPath);
+
+        // update the element we just changed
+        TourList.update(rootPath, tour);
+
+        // Remove cache from tour
+        // tour.removeFromTour(recentlyVisitedCache.geocache.code);
+        // notifyItemRemoved(position);
+        // showUndoSnackbar();
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        //tour._tourCaches.remove(position);
+        //notifyItemRemoved(position);
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(tour._tourCaches, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(tour._tourCaches, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+/*
+    private void showUndoSnackbar() {
+        View view = TourActivity.findViewById(R.id.coordinator_layout);
+        Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_text, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.snack_bar_undo, v -> undoDelete());
+        snackbar.show();
+    }
+
+    private void undoDelete() {
+        tour.addToTour(recentlyVisitedCache.geocache);
+        notifyItemInserted(recentlyVisitedCachePosition);
+    }
+*/
 
     static class ViewHolder extends RecyclerView.ViewHolder{
 

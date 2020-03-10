@@ -156,7 +156,7 @@ public class CacheDetailActivity extends AppCompatActivity {
         tour.setCacheInTour(currentCacheIndex, currentCache);
 
         // Finally save changes to file
-        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        String rootPath = App.getTourRoot();
         tour.toFile(rootPath);
 
         // update the element we just changed

@@ -52,7 +52,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         // Write progress in text
         int numFinds = tour.getNumFound();
         int numDNFS = tour.getNumDNF();
-        int totalCaches = tour._size; // # TODO -- this breaks the OO model...
+        int totalCaches = tour.getSize(); // # TODO -- this breaks the OO model...
+
         String progressText = numFinds + " + " + numDNFS + " / " + totalCaches;
         holder.tourProgressText.setText(progressText);
 

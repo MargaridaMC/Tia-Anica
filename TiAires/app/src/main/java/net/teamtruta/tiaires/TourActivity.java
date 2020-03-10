@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,17 +61,22 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         // Set progress
         TextView progressText = findViewById(R.id.tour_progress);
-        String progress = tour._numFound + " + " + tour._numDNF + " / " + tour.getSize();
+        String progress = tour.getNumFound() + " + " + tour.getNumDNF() + " / " + tour.getSize();
         progressText.setText(progress);
 
         // Set List
         RecyclerView cacheListView = findViewById(R.id.tour_view);
         cacheListView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter cacheListAdapter = new CacheListAdapter(tour, this, this);
+        CacheListAdapter cacheListAdapter = new CacheListAdapter(tour, this, this);
         cacheListView.setAdapter(cacheListAdapter);
 
+        // Create diving line between elements
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
         cacheListView.addItemDecoration(dividerItemDecoration);
+
+        // Add swipe to delete action
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToVisitCallback(cacheListAdapter));
+        itemTouchHelper.attachToRecyclerView(cacheListView);
 
     }
 

@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
         // If Login is required, set contentView to the login page
         // Else go to home page
-        Context context = this;//getActivity();
-        SharedPreferences sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String username = sharedPref.getString("username", "");
         String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
 
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             startActivity(intent);
         }
 
-        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        String rootPath = App.getTourRoot();
         File tourFolder = new File(rootPath);
         if(!tourFolder.exists()){
             tourFolder.mkdir();
