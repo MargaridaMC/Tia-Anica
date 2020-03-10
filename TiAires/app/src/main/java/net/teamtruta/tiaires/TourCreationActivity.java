@@ -237,17 +237,17 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         _tour.toFile(rootPath);
 
         // Add it to tour list
-        if(TourList.exists(rootPath))
+        if(TourList.exists())
         {
             // if the tour was renamed we need to remove the old name
-            ArrayList<GeocachingTourSummary> gts = TourList.read(rootPath);
+            ArrayList<GeocachingTourSummary> gts = TourList.read();
             gts.removeIf( tour -> tour.getName().equals(_originalTourName));
             gts.add(_tour);
-            TourList.write(rootPath, gts);
+            TourList.write(gts);
         } else {
             ArrayList<GeocachingTourSummary> gts = new ArrayList<>();
             gts.add(_tour);
-            TourList.write(rootPath, gts);
+            TourList.write(gts);
         }
 
         Intent intent = new Intent(this, TourActivity.class);

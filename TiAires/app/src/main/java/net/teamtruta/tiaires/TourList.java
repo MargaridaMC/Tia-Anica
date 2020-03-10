@@ -12,16 +12,16 @@ import java.util.ArrayList;
  **/
 public class TourList
 {
-    private static String _allToursFile = "alltours.txt";
+
+
 
     /**
      * Check if the TourList file exists
-     * @param folder Folder where the file should be stored
      * @return true or false according to the file existing or not. If empty but exists, returns True
      */
-    public static boolean exists(String folder)
+    public static boolean exists()
     {
-        File allToursFile = new File(folder, _allToursFile);
+        File allToursFile = new File(App.getAllToursFilePath());
         return allToursFile.exists();
     }
 
@@ -30,12 +30,12 @@ public class TourList
      * The file has the following format: note: not final, there may be other fields there
      * {"tourName":"Mytour","numDNF":0,"numFound":1,"size":3};{"tourName":"Mytour2","numDNF":0,"numFound":1,"size":3};
      */
-    public static ArrayList<GeocachingTourSummary> read(String folder)
+    public static ArrayList<GeocachingTourSummary> read()
     {
         // Read the full content of the file
         try {
             // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return new ObjectMapper().readValue(new File(folder, _allToursFile), new TypeReference<ArrayList<GeocachingTourSummary>>(){});
+            return new ObjectMapper().readValue(new File(App.getAllToursFilePath()), new TypeReference<ArrayList<GeocachingTourSummary>>(){});
         }
         catch(IOException e)
         {
@@ -46,16 +46,15 @@ public class TourList
 
     /**
      * Save a set of tour list summaries to storage
-     * @param folder folder where to save the caches
      * @param tourList list of tours to save
      * @return Always true
      */
-    public static boolean write(String folder, ArrayList<GeocachingTourSummary> tourList)
+    public static boolean write(ArrayList<GeocachingTourSummary> tourList)
     {
         try
         {
             tourList.sort(new GeocachingTourSummaryNameSorter());
-            new ObjectMapper().writeValue(new File(folder, _allToursFile), tourList);
+            new ObjectMapper().writeValue(new File(App.getAllToursFilePath()), tourList);
             return true;
         }
         catch (IOException e)
@@ -73,7 +72,7 @@ public class TourList
      */
     public static void update(String folder, GeocachingTourSummary gts)
     {
-        ArrayList<GeocachingTourSummary> tourList = TourList.read(folder);
+        ArrayList<GeocachingTourSummary> tourList = TourList.read();
 
         for(int i = 0; i< tourList.size(); i++){
             if(tourList.get(i).getName().equals(gts.getName())){
@@ -82,7 +81,7 @@ public class TourList
             }
         }
 
-        TourList.write(folder, tourList);
+        TourList.write(tourList);
     }
 
     /**
@@ -92,7 +91,7 @@ public class TourList
      */
     public static void append(String folder, GeocachingTourSummary tour)
     {
-        ArrayList<GeocachingTourSummary> allTours = TourList.read(folder);
+        ArrayList<GeocachingTourSummary> allTours = TourList.read();
 
         // Check if this tour is already in the list and if so replace it
         for (int i = 0; i < allTours.size(); i++) {
@@ -102,7 +101,7 @@ public class TourList
             if (n.equals(tour.getName())) {
 
                 allTours.set(i, tour);
-                TourList.write(folder, allTours);
+                TourList.write(allTours);
                 return;
             }
         }
@@ -110,7 +109,7 @@ public class TourList
         // otherwise, append it to the list
         allTours.add(tour);
 
-        TourList.write(folder, allTours);
+        TourList.write(allTours);
     }
 
     /**
@@ -120,10 +119,10 @@ public class TourList
      */
     public static void removeTour(String folder, String tourName)
     {
-        ArrayList<GeocachingTourSummary> tourList = TourList.read(folder);
+        ArrayList<GeocachingTourSummary> tourList = TourList.read();
 
         tourList.removeIf(t -> t.getName().equals(tourName));
 
-        TourList.write(folder, tourList);
+        TourList.write(tourList);
     }
 }

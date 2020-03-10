@@ -6,6 +6,7 @@ import android.content.Context;
 public class App extends Application {
 
     private static Context mContext;
+    private static String _allToursFile = "alltours.txt";
 
     @Override
     public void onCreate() {
@@ -22,4 +23,7 @@ public class App extends Application {
         return path;
     }
 
+    public static String getAllToursFilePath(){
+        return getTourRoot() + "/" + _allToursFile;
+    }
 }
