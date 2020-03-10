@@ -10,15 +10,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener {
+public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener, CacheListAdapter.OnVisitListener {
 
     String tourName;
     GeocachingTour tour;
@@ -60,24 +61,31 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         ab.setTitle(tourName);
 
         // Set progress
-        TextView progressText = findViewById(R.id.tour_progress);
-        String progress = tour.getNumFound() + " + " + tour.getNumDNF() + " / " + tour.getSize();
-        progressText.setText(progress);
+        setProgressBar();
 
         // Set List
         RecyclerView cacheListView = findViewById(R.id.tour_view);
         cacheListView.setLayoutManager(new LinearLayoutManager(this));
         CacheListAdapter cacheListAdapter = new CacheListAdapter(tour, this, this);
+        CacheListAdapter.onVisitListener = this;
         cacheListView.setAdapter(cacheListAdapter);
 
         // Create diving line between elements
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
+        dividerItemDecoration.setDrawable(new ColorDrawable(this.getColor(R.color.black)));
         cacheListView.addItemDecoration(dividerItemDecoration);
 
         // Add swipe to delete action
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToVisitCallback(cacheListAdapter));
         itemTouchHelper.attachToRecyclerView(cacheListView);
 
+    }
+
+
+    public void setProgressBar(){
+        TextView progressText = findViewById(R.id.tour_progress);
+        String progress = tour.getNumFound() + " + " + tour.getNumDNF() + " / " + tour.getSize();
+        progressText.setText(progress);
     }
 
     public void editTour(View view){
@@ -167,6 +175,16 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, tourName);
         shareIntent.putExtra(Intent.EXTRA_TEXT, tourCacheCodesString);
         this.startActivity(shareIntent);
+
+    }
+
+    @Override
+    public void onVisit(String visit) {
+
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.tour_view), "Cache was marked as: " + visit, Snackbar.LENGTH_LONG);
+        snackbar.show();
+
+        setProgressBar();
 
     }
 }

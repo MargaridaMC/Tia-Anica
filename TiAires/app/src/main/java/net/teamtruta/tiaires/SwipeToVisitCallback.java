@@ -97,6 +97,7 @@ public class SwipeToVisitCallback extends ItemTouchHelper.SimpleCallback {
                     itemView.getLeft() + ((int) dX) + backgroundCornerOffset,
                     itemView.getBottom());
 
+
         } else if (dX < 0) { // Swiping to the left
 
             icon = dnfIcon;

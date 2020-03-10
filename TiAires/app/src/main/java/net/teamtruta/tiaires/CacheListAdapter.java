@@ -7,12 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Collections;
 
@@ -22,6 +26,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     private static GeocachingTour tour;
     private EditOnClickListener editOnClickListener;
     private GoToOnClickListener goToOnClickListener;
+
+    static OnVisitListener onVisitListener;
+
     private static GeocacheInTour recentlyVisitedCache;
     private static int recentlyVisitedCachePosition;
 
@@ -169,7 +176,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         // Make section grey if cache has been visited
         if(cache.getVisit() == FoundEnumType.Found || cache.getVisit() == FoundEnumType.DNF){
-            holder.layout.setBackgroundColor(Color.parseColor("#DCDCDC"));
+            holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         }
 
     }
@@ -195,10 +202,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // update the element we just changed
         TourList.update(rootPath, tour);
 
-        // Remove cache from tour
-        // tour.removeFromTour(recentlyVisitedCache.geocache.code);
-        // notifyItemRemoved(position);
-        // showUndoSnackbar();
+        onVisitListener.onVisit(visit.toString());
     }
 
     @Override
@@ -225,7 +229,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         return true;
     }
-/*
+
+    /*
     private void showUndoSnackbar() {
         View view = TourActivity.findViewById(R.id.coordinator_layout);
         Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_text, Snackbar.LENGTH_LONG);
@@ -274,5 +279,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     interface GoToOnClickListener{
         void onGoToClick(String code);
+    }
+
+    interface OnVisitListener{
+        void onVisit(String visit);
     }
 }

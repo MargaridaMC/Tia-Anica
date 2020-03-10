@@ -1,7 +1,6 @@
 package net.teamtruta.tiaires;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +62,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
 
         // Grey out section if tour is done
         if(numFinds + numDNFS == totalCaches){
-            holder.layout.setBackgroundColor(Color.parseColor("#DCDCDC"));
+            holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         }
 
     }

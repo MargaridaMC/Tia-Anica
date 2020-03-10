@@ -3,6 +3,7 @@ package net.teamtruta.tiaires;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             tourListView.setAdapter(tourListAdapter);
 
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
+            dividerItemDecoration.setDrawable(new ColorDrawable(getColor(R.color.black)));
             tourListView.addItemDecoration(dividerItemDecoration);
 
         } else {
