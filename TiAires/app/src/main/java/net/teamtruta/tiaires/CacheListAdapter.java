@@ -209,6 +209,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(tour._tourCaches, i, i + 1);
@@ -219,6 +220,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+
+        tour.toFile(App.getTourRoot());
+
         return true;
     }
 /*
