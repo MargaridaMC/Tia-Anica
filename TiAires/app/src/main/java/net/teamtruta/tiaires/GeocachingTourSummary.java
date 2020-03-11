@@ -1,7 +1,5 @@
 package net.teamtruta.tiaires;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,11 +12,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class GeocachingTourSummary
 {
-    protected String _name;
-    protected int _numFound = 0;
-    protected int _numDNF = 0;
-    protected int _size = 0;
-    protected boolean _isCurrentTour = false;
+    private String _name;
+    private int _numFound = 0;
+    private int _numDNF = 0;
+    private int _size = 0;
+    private boolean _isCurrentTour = false;
 
     /**
      * Class constructor.
@@ -63,14 +61,15 @@ public class GeocachingTourSummary
 
     public String serializeYourself() throws JsonProcessingException
     {
-        String result = new ObjectMapper().writeValueAsString(this);
-        return result;
+        return new ObjectMapper().writeValueAsString(this);
     }
 
     /**
      * Get the metadata about the tour -- (tour name, number of DNFs, Founds, and # of caches)
      * @return JSON object with the metadata (tour name, number of DNFs, Founds, and # of caches)
      */
+
+    /*
     String serialize()
     {
         JSONObject summaryJsonObject = new JSONObject();
@@ -94,6 +93,8 @@ public class GeocachingTourSummary
      * De-serialize metadata from Json
      * @param summaryJsonString Summary information stored as a string
      */
+
+    /*
     static GeocachingTourSummary deserialize(String summaryJsonString)
     {
         JSONObject summaryJsonObject = null;
@@ -116,6 +117,6 @@ public class GeocachingTourSummary
 
         return null;
     }
-
+*/
 
 }

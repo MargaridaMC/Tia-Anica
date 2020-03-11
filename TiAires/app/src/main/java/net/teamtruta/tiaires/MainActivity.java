@@ -65,14 +65,14 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         }
         Log.d("TAG", "Tours data folder exists: " + tourFolder.exists());
 
-
-        if(TourList.exists())
+        String allToursFilePath = App.getAllToursFilePath();
+        if(TourList.exists(allToursFilePath))
         {
             Log.d("TAG", "TourList file exists: true");
 
             setContentView(R.layout.activity_main);
 
-            ArrayList<GeocachingTourSummary> tourList = TourList.read();
+            ArrayList<GeocachingTourSummary> tourList = TourList.read(allToursFilePath);
 
             tourListView = findViewById(R.id.tour_list);
             tourListView.setLayoutManager(new LinearLayoutManager(this));

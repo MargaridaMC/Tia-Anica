@@ -22,9 +22,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener, CacheListAdapter.OnVisitListener {
@@ -113,7 +111,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             // Delete tour file
             GeocachingTour.deleteTourFile(_rootPath, tourName);
 
-            TourList.removeTour(_rootPath, tourName);
+            String allToursFilePath = App.getAllToursFilePath();
+            TourList.removeTour(allToursFilePath, tourName);
 
             Intent intent = new Intent(context, MainActivity.class);
             startActivity(intent);
@@ -132,7 +131,6 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
     @Override
     public void onClick(int position) {
@@ -162,12 +160,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     public void share(View view){
 
-        List<String> tourCacheCodes = new ArrayList<>();
-        for(GeocacheInTour gc:tour._tourCaches){
-            tourCacheCodes.add(gc.geocache.code);
-        }
-
-        String tourCacheCodesString = tourCacheCodes.toString();
+        String tourCacheCodesString = tour.getTourCacheCodes().toString();
         tourCacheCodesString = tourCacheCodesString.substring(1, tourCacheCodesString.length() - 1);
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);

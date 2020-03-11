@@ -13,15 +13,13 @@ import java.util.ArrayList;
 public class TourList
 {
 
-
-
     /**
      * Check if the TourList file exists
      * @return true or false according to the file existing or not. If empty but exists, returns True
      */
-    public static boolean exists()
+    public static boolean exists(String filePath)
     {
-        File allToursFile = new File(App.getAllToursFilePath());
+        File allToursFile = new File(filePath);
         return allToursFile.exists();
     }
 
@@ -30,17 +28,17 @@ public class TourList
      * The file has the following format: note: not final, there may be other fields there
      * {"tourName":"Mytour","numDNF":0,"numFound":1,"size":3};{"tourName":"Mytour2","numDNF":0,"numFound":1,"size":3};
      */
-    public static ArrayList<GeocachingTourSummary> read()
+    static ArrayList<GeocachingTourSummary> read(String filePath)
     {
         // Read the full content of the file
         try {
             // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return new ObjectMapper().readValue(new File(App.getAllToursFilePath()), new TypeReference<ArrayList<GeocachingTourSummary>>(){});
+            return new ObjectMapper().readValue(new File(filePath), new TypeReference<ArrayList<GeocachingTourSummary>>(){});
         }
         catch(IOException e)
         {
             e.printStackTrace();
-            return new ArrayList<GeocachingTourSummary>(); // return an empty list
+            return new ArrayList<>(); // return an empty list
         }
     }
 
@@ -49,12 +47,12 @@ public class TourList
      * @param tourList list of tours to save
      * @return Always true
      */
-    public static boolean write(ArrayList<GeocachingTourSummary> tourList)
+    static boolean write(String filePath, ArrayList<GeocachingTourSummary> tourList)
     {
         try
         {
             tourList.sort(new GeocachingTourSummaryNameSorter());
-            new ObjectMapper().writeValue(new File(App.getAllToursFilePath()), tourList);
+            new ObjectMapper().writeValue(new File(filePath), tourList);
             return true;
         }
         catch (IOException e)
@@ -67,31 +65,29 @@ public class TourList
     /**
      * Update a tour in a given tour list, matching them by name.
      * If the tour doesn't exist with the same name, the method does nothing
-     * @param folder Data file folder
      * @param gts Tour to update in the TourList
      */
-    public static void update(String folder, GeocachingTourSummary gts)
+    static void update(String filePath, GeocachingTourSummary gts)
     {
-        ArrayList<GeocachingTourSummary> tourList = TourList.read();
+        ArrayList<GeocachingTourSummary> tourList = TourList.read(filePath);
 
-        for(int i = 0; i< tourList.size(); i++){
+        for(int i = 0; i < tourList.size(); i++){
             if(tourList.get(i).getName().equals(gts.getName())){
                 tourList.set(i, gts);
                 break;
             }
         }
 
-        TourList.write(tourList);
+        TourList.write(filePath, tourList);
     }
 
     /**
      * Add a tour to the tour list data store
-     * @param folder Data file folder
      * @param tour Tour to add in the TourList
      */
-    public static void append(String folder, GeocachingTourSummary tour)
+    public static void append(String filePath, GeocachingTourSummary tour)
     {
-        ArrayList<GeocachingTourSummary> allTours = TourList.read();
+        ArrayList<GeocachingTourSummary> allTours = TourList.read(filePath);
 
         // Check if this tour is already in the list and if so replace it
         for (int i = 0; i < allTours.size(); i++) {
@@ -101,7 +97,7 @@ public class TourList
             if (n.equals(tour.getName())) {
 
                 allTours.set(i, tour);
-                TourList.write(allTours);
+                TourList.write(filePath, allTours);
                 return;
             }
         }
@@ -109,20 +105,19 @@ public class TourList
         // otherwise, append it to the list
         allTours.add(tour);
 
-        TourList.write(allTours);
+        TourList.write(filePath, allTours);
     }
 
     /**
      * Remove a tour from the TourList master file
-     * @param folder folder where the file is stored
      * @param tourName name of the tour to remove from it
      */
-    public static void removeTour(String folder, String tourName)
+    static void removeTour(String filePath, String tourName)
     {
-        ArrayList<GeocachingTourSummary> tourList = TourList.read();
+        ArrayList<GeocachingTourSummary> tourList = TourList.read(filePath);
 
         tourList.removeIf(t -> t.getName().equals(tourName));
 
-        TourList.write(tourList);
+        TourList.write(filePath, tourList);
     }
 }

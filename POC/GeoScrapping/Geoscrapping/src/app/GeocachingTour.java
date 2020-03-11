@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.crypto.spec.GCMParameterSpec;
 
@@ -15,16 +16,14 @@ import org.json.simple.parser.JSONParser;
 /**
  * GeocachingTour
  */
-public class GeocachingTour {
-
+public class GeocachingTour
+{
     private String _name;
+    private int _size;
     private ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
-    boolean isCurrentTour = false;
-    int _numFound = 0;
-    int _numDNF = 0;
-    int _size = 0;
 
-    GeocachingTour(String name) {
+    GeocachingTour(String name)
+    {
         if(name == null)
         {
             _name = new Date().toString();
@@ -35,9 +34,39 @@ public class GeocachingTour {
         }
     }
 
-    int size()
+    public int getSize()
     {
         return _tourCaches.size();
+    }
+
+    /**
+     * Get number of found caches in tour
+     * @return number of finds in tour
+     */
+    public int getNumFound(){
+
+        return (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.Found).count();
+
+    }
+
+    /**
+     * Get number of DNFs in tour
+     * @return number of DNFs in tour
+     */
+    public int getNumDNF(){
+
+        return (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.DNF).count();
+
+    }
+
+    /**
+     * Rename a tour
+     * @param newName New name of tour
+     */
+
+    public void setName(String newName)
+    {
+        _name = newName;
     }
 
     int addToTour(Geocache gc)
@@ -51,7 +80,8 @@ public class GeocachingTour {
             _tourCaches.add(new GeocacheInTour(gc));
         }
 
-        return _tourCaches.size();
+        _size = _tourCaches.size();
+        return _size;
     }
 
     public int addToTour(Geocache[] gc) // TODO: trocar isto por uma classe básica de todas as collecções?
@@ -60,24 +90,37 @@ public class GeocachingTour {
             addToTour(geocache);
         }
 
-        return _tourCaches.size();
+        _size = _tourCaches.size();
+        return _size;
     }
 
-    public int removeFromTour(String code)
+    int addToTour(Geocache gc, int position)
     {
-        code = code.toUpperCase();
 
-        // TODO: trocar isto por um predicado chamado no remove
-        for(int j=0; j<_tourCaches.size(); j++)
+        if(getCacheInTour(gc.code) == null)
         {
-            if(_tourCaches.get(j).geocache.code.compareTo(code) == 0)
-                _tourCaches.remove(j);
-                break;
+            _tourCaches.add(position, new GeocacheInTour(gc));
         }
 
-        return _tourCaches.size();
+        _size = _tourCaches.size();
+        return _size;
     }
-    
+
+    int removeFromTour(String code)
+    {
+        final String upperCode = code.toUpperCase();
+
+        _tourCaches.removeIf(cit -> cit.geocache.code.equals(upperCode));
+
+        _size = _tourCaches.size();
+        return _size;
+    }
+
+    /**
+     * Check if a given cache is in the tour, returning its detailed information, or null if not exists
+     * @param code of geocache, eg. GCxxxx
+     * @return the information about the cache in tour, or null if not exists
+     */
     private GeocacheInTour getCacheInTour(String code)
     {
         code = code.toUpperCase();
@@ -93,35 +136,51 @@ public class GeocachingTour {
     GeocacheInTour getCacheInTour(int position){
         return _tourCaches.get(position);
     }
-    public void makeCurrentTour(){
-        isCurrentTour = true;
+
+    void setCacheInTour(int position, GeocacheInTour cache){
+        _tourCaches.set(position, cache);
     }
 
-    public String getName(){
-        return _name;
+    /**
+     * Return a list of geocache codes.
+     * @return  List of geocache codes. If there are no codes, it returns a list with getSize = 0. Doesn't return null.
+     */
+    List<String> getTourCacheCodes(){
+
+        List<String> codes = new ArrayList<>();
+
+        for(GeocacheInTour geocache:_tourCaches){
+            codes.add(geocache.geocache.code);
+        }
+
+        return codes;
     }
 
-    int getNumFound(){
-        return _numFound;
-    }
-
-    int getNumDNF(){
-        return _numDNF;
-    }
-
-    public JSONObject toJSON(){
+    /**
+     * Serialize the content of the tour into a JSON object.
+     * TODO: this method and the next should be in a separate class, e.g., GeocachingTourSerializer or something.
+     * @return JSON object with the contents of the Tour, including the cache information
+     */
+    JSONObject toJSON(){
 
         JSONObject tourCacheJSON = new JSONObject();
-        tourCacheJSON.put("tourName", this._name);
-        tourCacheJSON.put("numDNF", this._numDNF);
-        tourCacheJSON.put("numFound",this._numFound);
-        tourCacheJSON.put("size", size());
+        try {
+            tourCacheJSON.put("_tourName", _name);
+            tourCacheJSON.put("getSize", getSize());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         int i = 0;
 
         for(GeocacheInTour gc : _tourCaches){
             JSONObject cacheJSON = gc.toJSON();
-            tourCacheJSON.put(Integer.toString(i), cacheJSON); //gc.geocache.name
+            try {
+                tourCacheJSON.put(Integer.toString(i), cacheJSON); //gc.geocache.name
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             i++;
         }
 
@@ -129,22 +188,31 @@ public class GeocachingTour {
 
     }
 
+    /**
+     * Deserialize a JSON tour into a GeocachingTour instance.
+     * TODO: this method and the previous should be in a separate class, e.g., GeocachingTourSerializer or something.
+     * @param tourCacheJSON Tour to de-serialize
+     * @return De-serialized GeocachingTour
+     */
     static GeocachingTour fromJSON(JSONObject tourCacheJSON){
 
         GeocachingTour tour = new GeocachingTour("");
 
-        tour._name = tourCacheJSON.getString("tourName");
-        tour._numDNF = tourCacheJSON.getInt("numDNF");
-        tour._numFound = tourCacheJSON.getInt("numFound");
-        tour._size = tourCacheJSON.getInt("size");
+        try {
+            tour._name = tourCacheJSON.getString("_tourName");
+            tour._size = tourCacheJSON.getInt("getSize");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         for(int i = 0; i < tour._size; i++){
 
             JSONObject cacheJSON = null;
             try {
                 cacheJSON = tourCacheJSON.getJSONObject(Integer.toString(i));
-                System.out.println(i);
-                System.out.println(cacheJSON);
+                //System.out.println(i);
+                //System.out.println(cacheJSON);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -157,17 +225,22 @@ public class GeocachingTour {
 
     }
 
-    void toFile(File rootPath){
-
+    /**
+     * Serialize this tour and write it to a file
+     * TODO: put in a separate class, eg GeocachingTourStorage
+     * @param folder Path to the tour, which will be saved with the name of the tour and .json extention
+     */
+    void toFile(String folder){
+        // write tour to file, and overwrites the file if one exists
         JSONObject tourJSON = this.toJSON();
 
         // Save tour to file
         String filename = _name + ".json";
-        File file = new File(rootPath, filename);
+        File file = new File(folder, filename);
 
-        FileOutputStream stream = null;
+        FileOutputStream stream;
         try {
-            stream = new FileOutputStream(file);
+            stream = new FileOutputStream(file, false);
             stream.write(tourJSON.toString().getBytes());
             stream.close();
         } catch (Exception e) {
@@ -175,12 +248,18 @@ public class GeocachingTour {
         }
     }
 
-    static GeocachingTour fromFile(File rootPath, String tourName){
-
+    /**
+     * Read a tour from file and deserialize it
+     * TODO: put in a separate class, eg GeocachingTourStorage
+     * @param folder Path to the tour and it's name
+     * @param tourName Name of the tour to read (signals the file)
+     */
+    static GeocachingTour fromFile(String folder, String tourName)
+    {
         GeocachingTour newTour = new GeocachingTour(tourName);
 
         String filename = tourName + ".json";
-        File file = new File(rootPath, filename);
+        File file = new File(folder, filename);
 
         int length = (int) file.length();
 
@@ -196,11 +275,11 @@ public class GeocachingTour {
         }
 
         String contents = new String(bytes);
-      
+
         try {
             JSONObject newCacheTour = new JSONObject(contents);
             newTour = GeocachingTour.fromJSON(newCacheTour);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -209,25 +288,29 @@ public class GeocachingTour {
 
     }
 
-    JSONObject getMetaDataJSON(){
+    /**
+     * Delete the file with the information about the tour
+     * @param folder Folder where the tours are stored
+     * @param tourName Name of the tour to delete
+     * @return nuthin'
+     */
+    static boolean deleteTourFile(String folder, String tourName)
+    {
+        String filename = tourName + ".json";
+        File file = new File(folder, filename);
+        return file.delete();
+    }
 
-        JSONObject metaData = new JSONObject();
-
-        metaData.put("tourName", this._name);
-        metaData.put("numDNF", this._numDNF);
-        metaData.put("numFound", this._numFound);
-        metaData.put("size", this._size);
+    public GeocachingTourSummary toSummary(){
         
-        return metaData;
+        GeocachingTourSummary summary = new GeocachingTourSummary(_name);
+        summary.setSize(getSize());
+        summary.setNumDNF(getNumDNF());
+        summary.setNumFound(getNumFound());
+
+        return summary;
     }
 
-    void fromMetaDataJSON(JSONObject metaData){
-
-        this._name = metaData.getString("tourName");
-        this._numDNF = metaData.getInt("numDNF");
-        this._numFound = metaData.getInt("numFound");
-        this._size = metaData.getInt("size");
-    }
 }
 
 // TODO: I need some unit tests on this

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -11,27 +13,33 @@ import org.json.JSONObject;
 /**
  * GeocachingTour class, representing a tour to go out and find them gaches. Includes a list of Geocaches in tour, among others.
  */
-public class GeocachingTour extends GeocachingTourSummary
+public class GeocachingTour
 {
-    ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
+    private String _name;
+    private int _size;
+    private ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
 
     GeocachingTour(String name)
     {
-        super(name);
+        if(name == null)
+        {
+            _name = new Date().toString();
+        }
+        else
+        {
+            _name = name;
+        }
     }
 
-    @Override
-    public int getSize()
-    {
-        return _tourCaches.size();
-    }
+    String getName() { return _name; }
+
+    int getSize() { return _tourCaches.size(); }
 
     /**
      * Get number of found caches in tour
      * @return number of finds in tour
      */
-    @Override
-    public int getNumFound(){
+    int getNumFound(){
 
         return (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.Found).count();
 
@@ -41,8 +49,7 @@ public class GeocachingTour extends GeocachingTourSummary
      * Get number of DNFs in tour
      * @return number of DNFs in tour
      */
-    @Override
-    public int getNumDNF(){
+    int getNumDNF(){
 
         return (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.DNF).count();
 
@@ -53,7 +60,6 @@ public class GeocachingTour extends GeocachingTourSummary
      * @param newName New name of tour
      */
 
-    @Override
     public void setName(String newName)
     {
         _name = newName;
@@ -116,8 +122,8 @@ public class GeocachingTour extends GeocachingTourSummary
         code = code.toUpperCase();
 
         for (GeocacheInTour geocacheInTour : _tourCaches) {
-                if(geocacheInTour.geocache.code.compareTo(code) == 0)
-                    return geocacheInTour;
+            if(geocacheInTour.geocache.code.compareTo(code) == 0)
+                return geocacheInTour;
         }
 
         return null;
@@ -155,9 +161,7 @@ public class GeocachingTour extends GeocachingTourSummary
 
         JSONObject tourCacheJSON = new JSONObject();
         try {
-            tourCacheJSON.put("_tourName", this._name);
-            tourCacheJSON.put("numDNF", this._numDNF);
-            tourCacheJSON.put("numFound",this._numFound);
+            tourCacheJSON.put("_tourName", _name);
             tourCacheJSON.put("getSize", getSize());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -192,8 +196,6 @@ public class GeocachingTour extends GeocachingTourSummary
 
         try {
             tour._name = tourCacheJSON.getString("_tourName");
-            tour._numDNF = tourCacheJSON.getInt("numDNF");
-            tour._numFound = tourCacheJSON.getInt("numFound");
             tour._size = tourCacheJSON.getInt("getSize");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -295,8 +297,28 @@ public class GeocachingTour extends GeocachingTourSummary
         return file.delete();
     }
 
+    public GeocachingTourSummary getSummary(){
 
+        GeocachingTourSummary summary = new GeocachingTourSummary(_name);
+        summary.setSize(getSize());
+        summary.setNumDNF(getNumDNF());
+        summary.setNumFound(getNumFound());
 
+        return summary;
+    }
+
+    void swapCachePostions(int fromPosition, int toPosition){
+
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(_tourCaches, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(_tourCaches, i, i - 1);
+            }
+        }
+    }
 }
 
 // TODO: I need some unit tests on this

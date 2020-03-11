@@ -38,20 +38,20 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     @Override
     public void onBindViewHolder(TourViewHolder holder, int position) {
         //String animal = mData._tourList(position);
-        GeocachingTourSummary tour = _tourList.get(position);
+        GeocachingTourSummary tourSummary = _tourList.get(position);
 
         // Set tour title
-        holder.tourTitle.setText(tour.getName());
+        holder.tourTitle.setText(tourSummary.getName());
 
         // Set tour symbol
-        if(tour.getIsCurrentTour()){
+        if(tourSummary.getIsCurrentTour()){
             holder.tourSymbol.setImageResource(R.drawable.star);
         }
 
         // Write progress in text
-        int numFinds = tour.getNumFound();
-        int numDNFS = tour.getNumDNF();
-        int totalCaches = tour.getSize(); // # TODO -- this breaks the OO model...
+        int numFinds = tourSummary.getNumFound();
+        int numDNFS = tourSummary.getNumDNF();
+        int totalCaches = tourSummary.getSize(); // # TODO -- this breaks the OO model...
 
         String progressText = numFinds + " + " + numDNFS + " / " + totalCaches;
         holder.tourProgressText.setText(progressText);

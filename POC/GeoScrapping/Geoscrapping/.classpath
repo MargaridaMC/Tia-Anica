@@ -5,4 +5,7 @@
 	<classpathentry kind="output" path="bin"/>
 	<classpathentry exported="true" kind="lib" path="../lib/json-simple.jar"/>
 	<classpathentry exported="true" kind="lib" path="../lib/json.jar"/>
+	<classpathentry exported="true" kind="lib" path="../lib/jackson-annotations-2.10.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="../lib/jackson-core-2.10.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="../lib/jackson-databind-2.10.3.jar"/>
 </classpath>

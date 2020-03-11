@@ -98,19 +98,19 @@ public class CacheDetailActivity extends AppCompatActivity {
             // We want to reverse this -- set cache as not Attempted
 
             currentCache.setVisit(FoundEnumType.NotAttempted);
-            tour._numFound -= 1;
+            //tour._numFound -= 1;
 
         } else {
             // We want to set this cache as found
             // Can't have both switches on at the same time. The clicked switch will be on automatically
             Switch dnfSwitch = findViewById(R.id.dnf_switch);
             if(dnfSwitch.isChecked()){
-                tour._numDNF -= 1;
+                //tour._numDNF -= 1;
                 dnfSwitch.setChecked(false);
             }
 
             currentCache.setVisit(FoundEnumType.Found);
-            tour._numFound += 1;
+            //tour._numFound += 1;
         }
 
     }
@@ -122,19 +122,19 @@ public class CacheDetailActivity extends AppCompatActivity {
             // We want to reverse this -- set cache as not Attempted
 
             currentCache.setVisit(FoundEnumType.NotAttempted);
-            tour._numDNF -= 1;
+            //tour._numDNF -= 1;
 
         } else {
             // We want to set this cache as DNF
             // Can't have both switches on at the same time. The clicked switch will be on automatically
             Switch foundSwitch = findViewById(R.id.found_switch);
             if(foundSwitch.isChecked()){
-                tour._numFound -= 1;
+                //tour._numFound -= 1;
                 foundSwitch.setChecked(false);
             }
 
             currentCache.setVisit(FoundEnumType.DNF);
-            tour._numDNF += 1;
+            //tour._numDNF += 1;
         }
 
     }
@@ -160,7 +160,8 @@ public class CacheDetailActivity extends AppCompatActivity {
         tour.toFile(rootPath);
 
         // update the element we just changed
-        TourList.update(rootPath, tour);
+        String allToursFilePath = App.getAllToursFilePath();
+        TourList.update(allToursFilePath, tour.getSummary());
 
         Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
         t.show();

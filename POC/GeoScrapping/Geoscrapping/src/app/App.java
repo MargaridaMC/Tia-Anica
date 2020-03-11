@@ -1,26 +1,51 @@
 package app;
 
+import java.util.ArrayList;
+
 public class App {
     public static void main(String[] args) throws Exception {
         
-        System.out.println("** TEST OBTAINED CACHE TYPES**");
         
         GeocachingTour tour = new GeocachingTour("My tour");
         GeocachingScrapper scrapper = new GeocachingScrapper();
         boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
         System.out.println("Login = " + loginSuccess);
 
-        Geocache gc1;
+        Geocache gc1 = scrapper.getGeocacheDetails("GC7GX91");
+        Geocache gc2 = scrapper.getGeocacheDetails("GC23EH1");
+
+        tour.addToTour(new Geocache[] {gc1, gc2});
+
+        System.out.println(tour.getSize());
+
+        GeocachingTour tour2 = new GeocachingTour("New tour");
+        tour2.addToTour(new Geocache[] {gc1, gc2});
+
+        ArrayList<GeocachingTourSummary> tourList = new ArrayList<>();
+        tourList.add(tour.toSummary());
+        tourList.add(tour2.toSummary());
+
+        String allToursFilePath = "alltours.txt";
+        TourList.write(allToursFilePath, tourList);
+
+        ArrayList<GeocachingTourSummary> newTourList = TourList.read(allToursFilePath);
+
+        TourList.write("alltoursnew.txt", newTourList);
+        System.out.println(newTourList.size());
+
+        /*
+
+        System.out.println("** TEST OBTAINED CACHE TYPES**");
 
         // Traditional
         gc1 = scrapper.getGeocacheDetails("GC7GX91");
-        System.out.println(gc1.hint);
-        System.out.println(gc1.hint.length());
+        System.out.println("Type: " + gc1.type + " - should be Traditional");
+        System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
 
-        /*
+        
         // Mystery
         ;
-        System.out.gc1 = scrapper.getGeocacheDetails("GC23EH1");
+        gc1 = scrapper.getGeocacheDetails("GC23EH1");
         System.out.println("Type: " + gc1.type + " - should be Mystery");
         System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
 

@@ -2,7 +2,6 @@ package net.teamtruta.tiaires;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.TypedValue;
 
 public class App extends Application {
 
@@ -27,7 +26,4 @@ public class App extends Application {
         return getTourRoot() + "/" + _allToursFile;
     }
 
-    public static int spToPx(float sp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, mContext.getResources().getDisplayMetrics());
-    }
 }

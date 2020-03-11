@@ -213,8 +213,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         t.show();
 
         // Append entry to tour list file or alter it if we just want the tour
-        String rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
-        //File allToursFile = new File(rootPath, getString(R.string.all_tours_filename));
+        String rootPath = App.getTourRoot();
 
         // If this is a new tour we need to create one instance
         if(_tour == null)
@@ -237,18 +236,21 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         _tour.toFile(rootPath);
 
         // Add it to tour list
-        if(TourList.exists())
+        ArrayList<GeocachingTourSummary> gts;
+        GeocachingTourSummary summary;
+        String allToursFilePath = App.getAllToursFilePath();
+        if(TourList.exists(allToursFilePath))
         {
             // if the tour was renamed we need to remove the old name
-            ArrayList<GeocachingTourSummary> gts = TourList.read();
+            gts = TourList.read(allToursFilePath);
             gts.removeIf( tour -> tour.getName().equals(_originalTourName));
-            gts.add(_tour);
-            TourList.write(gts);
         } else {
-            ArrayList<GeocachingTourSummary> gts = new ArrayList<>();
-            gts.add(_tour);
-            TourList.write(gts);
+            gts = new ArrayList<>();
         }
+
+        summary = _tour.getSummary();
+        gts.add(summary);
+        TourList.write(allToursFilePath, gts);
 
         Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra("_tourName", _newTourName);

@@ -260,7 +260,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         tour.toFile(rootPath);
 
         // update the element we just changed
-        TourList.update(rootPath, tour);
+        String allToursFilePath = App.getAllToursFilePath();
+        TourList.update(allToursFilePath, tour.getSummary());
 
         onVisitListener.onVisit(visit.toString());
     }
@@ -274,15 +275,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
 
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(tour._tourCaches, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(tour._tourCaches, i, i - 1);
-            }
-        }
+        tour.swapCachePostions(fromPosition, toPosition);
+
         notifyItemMoved(fromPosition, toPosition);
 
         tour.toFile(App.getTourRoot());
