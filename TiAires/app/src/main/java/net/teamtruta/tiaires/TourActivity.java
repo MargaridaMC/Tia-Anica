@@ -76,7 +76,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         cacheListView.addItemDecoration(dividerItemDecoration);
 
         // Add swipe to delete action
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToVisitCallback(cacheListAdapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CacheInteractionCallback(cacheListAdapter));
         itemTouchHelper.attachToRecyclerView(cacheListView);
 
     }

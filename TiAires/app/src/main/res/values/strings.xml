@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">TiAires</string>
+    <string name="app_name">Ti\'Aires</string>
+    <string name="app_subtitle">Geocaching Tours</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="title_activity_login">Login</string>
@@ -16,4 +17,6 @@
     <string name="tour_folder">Tours</string>
     <string name="nothing_to_show">Nothing show.\nPlease create a tour to view it.\n\n(better than staying home!)</string>
     <string name="current_cache_extra">currentCache</string>
+    <string name="password_tag">Password</string>
+    <string name="username_tag">Username or Email</string>
 </resources>

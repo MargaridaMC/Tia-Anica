@@ -2,7 +2,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="space">16dp</dimen>
     <dimen name="margin">16dp</dimen>
-    <dimen name="small_padding">8dp</dimen>
+    <dimen name="small_padding">12dp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="large_padding">32dp</dimen>
     <dimen name="large_text_size">24sp</dimen>

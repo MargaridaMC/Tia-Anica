@@ -30,20 +30,6 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-
-        /*FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-         */
-
 
         // Set version
         TextView version = findViewById(R.id.version);
@@ -62,18 +48,15 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         passwordField.setImeOptions(IME_ACTION_GO);
-        passwordField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
+        passwordField.setOnEditorActionListener((v, actionId, event) -> {
+            boolean handled = false;
 
-                if(event.getAction() == KeyEvent.ACTION_DOWN && actionId == EditorInfo.IME_ACTION_UNSPECIFIED){
-                    if(mgr!=null) mgr.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
-                    login(v);
-                    handled = true;
-                }
-                return handled;
+            if(event.getAction() == KeyEvent.ACTION_DOWN && actionId == EditorInfo.IME_ACTION_UNSPECIFIED){
+                if(mgr!=null) mgr.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
+                login(v);
+                handled = true;
             }
+            return handled;
         });
 
         // Check if we already have a authentication cookie
@@ -204,7 +187,10 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
-        } else {
+        }
+
+        // Not necessary if error message already shows on top
+        /*else {
 
             failedLoginMessage.setVisibility(View.VISIBLE);
 
@@ -212,8 +198,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
             t.show();
 
         }
-
-
+        */
     }
 
     public void logout(View view){

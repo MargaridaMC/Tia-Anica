@@ -18,7 +18,7 @@ public class Geocache {
     String terrain;
     //String type; // Normal, etc.
     CacheTypeEnum type = CacheTypeEnum.Other;
-    int foundIt; // 0 - no, 1 - DNF, 2 - yes
+    FoundEnumType foundIt; // 0 - no, 1 - DNF, 2 - yes
     String hint;
     int favourites;
     ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
@@ -52,7 +52,7 @@ public class Geocache {
             cacheJSON.put("name", name);
             cacheJSON.put("latitude", latitude);
             cacheJSON.put("longitude", longitude);
-            cacheJSON.put("getSize", size);
+            cacheJSON.put("size", size);
             cacheJSON.put("difficulty", difficulty);
             cacheJSON.put("terrain", terrain);
             cacheJSON.put("type", type);
@@ -77,12 +77,13 @@ public class Geocache {
             cache.name = cacheJSON.getString("name");
             cache.latitude = cacheJSON.getString("latitude");
             cache.longitude = cacheJSON.getString("longitude");
-            cache.size = cacheJSON.getString("getSize");
+            cache.size = cacheJSON.getString("size");
             cache.difficulty = cacheJSON.getString("difficulty");
             cache.terrain = cacheJSON.getString("terrain");
             String typeString = cacheJSON.get("type").toString();
             cache.type = CacheTypeEnum.valueOf(typeString);
-            cache.foundIt = cacheJSON.getInt("foundIt");
+            String foundItString = cacheJSON.get("foundIt").toString();
+            cache.foundIt = FoundEnumType.valueOf(foundItString);
             cache.hint = cacheJSON.getString("hint");
             cache.favourites = cacheJSON.getInt("favourites");
             //recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
@@ -96,7 +97,7 @@ public class Geocache {
 
     boolean hasHint(){
 
-        return hint.equals("NO MATCH");
+        return !hint.equals("NO MATCH");
 
     }
 }

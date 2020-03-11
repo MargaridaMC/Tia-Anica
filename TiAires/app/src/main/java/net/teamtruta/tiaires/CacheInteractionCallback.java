@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 // Useful link: https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
 
-public class SwipeToVisitCallback extends ItemTouchHelper.SimpleCallback {
+public class CacheInteractionCallback extends ItemTouchHelper.SimpleCallback {
 
     private CacheListAdapter cacheListAdapter;
     private Drawable foundIcon;
     private Drawable dnfIcon;
     private final ColorDrawable background;
 
-    SwipeToVisitCallback(CacheListAdapter adapter){
+    CacheInteractionCallback(CacheListAdapter adapter){
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.cacheListAdapter = adapter;
 
@@ -79,18 +79,20 @@ public class SwipeToVisitCallback extends ItemTouchHelper.SimpleCallback {
         int iconMargin;
         int iconTop;
         int iconBottom;
+
+        int iconLeft;
+        int iconRight;
+
         Drawable icon = foundIcon;
 
         if (dX > 0) { // Swiping to the right
 
-            icon = foundIcon;
-
             iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
-            iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+            iconTop = itemView.getTop() + iconMargin;
             iconBottom = iconTop + icon.getIntrinsicHeight();
 
-            int iconLeft = itemView.getLeft() + iconMargin + icon.getIntrinsicWidth();
-            int iconRight = itemView.getLeft() + iconMargin;
+            iconLeft = itemView.getLeft() + iconMargin;
+            iconRight = iconLeft +  icon.getIntrinsicWidth();
             icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
             background.setBounds(itemView.getLeft(), itemView.getTop(),
@@ -103,15 +105,17 @@ public class SwipeToVisitCallback extends ItemTouchHelper.SimpleCallback {
             icon = dnfIcon;
 
             iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
-            iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+            iconTop = itemView.getTop() + iconMargin;
             iconBottom = iconTop + icon.getIntrinsicHeight();
 
-            int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
-            int iconRight = itemView.getRight() - iconMargin;
+            iconRight = itemView.getRight() - iconMargin;
+            iconLeft = iconRight - icon.getIntrinsicWidth();
+
             icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
             background.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
                     itemView.getTop(), itemView.getRight(), itemView.getBottom());
+
         } else { // view is unSwiped
             background.setBounds(0, 0, 0, 0);
         }

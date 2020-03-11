@@ -1,9 +1,5 @@
 package app;
 
-import java.time.chrono.JapaneseChronology;
-
-import org.json.JSONObject;
-
 public class App {
     public static void main(String[] args) throws Exception {
         
@@ -17,19 +13,19 @@ public class App {
         Geocache gc1;
 
         // Traditional
-        gc1 = scrapper.getGeocacheDetails("GCHNBF");
+        gc1 = scrapper.getGeocacheDetails("GC7GX91");
         System.out.println(gc1.hint);
         System.out.println(gc1.hint.length());
 
         /*
         // Mystery
-        gc1 = scrapper.getGeocacheDetails("GC23EH1");
+        ;
+        System.out.gc1 = scrapper.getGeocacheDetails("GC23EH1");
         System.out.println("Type: " + gc1.type + " - should be Mystery");
         System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
 
         // Multi
-        gc1 = scrapper.getGeocacheDetails("GCM2RJ");
-        System.out.println("Type: " + gc1.type + " - should be Multi");
+        gc1 = scrapper.getGeocacheDetails("GCM2RJ")println("Type: " + gc1.type + " - should be Multi");
         System.out.println(CacheTypeEnum.valueOfTypeString(gc1.type));
 
         // Earth

@@ -1,14 +1,10 @@
 package net.teamtruta.tiaires;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,33 +26,37 @@ public class GeocachingTour extends GeocachingTourSummary
         return _tourCaches.size();
     }
 
+    /**
+     * Get number of found caches in tour
+     * @return number of finds in tour
+     */
     @Override
     public int getNumFound(){
 
-        int finds = (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.Found).count();
-        return finds;
+        return (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.Found).count();
 
     }
 
+    /**
+     * Get number of DNFs in tour
+     * @return number of DNFs in tour
+     */
     @Override
     public int getNumDNF(){
 
-        int finds = (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.DNF).count();
-        return finds;
+        return (int) _tourCaches.stream().filter(gc -> gc.getVisit() == FoundEnumType.DNF).count();
 
     }
+
     /**
      * Rename a tour
      * @param newName New name of tour
-     * @return Old name of tour
      */
 
     @Override
     public void setName(String newName)
     {
-        // String oldName = _name;
         _name = newName;
-        // reurn oldName;
     }
 
     int addToTour(Geocache gc)
@@ -84,21 +84,23 @@ public class GeocachingTour extends GeocachingTourSummary
         return _size;
     }
 
+    int addToTour(Geocache gc, int position)
+    {
+
+        if(getCacheInTour(gc.code) == null)
+        {
+            _tourCaches.add(position, new GeocacheInTour(gc));
+        }
+
+        _size = _tourCaches.size();
+        return _size;
+    }
+
     int removeFromTour(String code)
     {
         final String upperCode = code.toUpperCase();
 
         _tourCaches.removeIf(cit -> cit.geocache.code.equals(upperCode));
-
-        /* OBSOLETE
-        for(int j=0; j<_tourCaches.size(); j++)
-        {
-            if(_tourCaches.get(j).geocache.code.equals(codeaa)) {
-                _tourCaches.remove(j);
-                break;
-            }
-        }
-         */
 
         _size = _tourCaches.size();
         return _size;
@@ -136,6 +138,7 @@ public class GeocachingTour extends GeocachingTourSummary
     List<String> getTourCacheCodes(){
 
         List<String> codes = new ArrayList<>();
+
         for(GeocacheInTour geocache:_tourCaches){
             codes.add(geocache.geocache.code);
         }

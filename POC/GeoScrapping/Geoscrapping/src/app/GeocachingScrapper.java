@@ -252,9 +252,9 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.foundIt = matcher.group(1).contains("Found It!") ? 2 : 1;
+            gc.foundIt = matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF;
         } else {
-            gc.foundIt = 0;
+            gc.foundIt = FoundEnumType.NotAttempted;
         }
         
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
@@ -269,7 +269,11 @@ public class GeocachingScrapper {
             temp = temp.replaceAll(" ", "");
             System.out.println(temp.length());
             if(temp.length()==0) gc.hint = "NO MATCH";
-            else gc.hint = Rot13.Decode(group);
+            else {   
+                gc.hint = Rot13.Decode(group);
+                gc.hint = gc.hint.replaceAll("<oe>", "\n");
+            }
+        
         } else {
             gc.hint = "NO MATCH";
         }
