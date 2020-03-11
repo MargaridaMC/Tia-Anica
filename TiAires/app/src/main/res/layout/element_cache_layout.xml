@@ -53,13 +53,24 @@
         />
 
     <TextView
+        android:id="@+id/hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/SmallText"
+        android:textSize="0sp"
+        app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
+        app:layout_constraintEnd_toEndOf="@+id/cache_info_1"
+        app:layout_constraintStart_toStartOf="@+id/cache_info_1"
+        />
+
+    <TextView
         android:id="@+id/cache_info_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/SmallText"
-        app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
-        app:layout_constraintEnd_toEndOf="@+id/cache_info_1"
-        app:layout_constraintStart_toStartOf="@+id/cache_info_1"
+        app:layout_constraintTop_toBottomOf="@+id/hint"
+        app:layout_constraintEnd_toEndOf="@+id/hint"
+        app:layout_constraintStart_toStartOf="@+id/hint"
         />
 
     <Button

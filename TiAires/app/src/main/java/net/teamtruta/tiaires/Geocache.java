@@ -93,4 +93,10 @@ public class Geocache {
         return cache;
 
     }
+
+    boolean hasHint(){
+
+        return hint.equals("NO MATCH");
+
+    }
 }
