@@ -11,8 +11,11 @@ public class App {
         boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
         System.out.println("Login = " + loginSuccess);
 
-        Geocache gc1 = scrapper.getGeocacheDetails("GC7GX91");
+        Geocache gc1 = scrapper.getGeocacheDetails("GC40");
+
+        System.out.println(gc1.getRecentLogs());
         
+        /*
         Geocache gc2 = scrapper.getGeocacheDetails("GC23EH1");
 
         tour.addToTour(new Geocache[] {gc1, gc2});
@@ -21,7 +24,7 @@ public class App {
 
         GeocachingTour newTour = GeocachingTour.read(".", tour.getName());
         System.out.println(tour.getName());
-    
+    */
         /*
 
         System.out.println("** TEST OBTAINED CACHE TYPES**");

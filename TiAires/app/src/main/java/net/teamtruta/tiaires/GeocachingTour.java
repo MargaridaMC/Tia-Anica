@@ -217,9 +217,7 @@ public class GeocachingTour
      */
     static boolean deleteTourFile(String folder, String tourName)
     {
-        String filename = tourName + ".json";
-        File file = new File(folder, filename);
-        return file.delete();
+        return new File(folder, tourName).delete();
     }
 
     public GeocachingTourSummary getSummary(){

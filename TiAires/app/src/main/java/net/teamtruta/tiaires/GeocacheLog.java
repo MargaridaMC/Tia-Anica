@@ -7,6 +7,13 @@ import java.util.Date;
  * It can be extended with more data as relevant for the use.
  */
 class GeocacheLog {
-    String logType;
+
+    FoundEnumType logType;
     Date logDate;
+
+    public FoundEnumType getLogType(){ return logType; }
+    public void setLogType(FoundEnumType type){ logType = type; }
+
+    public Date getLogDate(){ return logDate; }
+    public void setLogDate(Date date){ logDate = date; }
 }

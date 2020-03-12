@@ -121,11 +121,17 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // Set information line 1: Found: date - \heart nFavs - Hint/No hint
         holder.cacheInfo1.setText(getCacheInfoLine1(cache, true));
 
-        // Set information line 2: DNFs in last 10 logs: _
+        // Set information line 2: Days since last find: _
         holder.cacheInfo2.setText(getCacheInfoLine2(cache));
 
-        // Set height of hint area to 0 -- should only be visible when clicked on
-        //holder.hint.setHeight(0);
+        // Set DNF information in required
+        Spanned dnfInfo = getDNFInfo(cache);
+        if(!dnfInfo.toString().equals("")) { // Cache is a DNF risk
+            holder.dnfInfo.setText(dnfInfo);
+            float textSize = App.getContext().getResources().getDimension(R.dimen.small_text_size);
+            holder.dnfInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+        }
+
 
         // Set listener for edit button
         holder.editButton.setOnClickListener(v -> {
@@ -156,26 +162,46 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         return v -> {
 
-            if(!cache.getGeocache().hasHint()) {
+            if(!cache.getGeocache().hasHint() && !cache.getGeocache().isDNFRisk()) {
 
-                Toast t = Toast.makeText(App.getContext(), "This cache doesn't have a hint available.", Toast.LENGTH_SHORT);
+                Toast t = Toast.makeText(App.getContext(), "This cache doesn't have any extra information available.", Toast.LENGTH_SHORT);
                 t.show();
 
-            } else if(!holder.hintVisible){
+            } else if(!holder.expanded){
 
-                String hintString = "HINT: <i>" + cache.getGeocache().getHint() + "</i>";
-                holder.hint.setText(HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY));
                 float textSize = App.getContext().getResources().getDimension(R.dimen.small_text_size);
-                holder.hint.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                holder.hintVisible = true;
+
+                // If cache has a hint show it
+                if(cache.getGeocache().hasHint()){
+                    String hintString = "<strong>HINT</strong>: <i>" + cache.getGeocache().getHint() + "</i>";
+                    holder.hint.setText(HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY));
+                    holder.hint.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                }
+
+                // If cache is a DNF risk show reason
+                if(cache.getGeocache().isDNFRisk()){
+                    String dnfRiskString = "<b>DNF RISK</b>:  <i>" + cache.getGeocache().getDNFRisk() + "</i>";
+                    holder.dnfInfo.setText(HtmlCompat.fromHtml(dnfRiskString, HtmlCompat.FROM_HTML_MODE_LEGACY));
+                    holder.dnfInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                }
+
+                holder.expanded = true;
                 holder.cacheInfo1.setText(getCacheInfoLine1(cache, false));
+
 
             } else {
 
+                // Hide extra information
                 holder.hint.setText("");
                 holder.hint.setTextSize(TypedValue.COMPLEX_UNIT_PX, 0);
+
+                holder.dnfInfo.setText(getDNFInfo(cache));
+                if(!cache.getGeocache().isDNFRisk()){
+                    holder.dnfInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, 0);
+                }
+
                 holder.cacheInfo1.setText(getCacheInfoLine1(cache, true));
-                holder.hintVisible = false;
+                holder.expanded = false;
 
             }
 
@@ -230,10 +256,20 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
+    private String getCacheInfoLine2(GeocacheInTour cacheInTour){
 
-    private String getCacheInfoLine2(GeocacheInTour cache){
-        // TODO: include number of DNFs from recentlogs
-        return "DNFs in last 10 logs: ";
+        return "Days since last find: " + cacheInTour.getGeocache().CountDaysSinceLastFind();
+    }
+
+    private Spanned getDNFInfo(GeocacheInTour cache){
+
+        String info = "";
+        if(cache.getGeocache().isDNFRisk()){
+            String red = String.valueOf(App.getContext().getColor(R.color.red));
+            info = "<font color=\"" + red + "\">DNF RISK</font>";
+        }
+
+        return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
     public CacheListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -253,7 +289,6 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         tour.getCacheInTour(position).setVisit(visit);
 
         String rootPath = App.getTourRoot();
-        //tour.toFile(rootPath);
         GeocachingTour.write(rootPath, tour);
 
         // update the element we just changed
@@ -276,7 +311,6 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         notifyItemMoved(fromPosition, toPosition);
 
-        //tour.toFile(App.getTourRoot());
         GeocachingTour.write(App.getTourRoot(), tour);
 
         return true;
@@ -290,11 +324,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         TextView cacheInfo0;
         TextView cacheInfo1;
         TextView cacheInfo2;
+        TextView dnfInfo;
+        TextView hint;
         Button editButton;
         Button goToButton;
         ConstraintLayout layout;
-        TextView hint;
-        boolean hintVisible = false;
+        boolean expanded = false;
 
         ViewHolder(View v){
             super(v);
@@ -305,10 +340,11 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             cacheInfo0 = v.findViewById(R.id.cache_info_0);
             cacheInfo1 = v.findViewById(R.id.cache_info_1);
             cacheInfo2 = v.findViewById(R.id.cache_info_2);
+            dnfInfo = v.findViewById(R.id.dnf_info);
+            hint = v.findViewById(R.id.hint);
             editButton = v.findViewById(R.id.edit_button);
             goToButton = v.findViewById(R.id.go_to_button);
             layout = v.findViewById(R.id.element_cache_layout);
-            hint = v.findViewById(R.id.hint);
 
         }
 

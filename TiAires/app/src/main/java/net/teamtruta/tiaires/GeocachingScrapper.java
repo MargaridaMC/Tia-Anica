@@ -294,8 +294,8 @@ public class GeocachingScrapper {
 
         // 9. Last logs and their dates
         int logsParsed = 0, maxLogsToParse = 25;
-        String regexLogType = "\"LogType\":\"([a-zA-Z ]+)\"";
-        String regexLogDate = "\"Visited\":\"([a-zA-Z0-9\\.]+)\"";
+        String regexLogType = "\"LogType\":\"([a-zA-Z'\\s]+)\"";
+        String regexLogDate = "\"Visited\":\"([0-9/]+)";
 
         pattern = Pattern.compile(regexLogType);
         matcher = pattern.matcher(pageContents);
@@ -303,18 +303,19 @@ public class GeocachingScrapper {
         Pattern patternDates = Pattern.compile(regexLogDate);
         Matcher matcherDates = patternDates.matcher(pageContents);
 
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMM.yyyy"); // log dates are in format "05.Dec.2019"
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
+        ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
         while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
         {
             GeocacheLog log = new GeocacheLog();
-            log.logType = matcher.group(1);
+            String typeString = matcher.group(1);
+            log.logType = FoundEnumType.valueOfString(typeString);
             log.logDate = dateFormatter.parse(matcherDates.group(1));
 
-            ArrayList<GeocacheLog> recentLogs = gc.getRecentLogs();
             recentLogs.add(log);
-            gc.setRecentLogs(recentLogs);
             logsParsed++;
         }
+        gc.setRecentLogs(recentLogs);
         // else do nothing -- the collection will be non-null but empty
 
 
@@ -324,6 +325,10 @@ public class GeocachingScrapper {
 
         // Refactor Login() as appropriate
         httpConnection.disconnect();
+
+        // Check if cache is a DNF risk
+        gc.setDNFRisk();
+
         return gc;
     }
 

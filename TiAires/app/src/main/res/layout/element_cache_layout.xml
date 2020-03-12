@@ -53,21 +53,32 @@
         />
 
     <TextView
-        android:id="@+id/hint"
+        android:id="@+id/cache_info_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/SmallText"
-        android:textSize="0sp"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
         app:layout_constraintEnd_toEndOf="@+id/cache_info_1"
         app:layout_constraintStart_toStartOf="@+id/cache_info_1"
         />
 
     <TextView
-        android:id="@+id/cache_info_2"
+        android:id="@+id/hint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/SmallText"
+        android:textSize="0sp"
+        app:layout_constraintTop_toBottomOf="@+id/cache_info_2"
+        app:layout_constraintEnd_toEndOf="@+id/cache_info_2"
+        app:layout_constraintStart_toStartOf="@+id/cache_info_2"
+        />
+
+    <TextView
+        android:id="@+id/dnf_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/SmallText"
+        android:textSize="0sp"
         app:layout_constraintTop_toBottomOf="@+id/hint"
         app:layout_constraintEnd_toEndOf="@+id/hint"
         app:layout_constraintStart_toStartOf="@+id/hint"
@@ -78,7 +89,7 @@
         android:layout_width="@dimen/small_icon_size"
         android:layout_height="@dimen/small_icon_size"
         android:background="@drawable/direction_arrow"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cache_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/edit_button"/>
 
@@ -87,9 +98,8 @@
         android:layout_width="@dimen/small_icon_size"
         android:layout_height="@dimen/small_icon_size"
         android:background="@drawable/pencil"
-        android:layout_marginTop="@dimen/small_padding"
         app:layout_constraintTop_toBottomOf="@+id/go_to_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/dnf_info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

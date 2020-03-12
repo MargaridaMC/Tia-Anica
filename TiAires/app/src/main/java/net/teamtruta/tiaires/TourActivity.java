@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,6 +115,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
             String allToursFilePath = App.getAllToursFilePath();
             TourList.removeTour(allToursFilePath, tourName);
+            ArrayList<GeocachingTourSummary> allTours = TourList.read(allToursFilePath);
+            if(allTours.size() == 0) new File(allToursFilePath).delete();
 
             Intent intent = new Intent(context, MainActivity.class);
             startActivity(intent);

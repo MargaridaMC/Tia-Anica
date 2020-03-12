@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -162,7 +163,7 @@ public class GeocachingScrapper {
         System.out.println("Getting cache " + code);
         Geocache gc = new Geocache();
 
-        gc.code = code;
+        gc.setCode(code);
 
         // Obtain the HTML of the page, sending the authentication cookie
         URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
@@ -185,9 +186,9 @@ public class GeocachingScrapper {
         Matcher matcher = pattern.matcher(pageContents);
 
         if (matcher.find( )) {
-            gc.name = matcher.group(1);
+            gc.setName(matcher.group(1));
         } else {
-             gc.latitude = "NO MATCH";
+             gc.setName("NO MATCH");
         }
 
         // 2. Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span> 
@@ -196,11 +197,11 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.latitude = matcher.group(1);
-            gc.longitude = matcher.group(2);
+            gc.setLatitude(matcher.group(1));
+            gc.setLongitude(matcher.group(2));
         } else {
-             gc.latitude = "NO MATCH";
-             gc.longitude = "NO MATCH";
+             gc.setLatitude("NO MATCH");
+             gc.setLongitude("NO MATCH");
         }
 
         // 3. Get Size
@@ -209,10 +210,11 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.size = matcher.group(1);
-            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1, gc.size.length());
+            String size = matcher.group(1);
+            gc.setSize(size);
+            gc.setSize(size.substring(0,1).toUpperCase() +size.substring(1));
         } else {
-             gc.size = "NO MATCH";
+             gc.setSize("NO MATCH");
         }
 
         // 4. Get Difficulty and Terrain (both use the same regex, repeated instances)
@@ -222,17 +224,17 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.difficulty = matcher.group(1);
+            gc.setDifficulty(matcher.group(1));
 
             if(matcher.find()) {
-                gc.terrain = matcher.group(1);
+                gc.setTerrain( matcher.group(1));
             }
             else {
-                gc.terrain = "NO MATCH";
+                gc.setTerrain("NO MATCH");
             }
         } else {
-             gc.difficulty = "NO MATCH";
-             gc.terrain = "NO MATCH";
+             gc.setDifficulty("NO MATCH");
+             gc.setTerrain("NO MATCH");
         }
 
         // 5. Get the cache type
@@ -241,9 +243,9 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.type = CacheTypeEnum.valueOfTypeString(matcher.group(1));
+            gc.setType(CacheTypeEnum.valueOfTypeString(matcher.group(1)));
         } else {
-             gc.type = CacheTypeEnum.Other;
+             gc.setType(CacheTypeEnum.Other);
         }
         
         // 6. Have I found it?
@@ -252,9 +254,9 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.foundIt = matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF;
+            gc.setFoundIt(matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF);
         } else {
-            gc.foundIt = FoundEnumType.NotAttempted;
+            gc.setFoundIt(FoundEnumType.NotAttempted);
         }
         
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
@@ -268,14 +270,15 @@ public class GeocachingScrapper {
             String temp = group;
             temp = temp.replaceAll(" ", "");
             System.out.println(temp.length());
-            if(temp.length()==0) gc.hint = "NO MATCH";
+            if(temp.length()==0) gc.setHint("NO MATCH");
             else {   
-                gc.hint = Rot13.Decode(group);
-                gc.hint = gc.hint.replaceAll("<oe>", "\n");
+                String hint = Rot13.Decode(group);
+                hint = hint.trim();
+                gc.setHint(hint.replaceAll("<oe>", "\n"));
             }
         
         } else {
-            gc.hint = "NO MATCH";
+            gc.setHint("NO MATCH");
         }
 
 
@@ -285,15 +288,15 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.favourites = Integer.parseInt(matcher.group(1));
+            gc.setFavourites(Integer.parseInt(matcher.group(1)));
         } else {
-             gc.favourites = 0;
+             gc.setFavourites(0);
         }
 
         // 9. Last logs and their dates
         int logsParsed = 0, maxLogsToParse = 25;
-        String regexLogType = "\"LogType\":\"([a-zA-Z ]+)\"";
-        String regexLogDate = "\"Visited\":\"([a-zA-Z0-9\\.]+)\"";
+        String regexLogType = "\"LogType\":\"([a-zA-Z' ]+)\"";
+        String regexLogDate = "\"Visited\":\"([0-9/]+)";
 
         pattern = Pattern.compile(regexLogType);
         matcher = pattern.matcher(pageContents);
@@ -301,16 +304,18 @@ public class GeocachingScrapper {
         Pattern patternDates = Pattern.compile(regexLogDate);
         Matcher matcherDates = patternDates.matcher(pageContents);
 
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMM.yyyy"); // log dates are in format "05.Dec.2019"
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy"); // log dates are in format "05.Dec.2019"
+        ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
         while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
         {
             GeocacheLog log = new GeocacheLog();
-            log.logType = matcher.group(1);
+            log.logType = FoundEnumType.valueOfString(matcher.group(1));
             log.logDate = dateFormatter.parse(matcherDates.group(1));
 
-            gc.recentLogs.add(log);
+            recentLogs.add(log);
             logsParsed++;
         }
+        gc.setRecentLogs(recentLogs);
         // else do nothing -- the collection will be non-null but empty
 
 
