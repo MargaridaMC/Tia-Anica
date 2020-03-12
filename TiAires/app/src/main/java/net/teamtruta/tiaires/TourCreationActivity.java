@@ -69,7 +69,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
             // read the tour from file
             String rootPath = App.getTourRoot();
-            _tour = GeocachingTour.fromFile(rootPath, _originalTourName);
+            _tour = GeocachingTour.read(rootPath, _originalTourName);//GeocachingTour.fromFile(rootPath, _originalTourName);
 
             // get the codes of the caches to put in the text field
             List<String> allCodes = _tour.getTourCacheCodes();
@@ -233,7 +233,8 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         }
 
         // Write tour to file -- will  be overwritten if there is a file with same name
-        _tour.toFile(rootPath);
+        //_tour.toFile(rootPath);
+        GeocachingTour.write(rootPath, _tour);
 
         // Add it to tour list
         ArrayList<GeocachingTourSummary> gts;

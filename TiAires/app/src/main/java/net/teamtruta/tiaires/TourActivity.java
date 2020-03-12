@@ -51,9 +51,9 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         properties.put("TourName", tourName);
         Analytics.trackEvent("TourActivity.onCreate", properties);
 
-        _rootPath = getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        _rootPath = App.getTourRoot();//getFilesDir().toString() + "/" + getString(R.string.tour_folder);
 
-        tour = GeocachingTour.fromFile(_rootPath, tourName);
+        tour = GeocachingTour.read(_rootPath, tourName);//GeocachingTour.fromFile(_rootPath, tourName);
 
         // Set title
         ab.setTitle(tourName);
@@ -135,7 +135,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     @Override
     public void onClick(int position) {
         Intent intent = new Intent(this, CacheDetailActivity.class);
-        intent.putExtra("currentTour", tour.toJSON().toString());
+        intent.putExtra("currentTour", tour.toString());//tour.toJSON().toString());
         intent.putExtra("currentCacheIndex", position);
         startActivity(intent);
     }

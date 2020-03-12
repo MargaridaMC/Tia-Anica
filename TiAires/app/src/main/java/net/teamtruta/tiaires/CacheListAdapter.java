@@ -1,8 +1,6 @@
 package net.teamtruta.tiaires;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.text.Html;
 import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,8 +15,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.Collections;
 
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
@@ -49,10 +45,10 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         final GeocacheInTour cache = tour.getCacheInTour(position);
 
         // Set cache name
-        holder.cacheName.setText(cache.geocache.name);
+        holder.cacheName.setText(cache.getGeocache().getName());
 
         // Set cache type symbol
-        CacheTypeEnum cacheType = cache.geocache.type;
+        CacheTypeEnum cacheType = cache.getGeocache().getType();
         Drawable cacheSymbolDrawable;
 
         switch (cacheType){
@@ -141,7 +137,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // TODO: set listener for go to button
         holder.goToButton.setOnClickListener(v -> {
             if(goToOnClickListener!=null){
-                goToOnClickListener.onGoToClick(cache.geocache.code);
+                goToOnClickListener.onGoToClick(cache.getGeocache().getCode());
             }
         });
 
@@ -160,14 +156,14 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         return v -> {
 
-            if(!cache.geocache.hasHint()) {
+            if(!cache.getGeocache().hasHint()) {
 
                 Toast t = Toast.makeText(App.getContext(), "This cache doesn't have a hint available.", Toast.LENGTH_SHORT);
                 t.show();
 
             } else if(!holder.hintVisible){
 
-                String hintString = "HINT: <i>" + cache.geocache.hint + "</i>";
+                String hintString = "HINT: <i>" + cache.getGeocache().getHint() + "</i>";
                 holder.hint.setText(HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY));
                 float textSize = App.getContext().getResources().getDimension(R.dimen.small_text_size);
                 holder.hint.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
@@ -188,26 +184,26 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     private Spanned getCacheInfoLine0(GeocacheInTour cache){
         // Set information line 0: code - D/T: _/_ - Size: _
-        String info = cache.geocache.code + " - D/T: ";
+        String info = cache.getGeocache().getCode() + " - D/T: ";
 
-        double difficulty = Double.parseDouble(cache.geocache.difficulty);
-        double terrain = Double.parseDouble(cache.geocache.terrain);
+        double difficulty = Double.parseDouble(cache.getGeocache().getDifficulty());
+        double terrain = Double.parseDouble(cache.getGeocache().getTerrain());
 
         String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
 
         if(difficulty >= 4){
-            info += "<font color=\"" + red + "\">" + cache.geocache.difficulty + "</font>" + "/";
+            info += "<font color=\"" + red + "\">" + cache.getGeocache().getDifficulty() + "</font>" + "/";
         } else {
-            info += cache.geocache.difficulty + "/";
+            info += cache.getGeocache().getDifficulty() + "/";
         }
 
         if(terrain >= 4){
-            info += "<font color=\"" + red + "\">" + cache.geocache.terrain + "</font>";
+            info += "<font color=\"" + red + "\">" + cache.getGeocache().getTerrain() + "</font>";
         } else {
-            info += cache.geocache.terrain;
+            info += cache.getGeocache().getTerrain();
         }
 
-        info += " - Size: " + cache.geocache.size;
+        info += " - Size: " + cache.getGeocache().getSize();
 
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
 
@@ -218,13 +214,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
 
         // TODO: replace Found info with date of last find -- obtain from recent logs
-        String info = "Found: " + "ND" + "- &#9825; " + cache.geocache.favourites;
+        String info = "Found: " + "ND" + "- &#9825; " + cache.getGeocache().getFavourites();
 
         if(withHint){
 
             info += " - ";
 
-            if(!cache.geocache.hasHint()){
+            if(!cache.getGeocache().hasHint()){
                 info += "<font color=\"" + red+ "\">NO HINT</font>";
             } else {
                 info += "HINT";
@@ -257,7 +253,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         tour.getCacheInTour(position).setVisit(visit);
 
         String rootPath = App.getTourRoot();
-        tour.toFile(rootPath);
+        //tour.toFile(rootPath);
+        GeocachingTour.write(rootPath, tour);
 
         // update the element we just changed
         String allToursFilePath = App.getAllToursFilePath();
@@ -275,11 +272,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
 
-        tour.swapCachePostions(fromPosition, toPosition);
+        tour.swapCachePositions(fromPosition, toPosition);
 
         notifyItemMoved(fromPosition, toPosition);
 
-        tour.toFile(App.getTourRoot());
+        //tour.toFile(App.getTourRoot());
+        GeocachingTour.write(App.getTourRoot(), tour);
 
         return true;
     }

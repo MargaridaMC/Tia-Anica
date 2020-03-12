@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -16,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * GeocachingScrapper Useful site: https://www.baeldung.com/java-http-request
  */
-class GeocachingScrapper {
+public class GeocachingScrapper {
 
     //private String _username, _password;
 
@@ -27,13 +28,12 @@ class GeocachingScrapper {
     private String _requestVerificationCookie;
     private String _groundspeakAuthCookie;
 
-    GeocachingScrapper() {
+    public GeocachingScrapper() {
         //_username = user;
         //_password = password;
     }
 
-    // For saving and reading purposes
-    GeocachingScrapper(String AuthCookie) {
+    public GeocachingScrapper(String AuthCookie){
         _groundspeakAuthCookie = AuthCookie;
     }
 
@@ -42,7 +42,7 @@ class GeocachingScrapper {
      * groundspeak token is sent as a response to the auth / follow redirects has to
      * be disabled otherwise I can't capture that cookie
      */
-    Boolean login(String username, String password) throws IOException {
+    public Boolean login(String username, String password) throws IOException {
         // 01. get the login page and extract the relevant information from it
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
@@ -51,7 +51,7 @@ class GeocachingScrapper {
 
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
 
-        httpConnection.getResponseCode(); // this causes the request to be done
+        int status = httpConnection.getResponseCode(); // this causes the request to be done
 
         StringBuffer pageContent = readHttpRequest(httpConnection);
         String tokenValue = getTokenFromHtmlBody(pageContent);
@@ -87,7 +87,7 @@ class GeocachingScrapper {
 
         httpConnection.setInstanceFollowRedirects(false); // or else we're redirected to ReturnUrl and loose the
         // gspkauth cookie
-        httpConnection.getResponseCode();
+        status = httpConnection.getResponseCode();
 
         String pageContents = readHttpRequest(httpConnection).toString();
         if(pageContents.contains("Your password is incorrect")) return false;
@@ -108,8 +108,8 @@ class GeocachingScrapper {
         // header - cookie
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
-        int status = httpConnection.getResponseCode();
-        // pageContents = readHttpRequest(httpConnection).toString();
+
+        status = httpConnection.getResponseCode();
         // System.out.println("status GET= " + status);
 
         // PrintWriter pw = new PrintWriter("output.html", "UTF-8");
@@ -121,7 +121,7 @@ class GeocachingScrapper {
         return status == 200;
     }
 
-    Boolean login() throws IOException{
+    public Boolean login() throws IOException{
         // Added my Mg
         // Login using the Authentication Cookie (or rather, check that this authentication cookie is valid)
 
@@ -150,17 +150,19 @@ class GeocachingScrapper {
 
         httpConnection.disconnect();
 
+        System.out.println("AuthCookie: " + _groundspeakAuthCookie);
+
         return status == 200;
     }
 
-    Geocache getGeocacheDetails(String code) throws IOException, ParseException
+    public Geocache getGeocacheDetails(String code) throws IOException, ParseException
     {
         code = code.toUpperCase();
 
         System.out.println("Getting cache " + code);
         Geocache gc = new Geocache();
 
-        gc.code = code;
+        gc.setCode(code);
 
         // Obtain the HTML of the page, sending the authentication cookie
         URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
@@ -183,9 +185,9 @@ class GeocachingScrapper {
         Matcher matcher = pattern.matcher(pageContents);
 
         if (matcher.find( )) {
-            gc.name = matcher.group(1);
+            gc.setName(matcher.group(1));
         } else {
-            gc.latitude = "NO MATCH";
+            gc.setName("NO MATCH");
         }
 
         // 2. Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span>
@@ -194,11 +196,11 @@ class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.latitude = matcher.group(1);
-            gc.longitude = matcher.group(2);
+            gc.setLatitude(matcher.group(1));
+            gc.setLongitude(matcher.group(2));
         } else {
-            gc.latitude = "NO MATCH";
-            gc.longitude = "NO MATCH";
+            gc.setLatitude("NO MATCH");
+            gc.setLongitude("NO MATCH");
         }
 
         // 3. Get Size
@@ -207,10 +209,11 @@ class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.size = matcher.group(1);
-            gc.size = gc.size.substring(0,1).toUpperCase() + gc.size.substring(1);
+            String size = matcher.group(1);
+            gc.setSize(size);
+            gc.setSize(size.substring(0,1).toUpperCase() +size.substring(1));
         } else {
-            gc.size = "NO MATCH";
+            gc.setSize("NO MATCH");
         }
 
         // 4. Get Difficulty and Terrain (both use the same regex, repeated instances)
@@ -220,28 +223,28 @@ class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.difficulty = matcher.group(1);
+            gc.setDifficulty(matcher.group(1));
 
             if(matcher.find()) {
-                gc.terrain = matcher.group(1);
+                gc.setTerrain( matcher.group(1));
             }
             else {
-                gc.terrain = "NO MATCH";
+                gc.setTerrain("NO MATCH");
             }
         } else {
-            gc.difficulty = "NO MATCH";
-            gc.terrain = "NO MATCH";
+            gc.setDifficulty("NO MATCH");
+            gc.setTerrain("NO MATCH");
         }
 
         // 5. Get the cache type
-        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z\\s()]+).*?\" class=\"cacheImage\">";
+        String regexType = "<a href=\"/about/cache_types.aspx\" target=\"_blank\" title=\"([a-zA-Z\\s\\(\\)]+).*?\" class=\"cacheImage\">";
         pattern = Pattern.compile(regexType);
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.type = CacheTypeEnum.valueOfTypeString(matcher.group(1));
+            gc.setType(CacheTypeEnum.valueOfTypeString(matcher.group(1)));
         } else {
-            gc.type = CacheTypeEnum.Other;
+            gc.setType(CacheTypeEnum.Other);
         }
 
         // 6. Have I found it?
@@ -250,9 +253,9 @@ class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.foundIt = matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF;
+            gc.setFoundIt(matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF);
         } else {
-            gc.foundIt = FoundEnumType.NotAttempted;
+            gc.setFoundIt(FoundEnumType.NotAttempted);
         }
 
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
@@ -265,15 +268,18 @@ class GeocachingScrapper {
             String group = matcher.group(1);
             String temp = group;
             temp = temp.replaceAll(" ", "");
-            if(temp.length()==0) gc.hint = "NO MATCH";
+            System.out.println(temp.length());
+            if(temp.length()==0) gc.setHint("NO MATCH");
             else {
-                gc.hint = Rot13.Decode(group).trim();
-                // New lines are captured as <oe>
-                gc.hint = gc.hint.replaceAll("<oe>", "\n");
+                String hint = Rot13.Decode(group);
+                hint = hint.trim();
+                gc.setHint(hint.replaceAll("<oe>", "\n"));
             }
+
         } else {
-            gc.hint = "NO MATCH";
+            gc.setHint("NO MATCH");
         }
+
 
         // 8. Favourites
         String regexFavourites = "<span class=\"favorite-value\">\\s*(.*?)\\s*</span>";
@@ -281,9 +287,9 @@ class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.favourites = Integer.parseInt(matcher.group(1));
+            gc.setFavourites(Integer.parseInt(matcher.group(1)));
         } else {
-            gc.favourites = 0;
+            gc.setFavourites(0);
         }
 
         // 9. Last logs and their dates
@@ -304,7 +310,9 @@ class GeocachingScrapper {
             log.logType = matcher.group(1);
             log.logDate = dateFormatter.parse(matcherDates.group(1));
 
-            gc.recentLogs.add(log);
+            ArrayList<GeocacheLog> recentLogs = gc.getRecentLogs();
+            recentLogs.add(log);
+            gc.setRecentLogs(recentLogs);
             logsParsed++;
         }
         // else do nothing -- the collection will be non-null but empty
@@ -332,7 +340,7 @@ class GeocachingScrapper {
     }
 
     // from: https://github.com/eugenp/tutorials/blob/master/core-java-modules/core-java-networking-2/src/main/java/com/baeldung/httprequest/ParameterStringBuilder.java
-    private static String getParamsString(Map<String, String> params) throws UnsupportedEncodingException {
+    public static String getParamsString(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -345,11 +353,11 @@ class GeocachingScrapper {
         String resultString = result.toString();
         return resultString.length() > 0 ? resultString.substring(0, resultString.length() - 1) : resultString;
     }
-    
+
     private StringBuffer readHttpRequest(HttpURLConnection httpConnection) throws IOException
     {
         BufferedReader in = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
-        
+
         String inputLine;
         StringBuffer content = new StringBuffer();
         while ((inputLine = in.readLine()) != null) {

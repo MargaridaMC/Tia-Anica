@@ -35,11 +35,12 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Get the tour info
         String currentTourString = intent.getStringExtra("currentTour");
-        try {
+        /*try {
             tour = GeocachingTour.fromJSON(new JSONObject(currentTourString));
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
+        tour = GeocachingTour.fromString(currentTourString);
 
         // Get the clicked cache info
         currentCacheIndex = intent.getIntExtra("currentCacheIndex", -1);
@@ -52,7 +53,7 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Set Cache Title
         ActionBar ab = getSupportActionBar();
-        ab.setTitle(currentCache.geocache.name);
+        ab.setTitle(currentCache.getGeocache().getName());
         ab.setDisplayHomeAsUpEnabled(true);
 
         // Set Found / DNF switches
@@ -157,7 +158,8 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Finally save changes to file
         String rootPath = App.getTourRoot();
-        tour.toFile(rootPath);
+        //tour.toFile(rootPath);
+        GeocachingTour.write(rootPath, tour);
 
         // update the element we just changed
         String allToursFilePath = App.getAllToursFilePath();

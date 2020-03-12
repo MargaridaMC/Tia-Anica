@@ -3,26 +3,30 @@ package app;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.crypto.spec.GCMParameterSpec;
+import java.util.Collections;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import org.json.JSONObject;
-import org.json.JSONException;
-import org.json.simple.parser.JSONParser;
+import java.io.IOException;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * GeocachingTour
  */
+
+@JsonIgnoreProperties({"numDNF", "numFound", "summary"})
 public class GeocachingTour
 {
     private String _name;
     private int _size;
     private ArrayList<GeocacheInTour> _tourCaches = new ArrayList<>();
 
-    GeocachingTour(String name)
+    @JsonCreator
+    GeocachingTour(@JsonProperty("name") String name)
     {
         if(name == null)
         {
@@ -34,9 +38,69 @@ public class GeocachingTour
         }
     }
 
-    public int getSize()
+    public String getName(){ return _name; }
+    public void setName(String name) { this._name = name; }
+
+    public int getSize(){ return _tourCaches.size(); }
+    public void setSize(int size){ this._size = size; }
+
+    public ArrayList<GeocacheInTour> getTourGeocaches(){ return _tourCaches; }
+    public void setTourGeocaches(ArrayList<GeocacheInTour> tourCaches){ this._tourCaches = tourCaches; }
+
+    static boolean write(String folder, GeocachingTour tour)
     {
-        return _tourCaches.size();
+        try
+        {
+            new ObjectMapper().writeValue(new File(folder, tour.getName()), tour);
+            return true;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    static GeocachingTour read(String folder, String tourName)
+    {
+
+        // Read the full content of the file
+        try {
+            // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return new ObjectMapper().readValue(new File(folder, tourName), new TypeReference<GeocachingTour>(){});
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return new GeocachingTour(null); // return an empty list
+        }
+    }
+
+    public String toString(){
+
+        try
+        {
+            return new ObjectMapper().writeValueAsString(this);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+
+    }
+
+    public static GeocachingTour fromString(String tourString){
+
+        try {
+            // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return new ObjectMapper().readValue(tourString, new TypeReference<GeocachingTour>(){});
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return new GeocachingTour(null); // return an empty list
+        }
     }
 
     /**
@@ -59,24 +123,15 @@ public class GeocachingTour
 
     }
 
-    /**
-     * Rename a tour
-     * @param newName New name of tour
-     */
-
-    public void setName(String newName)
-    {
-        _name = newName;
-    }
 
     int addToTour(Geocache gc)
     {
         // TODO: se gc = null ou gc.code == null, estoirar
 
         // only add if it's not there yet
-        if(getCacheInTour(gc.code) == null)
+        if(getCacheInTour(gc.getCode()) == null)
         {
-            System.out.println(gc.code + " não está na lista, adding");
+            System.out.println(gc.getCode() + " não está na lista, adding");
             _tourCaches.add(new GeocacheInTour(gc));
         }
 
@@ -97,7 +152,7 @@ public class GeocachingTour
     int addToTour(Geocache gc, int position)
     {
 
-        if(getCacheInTour(gc.code) == null)
+        if(getCacheInTour(gc.getCode()) == null)
         {
             _tourCaches.add(position, new GeocacheInTour(gc));
         }
@@ -110,7 +165,7 @@ public class GeocachingTour
     {
         final String upperCode = code.toUpperCase();
 
-        _tourCaches.removeIf(cit -> cit.geocache.code.equals(upperCode));
+        _tourCaches.removeIf(cit -> cit.getGeocache().getCode().equals(upperCode));
 
         _size = _tourCaches.size();
         return _size;
@@ -126,8 +181,8 @@ public class GeocachingTour
         code = code.toUpperCase();
 
         for (GeocacheInTour geocacheInTour : _tourCaches) {
-                if(geocacheInTour.geocache.code.compareTo(code) == 0)
-                    return geocacheInTour;
+            if(geocacheInTour.getGeocache().getCode().compareTo(code) == 0)
+                return geocacheInTour;
         }
 
         return null;
@@ -150,142 +205,10 @@ public class GeocachingTour
         List<String> codes = new ArrayList<>();
 
         for(GeocacheInTour geocache:_tourCaches){
-            codes.add(geocache.geocache.code);
+            codes.add(geocache.getGeocache().getCode());
         }
 
         return codes;
-    }
-
-    /**
-     * Serialize the content of the tour into a JSON object.
-     * TODO: this method and the next should be in a separate class, e.g., GeocachingTourSerializer or something.
-     * @return JSON object with the contents of the Tour, including the cache information
-     */
-    JSONObject toJSON(){
-
-        JSONObject tourCacheJSON = new JSONObject();
-        try {
-            tourCacheJSON.put("_tourName", _name);
-            tourCacheJSON.put("getSize", getSize());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        int i = 0;
-
-        for(GeocacheInTour gc : _tourCaches){
-            JSONObject cacheJSON = gc.toJSON();
-            try {
-                tourCacheJSON.put(Integer.toString(i), cacheJSON); //gc.geocache.name
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            i++;
-        }
-
-        return tourCacheJSON;
-
-    }
-
-    /**
-     * Deserialize a JSON tour into a GeocachingTour instance.
-     * TODO: this method and the previous should be in a separate class, e.g., GeocachingTourSerializer or something.
-     * @param tourCacheJSON Tour to de-serialize
-     * @return De-serialized GeocachingTour
-     */
-    static GeocachingTour fromJSON(JSONObject tourCacheJSON){
-
-        GeocachingTour tour = new GeocachingTour("");
-
-        try {
-            tour._name = tourCacheJSON.getString("_tourName");
-            tour._size = tourCacheJSON.getInt("getSize");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        for(int i = 0; i < tour._size; i++){
-
-            JSONObject cacheJSON = null;
-            try {
-                cacheJSON = tourCacheJSON.getJSONObject(Integer.toString(i));
-                //System.out.println(i);
-                //System.out.println(cacheJSON);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            GeocacheInTour gc = GeocacheInTour.fromJSON(cacheJSON);
-            tour._tourCaches.add(gc);
-
-        }
-
-        return tour;
-
-    }
-
-    /**
-     * Serialize this tour and write it to a file
-     * TODO: put in a separate class, eg GeocachingTourStorage
-     * @param folder Path to the tour, which will be saved with the name of the tour and .json extention
-     */
-    void toFile(String folder){
-        // write tour to file, and overwrites the file if one exists
-        JSONObject tourJSON = this.toJSON();
-
-        // Save tour to file
-        String filename = _name + ".json";
-        File file = new File(folder, filename);
-
-        FileOutputStream stream;
-        try {
-            stream = new FileOutputStream(file, false);
-            stream.write(tourJSON.toString().getBytes());
-            stream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Read a tour from file and deserialize it
-     * TODO: put in a separate class, eg GeocachingTourStorage
-     * @param folder Path to the tour and it's name
-     * @param tourName Name of the tour to read (signals the file)
-     */
-    static GeocachingTour fromFile(String folder, String tourName)
-    {
-        GeocachingTour newTour = new GeocachingTour(tourName);
-
-        String filename = tourName + ".json";
-        File file = new File(folder, filename);
-
-        int length = (int) file.length();
-
-        byte[] bytes = new byte[length];
-
-        FileInputStream in;
-        try {
-            in = new FileInputStream(file);
-            in.read(bytes);
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String contents = new String(bytes);
-
-        try {
-            JSONObject newCacheTour = new JSONObject(contents);
-            newTour = GeocachingTour.fromJSON(newCacheTour);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return newTour;
-
     }
 
     /**
@@ -301,8 +224,8 @@ public class GeocachingTour
         return file.delete();
     }
 
-    public GeocachingTourSummary toSummary(){
-        
+    public GeocachingTourSummary getSummary(){
+
         GeocachingTourSummary summary = new GeocachingTourSummary(_name);
         summary.setSize(getSize());
         summary.setNumDNF(getNumDNF());
@@ -311,8 +234,19 @@ public class GeocachingTour
         return summary;
     }
 
-}
+    void swapCachePositions(int fromPosition, int toPosition) {
 
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(_tourCaches, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(_tourCaches, i, i - 1);
+            }
+        }
+    }
+}
 // TODO: I need some unit tests on this
 // TODO: add support to say a given trackable was found or left
 // TODO: rever nomenclatura. Geocache ou GeoCache ou cache ou TourCache ?

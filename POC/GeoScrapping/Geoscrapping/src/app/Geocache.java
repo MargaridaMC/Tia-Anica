@@ -1,5 +1,7 @@
 package app;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -8,96 +10,87 @@ import java.util.Date;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Geocache {
-    String code;
-    public String name;
-    String latitude;
-    String longitude;
-    String size;
-    String difficulty;
-    String terrain;
+    String _code;
+    public String _name;
+    String _latitude;
+    String _longitude;
+    String _size;
+    String _difficulty;
+    String _terrain;
     //String type; // Normal, etc.
-    CacheTypeEnum type = CacheTypeEnum.Other;
-    FoundEnumType foundIt; // 0 - no, 1 - DNF, 2 - yes
-    String hint;
-    int favourites;
-    ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
+    CacheTypeEnum _type = CacheTypeEnum.Other;
+    FoundEnumType _foundIt; // 0 - no, 1 - DNF, 2 - yes
+    String _hint;
+    int _favourites;
+    ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
+
+    // These set and get methods needs to be public otherwise the serialization will not work.
+    public String getCode(){ return _code; }
+    public void setCode(String code){ this._code = code;}
+
+    public String getName(){ return _name; }
+    public void setName(String name){ this._name = name;}
+
+    public String getLatitude(){ return _latitude; }
+    public void setLatitude(String latitude){ this._latitude = latitude;}
+
+    public String getLongitude(){ return _longitude; }
+    public void setLongitude(String longitude){ this._longitude = longitude;}
+
+    public String getSize(){ return _size; }
+    public void setSize(String size){ this._size = size;}
+
+    public String getDifficulty(){ return _difficulty; }
+    public void setDifficulty(String difficulty){ this._difficulty = difficulty;}
+
+    public String getTerrain(){ return _terrain; }
+    public void setTerrain(String terrain){ this._terrain = terrain;}
+
+    public CacheTypeEnum getType(){ return _type;}
+    public void setType(CacheTypeEnum type){ this._type = type; }
+
+    public FoundEnumType getFoundIt(){ return _foundIt; }
+    public void setFoundIt(FoundEnumType foundIt){ this._foundIt = foundIt;}
+
+    public String getHint(){ return _hint; }
+    public void setHint(String hint){ this._hint = hint;}
+
+    public int getFavourites(){ return _favourites; }
+    public void setFavourites(int favourites){ this._favourites = favourites;}
+
+    public ArrayList<GeocacheLog> getRecentLogs(){ return _recentLogs;}
+    public void setRecentLogs(ArrayList<GeocacheLog> recentLogs){this._recentLogs = recentLogs;}
+
 
     public long CountDaysSinceLastFind() {
-        if (recentLogs == null || recentLogs.size() == 0)
+        if (_recentLogs == null || _recentLogs.size() == 0)
             return 0;
 
-        // I'm not going to comment what I think about this line of code, esp if compared with the C# version.
+        // I'm not going to comment what I think about this line of _code, esp if compared with the C# version.
         // #language-of-the-flintstones
-        return ChronoUnit.DAYS.between(recentLogs.get(0).logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        return ChronoUnit.DAYS.between(_recentLogs.get(0).logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
     public double AverageDaysBetweenFinds()
     {
-        if (recentLogs == null || recentLogs.size() == 0)
+        if (_recentLogs == null || _recentLogs.size() == 0)
             return 0;
 
-        long daysDifference = ChronoUnit.DAYS.between(recentLogs.get(recentLogs.size()-1).logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-        new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        long daysDifference = ChronoUnit.DAYS.between(_recentLogs.get(_recentLogs.size()-1).logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-        return daysDifference / (double) recentLogs.size();
+        return daysDifference / (double) _recentLogs.size();
     }
 
-    JSONObject toJSON(){
-
-        JSONObject cacheJSON = new JSONObject();
-
-        try {
-            cacheJSON.put("code", code);
-            cacheJSON.put("name", name);
-            cacheJSON.put("latitude", latitude);
-            cacheJSON.put("longitude", longitude);
-            cacheJSON.put("size", size);
-            cacheJSON.put("difficulty", difficulty);
-            cacheJSON.put("terrain", terrain);
-            cacheJSON.put("type", type);
-            cacheJSON.put("foundIt", foundIt);
-            cacheJSON.put("hint", hint);
-            cacheJSON.put("favourites", favourites);
-            //cacheJSON.put("recentLogs", recentLogs);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return cacheJSON;
-    }
-
-    static Geocache fromJSON(JSONObject cacheJSON){
-
-        // TODO: check for null
-        Geocache cache = new Geocache();
-
-        try {
-            cache.code = cacheJSON.getString("code");
-            cache.name = cacheJSON.getString("name");
-            cache.latitude = cacheJSON.getString("latitude");
-            cache.longitude = cacheJSON.getString("longitude");
-            cache.size = cacheJSON.getString("size");
-            cache.difficulty = cacheJSON.getString("difficulty");
-            cache.terrain = cacheJSON.getString("terrain");
-            String typeString = cacheJSON.get("type").toString();
-            cache.type = CacheTypeEnum.valueOf(typeString);
-            String foundItString = cacheJSON.get("foundIt").toString();
-            cache.foundIt = FoundEnumType.valueOf(foundItString);
-            cache.hint = cacheJSON.getString("hint");
-            cache.favourites = cacheJSON.getInt("favourites");
-            //recentLogs = (ArrayList<GeocacheLog>) cacheJSON.get("recentLogs"); // Unsure if this will work
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    
-        return cache;
-
-    }
-
+   
     boolean hasHint(){
 
-        return !hint.equals("NO MATCH");
+        return !_hint.equals("NO MATCH");
 
     }
 }

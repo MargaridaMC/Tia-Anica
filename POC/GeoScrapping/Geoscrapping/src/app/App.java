@@ -12,27 +12,16 @@ public class App {
         System.out.println("Login = " + loginSuccess);
 
         Geocache gc1 = scrapper.getGeocacheDetails("GC7GX91");
+        
         Geocache gc2 = scrapper.getGeocacheDetails("GC23EH1");
 
         tour.addToTour(new Geocache[] {gc1, gc2});
 
-        System.out.println(tour.getSize());
+        GeocachingTour.write(".", tour);
 
-        GeocachingTour tour2 = new GeocachingTour("New tour");
-        tour2.addToTour(new Geocache[] {gc1, gc2});
-
-        ArrayList<GeocachingTourSummary> tourList = new ArrayList<>();
-        tourList.add(tour.toSummary());
-        tourList.add(tour2.toSummary());
-
-        String allToursFilePath = "alltours.txt";
-        TourList.write(allToursFilePath, tourList);
-
-        ArrayList<GeocachingTourSummary> newTourList = TourList.read(allToursFilePath);
-
-        TourList.write("alltoursnew.txt", newTourList);
-        System.out.println(newTourList.size());
-
+        GeocachingTour newTour = GeocachingTour.read(".", tour.getName());
+        System.out.println(tour.getName());
+    
         /*
 
         System.out.println("** TEST OBTAINED CACHE TYPES**");

@@ -4,8 +4,6 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * GeocachingTourSummary class represents the base information of a GeocachingTour, with the minimum metadata information
@@ -36,6 +34,7 @@ public class GeocachingTourSummary
         }
     }
 
+    // These set and get methods needs to be public otherwise the serialization will not work.
     public String getName(){
         return _name;
     }
@@ -58,65 +57,5 @@ public class GeocachingTourSummary
     public int getSize() { return _size; }
     public void setSize(int size) { _size = size; }
 
-
-    public String serializeYourself() throws JsonProcessingException
-    {
-        return new ObjectMapper().writeValueAsString(this);
-    }
-
-    /**
-     * Get the metadata about the tour -- (tour name, number of DNFs, Founds, and # of caches)
-     * @return JSON object with the metadata (tour name, number of DNFs, Founds, and # of caches)
-     */
-
-    /*
-    String serialize()
-    {
-        JSONObject summaryJsonObject = new JSONObject();
-
-        try {
-            summaryJsonObject.put("tourName", _name);
-            summaryJsonObject.put("numDNF", _numDNF);
-            summaryJsonObject.put("numFound", _numFound);
-            summaryJsonObject.put("size", _size);
-            summaryJsonObject.put("isCurrent", _isCurrentTour);
-
-            return summaryJsonObject.toString();
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * De-serialize metadata from Json
-     * @param summaryJsonString Summary information stored as a string
-     */
-
-    /*
-    static GeocachingTourSummary deserialize(String summaryJsonString)
-    {
-        JSONObject summaryJsonObject = null;
-
-        try {
-            summaryJsonObject = new JSONObject(summaryJsonString);
-
-            GeocachingTourSummary gts = new GeocachingTourSummary(summaryJsonObject.getString("tourName"));
-            gts._numFound = summaryJsonObject.getInt("numFound");
-            gts._numDNF = summaryJsonObject.getInt("numDNF");
-            gts._size = summaryJsonObject.getInt("size");
-            gts._isCurrentTour = summaryJsonObject.getBoolean("isCurrent");
-
-            return gts;
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-*/
 
 }
