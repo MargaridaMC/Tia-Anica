@@ -10,20 +10,20 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Geocache {
-    String _code;
-    String _name;
-    String _latitude;
-    String _longitude;
-    String _size;
-    String _difficulty;
-    String _terrain;
+    private String _code;
+    private String _name;
+    private String _latitude;
+    private String _longitude;
+    private String _size;
+    private String _difficulty;
+    private String _terrain;
     //String type; // Normal, etc.
-    CacheTypeEnum _type = CacheTypeEnum.Other;
-    FoundEnumType _foundIt; // 0 - no, 1 - DNF, 2 - yes
-    String _hint;
-    int _favourites;
-    ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
-    String _DNFRisk = "";
+    private CacheTypeEnum _type = CacheTypeEnum.Other;
+    private FoundEnumType _foundIt; // 0 - no, 1 - DNF, 2 - yes
+    private String _hint;
+    private int _favourites;
+    private ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
+    private String _DNFRisk = "";
 
     // These set and get methods needs to be public otherwise the serialization will not work.
     public String getCode(){ return _code; }

@@ -36,9 +36,7 @@ public enum CacheTypeEnum{
 
     public static CacheTypeEnum valueOfTypeString(String typeString) {
         for (CacheTypeEnum e : values()) {
-            if (e.typeString.equals(typeString)) {
-                return e;
-            }
+            if (e.typeString.equals(typeString))  return e;
         }
         return Other;
     }

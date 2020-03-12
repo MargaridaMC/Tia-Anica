@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,6 +145,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
 
+        List<String> cachesToGet = new ArrayList<>(_geocacheCodesList);
         // Process the deltas from the old list to the new list
         if (_tour != null) {
 
@@ -156,7 +158,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
 
             // 2. Remove from the list of caches to fetch, those we already have loaded
             for (String loadedCache : _tour.getTourCacheCodes()) {
-                _geocacheCodesList.remove(loadedCache); // don't get the information again. If the list doens't containt the cache nothing will happen
+                cachesToGet.remove(loadedCache); // don't get the information again. If the list doens't containt the cache nothing will happen
             }
         }
 
@@ -169,7 +171,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             _progressBar.setVisibility(View.VISIBLE);
 
             GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
-            GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, _geocacheCodesList);
+            GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, cachesToGet);
             geocachingScrappingTask.delegate = this;
             geocachingScrappingTask.execute(tourName);
         }
@@ -178,6 +180,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
     /**
      * Not used. Re-evaluate in the future vs a Tour Clone feature.
      */
+    /*
     public void getPermissionOverwrite(){
 
         // final String[] newTourName = {null};
@@ -205,7 +208,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         dialog.show();
 
     }
-
+    */
     @Override
     public void onGeocachingScrappingTaskResult(List<Geocache> newlyLoadedCaches) {
 
@@ -223,13 +226,32 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         else
         {
             // if it already exists we need to make sure the name is correct
-            _tour.setName(_newTourName);
-        }
+            //_tour.setName(_newTourName);
 
-        // Add loaded caches to tour
-        for(Geocache loadedCache : newlyLoadedCaches)
-        {
-            _tour.addToTour(loadedCache);
+            GeocachingTour newTour = new GeocachingTour(_newTourName);
+            int indexInOriginalTour = 0;
+            int indexFromLoadedCaches = 0;
+            for(String code : _geocacheCodesList){
+
+                // If cache is in previous tour, just add it to the new one
+                if(indexInOriginalTour < _tour.getSize()) {
+                    Geocache cacheFromOriginalTour = _tour.getCacheInTour(indexInOriginalTour).getGeocache();
+                    if (code.equals(cacheFromOriginalTour.getCode())) {
+                        newTour.addToTour(cacheFromOriginalTour);
+                        indexInOriginalTour++;
+                    } // Else get it from the newly loaded caches
+                    else {
+                        newTour.addToTour(newlyLoadedCaches.get(indexFromLoadedCaches));
+                        indexFromLoadedCaches++;
+                    }
+                } else { // Since we've reached the end of the caches in original tour just add the remaining loaded ones to the new tour
+                    Geocache[] toAdd = newlyLoadedCaches.subList(indexFromLoadedCaches, newlyLoadedCaches.size()).toArray(new Geocache[0]);
+                    newTour.addToTour(toAdd);
+                }
+            }
+
+            _tour = newTour;
+
         }
 
         // Write tour to file -- will  be overwritten if there is a file with same name
