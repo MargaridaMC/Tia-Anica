@@ -1,0 +1,1 @@
+[{"name":"My tour","size":2,"numDNF":0,"numFound":0,"isCurrentTour":false},{"name":"New tour","size":2,"numDNF":0,"numFound":0,"isCurrentTour":false}]
