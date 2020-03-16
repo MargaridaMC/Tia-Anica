@@ -2,7 +2,7 @@ Tia Anica: [![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/buil
 Ti'Aires: [![Build status](https://dev.azure.com/joamart/Tia%20Anica/_apis/build/status/TiAires%20CICD%20pipeline%20for%20Android)](https://dev.azure.com/joamart/Tia%20Anica/_build/latest?definitionId=6)
 
 # Tia Anica 
-## Your friendly geocaching aunts
+## Your friendly geocaching aunt
 *Simple Android app with on-the-go Geocaching tools*
 
 At the moment the included functionalities are:
