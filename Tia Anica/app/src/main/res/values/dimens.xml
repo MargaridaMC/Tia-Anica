@@ -2,6 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="margin">16dp</dimen>
     <dimen name="large_margin">32dp</dimen>
+    <dimen name="very_large_margin">64dp</dimen>
     <dimen name="padding">8dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>

@@ -73,77 +73,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Bug fix on Coordinate Formula: it didn't allow for power function">
-      <change afterPath="$PROJECT_DIR$/app/src/main/ic_home-web.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/grandma.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_home_background.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura_book.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura_book_italic.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura_light.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura_light_italic.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura_medium.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/futura_medium_italic.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-anydpi-v26/ic_home.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-anydpi-v26/ic_home_round.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_home_foreground.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_home_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_home_foreground.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_home_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_home_foreground.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_home_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_home_foreground.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_home_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_home_foreground.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_home_round.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/Geocache.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/Geocache.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
+    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Changes in UI and simplification of UI in Coordinate Formula">
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/ic_launcher-web.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/ic_launcher-web.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/landscape_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/landscape_background.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/portrait_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/portrait_background.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_alpha_sum.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_alpha_sum.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_alpha_sum.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_alpha_sum.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coord_calculator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coord_calculator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coordinate_offset.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_vigenere_cipher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_vigenere_cipher.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -210,20 +144,18 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="103" column="54" lean-forward="true" selection-start-line="103" selection-start-column="54" selection-end-line="103" selection-end-column="54" />
+            <state relative-caret-position="45">
+              <caret line="54" column="50" selection-start-line="54" selection-start-column="50" selection-end-line="54" selection-end-column="50" />
               <folding>
-                <element signature="e#2904#2919#0" expanded="true" />
-                <element signature="e#3608#3623#0" expanded="true" />
-                <element signature="e#4097#4112#0" expanded="true" />
-                <element signature="e#4463#4480#0" expanded="true" />
-                <element signature="e#5069#5084#0" expanded="true" />
-                <element signature="e#4711#4726#0" expanded="true" />
-                <element signature="e#5989#6004#0" expanded="true" />
-                <element signature="e#6049#6064#0" expanded="true" />
+                <element signature="e#695#716#0" expanded="true" />
+                <element signature="e#750#771#0" expanded="true" />
+                <element signature="e#805#826#0" expanded="true" />
+                <element signature="e#901#916#0" expanded="true" />
+                <element signature="e#1242#1271#0" expanded="true" />
+                <element signature="e#2381#2407#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -231,19 +163,52 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-301">
-              <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+            <state relative-caret-position="540">
+              <caret line="81" column="38" lean-forward="true" selection-start-line="81" selection-start-column="38" selection-end-line="81" selection-end-column="38" />
               <folding>
-                <element signature="e#13205#13878#0" expanded="true" />
-                <element signature="e#13877#13878#0" expanded="true" />
-                <element signature="e#13989#14005#0" />
-                <element signature="e#14868#17431#0" />
-                <element signature="e#21139#21420#0" expanded="true" />
-                <element signature="e#21419#21420#0" expanded="true" />
-                <element signature="e#24710#26172#0" expanded="true" />
-                <element signature="e#26171#26172#0" expanded="true" />
+                <element signature="e#921#936#0" expanded="true" />
+                <element signature="e#1330#1359#0" expanded="true" />
+                <element signature="e#5700#5715#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" column="49" lean-forward="true" selection-start-line="12" selection-start-column="49" selection-end-line="12" selection-end-column="49" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/text_field.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="120">
+              <caret line="8" column="33" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="224" lean-forward="true" selection-start-line="224" selection-end-line="224" />
+              <folding>
+                <element signature="e#9009#9270#0" expanded="true" />
+                <element signature="e#9269#9270#0" expanded="true" />
+                <element signature="e#16590#16643#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -327,8 +292,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MapFragment.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_map.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Map.java" />
         <option value="$PROJECT_DIR$/app/src/release/res/values/google_maps_api.xml" />
         <option value="$PROJECT_DIR$/app/src/debug/res/values/google_maps_api.xml" />
@@ -341,7 +304,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordCalculator.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateCalculator.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipher.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/AlphaSum.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_drawer.xml" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
@@ -353,7 +315,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_alpha_sum.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/portrait_background.xml" />
@@ -362,22 +323,26 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coord_calculator.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coordinate_offset.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_vigenere_cipher.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input_portrait.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input_4_letters.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
       </list>
     </option>
   </component>
@@ -393,7 +358,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -405,6 +369,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -469,6 +434,20 @@
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
               <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
               <item name="content_coord_calculator" type="c431d0b8:AndroidResGroupNode" />
+            </path>
+            <path>
+              <item name="Tia Anica" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+              <item name="content_coordinate_offset" type="c431d0b8:AndroidResGroupNode" />
+            </path>
+            <path>
+              <item name="Tia Anica" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+              <item name="content_vigenere_cipher" type="c431d0b8:AndroidResGroupNode" />
             </path>
             <path>
               <item name="Tia Anica" type="1abcf292:AndroidViewProjectNode" />
@@ -945,7 +924,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582457554843</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Changes in UI and simplification of UI in Coordinate Formula">
+      <created>1584410177928</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1584410177928</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TodoView">
@@ -961,7 +947,7 @@
     <frame x="1358" y="-264" width="1296" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7431694" visible="true" weight="0.2564725" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.7431694" visible="true" weight="0.2605178" />
       <window_info id="Structure" order="1" sideWeight="0.25" side_tool="true" weight="0.25340393" />
       <window_info id="Designer" order="2" />
       <window_info id="Build Variants" order="3" sideWeight="0.28196722" side_tool="true" weight="0.22087745" />
@@ -980,11 +966,11 @@
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.4977307" weight="0.22749591" />
       <window_info anchor="bottom" id="Gradle Console" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5030257" side_tool="true" weight="0.7348609" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="10" sideWeight="0.6429652" visible="true" weight="0.21222606" />
+      <window_info anchor="bottom" id="Logcat" order="10" sideWeight="0.6429652" weight="0.37254903" />
       <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.49924356" weight="0.12111293" />
       <window_info anchor="bottom" id="Terminal" order="12" sideWeight="0.49848714" weight="0.17021276" />
-      <window_info active="true" anchor="bottom" id="Messages" order="13" sideWeight="0.4977307" visible="true" weight="0.400982" />
-      <window_info anchor="bottom" id="Build" order="14" sideWeight="0.6043873" weight="0.32295272" />
+      <window_info active="true" anchor="bottom" id="Messages" order="13" sideWeight="0.4977307" visible="true" weight="0.40023068" />
+      <window_info anchor="bottom" id="Build" order="14" sideWeight="0.6043873" weight="0.20761245" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -1079,7 +1065,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Throws error if not all values are filled in" />
     <MESSAGE value="Changes in design and works in landscape mode now" />
     <MESSAGE value="Minor corrections" />
     <MESSAGE value="New coordinate object class and coordinate calculator allows N, S, E and W" />
@@ -1104,7 +1089,8 @@
     <MESSAGE value="Improvements in UI" />
     <MESSAGE value="Improvements in UI for Coordinate Formula Calculator; Directions are now only available when result is &quot;proper&quot; coordinates" />
     <MESSAGE value="Bug fix on Coordinate Formula: it didn't allow for power function" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fix on Coordinate Formula: it didn't allow for power function" />
+    <MESSAGE value="Changes in UI and simplification of UI in Coordinate Formula" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes in UI and simplification of UI in Coordinate Formula" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1123,41 +1109,20 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>509</line>
+          <line>385</line>
           <properties />
           <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>494</line>
+          <line>373</line>
           <properties />
           <option name="timeStamp" value="58" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>497</line>
-          <properties />
-          <option name="timeStamp" value="59" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_coord_calculator_drawer.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-      <provider editor-type-id="android-designer2" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/bt_style.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/portrait_background.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/debug/res/font/futura.xml" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/landscape_background.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1166,12 +1131,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" selection-start-line="9" selection-end-line="9" />
         </state>
       </provider>
+      <provider editor-type-id="android-manifest" />
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-26/data/res/values/attrs.xml">
       <provider selected="true" editor-type-id="text-editor">
@@ -1277,17 +1242,6 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_home_foreground.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="118" column="58" selection-start-line="118" selection-start-column="58" selection-end-line="118" selection-end-column="58" />
-          <folding>
-            <element signature="e#5634#5649#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
@@ -1329,14 +1283,6 @@
       </provider>
       <provider editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="126" column="51" selection-start-line="126" selection-start-column="51" selection-end-line="126" selection-end-column="51" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -1352,13 +1298,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png">
       <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_round.png">
       <provider selected="true" editor-type-id="images" />
@@ -1404,70 +1343,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="86" column="34" selection-start-line="86" selection-start-column="34" selection-end-line="86" selection-end-column="34" />
-          <folding>
-            <element signature="e#746#761#0" expanded="true" />
-            <element signature="e#786#801#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="android-designer2" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-26/data/res/drawable-hdpi/ic_menu_directions.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="57" selection-start-line="32" selection-start-column="57" selection-end-line="32" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-26/android/view/View.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="24104" column="22" selection-start-line="24104" selection-start-column="22" selection-end-line="24104" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input_portrait.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="51" column="43" selection-start-line="51" selection-start-column="43" selection-end-line="51" selection-end-column="43" />
-          <folding>
-            <element signature="e#360#378#0" expanded="true" />
-            <element signature="e#408#423#0" expanded="true" />
-            <element signature="e#451#466#0" expanded="true" />
-            <element signature="e#547#568#0" expanded="true" />
-            <element signature="e#678#696#0" expanded="true" />
-            <element signature="e#865#883#0" expanded="true" />
-            <element signature="e#1284#1302#0" expanded="true" />
-            <element signature="e#1471#1489#0" expanded="true" />
-            <element signature="e#1615#1636#0" expanded="true" />
-            <element signature="e#1847#1865#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="44" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="44" />
         </state>
       </provider>
     </entry>
@@ -1482,40 +1367,155 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5e3b92153b679a99261d963c63ea4bf4/design-26.1.0/res/values/values.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="229" column="18" selection-start-line="229" selection-start-column="18" selection-end-line="229" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="509">
+          <caret line="86" column="32" selection-start-line="86" selection-start-column="32" selection-end-line="86" selection-end-column="32" />
+          <folding>
+            <element signature="e#389#429#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input.xml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="539">
+          <caret line="83" column="43" lean-forward="true" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
+          <folding>
+            <element signature="e#451#466#0" expanded="true" />
+            <element signature="e#1519#1534#0" expanded="true" />
+            <element signature="e#1562#1577#0" expanded="true" />
+            <element signature="e#1890#1908#0" expanded="true" />
+            <element signature="e#2077#2095#0" expanded="true" />
+            <element signature="e#2125#2140#0" expanded="true" />
+            <element signature="e#2168#2183#0" expanded="true" />
+            <element signature="e#2264#2285#0" expanded="true" />
+            <element signature="e#2496#2514#0" expanded="true" />
+            <element signature="e#2683#2701#0" expanded="true" />
+            <element signature="e#2731#2746#0" expanded="true" />
+            <element signature="e#2774#2789#0" expanded="true" />
+            <element signature="e#2870#2891#0" expanded="true" />
+            <element signature="e#3102#3120#0" expanded="true" />
+            <element signature="e#3289#3307#0" expanded="true" />
+            <element signature="e#3337#3352#0" expanded="true" />
+            <element signature="e#3380#3395#0" expanded="true" />
+            <element signature="e#3476#3497#0" expanded="true" />
+            <element signature="e#3708#3726#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="34" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-301">
-          <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+        <state relative-caret-position="340">
+          <caret line="264" column="45" lean-forward="true" selection-start-line="264" selection-start-column="45" selection-end-line="264" selection-end-column="45" />
           <folding>
-            <element signature="e#13205#13878#0" expanded="true" />
-            <element signature="e#13877#13878#0" expanded="true" />
-            <element signature="e#13989#14005#0" />
-            <element signature="e#14868#17431#0" />
-            <element signature="e#21139#21420#0" expanded="true" />
-            <element signature="e#21419#21420#0" expanded="true" />
-            <element signature="e#24710#26172#0" expanded="true" />
-            <element signature="e#26171#26172#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="103" column="54" lean-forward="true" selection-start-line="103" selection-start-column="54" selection-end-line="103" selection-end-column="54" />
+        <state relative-caret-position="375">
+          <caret line="25" column="32" lean-forward="true" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
           <folding>
-            <element signature="e#2904#2919#0" expanded="true" />
-            <element signature="e#3608#3623#0" expanded="true" />
-            <element signature="e#4097#4112#0" expanded="true" />
-            <element signature="e#4463#4480#0" expanded="true" />
-            <element signature="e#5069#5084#0" expanded="true" />
-            <element signature="e#4711#4726#0" expanded="true" />
-            <element signature="e#5989#6004#0" expanded="true" />
-            <element signature="e#6049#6064#0" expanded="true" />
+            <element signature="e#729#744#0" expanded="true" />
+            <element signature="e#1210#1225#0" expanded="true" />
           </folding>
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="224" lean-forward="true" selection-start-line="224" selection-end-line="224" />
+          <folding>
+            <element signature="e#9009#9270#0" expanded="true" />
+            <element signature="e#9269#9270#0" expanded="true" />
+            <element signature="e#16590#16643#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="134" column="67" lean-forward="true" selection-start-line="134" selection-start-column="67" selection-end-line="134" selection-end-column="67" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="54" column="50" selection-start-line="54" selection-start-column="50" selection-end-line="54" selection-end-column="50" />
+          <folding>
+            <element signature="e#695#716#0" expanded="true" />
+            <element signature="e#750#771#0" expanded="true" />
+            <element signature="e#805#826#0" expanded="true" />
+            <element signature="e#901#916#0" expanded="true" />
+            <element signature="e#1242#1271#0" expanded="true" />
+            <element signature="e#2381#2407#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="81" column="38" lean-forward="true" selection-start-line="81" selection-start-column="38" selection-end-line="81" selection-end-column="38" />
+          <folding>
+            <element signature="e#921#936#0" expanded="true" />
+            <element signature="e#1330#1359#0" expanded="true" />
+            <element signature="e#5700#5715#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="33" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/text_field.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="49" lean-forward="true" selection-start-line="12" selection-start-column="49" selection-end-line="12" selection-end-column="49" />
+        </state>
+      </provider>
     </entry>
   </component>
   <component name="masterDetails">
