@@ -7,21 +7,21 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class Geocache {
-    String _code;
-    public String _name;
-    String _latitude;
-    String _longitude;
-    String _size;
-    String _difficulty;
-    String _terrain;
+    private String _code;
+    private String _name;
+    private String _latitude;
+    private String _longitude;
+    private String _size;
+    private String _difficulty;
+    private String _terrain;
     //String type; // Normal, etc.
-    CacheTypeEnum _type = CacheTypeEnum.Other;
-    FoundEnumType _foundIt; // 0 - no, 1 - DNF, 2 - yes
-    String _hint;
-    int _favourites;
-    ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
+    private CacheTypeEnum _type = CacheTypeEnum.Other;
+    private FoundEnumType _foundIt; // 0 - no, 1 - DNF, 2 - yes
+    private String _hint;
+    private int _favourites;
+    private ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
+    private String _DNFRisk = "";
 
     // These set and get methods needs to be public otherwise the serialization will not work.
     public String getCode(){ return _code; }
@@ -60,6 +60,9 @@ public class Geocache {
     public ArrayList<GeocacheLog> getRecentLogs(){ return _recentLogs;}
     public void setRecentLogs(ArrayList<GeocacheLog> recentLogs){this._recentLogs = recentLogs;}
 
+    public String getDNFRisk(){return _DNFRisk; }
+    public void setDNFRisk(String risk){this._DNFRisk = risk;}
+
 
     public long CountDaysSinceLastFind() {
         if (_recentLogs == null || _recentLogs.size() == 0)
@@ -67,7 +70,10 @@ public class Geocache {
 
         // I'm not going to comment what I think about this line of _code, esp if compared with the C# version.
         // #language-of-the-flintstones
-        return ChronoUnit.DAYS.between(_recentLogs.get(0).logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
+        GeocacheLog lastLog = _recentLogs.stream().filter(log -> log.logType == FoundEnumType.Found).findFirst().get();
+
+        return ChronoUnit.DAYS.between(lastLog.logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
     public double AverageDaysBetweenFinds()
@@ -81,7 +87,52 @@ public class Geocache {
         return daysDifference / (double) _recentLogs.size();
     }
 
-   
+    int countDNFsInLastLogs(int numberOfLogsToCheck){
+
+        List<GeocacheLog> logsToCheck = _recentLogs.subList(0, numberOfLogsToCheck);
+        return (int) logsToCheck.stream().filter(log -> log.logType == FoundEnumType.DNF).count();
+
+    }
+
+
+
+    boolean isDNFRisk(){
+        return !_DNFRisk.equals("");
+    }
+
+    public String setDNFRisk(){
+
+        GeocacheLog lastLog = _recentLogs.get(0);
+        if(lastLog.logType == FoundEnumType.Disabled) {
+            _DNFRisk = "Disabled";
+            return _DNFRisk;
+        }
+
+        if(lastLog.logType == FoundEnumType.NeedsMaintenance) {
+            _DNFRisk = "Needs Maintenance";
+            return _DNFRisk;
+        }
+
+        int maxLogs = 10;
+        int nDNFs = countDNFsInLastLogs(maxLogs);
+        if(nDNFs >= 2){
+
+            _DNFRisk = "DNFs in last " + maxLogs + ": " + nDNFs;
+
+            // Count DNFs since last log
+            if(_recentLogs.get(0).logType == FoundEnumType.DNF){
+                int i = 0;
+                while (_recentLogs.get(i).logType == FoundEnumType.DNF) i++;
+                _DNFRisk += " including last " + i;
+            }
+
+        }
+
+        return  _DNFRisk;
+
+    }
+
+
     boolean hasHint(){
 
         return !_hint.equals("NO MATCH");

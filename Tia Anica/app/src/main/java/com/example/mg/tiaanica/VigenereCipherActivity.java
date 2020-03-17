@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class VigenereCipherActivity extends AppCompatActivity
@@ -157,9 +159,14 @@ public class VigenereCipherActivity extends AppCompatActivity
 
         String message = "Encoded text: " + cipher.encode();
 
-        TextView textView = findViewById(R.id.result);
-        textView.setVisibility(View.VISIBLE);
-        textView.setText(message);
+        TextView resultTextView = findViewById(R.id.result);
+        resultTextView.setVisibility(View.VISIBLE);
+        resultTextView.setText(message);
+        resultTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size));
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) resultTextView.getLayoutParams();
+        params.setMargins(params.getMarginStart(), (int) getResources().getDimension(R.dimen.margin), params.getMarginEnd(), 0);
+
     }
 
     public void decode(View view) {
@@ -172,9 +179,12 @@ public class VigenereCipherActivity extends AppCompatActivity
 
         VigenereCipher cipher = new VigenereCipher(msg, key);
 
-        TextView textView = findViewById(R.id.result);
-        textView.setVisibility(View.VISIBLE);
+        TextView resultTextView = findViewById(R.id.result);
+        resultTextView.setVisibility(View.VISIBLE);
         String message = "Decoded text: " + cipher.decode();
-        textView.setText(message);
+        resultTextView.setText(message);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) resultTextView.getLayoutParams();
+        params.setMargins(params.getMarginStart(), (int) getResources().getDimension(R.dimen.margin), params.getMarginEnd(), 0);
     }
 }

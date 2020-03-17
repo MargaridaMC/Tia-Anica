@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/futura</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -14,22 +15,22 @@
     </style>
 
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_size</item>
         <item name="android:focusable">false</item>
+        <item name="android:background">@color/colorAccent</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:background">@drawable/bt_style</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="android:padding">@dimen/padding</item>
     </style>
 
     <style name="AppTheme.TextField">
         <item name="android:background">@drawable/text_field</item>
-        <item name="android:alpha">0.9</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:alpha">@dimen/alpha</item>
+        <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textColor">@color/gray</item>
-        <item name="android:gravity">center_vertical</item>
         <item name="android:textIsSelectable">true</item>
     </style>
 
