@@ -40,4 +40,5 @@
     <string name="gps_network_not_enabled">You need to have GPS signal enabled in order to use this feature.</string>
     <string name="open_location_settings">Go to Settings.</string>
     <string name="Cancel">Cancel</string>
+    <string name="coordinates_format">geo:0,0?q=%f,0%f</string>
 </resources>

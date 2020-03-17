@@ -397,7 +397,7 @@ public class CoordinateOffsetActivity extends AppCompatActivity
 
                 // Create a Uri from an intent string. Use the result to create an Intent.
                 //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
-                Uri gmmIntentUri = Uri.parse(String.format("geo:0,0?q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
+                Uri gmmIntentUri = Uri.parse(String.format(getResources().getString(R.string.coordinates_format), coordinate.getLatitude(), coordinate.getLongitude()));
 
                 // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);

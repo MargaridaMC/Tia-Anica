@@ -6,5 +6,6 @@
     <color name="colorPrimaryHalfWay">#A8CAD0</color>
     <color name="colorAccent">#BB4440</color>
     <color name="white">#ffffff</color>
+    <color name="transparentWhite">#D9ffffff</color>
     <color name="gray">#a2a7ad</color>
 </resources>

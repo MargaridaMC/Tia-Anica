@@ -10,12 +10,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.view.ContextThemeWrapper;
 import android.view.Display;
-import android.view.ViewGroup;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -37,9 +35,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.content.res.Resources;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static android.view.View.generateViewId;
@@ -55,8 +51,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
     HashMap<String, Integer> variables;
     ConstraintLayout constraintLayout;
 
-    List<Integer> variableViewIDs = new ArrayList<>();
-    List<Integer> resultViewIDs = new ArrayList<>();
     HashMap<String, Integer> neededLetterIds = new HashMap<>();
 
     int orientation;
@@ -217,12 +211,12 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         coordinate = new CoordinateFormula(coord);
 
         //constraintLayout.removeAllViews();
-        for(Integer id:variableViewIDs){
-            constraintLayout.removeView(findViewById(id));
-        }
-        for(Integer id:resultViewIDs){
-            constraintLayout.removeView(findViewById(id));
-        }
+        //for(Integer id:variableViewIDs){
+        //   constraintLayout.removeView(findViewById(id));
+        //}
+        //for(Integer id:resultViewIDs){
+        //    constraintLayout.removeView(findViewById(id));
+        //}
 
 
         if (!coordinate.successfulParsing) {
@@ -265,73 +259,84 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         textView.setText(message);
 
         int nNeededLetters = coordinate.neededLetters.size();
-        int columns;
+        int maxColumns;
 
         // In landscape mode put 5 fields in each row
-        if (orientation == 0) columns = 3;
-        else if (orientation == 1 || orientation == 3) columns = 5;
-        else columns = 3;
+        if (orientation == 0) maxColumns = 4;
+        else if (orientation == 1 || orientation == 3) maxColumns = 6;
+        else maxColumns = 4;
 
-        TextView temp;
-        EditText tempValue;
-        TextView blankSpace;
 
-        LinearLayout horizontalLine = new LinearLayout(this);
-        horizontalLine.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
-        horizontalLine.setAlpha(0.9f);
-        horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
-        horizontalLine.setPadding(0,32,0,32);
+        LinearLayout letterInputLayout = findViewById(R.id.letter_inputs);
+        letterInputLayout.removeAllViews();
+        letterInputLayout.setVisibility(View.VISIBLE);
+
+        // Get layout for letter inputs and inflate it
+        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout horizontalLine = (LinearLayout) inflater.inflate(R.layout.layout_letter_input, null, false);
+
 
         int i= 0;
-        int c = 0;
-
-        ArrayList<LinearLayout> inputLetterLayout = new ArrayList<>();
+        int column = 0;
 
         while(i < nNeededLetters) {
 
             String currentLetter = coordinate.neededLetters.get(i);
+
+            // This will allow us to get the values later on
             int letterId = generateViewId();
             neededLetterIds.put(currentLetter, letterId);
 
-            if (c == columns) {
-                c = 0;
+            // If we've the maximum number of letters per line, add the last line to the Vew and reset it to a new line
+            if(column == maxColumns){
 
-                // Add this line to the view and get a new one
-                inputLetterLayout.add(horizontalLine);
+                letterInputLayout.addView(horizontalLine);
 
-                horizontalLine = new LinearLayout(this);
-                horizontalLine.setOrientation(LinearLayout.HORIZONTAL);
-                horizontalLine.setAlpha(0.9f);
-                horizontalLine.setBackground(this.getDrawable(R.drawable.text_field));
+                // Get a new line
+                horizontalLine = (LinearLayout) inflater.inflate(R.layout.layout_letter_input, null, false);
+
+                column = 0;
             }
 
-            temp = new TextView(this);
-            temp.setText(currentLetter);
-            temp.setTextSize(18);
-            temp.setWidth(80);
-            temp.setTextColor(getResources().getColor(R.color.gray));
-            temp.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            blankSpace = new TextView(this);
-            blankSpace.setWidth(50);
+            TextView letterTag = null;
+            EditText letterInputArea = null;
 
-            tempValue = new EditText(this);
-            tempValue.setInputType(3);
-            tempValue.setWidth(150);
-            tempValue.setId(letterId);
-            tempValue.setTextColor(getResources().getColor(R.color.gray));
-            //tempValue.setHint(currentLetter);
-
-            if(variables.keySet().contains(currentLetter)){
-                int keyValue = variables.get(currentLetter);
-                tempValue.setText(Integer.toString(keyValue));
+            switch (column){
+                case(0):
+                    letterTag  = horizontalLine.findViewById(R.id.letterTag0);
+                    letterInputArea = horizontalLine.findViewById(R.id.letter0);
+                    break;
+                case (1):
+                    letterTag  = horizontalLine.findViewById(R.id.letterTag1);
+                    letterInputArea = horizontalLine.findViewById(R.id.letter1);
+                    break;
+                case(2):
+                    letterTag  = horizontalLine.findViewById(R.id.letterTag2);
+                    letterInputArea = horizontalLine.findViewById(R.id.letter2);
+                    break;
+                case(3):
+                    letterTag  = horizontalLine.findViewById(R.id.letterTag3);
+                    letterInputArea = horizontalLine.findViewById(R.id.letter3);
+                    break;
+                case(4):
+                    letterTag  = horizontalLine.findViewById(R.id.letterTag4);
+                    letterInputArea = horizontalLine.findViewById(R.id.letter4);
+                    break;
+                case(5):
+                    letterTag  = horizontalLine.findViewById(R.id.letterTag5);
+                    letterInputArea = horizontalLine.findViewById(R.id.letter5);
+                    break;
             }
 
-            // If we are inputting the value of the last coordinate compute the result and hide the keyboard
+
+            letterTag.setText(currentLetter);
+            letterInputArea.setVisibility(View.VISIBLE);
+            letterInputArea.setId(letterId);
+
             if (i == nNeededLetters - 1) {
-                tempValue.setImeOptions(IME_ACTION_DONE);
-                tempValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                letterInputArea.setImeOptions(IME_ACTION_DONE);
+                letterInputArea.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
                         // If the event is a key-down event on the "enter" button
                         if (actionId == IME_ACTION_DONE) {
@@ -344,61 +349,21 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                     }
                 });
             } else {
-                tempValue.setImeOptions(IME_ACTION_NEXT);
+                letterInputArea.setImeOptions(IME_ACTION_NEXT);
             }
 
-            horizontalLine.addView(temp);
-            horizontalLine.addView(tempValue);
-            horizontalLine.addView(blankSpace);
-
-            i++;c++;
-
+            column++;
+            i++;
         }
 
         // Add the final one
-        inputLetterLayout.add(horizontalLine);
+        letterInputLayout.addView(horizontalLine);
 
-        for(LinearLayout hv : inputLetterLayout) {
-            int id = generateViewId();
-            hv.setId(id); // Views must have IDs in order to add them to chain later.
-            constraintLayout.addView(hv);
-            variableViewIDs.add(id);
-        }
+        ConstraintLayout computeButtonLine = findViewById(R.id.button_line);
+        computeButtonLine.setVisibility(View.VISIBLE);
 
-        int buttonStyle = R.style.AppTheme_Button;
-        Button compute = new Button(new ContextThemeWrapper(this, buttonStyle), null, buttonStyle);
-        compute.setText(R.string.compute);
-        compute.setRight(0);
-        compute.setOnClickListener(new View.OnClickListener(){ public void onClick(View view) { computeCoordinates(view);}});
-        compute.setBackgroundResource(R.drawable.bt_style);
-        compute.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        int buttonId = generateViewId();
-        compute.setId(buttonId);
-
-        constraintLayout.addView(compute);
-        variableViewIDs.add(buttonId);
-
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(constraintLayout);
-
-        View previousItem = null;
-        for(LinearLayout hv : inputLetterLayout) {
-            boolean lastItem =inputLetterLayout.indexOf(hv) ==inputLetterLayout.size() - 1;
-            if(previousItem == null) {
-                constraintSet.connect(hv.getId(), ConstraintSet.TOP, R.id.NeededLetters, ConstraintSet.BOTTOM, 16);
-            } else {
-                constraintSet.connect(hv.getId(), ConstraintSet.TOP, previousItem.getId(), ConstraintSet.BOTTOM, 16);
-            }
-            if(lastItem) {
-                // constrain button
-                constraintSet.connect(compute.getId(), ConstraintSet.TOP, hv.getId(), ConstraintSet.BOTTOM, 16);
-                constraintSet.connect(compute.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 16);
-            }
-            previousItem = hv;
-        }
-
-        constraintSet.applyTo(constraintLayout);
+        Button compute = findViewById(R.id.button);
+        compute.setVisibility(View.VISIBLE);
 
     }
 
@@ -409,13 +374,9 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         coordinate = new CoordinateFormula(originalCoordinate);
-        for(Integer id:resultViewIDs){
-            constraintLayout.removeView(findViewById(id));
-        }
 
         assert mgr != null;
         mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
 
         for (Map.Entry<String, Integer> entry : neededLetterIds.entrySet()) {
 
@@ -441,6 +402,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 return;
             }
 
+            // TODO: app crashes if value is not int
             int value = Integer.parseInt(valueString);
             variables.put(letter, value);
         }
@@ -448,49 +410,18 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         coordinate.setVariables(variables);
         coordinate.evaluate();
 
-        TextView result = new TextView(this);
+        TextView result = findViewById(R.id.result);
+        result.setVisibility(View.VISIBLE);
         String resultString = "The final coordinates are:\n" + coordinate.getFullCoordinates();
         result.setText(resultString);
-        result.setTextSize(18);
-        result.setTextColor(getResources().getColor(R.color.gray));
-        result.setTextIsSelectable(true);
-        result.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        int resultId = generateViewId();
-        result.setId(resultId);
 
-        resultViewIDs.add(resultId);
-        constraintLayout.addView(result);
-
-        ConstraintSet constraintSet;
         boolean resultAreProperCoordinates = coordinate.resultAreProperCoordinates();
 
-        if(resultAreProperCoordinates){
+        if(resultAreProperCoordinates) {
             FloatingActionButton directionsFab = findViewById(R.id.direction);
             directionsFab.setOnClickListener(directionsFabListener);
             directionsFab.setVisibility(View.VISIBLE);
-
-            constraintSet = new ConstraintSet();
-            constraintSet.clone(constraintLayout);
-            // Get the last object in the variable section (should be the "compute" button and constrain the result to the bottom of this)
-            constraintSet.connect(variableViewIDs.get(variableViewIDs.size() - 1), ConstraintSet.BOTTOM, resultId, ConstraintSet.TOP, 16);
-            constraintSet.connect(resultId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 16);
-
-            if (orientation == 1 || orientation == 3){ // If display is in landscape mode this button will clash with the help button if margin is 0
-                constraintSet.connect(R.id.direction, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 112);
-            } else{
-                constraintSet.connect(R.id.direction, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
-            }
-            constraintSet.connect(R.id.direction, ConstraintSet.BOTTOM, resultId, ConstraintSet.BOTTOM, 0);
-            constraintSet.connect(R.id.direction, ConstraintSet.TOP, resultId, ConstraintSet.TOP, 0);
-        } else {
-            constraintSet = new ConstraintSet();
-            constraintSet.clone(constraintLayout);
-            // Get the last object in the variable section (should be the "compute" button and constrain the result to the bottom of this)
-            constraintSet.connect(variableViewIDs.get(variableViewIDs.size() - 1), ConstraintSet.BOTTOM, resultId, ConstraintSet.TOP, 16);
-            constraintSet.connect(resultId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 16);
         }
-
-        constraintSet.applyTo(constraintLayout);
 
     }
 

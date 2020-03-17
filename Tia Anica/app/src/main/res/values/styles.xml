@@ -27,8 +27,7 @@
     </style>
 
     <style name="AppTheme.TextField">
-        <item name="android:background">@drawable/text_field</item>
-        <item name="android:alpha">@dimen/alpha</item>
+        <item name="android:background">@color/transparentWhite</item>
         <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textColor">@color/gray</item>
         <item name="android:textIsSelectable">true</item>

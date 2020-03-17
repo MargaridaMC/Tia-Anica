@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+<NestedScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_layout"
@@ -22,59 +22,128 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/enter"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:onClick="parseCoordFormula"
-                android:text="@string/enter"
-                style="@style/AppTheme.Button"
-                app:layout_constraintBottom_toBottomOf="@+id/formula"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/formula" />
-
-            <EditText
-                android:id="@+id/formula"
-                android:layout_width="0dp"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/first_line"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:ems="10"
-                android:hint="@string/coord_formula_hint"
-                android:inputType="textPersonName"
-                android:singleLine="false"
-                android:textSize="@dimen/text_size"
-                app:layout_constraintEnd_toStartOf="@+id/enter"
+                android:theme="@style/AppTheme.TextField"
+                android:padding="@dimen/margin"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <EditText
+                    android:id="@+id/formula"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:ems="10"
+                    android:hint="@string/coord_formula_hint"
+                    android:inputType="textPersonName"
+                    android:singleLine="false"
+                    android:textSize="@dimen/text_size"
+                    app:layout_constraintEnd_toStartOf="@+id/enter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <Button
+                    android:id="@+id/enter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="parseCoordFormula"
+                    android:text="@string/enter"
+                    android:alpha="1"
+                    style="@style/AppTheme.Button"
+                    app:layout_constraintBottom_toBottomOf="@+id/formula"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/formula"/>
+
+            </android.support.constraint.ConstraintLayout>
+
 
             <TextView
                 android:id="@+id/NeededLetters"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
+                android:padding="@dimen/margin"
                 android:ems="10"
                 android:visibility="invisible"
-                android:textSize="@dimen/text_size"
                 android:theme="@style/AppTheme.TextField"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/formula" />
+                app:layout_constraintTop_toBottomOf="@+id/first_line" />
+
+
+
+            <LinearLayout
+                android:id="@+id/letter_inputs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:theme="@style/AppTheme.TextField"
+                android:visibility="invisible"
+                android:padding="@dimen/margin"
+                app:layout_constraintTop_toBottomOf="@+id/NeededLetters"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/button_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.TextField"
+                android:padding="@dimen/margin"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@+id/letter_inputs"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <Button
+                    android:id="@+id/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/compute"
+                    android:visibility="invisible"
+                    android:alpha="1"
+                    style="@style/AppTheme.Button"
+                    android:onClick="computeCoordinates"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin"
+                android:ems="10"
+                android:visibility="invisible"
+                android:theme="@style/AppTheme.TextField"
+                app:layout_constraintTop_toBottomOf="@+id/button_line"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/direction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin"
-                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="@dimen/very_large_margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:src="@android:drawable/ic_menu_directions"
                 android:visibility="invisible"
                 app:borderWidth="0dp"
                 app:elevation="0dp"
                 app:fabSize="mini"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="@id/result"
+                app:layout_constraintBottom_toBottomOf="@id/result"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:pressedTranslationZ="12dp" />
 
         </android.support.constraint.ConstraintLayout>
 
-    </ScrollView>
+    </NestedScrollView>
