@@ -112,7 +112,7 @@
             android:layout_height="@dimen/small_icon_size"
             android:layout_marginEnd="@dimen/large_icon_size"
             android:background="@drawable/map_dark"
-            android:onClick="share"
+            android:onClick="goToMap"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

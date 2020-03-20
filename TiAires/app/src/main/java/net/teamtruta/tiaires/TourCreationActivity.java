@@ -222,6 +222,10 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         if(_tour == null)
         {
             _tour = new GeocachingTour(_newTourName);
+            //Geocache[] toAdd = new Geocache[newlyLoadedCaches.size()];
+            //newlyLoadedCaches.toArray(toAdd);
+            _tour.addToTour(newlyLoadedCaches);
+
         }
         else
         {
@@ -245,7 +249,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
                         indexFromLoadedCaches++;
                     }
                 } else { // Since we've reached the end of the caches in original tour just add the remaining loaded ones to the new tour
-                    Geocache[] toAdd = newlyLoadedCaches.subList(indexFromLoadedCaches, newlyLoadedCaches.size()).toArray(new Geocache[0]);
+                    List toAdd = newlyLoadedCaches.subList(indexFromLoadedCaches, newlyLoadedCaches.size());//.toArray(new Geocache[0]);
                     newTour.addToTour(toAdd);
                 }
             }

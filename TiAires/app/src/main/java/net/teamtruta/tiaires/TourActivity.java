@@ -136,6 +136,12 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         dialog.show();
     }
 
+    public void goToMap(View view){
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra("_tourName", this.tourName);
+        startActivity(intent);
+    }
+
     @Override
     public void onClick(int position) {
         Intent intent = new Intent(this, CacheDetailActivity.class);
@@ -147,12 +153,21 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     @Override
     public void onGoToClick(String code){
 
+        // Open geocache in Geocahe app or website
+        /*
         String url = "https://coord.info/" + code;
         Intent i = new Intent(Intent.ACTION_VIEW);
 
         i.setData(Uri.parse(url));
 
         startActivity(i);
+        */
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra("_tourName", tourName);
+        intent.putExtra("focusOnCache", true);
+        intent.putExtra("geocacheCode", code);
+        startActivity(intent);
+
     }
 
     @Override

@@ -137,7 +137,7 @@ public class GeocachingTour
         return _size;
     }
 
-    public int addToTour(Geocache[] gc) // TODO: trocar isto por uma classe básica de todas as collecções?
+    public int addToTour(List<Geocache> gc) // TODO: trocar isto por uma classe básica de todas as collecções?
     {
         for (Geocache geocache : gc) {
             addToTour(geocache);
@@ -174,7 +174,7 @@ public class GeocachingTour
      * @param code of geocache, eg. GCxxxx
      * @return the information about the cache in tour, or null if not exists
      */
-    private GeocacheInTour getCacheInTour(String code)
+    public GeocacheInTour getCacheInTour(String code)
     {
         code = code.toUpperCase();
 

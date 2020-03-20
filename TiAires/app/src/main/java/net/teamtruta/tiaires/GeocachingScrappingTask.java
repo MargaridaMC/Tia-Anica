@@ -42,7 +42,8 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
         for(String code : geocacheCodesList)
         {
             try {
-                caches.add(scrapper.getGeocacheDetails(code));
+                Geocache geocache = scrapper.getGeocacheDetails(code);
+                caches.add(geocache);
             }
             catch (Exception e)
             {
