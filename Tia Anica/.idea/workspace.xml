@@ -74,22 +74,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance">
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/debug/res/values/google_maps_api.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/Coordinate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MapActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/activity_map.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/release/res/values/google_maps_api.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/drawable/double_up_arrow.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/drawable/dowble_arrow_down.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/Geocache.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/Geocache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingScrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingScrapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingTour.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingTour.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/Geocache.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/Geocache.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingScrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingScrapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingScrappingTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingScrappingTask.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingTour.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingTour.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/TourActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/TourActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/TourCreationActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/TourCreationActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/activity_tour.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/activity_tour.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MapActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MapActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/element_cache_layout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/element_cache_layout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/values/styles.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

@@ -34,6 +34,12 @@
         <item name="android:textSize">@dimen/main_text_size</item>
     </style>
 
+    <style name="TextView">
+        <item name="android:textAppearance">@style/SmallText</item>
+        <item name="android:paddingBottom">@dimen/line_space</item>
+        <item name="android:paddingTop">@dimen/line_space</item>
+    </style>
+
     <style name="SmallText">
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">@dimen/small_text_size</item>

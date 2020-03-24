@@ -4,14 +4,16 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Geocache {
     private String _code;
     private String _name;
-    private String _latitude;
-    private String _longitude;
+    private Coordinate _latitude;
+    private Coordinate _longitude;
     private String _size;
     private String _difficulty;
     private String _terrain;
@@ -30,11 +32,11 @@ public class Geocache {
     public String getName(){ return _name; }
     public void setName(String name){ this._name = name;}
 
-    public String getLatitude(){ return _latitude; }
-    public void setLatitude(String latitude){ this._latitude = latitude;}
+    public Coordinate getLatitude(){ return _latitude; }
+    public void setLatitude(Coordinate latitude){ this._latitude = latitude;}
 
-    public String getLongitude(){ return _longitude; }
-    public void setLongitude(String longitude){ this._longitude = longitude;}
+    public Coordinate getLongitude(){ return _longitude; }
+    public void setLongitude(Coordinate longitude){ this._longitude = longitude;}
 
     public String getSize(){ return _size; }
     public void setSize(String size){ this._size = size;}

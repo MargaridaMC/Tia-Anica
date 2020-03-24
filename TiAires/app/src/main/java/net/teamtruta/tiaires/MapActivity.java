@@ -13,9 +13,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
+    private GoogleMap map;
     String tourName;
     GeocachingTour tour;
     boolean focusOnCache;
@@ -56,22 +59,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        map = googleMap;
+        LatLng centre;
 
         // Find the center or focus on the clicked cache
         if(focusOnCache){
             Coordinate latitude = cacheToFocusOn.getGeocache().getLatitude();
             Coordinate longitude = cacheToFocusOn.getGeocache().getLongitude();
-            LatLng centre = new LatLng(latitude.getValue(), longitude.getValue());
-            mMap.addMarker(new MarkerOptions().position(centre));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centre, 13.0f));
+            centre = new LatLng(latitude.getValue(), longitude.getValue());
+            map.addMarker(new MarkerOptions().position(centre));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(centre, 13.0f));
             return;
         }
 
+        List<LatLng> allCacheCoordinates = new ArrayList<>();
+        for(GeocacheInTour gcit : tour.getTourGeocaches()){
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            LatLng geocacheCoordinates = gcit.getGeocache().getLatLng();
+            allCacheCoordinates.add(geocacheCoordinates);
+            map.addMarker(new MarkerOptions().position(geocacheCoordinates).title(gcit.getGeocache().getName()));
+        }
+
+        centre = computeCentroid(allCacheCoordinates);
+        map.moveCamera(CameraUpdateFactory.newLatLng(centre));
+    }
+
+    private LatLng computeCentroid(List<LatLng> points) {
+        double latitude = 0;
+        double longitude = 0;
+        int n = points.size();
+
+        for (LatLng point : points) {
+            latitude += point.latitude;
+            longitude += point.longitude;
+        }
+
+        return new LatLng(latitude/n, longitude/n);
     }
 }

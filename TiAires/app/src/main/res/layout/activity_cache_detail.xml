@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:mstb="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CacheDetailActivity">
@@ -23,6 +24,57 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <org.honorato.multistatetogglebutton.MultiStateToggleButton
+        android:id="@+id/cache_visit_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        app:layout_constraintEnd_toEndOf="@+id/notes"
+        app:layout_constraintStart_toStartOf="@+id/notes"
+        app:layout_constraintTop_toBottomOf="@id/action_bar"
+        mstb:mstbPrimaryColor="@color/colorAccent"
+        mstb:mstbSecondaryColor="@color/light_grey"
+        mstb:values="@array/cache_visit_options" />
+
+
+    <CheckBox
+        android:id="@+id/needsMaintenanceCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:text="@string/needs_maintenance"
+        android:onClick="onNeedsMaintenanceCheckboxClicked"
+        app:layout_constraintStart_toStartOf="@+id/cache_visit_button"
+        app:layout_constraintTop_toBottomOf="@+id/cache_visit_button" />
+
+    <CheckBox
+        android:id="@+id/foundTrackableCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/found_trackable"
+        android:onClick="onFoundTrackableCheckboxClicked"
+        app:layout_constraintStart_toStartOf="@+id/needsMaintenanceCheckBox"
+        app:layout_constraintTop_toBottomOf="@+id/needsMaintenanceCheckBox" />
+
+    <CheckBox
+        android:id="@+id/favouritePointCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:text="@string/favourite_point"
+        android:onClick="onFavouritePointCheckboxClicked"
+        app:layout_constraintStart_toStartOf="@+id/droppedTrackableCheckBox"
+        app:layout_constraintTop_toBottomOf="@+id/cache_visit_button" />
+
+    <CheckBox
+        android:id="@+id/droppedTrackableCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dropped_trackable"
+        android:onClick="onDroppedTrackableCheckboxClicked"
+        app:layout_constraintEnd_toEndOf="@+id/cache_visit_button"
+        app:layout_constraintTop_toBottomOf="@+id/favouritePointCheckBox" />
+
     <EditText
         android:id="@+id/notes"
         android:layout_width="0dp"
@@ -32,25 +84,16 @@
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         android:background="@drawable/text_box_with_border"
-        android:hint="@string/notes_hint"
         android:gravity="top|start"
+        android:hint="@string/notes_hint"
         android:theme="@style/EditText"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/foundTrackableCheckBox"
+        android:inputType="text" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin"
-        android:layout_marginTop="@dimen/margin"
-        android:text="@string/notes_input"
-        android:textAppearance="@style/MainText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
+<!--
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
@@ -64,39 +107,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="@+id/notes"
-        app:layout_constraintStart_toStartOf="@+id/notes"
-        app:layout_constraintTop_toBottomOf="@id/action_bar">
-
-        <Switch
-            android:id="@+id/found_switch"
-            android:layout_width="@dimen/large_icon_size"
-            android:layout_height="wrap_content"
-            android:text="@string/found"
-            android:textAppearance="@style/MainText"
-            android:layout_weight="1"
-            android:onClick="cacheFound"/>
-
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"/>
-
-        <Switch
-            android:id="@+id/dnf_switch"
-            android:layout_width="@dimen/large_icon_size"
-            android:layout_height="wrap_content"
-            android:text="@string/dnf"
-            android:textAppearance="@style/MainText"
-            android:layout_weight="1"
-            android:onClick="cacheNotFound"/>
-
-    </LinearLayout>
-
+-->
 </androidx.constraintlayout.widget.ConstraintLayout>

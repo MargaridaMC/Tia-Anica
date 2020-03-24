@@ -1,12 +1,4 @@
 package net.teamtruta.tiaires;
-
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,6 +16,9 @@ public class GeocacheInTour
     private FoundEnumType _found = FoundEnumType.NotAttempted;
     private Boolean _needsMaintenance = false;
     private Date _foundDate;
+    private boolean _foundTrackable = false;
+    private boolean _droppedTrackable = false;
+    private boolean _favouritePoint = false;
 
     @JsonCreator
     public GeocacheInTour(@JsonProperty("geocache") Geocache gc) {
@@ -32,7 +27,7 @@ public class GeocacheInTour
 
     // These set and get methods needs to be public otherwise the serialization will not work.
     public Geocache getGeocache(){ return _geocache; }
-    public void setGeocache(Geocache geocache){ _geocache = geocache; };
+    public void setGeocache(Geocache geocache){ _geocache = geocache; }
 
     public String getNotes(){ return _userNotes; }
     public void setNotes(String notes){ this._userNotes = notes; }
@@ -46,6 +41,16 @@ public class GeocacheInTour
 
     public Date getFoundDate(){ return _foundDate; }
     public void setFoundDate(Date foundDate){this._foundDate = foundDate; }
+
+    public boolean getFoundTrackable(){ return _foundTrackable; }
+    public void setFoundTrackable(boolean foundTrackable){this._foundTrackable = foundTrackable;}
+
+    public boolean getDroppedTrackable(){ return _droppedTrackable; }
+    public void setDroppedTrackable(boolean droppedTrackable){this._droppedTrackable = droppedTrackable;}
+
+    public boolean getFavouritePoint(){ return _favouritePoint; }
+    public void setFavouritePoint(boolean favouritePoint){this._favouritePoint = favouritePoint;}
+
 
     public void setVisit(FoundEnumType found, String notes, Boolean needsMaintenance)
     {

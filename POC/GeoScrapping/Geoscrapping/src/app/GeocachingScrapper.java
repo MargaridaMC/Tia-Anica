@@ -197,11 +197,13 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.setLatitude(matcher.group(1));
-            gc.setLongitude(matcher.group(2));
+            String latitudeString = matcher.group(1);
+            String longitudeString = matcher.group(2);
+            gc.setLatitude(new Coordinate(latitudeString));
+            gc.setLongitude(new Coordinate(longitudeString));
         } else {
-             gc.setLatitude("NO MATCH");
-             gc.setLongitude("NO MATCH");
+            gc.setLatitude(null);
+            gc.setLongitude(null);
         }
 
         // 3. Get Size

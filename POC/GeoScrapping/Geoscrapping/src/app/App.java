@@ -1,6 +1,6 @@
 package app;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -12,19 +12,16 @@ public class App {
         System.out.println("Login = " + loginSuccess);
 
         Geocache gc1 = scrapper.getGeocacheDetails("GC40");
-
-        System.out.println(gc1.getRecentLogs());
-        
-        /*
         Geocache gc2 = scrapper.getGeocacheDetails("GC23EH1");
 
-        tour.addToTour(new Geocache[] {gc1, gc2});
+        tour.addToTour(gc1);
+        tour.addToTour(gc2);
 
         GeocachingTour.write(".", tour);
 
         GeocachingTour newTour = GeocachingTour.read(".", tour.getName());
         System.out.println(tour.getName());
-    */
+    
         /*
 
         System.out.println("** TEST OBTAINED CACHE TYPES**");

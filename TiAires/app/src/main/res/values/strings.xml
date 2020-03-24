@@ -19,4 +19,13 @@
     <string name="current_cache_extra">currentCache</string>
     <string name="password_tag">Password</string>
     <string name="username_tag">Username or Email</string>
+    <string name="needs_maintenance">Needs Maintenance</string>
+    <string name="found_trackable">Found Trackable</string>
+    <string name="favourite_point">Favourite Point</string>
+    <string name="dropped_trackable">Dropped Trackable</string>
+    <string-array name="cache_visit_options">
+        <item>Not Found</item>
+        <item>Found</item>
+        <item>DNF</item>
+    </string-array>
 </resources>

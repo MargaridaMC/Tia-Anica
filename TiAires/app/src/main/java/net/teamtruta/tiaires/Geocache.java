@@ -1,12 +1,15 @@
 package net.teamtruta.tiaires;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Geocache {
@@ -65,6 +68,10 @@ public class Geocache {
     public String getDNFRisk(){return _DNFRisk; }
     public void setDNFRisk(String risk){this._DNFRisk = risk;}
 
+    LatLng getLatLng(){
+
+        return new LatLng(_latitude.getValue(), _longitude.getValue());
+    }
 
     public long CountDaysSinceLastFind() {
         if (_recentLogs == null || _recentLogs.size() == 0)
@@ -138,6 +145,35 @@ public class Geocache {
     boolean hasHint(){
 
         return !_hint.equals("NO MATCH");
+
+    }
+
+    Date getLastFindDate(){
+
+        Object[] allFinds = _recentLogs.stream().filter(log -> log.logType.equals(FoundEnumType.Found)).toArray();
+        GeocacheLog lastFind = (GeocacheLog) allFinds[allFinds.length - 1];
+        return lastFind.logDate;
+
+    }
+
+    Date getLastLogDate(){
+
+        return _recentLogs.get(0).logDate;
+
+    }
+
+    List<GeocacheLog> getLastNLogs(int n){
+        return _recentLogs.subList(0, n + 1);
+    }
+
+    public String getDNFRiskShort() {
+
+        GeocacheLog lastLog = _recentLogs.get(0);
+        if(lastLog.logType == FoundEnumType.Disabled)
+            return "Disabled";
+        if(lastLog.logType == FoundEnumType.NeedsMaintenance)
+            return  "Needs Maintenance";
+        else return "DNF Risk";
 
     }
 }
