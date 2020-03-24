@@ -101,6 +101,7 @@
             android:theme="@style/TextView"
             android:paddingTop="@dimen/line_space"
             android:paddingBottom="@dimen/line_space"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/last10LogsSquares"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -139,7 +140,7 @@
         android:id="@+id/extra_info_arrow"
         android:layout_width="@dimen/tiny_icon_size"
         android:layout_height="@dimen/tiny_icon_size"
-        android:layout_marginBottom="@dimen/tiny_padding"
+        android:layout_marginBottom="@dimen/tiny_icon_size"
         app:layout_constraintStart_toStartOf="@id/cache_symbol"
         app:layout_constraintEnd_toEndOf="@id/cache_symbol"
         app:layout_constraintBottom_toBottomOf="parent"

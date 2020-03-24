@@ -46,13 +46,14 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
 
-        final GeocacheInTour cache = tour.getCacheInTour(position);
+        GeocacheInTour geocacheInTour = tour.getCacheInTour(position);
+        Geocache geocache = geocacheInTour.getGeocache();
 
         // Set cache name
-        holder.cacheName.setText(cache.getGeocache().getName());
+        holder.cacheName.setText(geocache.getName());
 
         // Set cache type symbol
-        CacheTypeEnum cacheType = cache.getGeocache().getType();
+        CacheTypeEnum cacheType = geocache.getType();
         Drawable cacheSymbolDrawable;
 
         switch (cacheType){
@@ -120,12 +121,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         holder.cacheSymbol.setImageDrawable(cacheSymbolDrawable);
 
-        holder.cacheInfo0.setText(getCacheInfoLine0(cache));
+        holder.cacheInfo0.setText(getCacheInfoLine0(geocache));
 
         // Set information line 1: Found: date - \heart nFavs - Hint/No hint
-        holder.cacheInfo1.setText(getCacheInfoLine1(cache, true));
+        holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
 
-        List<GeocacheLog> last10Logs = cache.getGeocache().getLastNLogs(10);
+        List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
         for(int i=0; i<10;i++){
             Drawable square;
             if(last10Logs.get(i).logType == FoundEnumType.Found){
@@ -147,16 +148,16 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         }
 
 
-        holder.hint.setText(getHintText(cache));
+        holder.hint.setText(getHintText(geocache));
 
 
         // Set DNF information if required
-        Spanned dnfInfo = getDNFInfo(cache);
+        Spanned dnfInfo = getDNFInfo(geocache);
         if(!dnfInfo.toString().equals("")) { // Cache is a DNF risk
             holder.dnfInfo.setText(dnfInfo);
             holder.dnfInfo.setVisibility(View.VISIBLE);
 
-            String dnfRiskString = "<b>DNF Risk</b>:  <i>" + cache.getGeocache().getDNFRisk() + "</i>";
+            String dnfRiskString = "<b>DNF Risk</b>:  <i>" + geocache.getDNFRisk() + "</i>";
             holder.dnfInfoExpanded.setText(HtmlCompat.fromHtml(dnfRiskString, HtmlCompat.FROM_HTML_MODE_LEGACY));
             holder.dnfInfoExpanded.setVisibility(View.VISIBLE);
 
@@ -172,12 +173,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         holder.goToButton.setOnClickListener(v -> {
             if(goToOnClickListener!=null){
-                goToOnClickListener.onGoToClick(cache.getGeocache().getCode());
+                goToOnClickListener.onGoToClick(geocache.getCode());
             }
         });
 
         // Make section grey if cache has been visited
-        if(cache.getVisit() == FoundEnumType.Found || cache.getVisit() == FoundEnumType.DNF){
+        if(geocacheInTour.getVisit() == FoundEnumType.Found || geocacheInTour.getVisit() == FoundEnumType.DNF){
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         }
 
@@ -185,16 +186,16 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     }
 
-    private Spanned getHintText(GeocacheInTour cache) {
+    private Spanned getHintText(Geocache geocache) {
 
-        String hintString = "<strong>HINT</strong>: <i>" + cache.getGeocache().getHint() + "</i>";
+        String hintString = "<strong>HINT</strong>: <i>" + geocache.getHint() + "</i>";
         return HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY);
 
     }
 
     private View.OnClickListener expandCacheDetail(int position, ViewHolder holder) {
 
-        GeocacheInTour cache = tour.getCacheInTour(position);
+        Geocache geocache = tour.getCacheInTour(position).getGeocache();
 
         return v -> {
 
@@ -203,7 +204,10 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
                 holder.expanded = true;
 
                 // Remove hint indication from line 1
-                holder.cacheInfo1.setText(getCacheInfoLine1(cache, false));
+                if(geocache.hasHint()){
+                    holder.cacheInfo1.setText(getCacheInfoLine1(geocache, false));
+                    holder.hint.setVisibility(View.VISIBLE);
+                }
 
                 // Change arrow on the left
                 holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_up));
@@ -212,17 +216,20 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
                 holder.extraInfoLayout.setVisibility(View.VISIBLE);
 
                 // Show DNF information if needed
-                if(cache.getGeocache().isDNFRisk())
+                if(geocache.isDNFRisk())
                     holder.dnfInfo.setVisibility(View.GONE);
 
             } else {
 
                 // Hide extra information
-                holder.cacheInfo1.setText(getCacheInfoLine1(cache, true));
+                if(geocache.hasHint()){
+                    holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
+                    holder.hint.setVisibility(View.GONE);
+                }
                 holder.expanded = false;
                 holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_down));
                 holder.extraInfoLayout.setVisibility(View.GONE);
-                if(cache.getGeocache().isDNFRisk())
+                if(geocache.isDNFRisk())
                     holder.dnfInfo.setVisibility(View.VISIBLE);
 
             }
@@ -230,46 +237,46 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         };
     }
 
-    private Spanned getCacheInfoLine0(GeocacheInTour cache){
+    private Spanned getCacheInfoLine0(Geocache geocache){
         // Set information line 0: code - D/T: _/_ - Size: _
-        String info = cache.getGeocache().getCode() + " - D/T: ";
+        String info = geocache.getCode() + " - D/T: ";
 
-        double difficulty = Double.parseDouble(cache.getGeocache().getDifficulty());
-        double terrain = Double.parseDouble(cache.getGeocache().getTerrain());
+        double difficulty = Double.parseDouble(geocache.getDifficulty());
+        double terrain = Double.parseDouble(geocache.getTerrain());
 
         String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
 
         if(difficulty >= 4){
-            info += "<font color=\"" + red + "\">" + cache.getGeocache().getDifficulty() + "</font>" + "/";
+            info += "<font color=\"" + red + "\">" + geocache.getDifficulty() + "</font>" + "/";
         } else {
-            info += cache.getGeocache().getDifficulty() + "/";
+            info += geocache.getDifficulty() + "/";
         }
 
         if(terrain >= 4){
-            info += "<font color=\"" + red + "\">" + cache.getGeocache().getTerrain() + "</font>";
+            info += "<font color=\"" + red + "\">" + geocache.getTerrain() + "</font>";
         } else {
-            info += cache.getGeocache().getTerrain();
+            info += geocache.getTerrain();
         }
 
-        info += " - Size: " + cache.getGeocache().getSize();
+        info += " - Size: " + geocache.getSize();
 
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
 
     }
 
-    private Spanned getCacheInfoLine1(GeocacheInTour cache, boolean withHint){
+    private Spanned getCacheInfoLine1(Geocache geocache, boolean withHint){
 
         String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
 
-        Date lastLogDate = cache.getGeocache().getLastLogDate();
+        Date lastLogDate = geocache.getLastLogDate();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "dd/MMM/yy");
-        String info = "Last log: " + simpleDateFormat.format(lastLogDate) + "- &#9825; " + cache.getGeocache().getFavourites();
+        String info = "Last log: " + simpleDateFormat.format(lastLogDate) + "- &#9825; " + geocache.getFavourites();
 
         if(withHint){
 
             info += " - ";
 
-            if(!cache.getGeocache().hasHint()){
+            if(!geocache.hasHint()){
                 info += "<font color=\"" + red+ "\">NO HINT</font>";
             } else {
                 info += "HINT";
@@ -279,12 +286,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
-    private Spanned getDNFInfo(GeocacheInTour cache){
+    private Spanned getDNFInfo(Geocache geocache){
 
         String info = "";
-        if(cache.getGeocache().isDNFRisk()){
+        if(geocache.isDNFRisk()){
             String red = String.valueOf(App.getContext().getColor(R.color.red));
-            info = "<font color=\"" + red + "\">" + cache.getGeocache().getDNFRiskShort() + "</font>";
+            info = "<font color=\"" + red + "\">" + geocache.getDNFRiskShort() + "</font>";
         }
 
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
