@@ -8,10 +8,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.text.Spanned;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class TourCreationActivity extends AppCompatActivity implements PostGeocachingScrapping
 {
@@ -33,6 +33,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
     String _newTourName;
     List<String> _geocacheCodesList = new ArrayList<>();
     ConstraintLayout _progressBar;
+    List<String> cachesToGet;
 
     /**
      * Activity initializer
@@ -145,7 +146,7 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String authCookie = sharedPreferences.getString(getString(R.string.authentication_cookie_key), "");
 
-        List<String> cachesToGet = new ArrayList<>(_geocacheCodesList);
+        cachesToGet = new ArrayList<>(_geocacheCodesList);
         // Process the deltas from the old list to the new list
         if (_tour != null) {
 
@@ -162,9 +163,39 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
             }
         }
 
+        // If we have caches to get, check for internet access
+        if(!isNetworkConnected()){
+
+            Log.e("TAG", "Not connected");
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Unable to get caches. Please make sure you are connected to the internet.")
+                    .setPositiveButton("Ok.", (dialog, id) -> {
+                        return;
+                    });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            return;
+        }
+
         // we need to do this even if there are no new caches, because there's additional code to account for tour rename in the task
+
         if (authCookie.equals("")) {
-            // TODO: prompt for login
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Login information is missing. Please input your credentials in the login screen.");
+            builder.setPositiveButton(getString(R.string.ok), (dialog, id) -> {
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        startActivity(intent);
+                        return;
+                    });
+            builder.setNegativeButton(getString(R.string.cancel), ((dialog, which) -> {}));
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
         } else {
 
             _progressBar = findViewById(R.id.progress_layout);
@@ -222,15 +253,12 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         if(_tour == null)
         {
             _tour = new GeocachingTour(_newTourName);
-            //Geocache[] toAdd = new Geocache[newlyLoadedCaches.size()];
-            //newlyLoadedCaches.toArray(toAdd);
             _tour.addToTour(newlyLoadedCaches);
 
         }
         else
         {
             // if it already exists we need to make sure the name is correct
-            //_tour.setName(_newTourName);
 
             GeocachingTour newTour = new GeocachingTour(_newTourName);
             int indexInOriginalTour = 0;
@@ -279,8 +307,21 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         gts.add(summary);
         TourList.write(allToursFilePath, gts);
 
+
+        // Check if we were unable to get any of the requested caches
+        List<String> newlyLoadedCachesCodes = newlyLoadedCaches.stream().map(gc -> gc.getCode()).collect(Collectors.toList());
+        List<String> geocachesNotObtained = new ArrayList<>();
+        for(String code: cachesToGet){
+            if(!newlyLoadedCachesCodes.contains(code)) geocachesNotObtained.add(code);
+        }
+
         Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra("_tourName", _newTourName);
+        if(geocachesNotObtained.size() != 0){
+            String geocachesNotObtainedString = geocachesNotObtained.toString();
+            geocachesNotObtainedString = geocachesNotObtainedString.substring(1, geocachesNotObtainedString.length() - 1);
+            intent.putExtra("geocachesNotObtained", geocachesNotObtainedString);
+        }
         startActivity(intent);
     }
 
@@ -289,5 +330,11 @@ public class TourCreationActivity extends AppCompatActivity implements PostGeoca
         // do what you want to do when the "back" button is pressed.
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 }

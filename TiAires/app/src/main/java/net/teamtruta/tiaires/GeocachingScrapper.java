@@ -155,7 +155,7 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public Geocache getGeocacheDetails(String code) throws IOException, ParseException
+    public Geocache getGeocacheDetails(String code) throws IOException
     {
         code = code.toUpperCase();
 
@@ -269,7 +269,8 @@ public class GeocachingScrapper {
         if (matcher.find()) {
             String group = matcher.group(1);
             String temp = group;
-            temp = temp.replaceAll(" ", "");
+            //temp = temp.replaceAll(" ", "");
+            temp = temp.trim();
             System.out.println(temp.length());
             if(temp.length()==0) gc.setHint("NO MATCH");
             else {
@@ -297,7 +298,7 @@ public class GeocachingScrapper {
         // 9. Last logs and their dates
         int logsParsed = 0, maxLogsToParse = 25;
         String regexLogType = "\"LogType\":\"([a-zA-Z'\\s]+)\"";
-        String regexLogDate = "\"Visited\":\"([0-9/]+)";
+        String regexLogDate = "\"Visited\":\"([A-Za-z0-9/\\.]+)";
 
         pattern = Pattern.compile(regexLogType);
         matcher = pattern.matcher(pageContents);
@@ -305,18 +306,47 @@ public class GeocachingScrapper {
         Pattern patternDates = Pattern.compile(regexLogDate);
         Matcher matcherDates = patternDates.matcher(pageContents);
 
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
+        // It seems that the log dates are captured in different ways in different accounts
+        SimpleDateFormat dateFormatter0 = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat dateFormatter1 = new SimpleDateFormat("dd.MMM.yyyy");
         ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
-        while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
-        {
-            GeocacheLog log = new GeocacheLog();
-            String typeString = matcher.group(1);
-            log.logType = FoundEnumType.valueOfString(typeString);
-            log.logDate = dateFormatter.parse(matcherDates.group(1));
 
-            recentLogs.add(log);
-            logsParsed++;
+        try{ // Try first date format
+            while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
+            {
+                GeocacheLog log = new GeocacheLog();
+                String typeString = matcher.group(1);
+                log.logType = FoundEnumType.valueOfString(typeString);
+                String dateString = matcherDates.group(1);
+                log.logDate = dateFormatter0.parse(dateString);
+
+                recentLogs.add(log);
+                logsParsed++;
+            }
+        } catch (ParseException e0){
+
+            try{ // Try second date format
+
+                matcher = pattern.matcher(pageContents);
+                matcherDates = patternDates.matcher(pageContents);
+
+                while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
+                {
+                    GeocacheLog log = new GeocacheLog();
+                    String typeString = matcher.group(1);
+                    log.logType = FoundEnumType.valueOfString(typeString);
+                    String dateString = matcherDates.group(1);
+                    log.logDate = dateFormatter1.parse(dateString);
+
+                    recentLogs.add(log);
+                    logsParsed++;
+                }
+            } catch (ParseException e1){
+                e1.printStackTrace();
+            }
+
         }
+
         gc.setRecentLogs(recentLogs);
         // else do nothing -- the collection will be non-null but empty
 

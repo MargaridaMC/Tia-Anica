@@ -28,4 +28,6 @@
         <item>Found</item>
         <item>DNF</item>
     </string-array>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 </resources>

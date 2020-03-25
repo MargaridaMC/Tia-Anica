@@ -1,7 +1,7 @@
 package net.teamtruta.tiaires;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
+import android.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -13,7 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,7 +34,6 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
@@ -79,6 +77,15 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CacheInteractionCallback(cacheListAdapter));
         itemTouchHelper.attachToRecyclerView(cacheListView);
 
+        // Show dialog if there were caches that were not obtained
+        String geocachesNotObtainedString = intent.getStringExtra("geocachesNotObtained");
+        if(!(geocachesNotObtainedString == null)){
+            AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+            builder.setMessage("Unable to get geocaches: " + geocachesNotObtainedString + ". Please make sure there aren't any typos in the cache codes.");
+            builder.setPositiveButton(getString(R.string.ok), ((dialog, which) -> {}));
+            android.app.AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
 
