@@ -13,6 +13,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,6 +34,9 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     String tourName;
     GeocachingTour tour;
     String _rootPath;
+
+    SoundPool soundPool;
+    int soundID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +57,9 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         properties.put("TourName", tourName);
         Analytics.trackEvent("TourActivity.onCreate", properties);
 
-        _rootPath = App.getTourRoot();//getFilesDir().toString() + "/" + getString(R.string.tour_folder);
+        _rootPath = App.getTourRoot();
 
-        tour = GeocachingTour.read(_rootPath, tourName);//GeocachingTour.fromFile(_rootPath, tourName);
+        tour = GeocachingTour.read(_rootPath, tourName);
 
         // Set title
         ab.setTitle(tourName);
@@ -86,6 +92,9 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             android.app.AlertDialog dialog = builder.create();
             dialog.show();
         }
+
+        //  Setup ping sound
+        setupAudio();
     }
 
 
@@ -152,7 +161,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     @Override
     public void onClick(int position) {
         Intent intent = new Intent(this, CacheDetailActivity.class);
-        intent.putExtra("currentTour", tour.toString());//tour.toJSON().toString());
+        intent.putExtra("currentTour", tour.toString());
         intent.putExtra("currentCacheIndex", position);
         startActivity(intent);
     }
@@ -200,10 +209,35 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     @Override
     public void onVisit(String visit) {
 
+        // Play ping
+        playPing();
+
         Snackbar snackbar = Snackbar.make(findViewById(R.id.tour_view), "Cache was marked as: " + visit, Snackbar.LENGTH_LONG);
         snackbar.show();
 
         setProgressBar();
+
+    }
+
+    void playPing(){
+        // AudioManager audio settings for adjusting the volume
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        float volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        soundPool.play(soundID, volume, volume, 1, 0, 1f);
+    }
+
+    void setupAudio(){
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(attributes)
+                .build();
+
+        soundID = soundPool.load(this, R.raw.ping, 1);
+
 
     }
 }

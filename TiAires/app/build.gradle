@@ -29,8 +29,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.navigation:navigation-fragment:2.2.1'
-    implementation 'androidx.navigation:navigation-ui:2.2.1'
+    implementation 'androidx.navigation:navigation-fragment:2.2.2'
+    implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     testImplementation 'junit:junit:4.12'
@@ -41,4 +41,6 @@ dependencies {
     implementation files('libs/json-simple.jar')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
     implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
+    // https://mvnrepository.com/artifact/org.jxmapviewer/jxmapviewer2
+    implementation group: 'org.jxmapviewer', name: 'jxmapviewer2', version: '2.0'
 }

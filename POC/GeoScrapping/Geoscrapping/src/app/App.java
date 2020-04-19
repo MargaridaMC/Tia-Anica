@@ -1,6 +1,9 @@
 package app;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -10,18 +13,70 @@ public class App {
         GeocachingScrapper scrapper = new GeocachingScrapper();
         boolean loginSuccess = scrapper.login("mgthesilversardine", "12142guida");
         System.out.println("Login = " + loginSuccess);
+        
+        String regexNamePattern =  "\"LogType\":\"([a-zA-Z' ]+)\"";
+        Pattern pattern = Pattern.compile(regexNamePattern);
 
-        Geocache gc1 = scrapper.getGeocacheDetails("GC40");
-        Geocache gc2 = scrapper.getGeocacheDetails("GC23EH1");
+        String pageContents = scrapper.getGeocachePageContents("GC7F2P4");
+        long startTime = System.currentTimeMillis();
+        Matcher matcher = pattern.matcher(pageContents);
+        
+        String type;
+        if (matcher.find()){
+            type = matcher.group(1);
+            System.out.println(type);
 
-        tour.addToTour(gc1);
-        tour.addToTour(gc2);
+            //int startPosition = matcher.start();
+            //int endPosition = matcher.end();
+            //System.out.println("Start: " + startPosition + " end: " + endPosition);
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Getting info took: " + (endTime - startTime) + " ms.");
 
-        GeocachingTour.write(".", tour);
-
-        GeocachingTour newTour = GeocachingTour.read(".", tour.getName());
-        System.out.println(tour.getName());
     
+        startTime = System.currentTimeMillis();
+        String croppedPageContents = pageContents.substring(98000);
+        matcher = pattern.matcher(croppedPageContents);
+
+        String log;
+        int logsParsed = 0 ;
+            while (matcher.find() && logsParsed < 10){
+                log = matcher.group(1);
+                System.out.println(log);
+                logsParsed++;
+            }
+
+        endTime = System.currentTimeMillis();
+        System.out.println("Getting info from copped string took: " + (endTime - startTime) + " ms.");
+        
+        /*
+        String[] cacheList = {"GC7F2P4", "GC23EH1", "GCM2RJ", "GC8F4JH" ,"GC35AKX","GC8KFF5","GC7GX91", "GC23EH1", "GCM2RJ", "GC8F4JH", "GC35AKX","GC8JEEZ","GC84EA4","GC7WWWW","GC5KN51","GCK25B","GC13A70","GCK25B","GC896PK","GC5G4X5","GC8K0ZE","GC7F57","GCHNBF","GC12AC","GC8FR0G"};
+
+        int[] startPositions = new int[cacheList.length];
+        int[] endPositions = new int[cacheList.length];
+
+        int i = 0;
+        for(String code : cacheList){
+
+            String pageContents = scrapper.getGeocachePageContents(code);
+
+            Matcher matcher = pattern.matcher(pageContents);
+            int logsParsed = 0 ;
+            while (matcher.find()){
+                if(logsParsed == 0) startPositions[i] = matcher.start();
+                if(logsParsed == 9)
+                {
+                    endPositions[i] = matcher.end();
+                    break;
+                }
+                logsParsed++;
+            }
+            i ++;
+        }
+
+        System.out.println(Arrays.toString(startPositions));
+        System.out.println(Arrays.toString(endPositions));
+        */
         /*
 
         System.out.println("** TEST OBTAINED CACHE TYPES**");

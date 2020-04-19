@@ -156,6 +156,31 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
+    public String getGeocachePageContents(String code) throws IOException{
+        code = code.toUpperCase();
+
+        System.out.println("Getting cache " + code);
+        Geocache gc = new Geocache();
+
+        gc.setCode(code);
+
+        // Obtain the HTML of the page, sending the authentication cookie
+        URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
+        HttpURLConnection httpConnection = (HttpURLConnection) geocachePage.openConnection();
+
+        httpConnection.setRequestMethod("GET");
+        httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+
+        // header - cookie
+        httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
+        httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+        httpConnection.getResponseCode();
+        // System.out.println("Status GetGeocacheDetails GET= " + status);
+
+        String pageContents = readHttpRequest(httpConnection).toString();
+        return pageContents;
+    }
+
     public Geocache getGeocacheDetails(String code) throws IOException, ParseException
     {
         code = code.toUpperCase();

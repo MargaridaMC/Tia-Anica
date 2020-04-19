@@ -4,11 +4,13 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import com.microsoft.appcenter.analytics.Analytics;
@@ -22,6 +24,9 @@ public class CacheDetailActivity extends AppCompatActivity {
     GeocachingTour tour;
     int currentCacheIndex;
     GeocacheInTour currentCache;
+
+    SoundPool soundPool;
+    int soundID;
 
 
     @Override
@@ -49,6 +54,7 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Set Cache Title
         ActionBar ab = getSupportActionBar();
+        assert ab != null;
         ab.setTitle(currentCache.getGeocache().getName());
         ab.setDisplayHomeAsUpEnabled(true);
 
@@ -86,6 +92,8 @@ public class CacheDetailActivity extends AppCompatActivity {
         String myNotes = currentCache.getNotes();
         if(!myNotes.equals("")) notesSection.setText(myNotes);
 
+        //  Setup ping sound
+        setupAudio();
 
     }
 
@@ -119,6 +127,7 @@ public class CacheDetailActivity extends AppCompatActivity {
             // We want to set this cache as found
             currentCache.setVisit(FoundEnumType.Found);
             currentCache.setFoundDate(Calendar.getInstance().getTime());
+            playPing();
         }
 
 
@@ -140,6 +149,8 @@ public class CacheDetailActivity extends AppCompatActivity {
             // We want to set this cache as DNF
             currentCache.setVisit(FoundEnumType.DNF);
             currentCache.setFoundDate(Calendar.getInstance().getTime());
+
+            playPing();
         }
 
     }
@@ -216,5 +227,27 @@ public class CacheDetailActivity extends AppCompatActivity {
     protected void onPause(){
         saveChanges();
         super.onPause();
+    }
+
+    void playPing(){
+        // AudioManager audio settings for adjusting the volume
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        float volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        soundPool.play(soundID, volume, volume, 1, 0, 1f);
+    }
+
+    void setupAudio(){
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(attributes)
+                .build();
+
+        soundID = soundPool.load(this, R.raw.ping, 1);
+
+
     }
 }
