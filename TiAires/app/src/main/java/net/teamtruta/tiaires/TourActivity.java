@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener, CacheListAdapter.OnVisitListener {
 
@@ -48,10 +50,11 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
+        assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        tourName = intent.getExtras().getString("_tourName");
+        tourName = Objects.requireNonNull(intent.getExtras()).getString("_tourName");
 
         Map<String, String> properties = new HashMap<>();
         properties.put("TourName", tourName);
@@ -153,9 +156,14 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void goToMap(View view){
-        Intent intent = new Intent(this, MapActivity.class);
+
+        Toast t = Toast.makeText(this, "Not yet implemented.", Toast.LENGTH_SHORT);
+        t.show();
+
+        /*Intent intent = new Intent(this, MapActivity.class);
         intent.putExtra("_tourName", this.tourName);
         startActivity(intent);
+         */
     }
 
     @Override
@@ -222,6 +230,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     void playPing(){
         // AudioManager audio settings for adjusting the volume
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        assert audioManager != null;
         float volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         soundPool.play(soundID, volume, volume, 1, 0, 1f);
     }

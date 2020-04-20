@@ -42,5 +42,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
     implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
     // https://mvnrepository.com/artifact/org.jxmapviewer/jxmapviewer2
-    implementation group: 'org.jxmapviewer', name: 'jxmapviewer2', version: '2.0'
+    // implementation group: 'org.jxmapviewer', name: 'jxmapviewer2', version: '2.0'
 }
