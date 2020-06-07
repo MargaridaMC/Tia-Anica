@@ -400,7 +400,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
     void getHelp(){
         // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this,  R.style.MyAlertDialogTheme);
 
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));

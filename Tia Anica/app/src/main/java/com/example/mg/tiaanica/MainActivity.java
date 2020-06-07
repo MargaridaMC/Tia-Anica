@@ -1,6 +1,5 @@
 package com.example.mg.tiaanica;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -49,12 +48,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getHelp();
-            }
-        });
+        fab.setOnClickListener(view -> getHelp());
 
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -148,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
     public void getHelp(){
         // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogTheme);
 
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info) +
@@ -157,12 +151,7 @@ public class MainActivity extends AppCompatActivity
                 "<br><br>" + getString(R.string.coord_offset_info)));
 
         // Add OK button
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel());
 
         // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
         AlertDialog dialog = builder.create();

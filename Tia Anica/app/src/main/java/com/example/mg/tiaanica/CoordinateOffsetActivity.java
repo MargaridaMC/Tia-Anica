@@ -282,7 +282,7 @@ public class CoordinateOffsetActivity extends AppCompatActivity
 
     void getHelp(){
         // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this, R.style.MyAlertDialogTheme);
 
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info) + "<br></br><br></br><b>Note: </b>you can also use the location button to use your current location."));

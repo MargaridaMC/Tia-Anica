@@ -147,7 +147,7 @@ public class AlphaSumActivity extends AppCompatActivity
     }
 
     public void getHelp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSumActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSumActivity.this,  R.style.MyAlertDialogTheme);
         builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info)));
         builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel());
         AlertDialog dialog = builder.create();
