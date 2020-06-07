@@ -18,8 +18,6 @@
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         android:textSize="@dimen/small_text_size"
-        android:gravity="bottom"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="@+id/nav_view"
         app:layout_constraintStart_toStartOf="@+id/nav_view"  />
