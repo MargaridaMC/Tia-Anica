@@ -185,7 +185,7 @@
     <property name="device.picker.selection" value="acfde05b" />
     <property name="last.edited.regexp" value="N 48° 07.997 E 011° 34.380 " />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
     <property name="project.structure.last.edited" value="Suggestions" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -785,10 +785,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="541" y="177" key="AndroidCreateXmlResourceDialog/0.0.1366.728@0.0.1366.728" timestamp="1591479603607" />
-    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1591530331457">
+    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1591531851328">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1591530331457" />
+    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1591531851328" />
     <state width="1323" height="140" key="GridCell.Tab.0.bottom" timestamp="1591488678231">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -857,13 +857,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>365</line>
+          <line>346</line>
           <option name="timeStamp" value="57" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>354</line>
-          <option name="timeStamp" value="58" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>

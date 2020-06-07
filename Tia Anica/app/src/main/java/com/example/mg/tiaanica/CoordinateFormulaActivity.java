@@ -2,7 +2,6 @@ package com.example.mg.tiaanica;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.view.KeyEvent;
 import android.text.Html;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -183,12 +181,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
                 builder.setTitle("Error")
                         .setMessage("The letter E shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
+                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
 
                 builder.create().show();
                 return;
@@ -198,12 +191,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
                 builder.setTitle("Error")
                         .setMessage("The letter W shows up both in the formula and as a cardinal direction. This means the app can't separate the latitude and longitude in the formula. Please replace this for another letter in the formula.")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
+                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
 
                 builder.create().show();
                 return;
@@ -296,17 +284,15 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
             if (i == nNeededLetters - 1) {
                 letterInputArea.setImeOptions(IME_ACTION_DONE);
-                letterInputArea.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-                        // If the event is a key-down event on the "enter" button
-                        if (actionId == IME_ACTION_DONE) {
-                            // Perform action on key press
-                            computeCoordinates(view); // parse the coordinate
-                            mgr.hideSoftInputFromWindow(view.getWindowToken(), 0); // make the keyboard disappear
-                            return true;
-                        }
-                        return false;
+                letterInputArea.setOnEditorActionListener((view1, actionId, event) -> {
+                    // If the event is a key-down event on the "enter" button
+                    if (actionId == IME_ACTION_DONE) {
+                        // Perform action on key press
+                        computeCoordinates(view1); // parse the coordinate
+                        mgr.hideSoftInputFromWindow(view1.getWindowToken(), 0); // make the keyboard disappear
+                        return true;
                     }
+                    return false;
                 });
             } else {
                 letterInputArea.setImeOptions(IME_ACTION_NEXT);
@@ -349,12 +335,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
                 builder.setTitle("Error")
                         .setMessage("Please fill in the values for all the variables.")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
+                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
 
                 builder.create().show();
                 return;
@@ -378,7 +359,8 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
             FloatingActionButton directionsFab = findViewById(R.id.direction);
             directionsFab.setOnClickListener(directionsFabListener);
-            directionsFab.setVisibility(View.VISIBLE);
+            //directionsFab.setVisibility(View.VISIBLE);
+            directionsFab.show();
         } else {
             resultString = "Result is: " + coordinate.getFullCoordinates();
         }
@@ -424,11 +406,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));
 
         // Add OK button
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel());
 
 
         // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>

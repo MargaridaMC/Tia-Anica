@@ -1,11 +1,9 @@
 package com.example.mg.tiaanica;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.KeyEvent;
@@ -58,19 +56,17 @@ public class AlphaSumActivity extends AppCompatActivity
         final EditText finalTextField = findViewById(R.id.editText);
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        finalTextField.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                        && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-                    calculateAlphaSum(v); // parse the coordinate
-                    assert mgr != null;
-                    mgr.hideSoftInputFromWindow(finalTextField.getWindowToken(), 0); // make the keyboard disappear
-                    return true;
-                }
-                return false;
+        finalTextField.setOnKeyListener((v, keyCode, event) -> {
+            // If the event is a key-down event on the "enter" button
+            if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                    && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                // Perform action on key press
+                calculateAlphaSum(v); // parse the coordinate
+                assert mgr != null;
+                mgr.hideSoftInputFromWindow(finalTextField.getWindowToken(), 0); // make the keyboard disappear
+                return true;
             }
+            return false;
         });
 
 
@@ -153,11 +149,7 @@ public class AlphaSumActivity extends AppCompatActivity
     public void getHelp(){
         AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSumActivity.this);
         builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info)));
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
