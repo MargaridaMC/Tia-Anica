@@ -74,22 +74,13 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/AlphaSumActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/AlphaSumActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
-    </list>
+    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Corrected font in info dialog" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="VFFNW19319004521" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_API_27" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -198,7 +189,7 @@
     <property name="project.structure.last.edited" value="Suggestions" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
   </component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Default Config" />
@@ -747,7 +738,14 @@
       <option name="project" value="LOCAL" />
       <updated>1584442821673</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Corrected font in info dialog">
+      <created>1591535082944</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1591535082944</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TodoView">
@@ -796,7 +794,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="Minor corrections" />
     <MESSAGE value="New coordinate object class and coordinate calculator allows N, S, E and W" />
     <MESSAGE value="Map section initial commit" />
     <MESSAGE value="Icons on drawer" />
@@ -821,9 +818,14 @@
     <MESSAGE value="Bug fix on Coordinate Formula: it didn't allow for power function" />
     <MESSAGE value="Changes in UI and simplification of UI in Coordinate Formula" />
     <MESSAGE value="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance" />
+    <MESSAGE value="Corrected font in info dialog" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrected font in info dialog" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="275" y="22" key="#Notifications" timestamp="1591535101906">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="275" y="22" key="#Notifications/0.0.1366.728@0.0.1366.728" timestamp="1591535101906" />
     <state x="200" y="96" key="#PSD" timestamp="1591529503102">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -848,6 +850,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="541" y="177" key="AndroidCreateXmlResourceDialog/0.0.1366.728@0.0.1366.728" timestamp="1591479603607" />
+    <state x="189" y="0" key="CommitChangelistDialog2" timestamp="1591535080180">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591535080180" />
     <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1591531851328">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -884,10 +890,14 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state width="1323" height="140" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1591488678232" />
-    <state x="184" y="6" key="SettingsEditor" timestamp="1591532340471">
+    <state x="184" y="6" key="SettingsEditor" timestamp="1591535141445">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1591532340471" />
+    <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1591535141445" />
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591535085930">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591535085930" />
     <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1591474913850">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
