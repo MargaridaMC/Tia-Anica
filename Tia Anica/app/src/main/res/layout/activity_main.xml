@@ -13,30 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_drawer">
-
-        <TextView
-            android:id="@+id/version"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginStart="@dimen/margin"
-            android:layout_marginEnd="@dimen/margin"
-            android:layout_marginBottom="@dimen/margin"
-            android:textSize="@dimen/small_text_size"
-            android:textAlignment="center"
-            android:gravity="bottom"
-            app:layout_constraintBottom_toBottomOf="@+id/nav_view"
-            app:layout_constraintEnd_toEndOf="@+id/nav_view"
-            app:layout_constraintStart_toStartOf="@+id/nav_view"  />
-
-    </android.support.design.widget.NavigationView>
+    <include layout="@layout/navigation_bar"/>
 
 </android.support.v4.widget.DrawerLayout>

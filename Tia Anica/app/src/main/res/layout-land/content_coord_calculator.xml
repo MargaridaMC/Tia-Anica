@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<NestedScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_layout"
@@ -7,143 +7,124 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".CoordinateFormulaActivity"
-    tools:showIn="@layout/app_bar_coord_calculator">
+    tools:showIn="@layout/app_bar_coord_calculator"
+    android:background="@drawable/landscape_background">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="match_parent"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.EnvolvingBox"
+        android:layout_margin="@dimen/margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <EditText
+            android:id="@+id/formula"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/large_margin"
-            android:layout_marginTop="@dimen/large_margin"
-            android:layout_marginEnd="@dimen/large_margin"
-            android:alpha="0.9"
+            android:ems="10"
+            android:hint="@string/coord_formula_hint"
+            android:inputType="textPersonName"
+            android:singleLine="false"
             android:theme="@style/AppTheme.TextField"
+            app:layout_constraintEnd_toStartOf="@+id/enter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <Button
+            android:id="@+id/enter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="parseCoordFormula"
+            android:text="@string/enter"
+            android:alpha="1"
+            style="@style/AppTheme.Button"
+            android:layout_marginStart="@dimen/margin"
+            app:layout_constraintStart_toEndOf="@+id/formula"
+            app:layout_constraintBottom_toBottomOf="@+id/formula"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/formula"/>
+
+
+
+
+        <TextView
+            android:id="@+id/NeededLetters"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:visibility="gone"
+            android:theme="@style/AppTheme.TextField"
+            android:layout_marginTop="@dimen/margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/first_line"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.TextField"
-                android:padding="@dimen/margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <EditText
-                    android:id="@+id/formula"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
-                    android:ems="10"
-                    android:hint="@string/coord_formula_hint"
-                    android:inputType="textPersonName"
-                    android:singleLine="false"
-                    android:textSize="@dimen/text_size"
-                    app:layout_constraintEnd_toStartOf="@+id/enter"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                <Button
-                    android:id="@+id/enter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="parseCoordFormula"
-                    android:text="@string/enter"
-                    android:alpha="1"
-                    style="@style/AppTheme.Button"
-                    app:layout_constraintBottom_toBottomOf="@+id/formula"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/formula"/>
-
-            </android.support.constraint.ConstraintLayout>
-
-
-            <TextView
-                android:id="@+id/NeededLetters"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/margin"
-                android:ems="10"
-                android:visibility="invisible"
-                android:theme="@style/AppTheme.TextField"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/first_line" />
+            app:layout_constraintTop_toBottomOf="@+id/formula" />
 
 
 
-            <LinearLayout
-                android:id="@+id/letter_inputs"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:theme="@style/AppTheme.TextField"
-                android:visibility="invisible"
-                android:padding="@dimen/margin"
-                app:layout_constraintTop_toBottomOf="@+id/NeededLetters"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+        <LinearLayout
+            android:id="@+id/letter_inputs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:theme="@style/AppTheme.TextField"
+            app:layout_constraintTop_toBottomOf="@+id/NeededLetters"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-            </LinearLayout>
+        </LinearLayout>
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/button_line"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.TextField"
-                android:padding="@dimen/margin"
-                android:visibility="invisible"
-                app:layout_constraintTop_toBottomOf="@+id/letter_inputs"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/compute"
+            android:visibility="gone"
+            android:alpha="1"
+            style="@style/AppTheme.Button"
+            android:onClick="computeCoordinates"
+            app:layout_constraintTop_toBottomOf="@+id/letter_inputs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-                <Button
-                    android:id="@+id/button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/compute"
-                    android:visibility="invisible"
-                    android:alpha="1"
-                    style="@style/AppTheme.Button"
-                    android:onClick="computeCoordinates"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-            </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/padding"
+            android:theme="@style/AppTheme.TextField"
+            app:layout_constraintTop_toBottomOf="@+id/button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
-                android:id="@+id/result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/margin"
-                android:ems="10"
-                android:visibility="invisible"
-                android:theme="@style/AppTheme.TextField"
-                app:layout_constraintTop_toBottomOf="@+id/button_line"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_marginEnd="@dimen/very_large_margin"
+            android:layout_marginBottom="@dimen/margin"
+            android:src="@android:drawable/ic_menu_directions"
+            android:visibility="gone"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:fabSize="mini"
+            app:layout_constraintTop_toTopOf="@id/result"
+            app:layout_constraintBottom_toBottomOf="@id/result"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:pressedTranslationZ="12dp" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/direction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:layout_marginEnd="@dimen/very_large_margin"
-                android:layout_marginBottom="@dimen/margin"
-                android:src="@android:drawable/ic_menu_directions"
-                android:visibility="invisible"
-                app:borderWidth="0dp"
-                app:elevation="0dp"
-                app:fabSize="mini"
-                app:layout_constraintTop_toTopOf="@id/result"
-                app:layout_constraintBottom_toBottomOf="@id/result"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:pressedTranslationZ="12dp" />
 
-        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
 
-    </NestedScrollView>
+
+
+    </android.support.v4.widget.NestedScrollView>
+

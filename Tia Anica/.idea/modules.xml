@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Tia Anica.iml" filepath="$PROJECT_DIR$/Tia Anica.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Tia Anica-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Tia Anica-app.iml" group="Tia Anica/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Tia_Anica.iml" filepath="$PROJECT_DIR$/.idea/modules/Tia_Anica.iml" group="Tia_Anica" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

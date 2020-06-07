@@ -9,15 +9,14 @@
     tools:context="com.example.mg.tiaanica.AlphaSumActivity"
     tools:showIn="@layout/app_bar_alpha_sum">
 
+    <include layout="@layout/portrait_background"/>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:alpha="0.9"
-        android:theme="@style/AppTheme.TextField"
+        android:theme="@style/AppTheme.EnvolvingBox"
+        android:layout_margin="@dimen/margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,15 +25,12 @@
             android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
             android:ems="10"
             android:hint="@string/hint"
             android:importantForAutofill="no"
             android:inputType="textPersonName"
-            android:textSize="@dimen/text_size"
+            android:theme="@style/AppTheme.TextField"
             app:layout_constraintEnd_toStartOf="@+id/EnterButton"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute" />
@@ -43,9 +39,8 @@
             android:id="@+id/EnterButton"
             style="@style/AppTheme.Button"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
             android:onClick="calculateAlphaSum"
             android:text="@string/enter"
             app:layout_constraintBottom_toBottomOf="@+id/editText"
@@ -54,19 +49,14 @@
             app:layout_constraintTop_toTopOf="@+id/editText" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/result"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/large_margin"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginEnd="@dimen/large_margin"
-            android:textIsSelectable="true"
-            android:textSize="@dimen/text_size"
             android:theme="@style/AppTheme.TextField"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText" />
 
     </android.support.constraint.ConstraintLayout>

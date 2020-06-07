@@ -9,14 +9,13 @@
     tools:context=".CoordinateOffsetActivity"
     tools:showIn="@layout/app_bar_coordinate_offset">
 
+    <include layout="@layout/portrait_background"/>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/large_margin"
-        android:layout_marginTop="@dimen/large_margin"
-        android:layout_marginEnd="@dimen/large_margin"
-        android:theme="@style/AppTheme.TextField"
-        android:padding="@dimen/margin"
+        android:theme="@style/AppTheme.EnvolvingBox"
+        android:layout_margin="@dimen/margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/initial_coordinates"
+            android:theme="@style/AppTheme.TextField"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,18 +38,33 @@
             android:importantForAutofill="no"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="@+id/InitialCoordinates"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/myLocationButton"
             app:layout_constraintStart_toEndOf="@+id/InitialCoordinates"
             app:layout_constraintTop_toTopOf="@+id/InitialCoordinates"
             tools:ignore="LabelFor"
             tools:targetApi="o" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/myLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/margin"
+            android:src="@android:drawable/ic_menu_mylocation"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:fabSize="mini"
+            app:layout_constraintStart_toEndOf="@+id/coordinates"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:pressedTranslationZ="12dp" />
+
         <TextView
             android:id="@+id/angleID"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
             android:text="@string/angle_in_degrees"
+            android:theme="@style/AppTheme.TextField"
             app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
             app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
             app:layout_constraintTop_toBottomOf="@+id/InitialCoordinates" />
@@ -58,11 +73,11 @@
             android:id="@+id/angle"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:alpha="0.9"
             android:ems="10"
             android:inputType="numberDecimal"
+            android:hint="@string/angle_hint"
             app:layout_constraintBottom_toBottomOf="@+id/angleID"
-            app:layout_constraintEnd_toEndOf="@+id/coordinates"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/coordinates"
             app:layout_constraintTop_toTopOf="@+id/angleID" />
 
@@ -70,8 +85,8 @@
             android:id="@+id/distanceID"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
             android:text="@string/distance_in_m"
+            android:theme="@style/AppTheme.TextField"
             app:layout_constraintEnd_toEndOf="@+id/angleID"
             app:layout_constraintStart_toStartOf="@+id/angleID"
             app:layout_constraintTop_toBottomOf="@+id/angleID" />
@@ -83,6 +98,7 @@
             android:ems="10"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
+            android:hint="@string/distance_hint"
             app:layout_constraintBottom_toBottomOf="@+id/distanceID"
             app:layout_constraintEnd_toEndOf="@+id/angle"
             app:layout_constraintStart_toStartOf="@+id/angle"
@@ -96,34 +112,22 @@
             android:onClick="compute"
             android:text="@string/compute"
             style="@style/AppTheme.Button"
-            app:layout_constraintBottom_toBottomOf="@+id/myLocationButton"
-            app:layout_constraintEnd_toEndOf="@+id/distance"
-            app:layout_constraintTop_toTopOf="@+id/myLocationButton" />
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginStart="@dimen/padding"
+            app:layout_constraintTop_toBottomOf="@+id/distance"
+            app:layout_constraintStart_toStartOf="@+id/distanceID"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/myLocationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="@dimen/margin"
-            android:src="@android:drawable/ic_menu_mylocation"
-            app:borderWidth="0dp"
-            app:elevation="0dp"
-            app:fabSize="mini"
-            app:layout_constraintStart_toStartOf="@+id/distanceID"
-            app:layout_constraintTop_toBottomOf="@+id/distanceID"
-            app:pressedTranslationZ="12dp" />
 
         <TextView
             android:id="@+id/result"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/direction"
+            android:layout_marginTop="@dimen/margin"
+            android:visibility="gone"
+            android:theme="@style/AppTheme.TextField"
             app:layout_constraintEnd_toStartOf="@+id/direction"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/direction" />
+            app:layout_constraintTop_toBottomOf="@+id/offset" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/direction"
@@ -135,9 +139,9 @@
             app:borderWidth="0dp"
             app:elevation="0dp"
             app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/offset"
-            app:layout_constraintTop_toBottomOf="@+id/offset"
+            app:layout_constraintBottom_toBottomOf="@+id/result"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/result"
             app:pressedTranslationZ="12dp" />
 
     </android.support.constraint.ConstraintLayout>

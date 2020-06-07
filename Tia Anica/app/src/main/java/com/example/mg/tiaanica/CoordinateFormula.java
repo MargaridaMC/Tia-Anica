@@ -18,7 +18,7 @@ class CoordinateFormula {
     private String lonDir = "";
 
     List<String> neededLetters;
-    private static Map<String, Integer> variables;
+    private static Map<String, Double> variables;
 
     long Es;
     long Ws;
@@ -128,7 +128,7 @@ class CoordinateFormula {
 
     }
 
-    void setVariables(Map<String, Integer> vars) {
+    void setVariables(Map<String, Double> vars) {
         variables = vars;
     }
 
@@ -248,21 +248,26 @@ class CoordinateFormula {
 
     void evaluate(){
 
-        for (Map.Entry<String, Integer> pair : variables.entrySet()) {
+        for (Map.Entry<String, Double> pair : variables.entrySet()) {
             String key = pair.getKey();
-            String value = Integer.toString(pair.getValue());
+            String value = Double.toString(pair.getValue());
 
             lat = lat.replace(key,  value);
             lon = lon.replace(key,  value);
         }
 
         // Look for sections within parenthesis
-        Pattern sectionPattern = Pattern.compile("(\\([0-9+\\-/*\\^\\s]+\\))");
+        Pattern sectionPattern = Pattern.compile("(\\([0-9+\\-/*\\^\\s\\.]+\\))");
         Matcher sectionMatcher = sectionPattern.matcher(lat);
 
         while (sectionMatcher.find()) {
             String group = sectionMatcher.group(1);
-            lat = lat.replace(group, Integer.toString((int)eval(group)));
+            double result = eval(group);
+            if(result % 1 == 0){
+                lat = lat.replace(group, Integer.toString((int) result));
+            } else {
+                lat = lat.replace(group, Double.toString(result));
+            }
             sectionMatcher = sectionPattern.matcher(lat);
         }
 
@@ -270,23 +275,41 @@ class CoordinateFormula {
 
         while (sectionMatcher.find()) {
             String group = sectionMatcher.group(1);
-            lon = lon.replace(group, Integer.toString((int)eval(group)));
+            double result = eval(group);
+            if(result % 1 == 0){
+                lon = lon.replace(group, Integer.toString((int) result));
+            } else {
+                lon = lon.replace(group, Double.toString(result));
+            }
             sectionMatcher = sectionPattern.matcher(lon);
         }
 
         // Check if there are still sections with operation signs (+, -, /, *)
-        Pattern operationPattern = Pattern.compile("([\\d]+\\s*([+\\-/*\\^]+\\s*[\\s\\d]+)+)");
+        Pattern operationPattern = Pattern.compile("([\\d\\.]+\\s*([+\\-/*\\^]+\\s*[\\s\\d\\.]+)+)");
         Matcher operationMatcher = operationPattern.matcher(lat);
         while(operationMatcher.find()) {
             String group = operationMatcher.group(0);
-            lat = lat.replace(group, Integer.toString((int)eval(group)));
+            double result = eval(group);
+            if(result % 1 == 0){
+                lat = lat.replace(group, Integer.toString((int) result));
+            } else {
+                lat = lat.replace(group, Double.toString(result));
+            }
+
         }
 
         operationMatcher = operationPattern.matcher(lon);
         while(operationMatcher.find()) {
             String group = operationMatcher.group(0);
-            lon = lon.replace(group, Integer.toString((int)eval(group)));
+            double result = eval(group);
+            if(result % 1 == 0){
+                lon = lon.replace(group, Integer.toString((int) result));
+            } else {
+                lon = lon.replace(group, Double.toString(result));
+            }
         }
+
+        returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
     }
 
     boolean resultAreProperCoordinates(){
@@ -297,7 +320,7 @@ class CoordinateFormula {
             returnStr = coordinate.getFullCoordinates();
 
         } catch(Exception e) {
-            returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
+            //returnStr = this.latDir + this.lat + " " + this.lonDir + this.lon;
             return false;
         }
 
@@ -309,7 +332,7 @@ class CoordinateFormula {
 
         // TODO: check if anything is wrong with the output coordinates
         // Check if any value is negative
-        resultAreProperCoordinates();
+        //resultAreProperCoordinates();
         return returnStr;
     }
 }

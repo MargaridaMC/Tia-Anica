@@ -2,10 +2,8 @@ package com.example.mg.tiaanica;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,14 +11,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -31,7 +27,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -40,7 +35,7 @@ import android.widget.TextView;
 public class CoordinateOffsetActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Coordinate coordinate;
+    Coordinate coordinate = null;
     LocationManager locationManager;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -76,10 +71,21 @@ public class CoordinateOffsetActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Set version number in navigation drawer
+        TextView version = findViewById(R.id.version);
+        String versionName = null;
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String versionStr = "Version: " + versionName;
+        version.setText(versionStr);
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(infoFabListener);
+        //FloatingActionButton fab = findViewById(R.id.fab);
+        //fab.setOnClickListener((view) -> getHelp());
 
         FloatingActionButton locationFab = findViewById(R.id.myLocationButton);
         //locationFab.setAlpha(0.9f);
@@ -99,35 +105,16 @@ public class CoordinateOffsetActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final EditText finalTextField = findViewById(R.id.distance);
-        finalTextField.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                        && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-                    compute(v); // parse the coordinate
-                    return true;
-                }
-                return false;
+        finalTextField.setOnKeyListener((v, keyCode, event) -> {
+            // If the event is a key-down event on the "enter" button
+            if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                    && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                // Perform action on key press
+                compute(v); // parse the coordinate
+                return true;
             }
+            return false;
         });
-
-        // Set background
-        ConstraintLayout base_layout = findViewById(R.id.base_layout);
-        Resources res = getResources();
-
-        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
-        assert window != null;
-        Display display = window.getDefaultDisplay();
-
-        int num = display.getRotation();
-        if (num == 0){
-            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
-        }else if (num == 1 || num == 3){
-            base_layout.setBackground(res.getDrawable(R.drawable.landscape_background));
-        }else{
-            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
-        }
 
     }
 
@@ -144,7 +131,7 @@ public class CoordinateOffsetActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.coordinate_offset, menu);
+        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
         return true;
     }
 
@@ -156,7 +143,8 @@ public class CoordinateOffsetActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+            getHelp();
             return true;
         }
 
@@ -211,12 +199,7 @@ public class CoordinateOffsetActivity extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
             builder.setTitle("Error")
                     .setMessage("Please fill in all the values.")
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
+                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
 
             builder.create().show();
 
@@ -235,19 +218,16 @@ public class CoordinateOffsetActivity extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
             builder.setTitle("Error")
                     .setMessage("The angle and the distance should be numbers.")
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
+                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
 
             builder.create().show();
 
             return;
         }
 
-        coordinate = new Coordinate(initialCoordinatesString);
+        if(coordinate == null){
+            coordinate = new Coordinate(initialCoordinatesString);
+        }
         coordinate.Offset(angleDeg, distanceInMeters);
 
         TextView result = findViewById(R.id.result);
@@ -285,12 +265,7 @@ public class CoordinateOffsetActivity extends AppCompatActivity
     void requestGPSEnable(){
         AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
         builder.setMessage(R.string.gps_network_not_enabled);
-        builder.setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                CoordinateOffsetActivity.this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
-        });
+        builder.setPositiveButton(R.string.open_location_settings, (paramDialogInterface, paramInt) -> CoordinateOffsetActivity.this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
         builder.setNegativeButton(R.string.Cancel,null);
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -300,37 +275,24 @@ public class CoordinateOffsetActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(Html.fromHtml("<b>Error</b>"));
         builder.setMessage("Sorry.. Can't access your location.");
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 
-    View.OnClickListener infoFabListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+    void getHelp(){
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
 
-            // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateOffsetActivity.this);
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info) + "<br></br><br></br><b>Note: </b>you can also use the location button to use your current location."));
 
-            // 2. Chain together various setter methods to set the dialog characteristics
-            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_offset_info) + "<br></br><br></br><b>Note: </b>you can also use the location button to use your current location."));
+        // Add OK button
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel());
 
-            // Add OK button
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-
-
-            // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-            builder.show();
-        }
-    };
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        builder.show();
+    }
 
     View.OnClickListener locationFabListener = new View.OnClickListener() {
         @Override
@@ -359,58 +321,44 @@ public class CoordinateOffsetActivity extends AppCompatActivity
 
                         new AlertDialog.Builder(CoordinateOffsetActivity.this)
                                 .setMessage("Used coordinates from Network signal.")
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                }).show();
+                                .setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel()).show();
                     }
                 }
                 else{
                     TextView txtLat = findViewById(R.id.coordinates);
                     coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
-                    txtLat.setText(coordinate.getFullCoordinates());
+                    String fullCoordinates = coordinate.getFullCoordinates();
+                    txtLat.setText(fullCoordinates);
 
                     new AlertDialog.Builder(CoordinateOffsetActivity.this)
                             .setMessage("Used coordinates from GPS signal.")
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    }).show();
+                            .setPositiveButton(R.string.ok, (dialog, id) -> dialog.cancel()).show();
                 }
             }
 
         }
     };
 
-    View.OnClickListener directionsFabListener;
+    View.OnClickListener directionsFabListener = view -> {
 
-    {
-        directionsFabListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            //Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+            //        Uri.parse("https://www.google.com/maps/dir/?api=1?destination=" + coordinate.getLatitude() + "," + coordinate.getLongitude()));
+            //startActivity(intent);
 
-                //Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                //        Uri.parse("https://www.google.com/maps/dir/?api=1?destination=" + coordinate.getLatitude() + "," + coordinate.getLongitude()));
-                //startActivity(intent);
+            // Create a Uri from an intent string. Use the result to create an Intent.
+            //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
+            Uri gmmIntentUri = Uri.parse(String.format(getResources().getString(R.string.coordinates_format), coordinate.getLatitude(), coordinate.getLongitude()));
 
-                // Create a Uri from an intent string. Use the result to create an Intent.
-                //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
-                Uri gmmIntentUri = Uri.parse(String.format(getResources().getString(R.string.coordinates_format), coordinate.getLatitude(), coordinate.getLongitude()));
+            // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
 
-                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            // Make the Intent explicit by setting the Google Maps package
+            // If this is not set the user will be asked to choose between available apps
+            //mapIntent.setPackage("com.google.android.apps.maps");
 
-                // Make the Intent explicit by setting the Google Maps package
-                // If this is not set the user will be asked to choose between available apps
-                //mapIntent.setPackage("com.google.android.apps.maps");
-
-                // Attempt to start an activity that can handle the Intent
-                startActivity(mapIntent);
-            }
+            // Attempt to start an activity that can handle the Intent
+            startActivity(mapIntent);
         };
-    }
 
 
 }

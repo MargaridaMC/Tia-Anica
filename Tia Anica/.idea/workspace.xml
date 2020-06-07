@@ -6,6 +6,7 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="FATAL" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="AvailableLibraryUpdateStorage">
@@ -73,29 +74,13 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance">
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/drawable/double_up_arrow.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/drawable/dowble_arrow_down.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/Geocache.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/Geocache.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingScrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingScrapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingTour.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POC/GeoScrapping/Geoscrapping/src/app/GeocachingTour.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/Geocache.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/Geocache.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MapActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MapActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/element_cache_layout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/layout/element_cache_layout.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/res/values/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DefaultGradleProjectSettings">
-    <option name="isMigrated" value="true" />
-  </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_google_api" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="VFFNW19319004521" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -149,19 +134,6 @@
   <component name="FavoritesManager">
     <favorites_list name="TiaAnica" />
   </component>
-  <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4695">
-              <caret line="318" column="1" lean-forward="true" selection-start-line="9" selection-end-line="318" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -172,52 +144,6 @@
         <option value="layoutResourceFile" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>onRequestPermissionsResult</find>
-      <find>fa</find>
-      <find>locationListener</find>
-      <find>asy</find>
-      <find>eva</find>
-      <find>variables</find>
-      <find>Log.</find>
-      <find>Log</find>
-      <find>KEYCODE</find>
-      <find>ACTION_</find>
-      <find>dialog</find>
-      <find>coordinate</find>
-      <find>stringutils</find>
-      <find>value</find>
-      <find>formula</find>
-      <find>parseCoordFormula</find>
-      <find>button5</find>
-      <find>button6</find>
-      <find>button7</find>
-      <find>button3</find>
-      <find>button4</find>
-      <find>textView4</find>
-      <find>textView2</find>
-      <find>button2</find>
-      <find>compute</find>
-      <find>setLayoutParams</find>
-      <find>resultAndVariableLayout</find>
-      <find>base</find>
-      <find>neededLetterIds</find>
-      <find>constraintLayout</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>sum</replace>
-      <replace>VigenereCipherButton</replace>
-      <replace>CoordinateCalculatorButton</replace>
-      <replace>CoordinateOffsetButton</replace>
-      <replace>EncodeButton</replace>
-      <replace>DecodeButton</replace>
-      <replace>InitialCoordinates</replace>
-      <replace>NeededLetters</replace>
-      <replace>enter</replace>
-      <replace>EnterButton</replace>
-    </replaceStrings>
   </component>
   <component name="GenerateSignedApkSettings">
     <option name="EXPORT_PRIVATE_KEY" value="false" />
@@ -235,144 +161,17 @@
       </map>
     </option>
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Map.java" />
-        <option value="$PROJECT_DIR$/app/src/release/res/values/google_maps_api.xml" />
-        <option value="$PROJECT_DIR$/app/src/debug/res/values/google_maps_api.xml" />
-        <option value="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_vigenere_cipher.xml" />
-        <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/ic_my_location.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/drawables.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/ic_directions_black_24dp.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordCalculator.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateCalculator.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipher.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/AlphaSum.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_drawer.xml" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/AlphaSumActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/CoordinateOffset.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffset.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_alpha_sum.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_alpha_sum.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/portrait_background.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/landscape_background.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/font/futura.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coord_calculator.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_coordinate_offset.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_vigenere_cipher.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input_portrait.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input_4_letters.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1358" />
-    <option name="y" value="-264" />
-    <option name="width" value="1296" />
-    <option name="height" value="1000" />
-  </component>
+  <component name="ProjectId" id="1cvDEwWGeTAKy51xwRqUTK5VesY" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Tia Anica" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Tia Anica" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="Tia Anica" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\guidi\Documents\Android\Tia-Anica\Tia Anica" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="Tia Anica" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\guidi\Documents\Android\Tia-Anica\Tia Anica" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Tia Anica" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\guidi\Documents\Android\Tia-Anica\Tia Anica" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Tia Anica" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\guidi\Documents\Android\Tia-Anica\Tia Anica" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Tia Anica" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="Tia Anica" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="Tia Anica" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="tiaanica" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="AnalyzeApkAction.lastApkPath" value="$PROJECT_DIR$/app/build/outputs/apk/debug/app-debug.apk" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_3_API_26" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-03-17T01:17:13.393Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_3_API_27" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-06-06T20:21:11.999Z" />
     <property name="ExportApk.ApkPath" value="C:\Users\guidi\Documents\Android\TiaAnica\release" />
     <property name="ExportApk.BuildType" value="release" />
     <property name="ExportApk.BuildVariants" value="release" />
@@ -385,11 +184,11 @@
     <property name="device.picker.selection" value="acfde05b" />
     <property name="last.edited.regexp" value="N 48° 07.997 E 011° 34.380 " />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/font" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -413,19 +212,13 @@
       <recent name="C:\Users\Mg\Documents\Android\TiaAnica\app\src\main\res\drawable" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Android App.Tia Anica-app">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -439,6 +232,57 @@
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tia Anica-app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="Tia Anica-app" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sample Java Methods" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
       <method v="2">
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
@@ -458,8 +302,6 @@
       <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
       <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
-      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
-      <option name="PREFERRED_AVD" value="" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="DEBUGGER_TYPE" value="Auto" />
@@ -496,19 +338,13 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet">
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
       <option name="filePath" />
       <option name="vmParameters" />
       <option name="alternativeJrePath" />
@@ -858,101 +694,13 @@
       <is-autoscroll-to-source value="true" />
     </todo-panel>
   </component>
-  <component name="ToolWindowManager">
-    <frame x="1358" y="-264" width="1296" height="1000" extended-state="6" />
-    <editor active="true" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.7431694" visible="true" weight="0.26860842" />
-      <window_info id="Structure" order="1" sideWeight="0.25" side_tool="true" weight="0.25340393" />
-      <window_info id="Designer" order="2" />
-      <window_info id="Build Variants" order="3" sideWeight="0.28196722" side_tool="true" weight="0.22087745" />
-      <window_info id="Image Layers" order="4" />
-      <window_info id="Favorites" order="5" sideWeight="0.2568306" side_tool="true" weight="0.16641453" />
-      <window_info id="Captures" order="6" sideWeight="0.10697675" side_tool="true" weight="0.24357034" />
-      <window_info id="Capture Tool" order="7" />
-      <window_info id="Resources Explorer" order="8" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49848714" weight="0.33217993" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4969743" weight="0.3183391" />
-      <window_info anchor="bottom" id="Android Profiler" order="3" show_stripe_button="false" sideWeight="0.49924356" weight="0.3289689" />
-      <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.4969743" weight="0.2283737" />
-      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.4977307" weight="0.22749591" />
-      <window_info anchor="bottom" id="Gradle Console" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5030257" side_tool="true" weight="0.7348609" />
-      <window_info anchor="bottom" id="Logcat" order="10" sideWeight="0.6429652" weight="0.37254903" />
-      <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.49924356" weight="0.12111293" />
-      <window_info anchor="bottom" id="Terminal" order="12" sideWeight="0.49848714" weight="0.17021276" />
-      <window_info active="true" anchor="bottom" id="Messages" order="13" sideWeight="0.4977307" visible="true" weight="0.40023068" />
-      <window_info anchor="bottom" id="Build" order="14" sideWeight="0.6043873" visible="true" weight="0.20761245" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Capture Analysis" order="3" />
-      <window_info anchor="right" id="Preview" order="4" weight="0.24919094" />
-      <window_info anchor="right" id="Device File Explorer" order="5" side_tool="true" weight="0.32980332" />
-      <window_info anchor="right" id="Palette&#9;" order="6" />
-      <window_info anchor="right" id="Theme Preview" order="7" />
-      <window_info anchor="right" id="Gradle" order="8" weight="0.32980332" />
-      <window_info anchor="right" id="Assistant" order="9" weight="0.1172466" />
-    </layout>
-    <layout-to-restore>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.7180328" visible="true" weight="0.2602118" />
-      <window_info id="Structure" order="1" sideWeight="0.25" side_tool="true" weight="0.25340393" />
-      <window_info id="Designer" order="2" />
-      <window_info id="Build Variants" order="3" sideWeight="0.28196722" side_tool="true" weight="0.22087745" />
-      <window_info id="Image Layers" order="4" />
-      <window_info id="Favorites" order="5" side_tool="true" />
-      <window_info id="Captures" order="6" sideWeight="0.10697675" side_tool="true" weight="0.24357034" />
-      <window_info id="Capture Tool" order="7" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49848714" weight="0.14754099" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49924356" weight="0.32786885" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.04738562" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49924356" weight="0.3295082" />
-      <window_info anchor="bottom" id="Gradle Console" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Android Profiler" order="8" sideWeight="0.49924356" weight="0.3295082" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5015129" side_tool="true" weight="0.0" />
-      <window_info anchor="bottom" id="Logcat" order="10" sideWeight="0.64523447" visible="true" weight="0.21967213" />
-      <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.49924356" weight="0.3295082" />
-      <window_info anchor="bottom" id="Terminal" order="12" sideWeight="0.49848714" weight="0.024590164" />
-      <window_info active="true" anchor="bottom" id="Messages" order="13" sideWeight="0.4977307" visible="true" weight="0.3065574" />
-      <window_info anchor="bottom" id="Build" order="14" sideWeight="0.7881997" weight="0.07377049" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Capture Analysis" order="3" />
-      <window_info anchor="right" id="Preview" order="4" weight="0.1913767" />
-      <window_info anchor="right" id="Device File Explorer" order="5" side_tool="true" />
-      <window_info anchor="right" id="Palette&#9;" order="6" />
-      <window_info anchor="right" id="Theme Preview" order="7" />
-      <window_info anchor="right" id="Gradle" order="8" weight="0.32980332" />
-      <window_info anchor="right" id="Assistant" order="9" weight="0.1172466" />
-    </layout-to-restore>
-  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
-              <option name="COLUMN_ORDER">
-                <list>
-                  <option value="0" />
-                  <option value="1" />
-                  <option value="2" />
-                  <option value="3" />
-                </list>
-              </option>
+              <option name="COLUMN_ORDER" />
             </State>
           </value>
         </entry>
@@ -1007,431 +755,116 @@
     <MESSAGE value="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance" />
     <option name="LAST_COMMIT_MESSAGE" value="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance" />
   </component>
+  <component name="WindowStateProjectService">
+    <state x="402" y="9" key="#Tia_Anica-app" timestamp="1591476918962">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="402" y="9" key="#Tia_Anica-app/0.0.1366.728@0.0.1366.728" timestamp="1591476918962" />
+    <state x="455" y="167" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1591400361761">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="455" y="167" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1591400361761" />
+    <state x="413" y="111" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1591486635700">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="413" y="111" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728@0.0.1366.728" timestamp="1591486635700" />
+    <state x="263" y="119" key="AndroidCreateResourceFileDialog" timestamp="1591401087549">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="263" y="119" key="AndroidCreateResourceFileDialog/0.0.1366.728@0.0.1366.728" timestamp="1591401087549" />
+    <state x="541" y="177" key="AndroidCreateXmlResourceDialog" timestamp="1591479603607">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="541" y="177" key="AndroidCreateXmlResourceDialog/0.0.1366.728@0.0.1366.728" timestamp="1591479603607" />
+    <state width="1323" height="140" key="GridCell.Tab.0.bottom" timestamp="1591488678231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
+    <state width="1323" height="140" key="GridCell.Tab.0.center" timestamp="1591488678231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
+    <state width="1323" height="140" key="GridCell.Tab.0.left" timestamp="1591488678231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
+    <state width="1323" height="140" key="GridCell.Tab.0.right" timestamp="1591488678231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
+    <state width="1323" height="140" key="GridCell.Tab.1.bottom" timestamp="1591488678232">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591488678232" />
+    <state width="1323" height="140" key="GridCell.Tab.1.center" timestamp="1591488678231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
+    <state width="1323" height="140" key="GridCell.Tab.1.left" timestamp="1591488678231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
+    <state width="1323" height="140" key="GridCell.Tab.1.right" timestamp="1591488678232">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="140" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1591488678232" />
+    <state x="184" y="6" key="SettingsEditor" timestamp="1591488775760">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1591488775760" />
+    <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1591474913850">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1366.728@0.0.1366.728" timestamp="1591474913850" />
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1591488701806">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1591488701806" />
+    <state x="339" y="162" key="run.anything.popup" timestamp="1591474346966">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="339" y="162" key="run.anything.popup/0.0.1366.728@0.0.1366.728" timestamp="1591474346966" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>295</line>
-          <properties />
+          <line>318</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>293</line>
-          <properties />
+          <line>316</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>385</line>
-          <properties />
+          <line>365</line>
           <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>373</line>
-          <properties />
+          <line>354</line>
           <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
+          <line>287</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>
+          <line>227</line>
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>
+          <line>330</line>
+          <option name="timeStamp" value="67" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-26/data/res/values/attrs.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="8637" column="1" lean-forward="true" selection-start-line="8637" selection-start-column="1" selection-end-line="8637" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="25" lean-forward="true" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
-          <folding>
-            <element signature="e#1176#1191#0" expanded="true" />
-            <element signature="e#1229#1244#0" expanded="true" />
-            <element signature="e#1285#1300#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_alpha_sum.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="43" lean-forward="true" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/font/futura.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/main.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="22" lean-forward="true" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_drawer.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" column="11" selection-start-line="40" selection-start-column="11" selection-end-line="40" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/debug/res/values/google_maps_api.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="479">
-          <caret line="52" column="62" selection-start-line="52" selection-start-column="49" selection-end-line="52" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-v21/ic_menu_camera.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_menu_home.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_coord_calculator.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="48" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="48" />
-          <folding>
-            <element signature="e#397#412#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_home.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_home_foreground.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="45" selection-start-line="45" selection-end-line="45" />
-          <folding>
-            <element signature="e#1504#1519#0" expanded="true" />
-            <element signature="e#2296#2311#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
-          <folding>
-            <element signature="e#439#454#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_home_foreground.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
-          <folding>
-            <element signature="e#1442#1457#0" expanded="true" />
-            <element signature="e#2234#2249#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="8" lean-forward="true" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher_round.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher_round.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_vigenere_cipher.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="44" lean-forward="true" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="44" />
-          <folding>
-            <element signature="e#399#414#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_coordinate_offset.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
-          <folding>
-            <element signature="e#397#412#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipher.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-545">
-          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="187" column="128" selection-start-line="187" selection-start-column="128" selection-end-line="187" selection-end-column="128" />
-          <folding>
-            <element signature="e#6471#6517#0" expanded="true" />
-            <element signature="e#6691#6734#0" expanded="true" />
-            <element signature="e#7461#7504#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-26/data/res/drawable-hdpi/ic_menu_directions.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-26/android/view/View.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="24104" column="22" selection-start-line="24104" selection-start-column="22" selection-end-line="24104" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1291">
-          <caret line="291" column="40" selection-start-line="291" selection-start-column="40" selection-end-line="291" selection-end-column="40" />
-          <folding>
-            <element signature="method#evaluate#0;class#CoordinateFormula#0" />
-            <element signature="method#resultAreProperCoordinates#0;class#CoordinateFormula#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5e3b92153b679a99261d963c63ea4bf4/design-26.1.0/res/values/values.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="229" column="18" selection-start-line="229" selection-start-column="18" selection-end-line="229" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_vigenere_cipher.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_vigenere_cipher.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="509">
-          <caret line="86" column="32" selection-start-line="86" selection-start-column="32" selection-end-line="86" selection-end-column="32" />
-          <folding>
-            <element signature="e#389#429#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="83" column="43" lean-forward="true" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
-          <folding>
-            <element signature="e#451#466#0" expanded="true" />
-            <element signature="e#1519#1534#0" expanded="true" />
-            <element signature="e#1562#1577#0" expanded="true" />
-            <element signature="e#1890#1908#0" expanded="true" />
-            <element signature="e#2077#2095#0" expanded="true" />
-            <element signature="e#2125#2140#0" expanded="true" />
-            <element signature="e#2168#2183#0" expanded="true" />
-            <element signature="e#2264#2285#0" expanded="true" />
-            <element signature="e#2496#2514#0" expanded="true" />
-            <element signature="e#2683#2701#0" expanded="true" />
-            <element signature="e#2731#2746#0" expanded="true" />
-            <element signature="e#2774#2789#0" expanded="true" />
-            <element signature="e#2870#2891#0" expanded="true" />
-            <element signature="e#3102#3120#0" expanded="true" />
-            <element signature="e#3289#3307#0" expanded="true" />
-            <element signature="e#3337#3352#0" expanded="true" />
-            <element signature="e#3380#3395#0" expanded="true" />
-            <element signature="e#3476#3497#0" expanded="true" />
-            <element signature="e#3708#3726#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="34" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="264" column="45" lean-forward="true" selection-start-line="264" selection-start-column="45" selection-end-line="264" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="32" lean-forward="true" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
-          <folding>
-            <element signature="e#729#744#0" expanded="true" />
-            <element signature="e#1210#1225#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="224" lean-forward="true" selection-start-line="224" selection-end-line="224" />
-          <folding>
-            <element signature="e#9009#9270#0" expanded="true" />
-            <element signature="e#9269#9270#0" expanded="true" />
-            <element signature="e#16590#16643#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="134" column="67" lean-forward="true" selection-start-line="134" selection-start-column="67" selection-end-line="134" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="54" column="50" selection-start-line="54" selection-start-column="50" selection-end-line="54" selection-end-column="50" />
-          <folding>
-            <element signature="e#695#716#0" expanded="true" />
-            <element signature="e#750#771#0" expanded="true" />
-            <element signature="e#805#826#0" expanded="true" />
-            <element signature="e#901#916#0" expanded="true" />
-            <element signature="e#1242#1271#0" expanded="true" />
-            <element signature="e#2381#2407#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="81" column="38" lean-forward="true" selection-start-line="81" selection-start-column="38" selection-end-line="81" selection-end-column="38" />
-          <folding>
-            <element signature="e#921#936#0" expanded="true" />
-            <element signature="e#1330#1359#0" expanded="true" />
-            <element signature="e#5700#5715#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="33" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/text_field.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" lean-forward="true" selection-start-line="40" selection-end-line="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4695">
-          <caret line="318" column="1" lean-forward="true" selection-start-line="9" selection-end-line="318" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
   </component>
   <component name="masterDetails">
     <states>

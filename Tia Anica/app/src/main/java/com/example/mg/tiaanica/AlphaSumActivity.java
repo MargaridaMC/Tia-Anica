@@ -2,14 +2,12 @@ package com.example.mg.tiaanica;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,8 +32,18 @@ public class AlphaSumActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(infoFabListener);
+        TextView version = findViewById(R.id.version);
+        String versionName = null;
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String versionStr = "Version: " + versionName;
+        version.setText(versionStr);
+
+        //FloatingActionButton fab = findViewById(R.id.fab);
+        //fab.setOnClickListener((view) -> getHelp());
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -47,7 +54,7 @@ public class AlphaSumActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Help button
+        // Hide keyboard when enter is clicked
         final EditText finalTextField = findViewById(R.id.editText);
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
@@ -66,22 +73,6 @@ public class AlphaSumActivity extends AppCompatActivity
             }
         });
 
-        // Set background
-        ConstraintLayout base_layout = findViewById(R.id.base_layout);
-        Resources res = getResources();
-
-        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
-        assert window != null;
-        Display display = window.getDefaultDisplay();
-
-        int num = display.getRotation();
-        if (num == 0){
-            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
-        }else if (num == 1 || num == 3){
-            base_layout.setBackground(res.getDrawable(R.drawable.landscape_background));
-        }else{
-            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
-        }
 
     }
 
@@ -98,7 +89,7 @@ public class AlphaSumActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.alpha_sum, menu);
+        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
         return true;
     }
 
@@ -110,7 +101,8 @@ public class AlphaSumActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+            getHelp();
             return true;
         }
 
@@ -152,25 +144,22 @@ public class AlphaSumActivity extends AppCompatActivity
         AlphaSum s = new AlphaSum(text);
         String message = "The alpha sum value of '" + text + "' is " + s.getSum();
 
-        TextView textView = findViewById(R.id.textView);
+        TextView textView = findViewById(R.id.result);
         textView.setVisibility(View.VISIBLE);
         textView.setText(message);
 
     }
 
-    View.OnClickListener infoFabListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+    public void getHelp(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSumActivity.this);
+        builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info)));
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(AlphaSumActivity.this);
-            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info)));
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-    };
 }

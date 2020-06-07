@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,13 +13,11 @@ import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.view.Display;
+import android.text.InputType;
 import android.view.LayoutInflater;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.KeyEvent;
 import android.text.Html;
@@ -33,7 +32,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.content.res.Resources;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +46,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
     CoordinateFormula coordinate;
     String originalCoordinate;
-    HashMap<String, Integer> variables;
+    HashMap<String, Double> variables;
     ConstraintLayout constraintLayout;
 
     HashMap<String, Integer> neededLetterIds = new HashMap<>();
@@ -62,30 +60,19 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        // Set version number in navigation drawer
+        TextView version = findViewById(R.id.version);
+        String versionName = null;
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String versionStr = "Version: " + versionName;
+        version.setText(versionStr);
 
-                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
-
-                // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));
-
-                // Add OK button
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-
-                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+        //FloatingActionButton fab = findViewById(R.id.fab);
+        //fab.setOnClickListener((view) -> getHelp());
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -101,36 +88,16 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         formula.setImeOptions(IME_ACTION_GO);
-        formula.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            public boolean onEditorAction(TextView view, int actionId, KeyEvent event){
-                // If the event is a key-down event on the "enter" button
-                if (actionId == EditorInfo.IME_ACTION_GO) {
-                    // Perform action on key press
-                    parseCoordFormula(view); // parse the coordinate
-                    if (mgr != null) mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0);// make the keyboard disappear
-                    return true;
-                }
-                return false;
+        formula.setOnEditorActionListener((view, actionId, event) -> {
+            // If the event is a key-down event on the "enter" button
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                // Perform action on key press
+                parseCoordFormula(view); // parse the coordinate
+                if (mgr != null) mgr.hideSoftInputFromWindow(formula.getWindowToken(), 0);// make the keyboard disappear
+                return true;
             }
+            return false;
         });
-
-        // Set background
-        ScrollView base_layout = findViewById(R.id.base_layout);
-        Resources res = getResources();
-
-        WindowManager window = (WindowManager)getSystemService(WINDOW_SERVICE);
-        assert window != null;
-        Display display = window.getDefaultDisplay();
-
-        orientation = display.getRotation();
-        if (orientation == 0){
-            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
-        }else if (orientation == 1 || orientation == 3){
-            base_layout.setBackground(res.getDrawable(R.drawable.landscape_background));
-        }else{
-            base_layout.setBackground(res.getDrawable(R.drawable.portrait_background));
-        }
 
         constraintLayout = findViewById(R.id.constraintLayout);
         variables = new HashMap<>();
@@ -149,7 +116,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.coord_calculator, menu);
+        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
         return true;
     }
 
@@ -161,7 +128,8 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+            getHelp();
             return true;
         }
 
@@ -209,15 +177,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         String coord = editText.getText().toString();
         originalCoordinate = coord;
         coordinate = new CoordinateFormula(coord);
-
-        //constraintLayout.removeAllViews();
-        //for(Integer id:variableViewIDs){
-        //   constraintLayout.removeView(findViewById(id));
-        //}
-        //for(Integer id:resultViewIDs){
-        //    constraintLayout.removeView(findViewById(id));
-        //}
-
 
         if (!coordinate.successfulParsing) {
             if (coordinate.Es != 1) {
@@ -333,6 +292,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             letterTag.setText(currentLetter);
             letterInputArea.setVisibility(View.VISIBLE);
             letterInputArea.setId(letterId);
+            letterInputArea.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
 
             if (i == nNeededLetters - 1) {
                 letterInputArea.setImeOptions(IME_ACTION_DONE);
@@ -352,15 +312,13 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 letterInputArea.setImeOptions(IME_ACTION_NEXT);
             }
 
+
             column++;
             i++;
         }
 
         // Add the final one
         letterInputLayout.addView(horizontalLine);
-
-        ConstraintLayout computeButtonLine = findViewById(R.id.button_line);
-        computeButtonLine.setVisibility(View.VISIBLE);
 
         Button compute = findViewById(R.id.button);
         compute.setVisibility(View.VISIBLE);
@@ -402,8 +360,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 return;
             }
 
-            // TODO: app crashes if value is not int
-            int value = Integer.parseInt(valueString);
+            double value = Double.parseDouble(valueString);
             variables.put(letter, value);
         }
 
@@ -412,16 +369,21 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
         TextView result = findViewById(R.id.result);
         result.setVisibility(View.VISIBLE);
-        String resultString = "The final coordinates are:\n" + coordinate.getFullCoordinates();
-        result.setText(resultString);
 
         boolean resultAreProperCoordinates = coordinate.resultAreProperCoordinates();
 
+        String resultString;
         if(resultAreProperCoordinates) {
+            resultString = "The final coordinates are:\n" + coordinate.getFullCoordinates();
+
             FloatingActionButton directionsFab = findViewById(R.id.direction);
             directionsFab.setOnClickListener(directionsFabListener);
             directionsFab.setVisibility(View.VISIBLE);
+        } else {
+            resultString = "Result is: " + coordinate.getFullCoordinates();
         }
+
+        result.setText(resultString);
 
     }
 
@@ -452,5 +414,25 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 startActivity(mapIntent);
             }
         };
+    }
+
+    void getHelp(){
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.coord_calculator_info)));
+
+        // Add OK button
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

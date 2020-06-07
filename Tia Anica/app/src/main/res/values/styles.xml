@@ -26,11 +26,19 @@
         <item name="android:padding">@dimen/padding</item>
     </style>
 
-    <style name="AppTheme.TextField">
+    <style name="AppTheme.EnvolvingBox">
         <item name="android:background">@color/transparentWhite</item>
         <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textColor">@color/gray</item>
         <item name="android:textIsSelectable">true</item>
+        <item name="android:padding">@dimen/padding</item>
+        <item name="alpha">0.9</item>
+    </style>
+
+    <style name="AppTheme.TextField">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:textSize">@dimen/text_size</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

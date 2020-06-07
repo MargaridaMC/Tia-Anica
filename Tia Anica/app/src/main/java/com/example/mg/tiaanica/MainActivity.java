@@ -43,12 +43,18 @@ public class MainActivity extends AppCompatActivity
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        version.setText("Version: " + versionName);
+        String versionStr = "Version: " + versionName;
+        version.setText(versionStr);
 
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(helpFabOnClickListener);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getHelp();
+            }
+        });
 
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -73,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
         return true;
     }
 
@@ -85,7 +91,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+            getHelp();
             return true;
         }
 
@@ -139,30 +146,26 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    View.OnClickListener helpFabOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+    public void getHelp(){
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
-            // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info) +
+                "<br><br>" + getString(R.string.vigenere_info) +
+                "<br><br>" + getString(R.string.coord_calculator_info) +
+                "<br><br>" + getString(R.string.coord_offset_info)));
 
-            // 2. Chain together various setter methods to set the dialog characteristics
-            builder.setTitle(R.string.help).setMessage(Html.fromHtml(getString(R.string.alphasum_info) +
-                    "<br><br>" + getString(R.string.vigenere_info) +
-                    "<br><br>" + getString(R.string.coord_calculator_info) +
-                    "<br><br>" + getString(R.string.coord_offset_info)));
-
-            // Add OK button
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
+        // Add OK button
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
 
 
-            // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-    };
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }
