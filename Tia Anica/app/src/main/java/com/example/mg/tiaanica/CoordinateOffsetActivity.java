@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
@@ -88,11 +90,9 @@ public class CoordinateOffsetActivity extends AppCompatActivity
         //fab.setOnClickListener((view) -> getHelp());
 
         FloatingActionButton locationFab = findViewById(R.id.myLocationButton);
-        //locationFab.setAlpha(0.9f);
         locationFab.setOnClickListener(locationFabListener);
 
         FloatingActionButton directionsFab = findViewById(R.id.direction);
-        directionsFab.hide();
         directionsFab.setOnClickListener(directionsFabListener);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -228,15 +228,23 @@ public class CoordinateOffsetActivity extends AppCompatActivity
         if(coordinate == null){
             coordinate = new Coordinate(initialCoordinatesString);
         }
-        coordinate.Offset(angleDeg, distanceInMeters);
+
+        Coordinate newCoordinate = coordinate.offset(angleDeg, distanceInMeters);
 
         TextView result = findViewById(R.id.result);
         result.setVisibility(View.VISIBLE);
-        String message = "The final coordinates are: \n" + coordinate.getFullCoordinates();
+        String message = "The final coordinates are: \n" + newCoordinate.getFullCoordinates();
         result.setText(message);
 
         FloatingActionButton directionsFab = findViewById(R.id.direction);
         directionsFab.show();
+
+        // If in landscape mode scroll down to view result
+        int orientation = this.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            NestedScrollView scrollView = findViewById(R.id.scrollView);
+            scrollView.scrollTo(0, scrollView.getBottom());
+        }
 
     }
 
@@ -346,7 +354,6 @@ public class CoordinateOffsetActivity extends AppCompatActivity
             //startActivity(intent);
 
             // Create a Uri from an intent string. Use the result to create an Intent.
-            //Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%f,0%f", coordinate.getLatitude(), coordinate.getLongitude()));
             Uri gmmIntentUri = Uri.parse(String.format(getResources().getString(R.string.coordinates_format), coordinate.getLatitude(), coordinate.getLongitude()));
 
             // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW

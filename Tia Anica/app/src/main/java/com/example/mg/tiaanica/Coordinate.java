@@ -266,7 +266,9 @@ class Coordinate implements CoordinateOffset{
 
     }
 
-    public void Offset(double angle, double distanceInMeters){
+    public Coordinate offset(double angle, double distanceInMeters){
+
+        Coordinate newCoordinate = new Coordinate(this.lat, this.lon);
 
         double X = lat;
         double Y = lon;
@@ -291,15 +293,16 @@ class Coordinate implements CoordinateOffset{
         double[] latVals = Decimal2DM(x);
         double[] lonVals = Decimal2DM(y);
 
-        this.lat = x;
-        this.lon = y;
+        newCoordinate.lat = x;
+        newCoordinate.lon = y;
 
-        this.latDeg = latVals[0];
-        this.latMin = latVals[1];
+        newCoordinate.latDeg = latVals[0];
+        newCoordinate.latMin = latVals[1];
 
-        this.lonDeg = lonVals[0];
-        this.lonMin = lonVals[1];
+        newCoordinate.lonDeg = lonVals[0];
+        newCoordinate.lonMin = lonVals[1];
 
+        return newCoordinate;
     }
 
     String getFullCoordinates() {

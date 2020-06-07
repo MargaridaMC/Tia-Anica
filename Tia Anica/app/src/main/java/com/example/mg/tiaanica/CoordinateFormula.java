@@ -250,10 +250,17 @@ class CoordinateFormula {
 
         for (Map.Entry<String, Double> pair : variables.entrySet()) {
             String key = pair.getKey();
-            String value = Double.toString(pair.getValue());
+            double value = pair.getValue();
+            String valueStr;
+            if(value % 1 == 0){
+                // value is an int
+                valueStr = Integer.toString((int) value);
+            } else { // value is double
+                valueStr = Double.toString(pair.getValue());
+            }
 
-            lat = lat.replace(key,  value);
-            lon = lon.replace(key,  value);
+            lat = lat.replace(key,  valueStr);
+            lon = lon.replace(key,  valueStr);
         }
 
         // Look for sections within parenthesis

@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> getHelp());
+        //FloatingActionButton fab = findViewById(R.id.fab);
+        //fab.setOnClickListener(view -> getHelp());
 
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

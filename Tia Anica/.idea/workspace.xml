@@ -74,13 +74,25 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Corrected font in info dialog" />
+    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Corrected font in info dialog">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffset.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffset.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_API_27" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="VFFNW19319004521" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -745,7 +757,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591535082944</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Corrected font in info dialog">
+      <created>1591535148146</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1591535148146</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TodoView">
@@ -850,54 +869,54 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="541" y="177" key="AndroidCreateXmlResourceDialog/0.0.1366.728@0.0.1366.728" timestamp="1591479603607" />
-    <state x="189" y="0" key="CommitChangelistDialog2" timestamp="1591535080180">
+    <state x="189" y="0" key="CommitChangelistDialog2" timestamp="1591535146869">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591535080180" />
+    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591535146869" />
     <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1591531851328">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1591531851328" />
-    <state width="1323" height="140" key="GridCell.Tab.0.bottom" timestamp="1591488678231">
+    <state width="1306" height="161" key="GridCell.Tab.0.bottom" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
-    <state width="1323" height="140" key="GridCell.Tab.0.center" timestamp="1591488678231">
+    <state width="1306" height="161" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.0.center" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
-    <state width="1323" height="140" key="GridCell.Tab.0.left" timestamp="1591488678231">
+    <state width="1306" height="161" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.0.left" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
-    <state width="1323" height="140" key="GridCell.Tab.0.right" timestamp="1591488678231">
+    <state width="1306" height="161" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.0.right" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
-    <state width="1323" height="140" key="GridCell.Tab.1.bottom" timestamp="1591488678232">
+    <state width="1306" height="161" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.1.bottom" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591488678232" />
-    <state width="1323" height="140" key="GridCell.Tab.1.center" timestamp="1591488678231">
+    <state width="1306" height="161" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.1.center" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
-    <state width="1323" height="140" key="GridCell.Tab.1.left" timestamp="1591488678231">
+    <state width="1306" height="161" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.1.left" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1591488678231" />
-    <state width="1323" height="140" key="GridCell.Tab.1.right" timestamp="1591488678232">
+    <state width="1306" height="161" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
+    <state width="1306" height="161" key="GridCell.Tab.1.right" timestamp="1591541713520">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="140" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1591488678232" />
+    <state width="1306" height="161" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
     <state x="184" y="6" key="SettingsEditor" timestamp="1591535141445">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1591535141445" />
-    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591535085930">
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591535149945">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591535085930" />
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591535149945" />
     <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1591474913850">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -910,6 +929,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="492" y="281" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1366.728@0.0.1366.728" timestamp="1591530597667" />
+    <state x="425" y="0" key="refactoring.ChangeSignatureDialog" timestamp="1591541344412">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="425" y="0" key="refactoring.ChangeSignatureDialog/0.0.1366.728@0.0.1366.728" timestamp="1591541344412" />
     <state x="339" y="162" key="run.anything.popup" timestamp="1591474346966">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -920,22 +943,22 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>318</line>
+          <line>325</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>316</line>
+          <line>323</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>346</line>
+          <line>351</line>
           <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>287</line>
+          <line>294</line>
           <option name="timeStamp" value="60" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
@@ -945,8 +968,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>
-          <line>330</line>
+          <line>338</line>
           <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
+          <line>250</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>
+          <line>211</line>
+          <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

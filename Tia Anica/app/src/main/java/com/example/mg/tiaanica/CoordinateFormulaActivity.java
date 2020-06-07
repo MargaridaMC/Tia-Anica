@@ -2,8 +2,10 @@ package com.example.mg.tiaanica;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,12 +13,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.text.Html;
 import android.view.View;
@@ -209,8 +214,8 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         int maxColumns;
 
         // In landscape mode put 5 fields in each row
-        if (orientation == 0) maxColumns = 4;
-        else if (orientation == 1 || orientation == 3) maxColumns = 6;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) maxColumns = 4;
+        else if (orientation == Configuration.ORIENTATION_LANDSCAPE) maxColumns = 6;
         else maxColumns = 4;
 
 
@@ -359,7 +364,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
             FloatingActionButton directionsFab = findViewById(R.id.direction);
             directionsFab.setOnClickListener(directionsFabListener);
-            //directionsFab.setVisibility(View.VISIBLE);
             directionsFab.show();
         } else {
             resultString = "Result is: " + coordinate.getFullCoordinates();
@@ -367,14 +371,20 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
         result.setText(resultString);
 
+        // Scroll down to view result
+        int orientation = this.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            ScrollView scrollView = findViewById(R.id.scrollView);
+            scrollView.scrollTo(0, scrollView.getBottom());
+        } else {
+            NestedScrollView scrollView = findViewById(R.id.scrollView);
+            scrollView.scrollTo(0, scrollView.getBottom());
+        }
+
+
     }
 
-    View.OnClickListener directionsFabListener;
-
-    {
-        directionsFabListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    View.OnClickListener directionsFabListener = (view) -> {
 
                 //Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 //        Uri.parse("https://www.google.com/maps/dir/?api=1?destination=" + coordinate.getLatitude() + "," + coordinate.getLongitude()));
@@ -394,9 +404,8 @@ public class CoordinateFormulaActivity extends AppCompatActivity
 
                 // Attempt to start an activity that can handle the Intent
                 startActivity(mapIntent);
-            }
-        };
-    }
+            };
+
 
     void getHelp(){
         // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
@@ -412,5 +421,11 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public int calculateNoOfColumns(Context context, float columnWidthDp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        return (int) (dpWidth / columnWidthDp + 0.5);
     }
 }
