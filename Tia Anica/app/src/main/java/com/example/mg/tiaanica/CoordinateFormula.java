@@ -342,4 +342,5 @@ class CoordinateFormula {
         //resultAreProperCoordinates();
         return returnStr;
     }
+
 }

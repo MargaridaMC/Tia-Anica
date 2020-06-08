@@ -72,20 +72,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/formula" />
 
-
-
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/letter_inputs"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
                 android:theme="@style/AppTheme.TextField"
+                android:numColumns="auto_fit"
                 app:layout_constraintTop_toBottomOf="@+id/NeededLetters"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-            </LinearLayout>
+            </android.support.v7.widget.RecyclerView>
 
             <Button
                 android:id="@+id/button"

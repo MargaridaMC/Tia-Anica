@@ -1,23 +1,20 @@
 package com.example.mg.tiaanica;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -34,27 +31,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import java.util.HashMap;
-import java.util.Map;
-
-import static android.view.View.generateViewId;
-import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
-import static android.view.inputmethod.EditorInfo.IME_ACTION_NEXT;
 
 public class CoordinateFormulaActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DoneWithInput {
 
     CoordinateFormula coordinate;
     String originalCoordinate;
-    HashMap<String, Double> variables;
-    ConstraintLayout constraintLayout;
 
-    HashMap<String, Integer> neededLetterIds = new HashMap<>();
-
-    int orientation;
+    LetterInputAdapter letterInputAdapter;
+    HashMap<String, Double> variableValues = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +62,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         String versionStr = "Version: " + versionName;
         version.setText(versionStr);
 
-        //FloatingActionButton fab = findViewById(R.id.fab);
-        //fab.setOnClickListener((view) -> getHelp());
-
+        // Setup navigation drawer
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -102,8 +88,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             return false;
         });
 
-        constraintLayout = findViewById(R.id.constraintLayout);
-        variables = new HashMap<>();
+        //variables = new HashMap<>();
     }
 
     @Override
@@ -166,8 +151,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         return true;
     }
 
-    @SuppressLint("SetTextI18n")
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void parseCoordFormula(View view) {
 
         // Keyboard manager -- allows keyboard to disappear
@@ -210,147 +193,65 @@ public class CoordinateFormulaActivity extends AppCompatActivity
                 "\n\nPlease fill in the value for each variable.";
         textView.setText(message);
 
-        int nNeededLetters = coordinate.neededLetters.size();
-        int maxColumns;
 
-        // In landscape mode put 5 fields in each row
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) maxColumns = 4;
-        else if (orientation == Configuration.ORIENTATION_LANDSCAPE) maxColumns = 6;
-        else maxColumns = 4;
+        // Setup area to input letter values
+        RecyclerView neededLetterInputView = findViewById(R.id.letter_inputs);
+        neededLetterInputView.setVisibility(View.VISIBLE);
 
+        // Compute number of columns to use:
+        // TODO:  make column width not show up out the blue
+        int noColumns = calculateNoOfColumns(this, 100);
+        neededLetterInputView.setLayoutManager(new GridLayoutManager(this, noColumns));
 
-        LinearLayout letterInputLayout = findViewById(R.id.letter_inputs);
-        letterInputLayout.removeAllViews();
-        letterInputLayout.setVisibility(View.VISIBLE);
+        letterInputAdapter = new LetterInputAdapter(coordinate.neededLetters, variableValues, this::doneWithInput);
 
-        // Get layout for letter inputs and inflate it
-        LayoutInflater inflater = LayoutInflater.from(this);
-        LinearLayout horizontalLine = (LinearLayout) inflater.inflate(R.layout.layout_letter_input, null, false);
-
-
-        int i= 0;
-        int column = 0;
-
-        while(i < nNeededLetters) {
-
-            String currentLetter = coordinate.neededLetters.get(i);
-
-            // This will allow us to get the values later on
-            int letterId = generateViewId();
-            neededLetterIds.put(currentLetter, letterId);
-
-            // If we've the maximum number of letters per line, add the last line to the Vew and reset it to a new line
-            if(column == maxColumns){
-
-                letterInputLayout.addView(horizontalLine);
-
-                // Get a new line
-                horizontalLine = (LinearLayout) inflater.inflate(R.layout.layout_letter_input, null, false);
-
-                column = 0;
-            }
-
-
-            TextView letterTag = null;
-            EditText letterInputArea = null;
-
-            switch (column){
-                case(0):
-                    letterTag  = horizontalLine.findViewById(R.id.letterTag0);
-                    letterInputArea = horizontalLine.findViewById(R.id.letter0);
-                    break;
-                case (1):
-                    letterTag  = horizontalLine.findViewById(R.id.letterTag1);
-                    letterInputArea = horizontalLine.findViewById(R.id.letter1);
-                    break;
-                case(2):
-                    letterTag  = horizontalLine.findViewById(R.id.letterTag2);
-                    letterInputArea = horizontalLine.findViewById(R.id.letter2);
-                    break;
-                case(3):
-                    letterTag  = horizontalLine.findViewById(R.id.letterTag3);
-                    letterInputArea = horizontalLine.findViewById(R.id.letter3);
-                    break;
-                case(4):
-                    letterTag  = horizontalLine.findViewById(R.id.letterTag4);
-                    letterInputArea = horizontalLine.findViewById(R.id.letter4);
-                    break;
-                case(5):
-                    letterTag  = horizontalLine.findViewById(R.id.letterTag5);
-                    letterInputArea = horizontalLine.findViewById(R.id.letter5);
-                    break;
-            }
-
-
-            letterTag.setText(currentLetter);
-            letterInputArea.setVisibility(View.VISIBLE);
-            letterInputArea.setId(letterId);
-            letterInputArea.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-
-            if (i == nNeededLetters - 1) {
-                letterInputArea.setImeOptions(IME_ACTION_DONE);
-                letterInputArea.setOnEditorActionListener((view1, actionId, event) -> {
-                    // If the event is a key-down event on the "enter" button
-                    if (actionId == IME_ACTION_DONE) {
-                        // Perform action on key press
-                        computeCoordinates(view1); // parse the coordinate
-                        mgr.hideSoftInputFromWindow(view1.getWindowToken(), 0); // make the keyboard disappear
-                        return true;
-                    }
-                    return false;
-                });
-            } else {
-                letterInputArea.setImeOptions(IME_ACTION_NEXT);
-            }
-
-
-            column++;
-            i++;
+        /*if(letterInputAdapter == null){
+            letterInputAdapter = new LetterInputAdapter(coordinate.neededLetters);
+        } else {// For example if we accidentally forgot a part of the formula we don't need a new object, just to update the formula
+            letterInputAdapter.setNeededLetters(coordinate.neededLetters);
         }
 
-        // Add the final one
-        letterInputLayout.addView(horizontalLine);
+         */
+        neededLetterInputView.setAdapter(letterInputAdapter);
+
 
         Button compute = findViewById(R.id.button);
         compute.setVisibility(View.VISIBLE);
 
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void computeCoordinates(View view){
 
-        // Keyboard manager -- allows keyboard to disappear
-        final InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        computeCoordinates();
+    }
+
+    public void computeCoordinates(){
+
+        // Hide keyboard -- https://medium.com/@rmirabelle/close-hide-the-soft-keyboard-in-android-db1da22b09d2
+        Activity activity = this;
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
 
         coordinate = new CoordinateFormula(originalCoordinate);
 
-        assert mgr != null;
-        mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if(variableValues.size() != coordinate.neededLetters.size()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
+            builder.setTitle("Error")
+                    .setMessage("Please fill in the values for all the variables.")
+                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
 
-        for (Map.Entry<String, Integer> entry : neededLetterIds.entrySet()) {
-
-            String letter = entry.getKey();
-            Integer id = entry.getValue();
-
-            TextView valueField = findViewById(id);
-            String valueString = valueField.getText().toString();
-
-            if(valueString.equals("")){
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(CoordinateFormulaActivity.this);
-                builder.setTitle("Error")
-                        .setMessage("Please fill in the values for all the variables.")
-                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.cancel());
-
-                builder.create().show();
-                return;
-            }
-
-            double value = Double.parseDouble(valueString);
-            variables.put(letter, value);
+            builder.create().show();
+            return;
         }
 
-        coordinate.setVariables(variables);
+        coordinate.setVariables(variableValues);
         coordinate.evaluate();
 
         TextView result = findViewById(R.id.result);
@@ -380,8 +281,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             NestedScrollView scrollView = findViewById(R.id.scrollView);
             scrollView.scrollTo(0, scrollView.getBottom());
         }
-
-
     }
 
     View.OnClickListener directionsFabListener = (view) -> {
@@ -427,5 +326,10 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         return (int) (dpWidth / columnWidthDp + 0.5);
+    }
+
+    @Override
+    public void doneWithInput() {
+        computeCoordinates();
     }
 }

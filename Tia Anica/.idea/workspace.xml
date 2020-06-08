@@ -74,18 +74,22 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Corrected font in info dialog">
+    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Removed help FAB from main menu">
+      <change afterPath="$PROJECT_DIR$/../TiAires/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/DoneWithInput.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/LetterInputAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/letter_input.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/TourListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/TourListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/Coordinate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffset.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffset.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/VigenereCipherActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coord_calculator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_coord_calculator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/layout_letter_input.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,10 +154,10 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="valueResourceFile" />
-        <option value="Class" />
-        <option value="Interface" />
         <option value="resourceFile" />
         <option value="layoutResourceFile" />
+        <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -196,8 +200,8 @@
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="device.picker.selection" value="acfde05b" />
     <property name="last.edited.regexp" value="N 48° 07.997 E 011° 34.380 " />
-    <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/java" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../TiAires" />
     <property name="project.structure.last.edited" value="Suggestions" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -764,7 +768,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591535148146</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Removed help FAB from main menu">
+      <created>1591541841748</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1591541841748</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TodoView">
@@ -813,7 +824,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="New coordinate object class and coordinate calculator allows N, S, E and W" />
     <MESSAGE value="Map section initial commit" />
     <MESSAGE value="Icons on drawer" />
     <MESSAGE value="Bug fixes" />
@@ -838,7 +848,8 @@
     <MESSAGE value="Changes in UI and simplification of UI in Coordinate Formula" />
     <MESSAGE value="Changes in UI and fixed bug where only ints were allowed in coordinate offset angle and distance" />
     <MESSAGE value="Corrected font in info dialog" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrected font in info dialog" />
+    <MESSAGE value="Removed help FAB from main menu" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed help FAB from main menu" />
   </component>
   <component name="WindowStateProjectService">
     <state x="275" y="22" key="#Notifications" timestamp="1591535101906">
@@ -857,73 +868,97 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="455" y="167" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1591400361761" />
+    <state x="1811" y="-55" key="#com.intellij.ide.util.MemberChooser" timestamp="1591648508143">
+      <screen x="1366" y="-256" width="1280" height="984" />
+    </state>
+    <state x="1811" y="-55" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648508143" />
+    <state x="1795" y="95" width="422" height="288" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1591630333941">
+      <screen x="1366" y="-256" width="1280" height="984" />
+    </state>
+    <state x="1795" y="95" width="422" height="288" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591630333941" />
     <state x="413" y="111" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1591486635700">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="413" y="111" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728@0.0.1366.728" timestamp="1591486635700" />
-    <state x="263" y="119" key="AndroidCreateResourceFileDialog" timestamp="1591401087549">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state x="1612" y="-95" key="AndroidCreateResourceFileDialog" timestamp="1591629922150">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state x="1612" y="-95" key="AndroidCreateResourceFileDialog/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591629922150" />
     <state x="263" y="119" key="AndroidCreateResourceFileDialog/0.0.1366.728@0.0.1366.728" timestamp="1591401087549" />
     <state x="541" y="177" key="AndroidCreateXmlResourceDialog" timestamp="1591479603607">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="541" y="177" key="AndroidCreateXmlResourceDialog/0.0.1366.728@0.0.1366.728" timestamp="1591479603607" />
-    <state x="189" y="0" key="CommitChangelistDialog2" timestamp="1591535146869">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state x="1543" y="-256" key="CommitChangelistDialog2" timestamp="1591649395425">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
-    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591535146869" />
-    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1591531851328">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state x="1543" y="-256" key="CommitChangelistDialog2/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591649395425" />
+    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591541840540" />
+    <state x="1800" y="-95" key="FileChooserDialogImpl" timestamp="1591629838613">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state x="1800" y="-95" key="FileChooserDialogImpl/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591629838613" />
     <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1591531851328" />
-    <state width="1306" height="161" key="GridCell.Tab.0.bottom" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.0.bottom" timestamp="1591648741355">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.0.bottom/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741355" />
     <state width="1306" height="161" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.0.center" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.0.center" timestamp="1591648741355">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.0.center/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741355" />
     <state width="1306" height="161" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.0.left" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.0.left" timestamp="1591648741355">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.0.left/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741355" />
     <state width="1306" height="161" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.0.right" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.0.right" timestamp="1591648741355">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.0.right/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741355" />
     <state width="1306" height="161" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.1.bottom" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.1.bottom" timestamp="1591648741356">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.1.bottom/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741356" />
     <state width="1306" height="161" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.1.center" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.1.center" timestamp="1591648741355">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.1.center/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741355" />
     <state width="1306" height="161" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.1.left" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.1.left" timestamp="1591648741355">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.1.left/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741355" />
     <state width="1306" height="161" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
-    <state width="1306" height="161" key="GridCell.Tab.1.right" timestamp="1591541713520">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="1237" height="101" key="GridCell.Tab.1.right" timestamp="1591648741356">
+      <screen x="1366" y="-256" width="1280" height="984" />
     </state>
+    <state width="1237" height="101" key="GridCell.Tab.1.right/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591648741356" />
     <state width="1306" height="161" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1591541713520" />
     <state x="184" y="6" key="SettingsEditor" timestamp="1591535141445">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1591535141445" />
-    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591535149945">
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591541845369">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591535149945" />
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591541845369" />
+    <state x="1822" y="14" key="chooseDestDirectoryDialog" timestamp="1591630309749">
+      <screen x="1366" y="-256" width="1280" height="984" />
+    </state>
+    <state x="1822" y="14" key="chooseDestDirectoryDialog/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591630309749" />
     <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1591474913850">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1366.728@0.0.1366.728" timestamp="1591474913850" />
-    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1591533295013">
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1591629618698">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1591629618698" />
     <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1591533295013" />
     <state x="492" y="281" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1591530597667">
       <screen x="0" y="0" width="1366" height="728" />
@@ -941,26 +976,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>325</line>
-          <option name="timeStamp" value="47" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>323</line>
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java</url>
-          <line>351</line>
-          <option name="timeStamp" value="57" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>294</line>
-          <option name="timeStamp" value="60" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>
           <line>227</line>
@@ -970,11 +985,6 @@
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>
           <line>338</line>
           <option name="timeStamp" value="67" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormula.java</url>
-          <line>250</line>
-          <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateOffsetActivity.java</url>

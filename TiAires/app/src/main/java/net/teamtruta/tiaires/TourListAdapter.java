@@ -16,13 +16,11 @@ import java.util.ArrayList;
 public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourViewHolder> {
 
     private ArrayList<GeocachingTourSummary> _tourList;
-    private LayoutInflater mInflater;
     private ItemClickListener onClickListener;
 
     // data is passed into the constructor
-    TourListAdapter(Context context,  ArrayList<GeocachingTourSummary> data, ItemClickListener listener) {
+    TourListAdapter(ArrayList<GeocachingTourSummary> data, ItemClickListener listener) {
 
-        this.mInflater = LayoutInflater.from(context);
         _tourList = data;
         this.onClickListener = listener;
     }
@@ -30,7 +28,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     // inflates the row layout from xml when needed
     @Override
     public TourViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.element_tour_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_tour_layout, parent, false);
         return new TourViewHolder(view);
     }
 

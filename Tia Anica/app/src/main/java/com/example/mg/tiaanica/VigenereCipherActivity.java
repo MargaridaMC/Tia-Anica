@@ -41,10 +41,7 @@ public class VigenereCipherActivity extends AppCompatActivity
         String versionStr = "Version: " + versionName;
         version.setText(versionStr);
 
-        // Help FAB
-        //FloatingActionButton fab = findViewById(R.id.fab);
-        //fab.setOnClickListener((view) -> getHelp());
-
+        // Setup navigation drawer
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
