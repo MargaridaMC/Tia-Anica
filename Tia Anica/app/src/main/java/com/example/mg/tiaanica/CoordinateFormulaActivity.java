@@ -203,15 +203,7 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         int noColumns = calculateNoOfColumns(this, 100);
         neededLetterInputView.setLayoutManager(new GridLayoutManager(this, noColumns));
 
-        letterInputAdapter = new LetterInputAdapter(coordinate.neededLetters, variableValues, this::doneWithInput);
-
-        /*if(letterInputAdapter == null){
-            letterInputAdapter = new LetterInputAdapter(coordinate.neededLetters);
-        } else {// For example if we accidentally forgot a part of the formula we don't need a new object, just to update the formula
-            letterInputAdapter.setNeededLetters(coordinate.neededLetters);
-        }
-
-         */
+        letterInputAdapter = new LetterInputAdapter(coordinate.neededLetters, variableValues, this);
         neededLetterInputView.setAdapter(letterInputAdapter);
 
 

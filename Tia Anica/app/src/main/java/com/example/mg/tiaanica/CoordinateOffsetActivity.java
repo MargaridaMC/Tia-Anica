@@ -86,9 +86,6 @@ public class CoordinateOffsetActivity extends AppCompatActivity
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        //FloatingActionButton fab = findViewById(R.id.fab);
-        //fab.setOnClickListener((view) -> getHelp());
-
         FloatingActionButton locationFab = findViewById(R.id.myLocationButton);
         locationFab.setOnClickListener(locationFabListener);
 

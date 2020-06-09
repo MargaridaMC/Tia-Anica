@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
 
-import static android.view.View.generateViewId;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 
 public class LetterInputAdapter extends RecyclerView.Adapter<LetterInputAdapter.LetterInputViewHolder> {
@@ -65,7 +63,6 @@ public class LetterInputAdapter extends RecyclerView.Adapter<LetterInputAdapter.
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String valueString = viewHolder.letterValue.getText().toString();
-                // TODO: if string is "" display warning
                 if(valueString.equals("")) return;
                 double value = Double.parseDouble(valueString);
                 String currentLetter = viewHolder.letter.getText().toString();
@@ -97,7 +94,7 @@ public class LetterInputAdapter extends RecyclerView.Adapter<LetterInputAdapter.
 
             letter = itemView.findViewById(R.id.letter);
             letterValue = itemView.findViewById(R.id.letter_value);
-            letterValue.setId(generateViewId());
+
         }
     }
 }
