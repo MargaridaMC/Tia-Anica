@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import java.util.HashMap;
+
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 
 public class CoordinateFormulaActivity extends AppCompatActivity
@@ -87,8 +88,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
             }
             return false;
         });
-
-        //variables = new HashMap<>();
     }
 
     @Override
@@ -201,15 +200,21 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         // Compute number of columns to use:
         // TODO:  make column width not show up out the blue
         int noColumns = calculateNoOfColumns(this, 100);
-        neededLetterInputView.setLayoutManager(new GridLayoutManager(this, noColumns));
+        GridLayoutManager layout = new GridLayoutManager(this, noColumns);
+        neededLetterInputView.setLayoutManager(layout);
 
         letterInputAdapter = new LetterInputAdapter(coordinate.neededLetters, variableValues, this);
         neededLetterInputView.setAdapter(letterInputAdapter);
 
-
+        // Make compute button visible
         Button compute = findViewById(R.id.button);
         compute.setVisibility(View.VISIBLE);
 
+        // Move focus to RecyclerView
+        neededLetterInputView.requestFocusFromTouch();
+
+        // reopen keyboard
+        mgr.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     public void computeCoordinates(View view){

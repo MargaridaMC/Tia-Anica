@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/initial_coordinates"
             android:theme="@style/AppTheme.TextField"
+            android:hint="@string/initial_coordinate_hint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

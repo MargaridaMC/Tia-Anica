@@ -96,5 +96,9 @@ public class LetterInputAdapter extends RecyclerView.Adapter<LetterInputAdapter.
             letterValue = itemView.findViewById(R.id.letter_value);
 
         }
+
+        public EditText getLeterValueArea(){
+            return letterValue;
+        }
     }
 }

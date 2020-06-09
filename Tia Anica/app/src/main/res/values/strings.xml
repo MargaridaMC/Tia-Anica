@@ -18,6 +18,7 @@
     <string name="Decode">Decode</string>
     <string name="latitude_hint"><font size="15">Enter the initial latitude</font></string>
     <string name="longitude_hint"><font size="15">Enter the initial longitude</font></string>
+    <string name="initial_coordinate_hint"><font size = "15">Enter the initial coordinates</font></string>
     <string name="angle_hint"><font size="15">Enter the angle in degrees</font></string>
     <string name="distance_hint"><font size="15">Enter the distance in metres</font></string>
     <string name="coord_formula_hint"><font size="15">Enter the coordinate formula</font></string>
