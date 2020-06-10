@@ -235,7 +235,6 @@ public class CoordinateFormulaActivity extends AppCompatActivity
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-
         coordinate = new CoordinateFormula(originalCoordinate);
 
         if(variableValues.size() != coordinate.neededLetters.size()){

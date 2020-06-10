@@ -35,7 +35,7 @@
     <string name="nav_header_subtitle">https://github.com/MargaridaMC/Tia-Anica</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="initial_coordinates">Initial\nCoordinates:</string>
-    <string name="angle_in_degrees">Angle (in degrees):</string>
+    <string name="angle_in_degrees">Angle\n(in degrees):</string>
     <string name="distance_in_m">Distance\n(in m):</string>
     <string name="compute">Compute</string>
     <string name="gps_network_not_enabled">You need to have GPS signal enabled in order to use this feature.</string>

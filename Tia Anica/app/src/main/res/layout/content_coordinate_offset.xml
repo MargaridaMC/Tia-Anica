@@ -26,124 +26,124 @@
             android:layout_height="wrap_content"
             android:text="@string/initial_coordinates"
             android:theme="@style/AppTheme.TextField"
-            android:hint="@string/initial_coordinate_hint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/coordinates"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/margin"
-            android:ems="10"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toBottomOf="@+id/InitialCoordinates"
-            app:layout_constraintEnd_toStartOf="@+id/myLocationButton"
-            app:layout_constraintStart_toEndOf="@+id/InitialCoordinates"
-            app:layout_constraintTop_toTopOf="@+id/InitialCoordinates"
-            tools:ignore="LabelFor"
-            tools:targetApi="o" />
+                <EditText
+                    android:id="@+id/coordinates"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:ems="10"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName"
+                    android:hint="@string/initial_coordinate_hint"
+                    app:layout_constraintBottom_toBottomOf="@+id/InitialCoordinates"
+                    app:layout_constraintEnd_toStartOf="@+id/myLocationButton"
+                    app:layout_constraintStart_toEndOf="@+id/InitialCoordinates"
+                    app:layout_constraintTop_toTopOf="@+id/InitialCoordinates"
+                    tools:ignore="LabelFor"
+                    tools:targetApi="o" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/myLocationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="@dimen/margin"
-            android:src="@android:drawable/ic_menu_mylocation"
-            app:borderWidth="0dp"
-            app:elevation="0dp"
-            app:fabSize="mini"
-            app:layout_constraintStart_toEndOf="@+id/coordinates"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:pressedTranslationZ="12dp" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/myLocationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="@dimen/margin"
+                    android:src="@android:drawable/ic_menu_mylocation"
+                    app:borderWidth="0dp"
+                    app:elevation="0dp"
+                    app:fabSize="mini"
+                    app:layout_constraintStart_toEndOf="@+id/coordinates"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:pressedTranslationZ="12dp" />
 
-        <TextView
-            android:id="@+id/angleID"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/angle_in_degrees"
-            android:theme="@style/AppTheme.TextField"
-            app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
-            app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
-            app:layout_constraintTop_toBottomOf="@+id/InitialCoordinates" />
+                <TextView
+                    android:id="@+id/angleID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/angle_in_degrees"
+                    android:theme="@style/AppTheme.TextField"
+                    app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
+                    app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
+                    app:layout_constraintTop_toBottomOf="@+id/InitialCoordinates" />
 
-        <EditText
-            android:id="@+id/angle"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:ems="10"
-            android:inputType="numberDecimal"
-            android:hint="@string/angle_hint"
-            app:layout_constraintBottom_toBottomOf="@+id/angleID"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/coordinates"
-            app:layout_constraintTop_toTopOf="@+id/angleID" />
+                <EditText
+                    android:id="@+id/angle"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:ems="10"
+                    android:inputType="numberDecimal"
+                    android:hint="@string/angle_hint"
+                    app:layout_constraintBottom_toBottomOf="@+id/angleID"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/angleID"
+                    app:layout_constraintTop_toTopOf="@+id/angleID" />
 
-        <TextView
-            android:id="@+id/distanceID"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/distance_in_m"
-            android:theme="@style/AppTheme.TextField"
-            app:layout_constraintEnd_toEndOf="@+id/angleID"
-            app:layout_constraintStart_toStartOf="@+id/angleID"
-            app:layout_constraintTop_toBottomOf="@+id/angleID" />
+                <TextView
+                    android:id="@+id/distanceID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/distance_in_m"
+                    android:theme="@style/AppTheme.TextField"
+                    app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
+                    app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
+                    app:layout_constraintTop_toBottomOf="@+id/angleID" />
 
-        <EditText
-            android:id="@+id/distance"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:ems="10"
-            android:importantForAutofill="no"
-            android:inputType="numberDecimal"
-            android:hint="@string/distance_hint"
-            app:layout_constraintBottom_toBottomOf="@+id/distanceID"
-            app:layout_constraintEnd_toEndOf="@+id/angle"
-            app:layout_constraintStart_toStartOf="@+id/angle"
-            app:layout_constraintTop_toTopOf="@+id/distanceID"
-            tools:ignore="LabelFor,UnusedAttribute" />
+                <EditText
+                    android:id="@+id/distance"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:ems="10"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:hint="@string/distance_hint"
+                    app:layout_constraintBottom_toBottomOf="@+id/distanceID"
+                    app:layout_constraintEnd_toEndOf="@+id/angle"
+                    app:layout_constraintStart_toEndOf="@+id/distanceID"
+                    app:layout_constraintTop_toTopOf="@+id/distanceID"
+                    tools:ignore="LabelFor,UnusedAttribute" />
 
-        <Button
-            android:id="@+id/offset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="compute"
-            android:text="@string/compute"
-            style="@style/AppTheme.Button"
-            android:layout_marginTop="@dimen/padding"
-            android:layout_marginStart="@dimen/padding"
-            app:layout_constraintTop_toBottomOf="@+id/distance"
-            app:layout_constraintStart_toStartOf="@+id/distanceID"/>
+                <Button
+                    android:id="@+id/offset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="compute"
+                    android:text="@string/compute"
+                    style="@style/AppTheme.Button"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginStart="@dimen/padding"
+                    app:layout_constraintTop_toBottomOf="@+id/distance"
+                    app:layout_constraintStart_toStartOf="@+id/distanceID"/>
 
 
-        <TextView
-            android:id="@+id/result"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:visibility="gone"
-            android:theme="@style/AppTheme.TextField"
-            app:layout_constraintEnd_toStartOf="@+id/direction"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/offset" />
+                <TextView
+                    android:id="@+id/result"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:visibility="gone"
+                    android:theme="@style/AppTheme.TextField"
+                    app:layout_constraintEnd_toStartOf="@+id/direction"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/offset" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/direction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_marginBottom="8dp"
-            android:src="@android:drawable/ic_menu_directions"
-            app:borderWidth="0dp"
-            app:elevation="0dp"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/result"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/result"
-            app:pressedTranslationZ="12dp" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/direction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_marginBottom="8dp"
+                    android:src="@android:drawable/ic_menu_directions"
+                    app:borderWidth="0dp"
+                    app:elevation="0dp"
+                    app:fabSize="mini"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/result"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/result"
+                    app:pressedTranslationZ="12dp" />
 
     </android.support.constraint.ConstraintLayout>
 

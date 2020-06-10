@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:text="@string/initial_coordinates"
             android:theme="@style/AppTheme.TextField"
-            android:hint="@string/initial_coordinate_hint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,6 +43,7 @@
             android:ems="10"
             android:importantForAutofill="no"
             android:inputType="textPersonName"
+            android:hint="@string/initial_coordinate_hint"
             app:layout_constraintBottom_toBottomOf="@+id/InitialCoordinates"
             app:layout_constraintEnd_toStartOf="@+id/myLocationButton"
             app:layout_constraintStart_toEndOf="@+id/InitialCoordinates"
@@ -145,6 +145,7 @@
             app:borderWidth="0dp"
             app:elevation="0dp"
             app:fabSize="mini"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/result"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/result"

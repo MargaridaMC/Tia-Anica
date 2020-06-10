@@ -19,6 +19,5 @@
         app:layout_constraintStart_toEndOf="@+id/letter"
         app:layout_constraintBottom_toBottomOf="@id/letter"
         android:imeOptions="actionNext"
-        android:inputType="number|numberDecimal|numberSigned"/>
-
+        android:inputType="number|numberDecimal|numberSigned" />
 </android.support.constraint.ConstraintLayout>
