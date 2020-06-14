@@ -25,20 +25,18 @@ import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener, CacheListAdapter.OnVisitListener {
 
-    String tourName;
-    GeocachingTour tour;
-    String _rootPath;
+    GeocachingTour _tour;
+    Long tourID = -1L;
 
     SoundPool soundPool;
     int soundID;
+
+    DbConnection dbConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +51,20 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
 
+        // Setup connection to database
+        dbConnection = new DbConnection(this);
+
+        // Get the ID of the tour that was clicked on
         Intent intent = getIntent();
-        tourName = Objects.requireNonNull(intent.getExtras()).getString("_tourName");
+        tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1);//intent.getLongExtra(MainActivity.TOUR_ID_EXTRA, -1);
+        if(tourID == -1){
+            // Something went wrong
+            // TODO: handle error
+            return;
+        }
 
-        Map<String, String> properties = new HashMap<>();
-        properties.put("TourName", tourName);
-        Analytics.trackEvent("TourActivity.onCreate", properties);
-
-        _rootPath = App.getTourRoot();
-
-        tour = GeocachingTour.read(_rootPath, tourName);
+        _tour = GeocachingTour.getGeocachingTourFromID(tourID, dbConnection);//new GeocachingTour(tourID, dbConnection);//new CacheDbTable(this).getGeocachingTour(tourID);
+        String tourName = _tour.getName();
 
         // Set title
         ab.setTitle(tourName);
@@ -73,18 +75,20 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         // Set List
         RecyclerView cacheListView = findViewById(R.id.tour_view);
         cacheListView.setLayoutManager(new LinearLayoutManager(this));
-        CacheListAdapter cacheListAdapter = new CacheListAdapter(tour, this, this);
+        CacheListAdapter cacheListAdapter = new CacheListAdapter(_tour, this, this);
         CacheListAdapter.onVisitListener = this;
         cacheListView.setAdapter(cacheListAdapter);
+
 
         // Create diving line between elements
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
         dividerItemDecoration.setDrawable(new ColorDrawable(this.getColor(R.color.black)));
         cacheListView.addItemDecoration(dividerItemDecoration);
 
-        // Add swipe to delete action
+        // Add swipe to visit action
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CacheInteractionCallback(cacheListAdapter));
         itemTouchHelper.attachToRecyclerView(cacheListView);
+/*
 
         // Show dialog if there were caches that were not obtained
         String geocachesNotObtainedString = intent.getStringExtra("geocachesNotObtained");
@@ -96,6 +100,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             dialog.show();
         }
 
+        */
+
         //  Setup ping sound
         setupAudio();
     }
@@ -103,14 +109,14 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     public void setProgressBar(){
         TextView progressText = findViewById(R.id.tour_progress);
-        String progress = tour.getNumFound() + " + " + tour.getNumDNF() + " / " + tour.getSize();
+        String progress = _tour.getNumFound() + " + " + _tour.getNumDNF() + " / " + _tour.getSize();
         progressText.setText(progress);
     }
 
     public void editTour(View view){
         Intent intent = new Intent(this, TourCreationActivity.class);
-        intent.putExtra("_tourName", tourName);
-        intent.putExtra("edit", true);
+        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
+        intent.putExtra(App.EDIT_EXTRA, true);
         startActivity(intent);
     }
 
@@ -118,6 +124,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
 
         final Context context = this;
+
+        String tourName = _tour.getName();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete tour?");
@@ -129,16 +137,17 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             properties.put("UserConfirmed", "true");
             Analytics.trackEvent("TourActivity.deleteTour", properties);
 
-            // Delete tour file
-            GeocachingTour.deleteTourFile(_rootPath, tourName);
+            // Delete Tour
+            int nRowsDeleted = new TourDbTable(this).deleteTour(tourID);
+            if(nRowsDeleted == 1){
+                // Successfully deleted tour
+                Intent intent = new Intent(context, MainActivity.class);
+                startActivity(intent);
+            } else {
+                // TODO: Something went wrong
+            }
 
-            String allToursFilePath = App.getAllToursFilePath();
-            TourList.removeTour(allToursFilePath, tourName);
-            ArrayList<GeocachingTourSummary> allTours = TourList.read(allToursFilePath);
-            if(allTours.size() == 0) new File(allToursFilePath).delete();
 
-            Intent intent = new Intent(context, MainActivity.class);
-            startActivity(intent);
         });
 
         builder.setNegativeButton("Cancel", (dialog, id) -> {
@@ -167,17 +176,17 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     @Override
-    public void onClick(int position) {
+    public void onEditClick(long cacheID) {
         Intent intent = new Intent(this, CacheDetailActivity.class);
-        intent.putExtra("currentTour", tour.toString());
-        intent.putExtra("currentCacheIndex", position);
+        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
+        intent.putExtra(App.CACHE_ID_EXTRA, cacheID);
         startActivity(intent);
     }
 
     @Override
     public void onGoToClick(String code){
 
-        // Open geocache in Geocahe app or website
+        // Open geocache in Geocache app or website
         /*
         String url = "https://coord.info/" + code;
         Intent i = new Intent(Intent.ACTION_VIEW);
@@ -187,7 +196,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         startActivity(i);
         */
         Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra("_tourName", tourName);
+        intent.putExtra("_tourName", _tour.getName());
         intent.putExtra("focusOnCache", true);
         intent.putExtra("geocacheCode", code);
         startActivity(intent);
@@ -203,12 +212,12 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     public void share(View view){
 
-        String tourCacheCodesString = tour.getTourCacheCodes().toString();
+        String tourCacheCodesString = _tour.getTourCacheCodes().toString();
         tourCacheCodesString = tourCacheCodesString.substring(1, tourCacheCodesString.length() - 1);
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("vnd.android.cursor.dir/email");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, tourName);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, _tour.getName());
         shareIntent.putExtra(Intent.EXTRA_TEXT, tourCacheCodesString);
         this.startActivity(shareIntent);
 

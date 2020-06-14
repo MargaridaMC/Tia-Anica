@@ -1,12 +1,18 @@
 package net.teamtruta.tiaires;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 
 public class App extends Application {
 
     private static Context mContext;
-    private static String _allToursFile = "alltours.txt";
+
+    static String TOUR_ID_EXTRA = "tourID";
+    static String EDIT_EXTRA = "edit";
+    static String CACHE_ID_EXTRA = "cacheID";
 
     @Override
     public void onCreate() {
@@ -18,12 +24,27 @@ public class App extends Application {
         return mContext;
     }
 
-    public static String getTourRoot(){
-        return mContext.getFilesDir().toString() + "/" + mContext.getString(R.string.tour_folder);
-    }
+    public static String getAuthenticationCookie(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String authCookie = sharedPreferences.getString(mContext.getString(R.string.authentication_cookie_key), "");
 
-    public static String getAllToursFilePath(){
-        return getTourRoot() + "/" + _allToursFile;
+        if (authCookie.equals("")) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setMessage("Login information is missing. Please input your credentials in the login screen.");
+            builder.setPositiveButton(mContext.getString(R.string.ok), (dialog, id) -> {
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                mContext.startActivity(intent);
+                return;
+            });
+            builder.setNegativeButton(mContext.getString(R.string.cancel), ((dialog, which) -> {
+            }));
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+        return authCookie;
     }
 
 }

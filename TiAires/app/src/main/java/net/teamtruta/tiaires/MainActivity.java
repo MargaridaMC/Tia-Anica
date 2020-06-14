@@ -20,9 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.microsoft.appcenter.AppCenter;
@@ -34,12 +33,18 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
     RecyclerView.Adapter tourListAdapter;
     RecyclerView tourListView;
 
+    String TAG = MainActivity.class.getSimpleName();
+
+    DbConnection dbConnection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         AppCenter.start(getApplication(), "67d245e6-d08d-4d74-8616-9af6c3471a09", Analytics.class, Crashes.class);
 
+        // Setup connection to database
+        dbConnection = new DbConnection(this);
 
         // If Login is required, set contentView to the login page
         // Else go to home page
@@ -51,28 +56,26 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         properties.put("Username", username);
         Analytics.trackEvent("MainActivity.onCreate", properties);
 
-        Log.d("TAG", "Cookie: " + authCookie);
+        Log.d(TAG, "Cookie: " + authCookie);
 
         if(authCookie.equals("")){
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
 
-        String rootPath = App.getTourRoot();
+        /*String rootPath = App.getTourRoot();
         File tourFolder = new File(rootPath);
         if(!tourFolder.exists()){
             tourFolder.mkdir();
         }
-        Log.d("TAG", "Tours data folder exists: " + tourFolder.exists());
+        Log.d(TAG, "Tours data folder exists: " + tourFolder.exists());*/
 
-        String allToursFilePath = App.getAllToursFilePath();
-        if(TourList.exists(allToursFilePath))
-        {
-            Log.d("TAG", "TourList file exists: true");
-
+        // Get all tours
+        List<GeocachingTour> tourList = GeocachingTour.getAllTours(dbConnection); //new TourDbTable(this).getAllTours(dbConnection);
+        if(tourList.size() == 0){
+            setContentView(R.layout.activity_main_nothing_to_show);
+        } else {
             setContentView(R.layout.activity_main);
-
-            ArrayList<GeocachingTourSummary> tourList = TourList.read(allToursFilePath);
 
             tourListView = findViewById(R.id.tour_list);
             tourListView.setLayoutManager(new LinearLayoutManager(this));
@@ -82,9 +85,6 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
             dividerItemDecoration.setDrawable(new ColorDrawable(getColor(R.color.black)));
             tourListView.addItemDecoration(dividerItemDecoration);
-
-        } else {
-            setContentView(R.layout.activity_main_nothing_to_show);
         }
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         if(!username.equals("")){
             getSupportActionBar().setTitle(username);
         }
+
+        // Delete all Cache details that are in the database but unused
+        // new CacheDetailDbTable(this).collectCacheDetailGarbage();
 
     }
 
@@ -140,11 +143,11 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
     }
 
     @Override
-    public void onItemClick(View view, int position, String tourName) {
-        //Toast.makeText(this, "You clicked " + _tourName + " on row number " + position, Toast.LENGTH_SHORT).show();
+    public void onItemClick(View view, int position, Long tourID) {
+        //Toast.makeText(this, "You clicked on the tour with the id: " + tourID , Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra("_tourName", tourName);
+        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
         startActivity(intent);
     }
 

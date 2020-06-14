@@ -244,7 +244,7 @@ public class GeocachingScrapper {
         matcher = pattern.matcher(pageContents);
 
         if (matcher.find()) {
-            gc.setType(CacheTypeEnum.valueOfTypeString(matcher.group(1)));
+            gc.setType(CacheTypeEnum.valueOfString(matcher.group(1)));
         } else {
             gc.setType(CacheTypeEnum.Other);
         }

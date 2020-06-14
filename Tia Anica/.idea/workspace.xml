@@ -74,22 +74,15 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Focus in coordinate formula moves to letter input area when Enter is clicked">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/shaded_rectangle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+    <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Corrected spacing in Coordinate Offset">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/mg/tiaanica/CoordinateFormulaActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_coordinate_offset.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_coordinate_offset.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/letter_input.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/letter_input.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="VFFNW19319004521" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_API_27" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -790,7 +783,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591717540487</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Corrected spacing in Coordinate Offset">
+      <created>1591824440914</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1591824440918</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -830,7 +830,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="Bug in coordinate calculator: replacing E in coordinates" />
     <MESSAGE value="Changes in Coordinate Calculator / Coordinate Definition" />
     <MESSAGE value="Corrected bug in coordinate calculator" />
     <MESSAGE value="Changes in coordinate parsing" />
@@ -855,7 +854,8 @@
     <MESSAGE value="Exchanged CoordinateFormula input area with a RecyclerView" />
     <MESSAGE value="Background is no longer cropped" />
     <MESSAGE value="Focus in coordinate formula moves to letter input area when Enter is clicked" />
-    <option name="LAST_COMMIT_MESSAGE" value="Focus in coordinate formula moves to letter input area when Enter is clicked" />
+    <MESSAGE value="Corrected spacing in Coordinate Offset" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrected spacing in Coordinate Offset" />
   </component>
   <component name="WindowStateProjectService">
     <state x="275" y="22" key="#Notifications" timestamp="1591535101906">
@@ -896,12 +896,12 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="541" y="177" key="AndroidCreateXmlResourceDialog/0.0.1366.728@0.0.1366.728" timestamp="1591479603607" />
-    <state x="189" y="0" key="CommitChangelistDialog2" timestamp="1591717599670">
+    <state x="189" y="0" key="CommitChangelistDialog2" timestamp="1591824435624">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1591717599670" />
     <state x="1543" y="-256" key="CommitChangelistDialog2/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591687285887" />
-    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591541840540" />
+    <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1591824435624" />
     <state x="1800" y="-95" key="FileChooserDialogImpl" timestamp="1591629838613">
       <screen x="1366" y="-256" width="1280" height="984" />
     </state>
@@ -959,12 +959,12 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1591535141445" />
-    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591717621963">
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2" timestamp="1591824452430">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1591717621963" />
     <state x="1624" y="-125" key="Vcs.Push.Dialog.v2/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591687290771" />
-    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591541845369" />
+    <state x="275" y="97" key="Vcs.Push.Dialog.v2/0.0.1366.728@0.0.1366.728" timestamp="1591824452430" />
     <state x="1822" y="14" key="chooseDestDirectoryDialog" timestamp="1591687021688">
       <screen x="1366" y="-256" width="1280" height="984" />
     </state>

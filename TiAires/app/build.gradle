@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 29
@@ -41,6 +42,12 @@ dependencies {
     implementation files('libs/json-simple.jar')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
     implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     // https://mvnrepository.com/artifact/org.jxmapviewer/jxmapviewer2
     // implementation group: 'org.jxmapviewer', name: 'jxmapviewer2', version: '2.0'
+}
+repositories {
+    mavenCentral()
 }

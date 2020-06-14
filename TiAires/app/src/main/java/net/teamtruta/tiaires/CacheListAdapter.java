@@ -1,6 +1,5 @@
 package net.teamtruta.tiaires;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -15,11 +14,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
 
@@ -40,13 +34,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     }
     @Override
     public int getItemCount(){
-        return tour.getSize();
+        return (int) tour.getSize();
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
 
-        GeocacheInTour geocacheInTour = tour.getCacheInTour(position);
+        GeocacheInTour geocacheInTour = tour._tourCaches.get(position);
         Geocache geocache = geocacheInTour.getGeocache();
 
         // Set cache name
@@ -125,6 +119,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         // Set information line 1: Found: date - \heart nFavs - Hint/No hint
         holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
+/*
 
         List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
         for(int i=0; i<10;i++){
@@ -146,6 +141,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             holder.lastLogsLayout.addView(squareImageView);
 
         }
+*/
 
 
         holder.hint.setText(getHintText(geocache));
@@ -167,7 +163,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // Set listener for edit button
         holder.editButton.setOnClickListener(v -> {
             if(editOnClickListener!=null){
-                editOnClickListener.onClick(position);
+                editOnClickListener.onEditClick(geocacheInTour._id);
             }
         });
 
@@ -195,7 +191,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     private View.OnClickListener expandCacheDetail(int position, ViewHolder holder) {
 
-        Geocache geocache = tour.getCacheInTour(position).getGeocache();
+        Geocache geocache = tour._tourCaches.get(position).getGeocache();
 
         return v -> {
 
@@ -268,10 +264,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
 
-        Date lastLogDate = geocache.getLastLogDate();
+       /* Date lastLogDate = geocache.getLastLogDate();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "dd/MMM/yy");
         String info = "Last log: " + simpleDateFormat.format(lastLogDate) + "- &#9825; " + geocache.getFavourites();
+*/
 
+       String info = "- &#9825; " + geocache.getFavourites();
         if(withHint){
 
             info += " - ";
@@ -311,14 +309,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // recentlyVisitedCache = tour.getCacheInTour(position);
         // recentlyVisitedCachePosition = position;
 
-        tour.getCacheInTour(position).setVisit(visit);
-
-        String rootPath = App.getTourRoot();
-        GeocachingTour.write(rootPath, tour);
-
-        // update the element we just changed
-        String allToursFilePath = App.getAllToursFilePath();
-        TourList.update(allToursFilePath, tour.getSummary());
+        GeocacheInTour selectedGeocache = tour._tourCaches.get(position);
+        selectedGeocache.setNewVisit(visit);
 
         onVisitListener.onVisit(visit.toString());
     }
@@ -332,11 +324,11 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
 
-        tour.swapCachePositions(fromPosition, toPosition);
+       /* tour.swapCachePositions(fromPosition, toPosition);
 
         notifyItemMoved(fromPosition, toPosition);
 
-        GeocachingTour.write(App.getTourRoot(), tour);
+        GeocachingTour.write(App.getTourRoot(), tour);*/
 
         return true;
     }
@@ -382,7 +374,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     }
 
     interface EditOnClickListener {
-        void onClick(int position);
+        void onEditClick(long cacheID);
     }
 
     interface GoToOnClickListener{

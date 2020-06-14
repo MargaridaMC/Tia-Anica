@@ -21,12 +21,13 @@ import java.util.Calendar;
 
 public class CacheDetailActivity extends AppCompatActivity {
 
-    GeocachingTour tour;
-    int currentCacheIndex;
-    GeocacheInTour currentCache;
+    GeocacheInTour currentGeocache;
 
     SoundPool soundPool;
     int soundID;
+
+    DbConnection _dbConnection;
+    long _tourID;
 
 
     @Override
@@ -37,41 +38,40 @@ public class CacheDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_cache_detail);
         setSupportActionBar(toolbar);
 
+        // Setup connection to database
+        _dbConnection = new DbConnection(this);
+
         Intent intent = getIntent();
+        long cacheID = intent.getLongExtra(App.CACHE_ID_EXTRA,  -1L);
+        _tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1L);
+        if(cacheID == -1L){
+            // TODO: Something went wrong
+        } else {
 
-        // Get the tour info
-        String currentTourString = intent.getStringExtra("currentTour");
-        tour = GeocachingTour.fromString(currentTourString);
-
-        // Get the clicked cache info
-        currentCacheIndex = intent.getIntExtra("currentCacheIndex", -1);
-        if(currentCacheIndex == -1){
-            // TODO: Something went wrong -- check
-            return;
         }
 
-        currentCache = tour.getCacheInTour(currentCacheIndex);
+        currentGeocache = GeocacheInTour.getGeocacheFromID(cacheID, _dbConnection);
 
         // Set Cache Title
         ActionBar ab = getSupportActionBar();
         assert ab != null;
-        ab.setTitle(currentCache.getGeocache().getName());
+        ab.setTitle(currentGeocache.getGeocache().getName());
         ab.setDisplayHomeAsUpEnabled(true);
 
         // Set Not Found / Found / DNF toggle and appropriate onClickListener
         MultiStateToggleButton cacheVisitButton = this.findViewById(R.id.cache_visit_button);
         boolean[] buttonStates = new boolean[] {true, false, false};
 
-        if(currentCache.getVisit() == FoundEnumType.Found)
+        if(this.currentGeocache.getVisit() == FoundEnumType.Found)
             buttonStates = new boolean[] {false, true, false};
-        else if(currentCache.getVisit() == FoundEnumType.DNF)
+        else if(this.currentGeocache.getVisit() == FoundEnumType.DNF)
             buttonStates = new boolean[] {false, false, true};
 
         cacheVisitButton.setStates(buttonStates);
 
         cacheVisitButton.setOnValueChangedListener(position -> {
             if(position == 0){
-                currentCache.setVisit(FoundEnumType.NotAttempted);
+                this.currentGeocache.setVisit(FoundEnumType.NotAttempted);
             }
             else if(position == 1) cacheFound();
             else if(position == 2) cacheNotFound();
@@ -79,17 +79,17 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Set Checkboxes
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
-        if(currentCache.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
+        if(this.currentGeocache.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
         CheckBox foundTrackableCheckBox = findViewById(R.id.foundTrackableCheckBox);
-        if(currentCache.getFoundTrackable()) foundTrackableCheckBox.setChecked(true);
+        if(this.currentGeocache.getFoundTrackable()) foundTrackableCheckBox.setChecked(true);
         CheckBox droppedTrackableCheckBox = findViewById(R.id.droppedTrackableCheckBox);
-        if(currentCache.getDroppedTrackable()) droppedTrackableCheckBox.setChecked(true);
+        if(this.currentGeocache.getDroppedTrackable()) droppedTrackableCheckBox.setChecked(true);
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
-        if(currentCache.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
+        if(this.currentGeocache.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
 
         // Set my notes
         EditText notesSection = findViewById(R.id.notes);
-        String myNotes = currentCache.getNotes();
+        String myNotes = this.currentGeocache.getNotes();
         if(!myNotes.equals("")) notesSection.setText(myNotes);
 
         //  Setup ping sound
@@ -102,7 +102,7 @@ public class CacheDetailActivity extends AppCompatActivity {
         //onBackPressed();
 
         Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra("_tourName", tour.getName());
+        intent.putExtra(App.TOUR_ID_EXTRA, _tourID);
         startActivity(intent);
 
         return true;
@@ -114,19 +114,19 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         // Cache was found
 
-        if(currentCache.getVisit() == FoundEnumType.Found){
+        if(currentGeocache.getVisit() == FoundEnumType.Found){
             // If cache has already been found and we are clicking on Found again
             // We want to reverse this -- set cache as not Attempted
-            currentCache.setVisit(FoundEnumType.NotAttempted);
-            currentCache.setFoundDate(null);
+            currentGeocache.setVisit(FoundEnumType.NotAttempted);
+            currentGeocache.setFoundDate(null);
 
             MultiStateToggleButton cacheVisitButton = this.findViewById(R.id.cache_visit_button);
             cacheVisitButton.setStates(new boolean[] {true, false, false});
 
         } else {
             // We want to set this cache as found
-            currentCache.setVisit(FoundEnumType.Found);
-            currentCache.setFoundDate(Calendar.getInstance().getTime());
+            currentGeocache.setVisit(FoundEnumType.Found);
+            currentGeocache.setFoundDate(Calendar.getInstance().getTime());
             playPing();
         }
 
@@ -136,19 +136,19 @@ public class CacheDetailActivity extends AppCompatActivity {
     public void cacheNotFound(){
         // DNF
 
-        if(currentCache.getVisit() == FoundEnumType.DNF){
+        if(currentGeocache.getVisit() == FoundEnumType.DNF){
             // If cache is already a DNF and we are clicking on DNF again
             // We want to reverse this -- set cache as not Attempted
-            currentCache.setVisit(FoundEnumType.NotAttempted);
-            currentCache.setFoundDate(null);
+            currentGeocache.setVisit(FoundEnumType.NotAttempted);
+            currentGeocache.setFoundDate(null);
 
             MultiStateToggleButton cacheVisitButton = this.findViewById(R.id.cache_visit_button);
             cacheVisitButton.setStates(new boolean[] {true, false, false});
 
         } else {
             // We want to set this cache as DNF
-            currentCache.setVisit(FoundEnumType.DNF);
-            currentCache.setFoundDate(Calendar.getInstance().getTime());
+            currentGeocache.setVisit(FoundEnumType.DNF);
+            currentGeocache.setFoundDate(Calendar.getInstance().getTime());
 
             playPing();
         }
@@ -165,34 +165,17 @@ public class CacheDetailActivity extends AppCompatActivity {
         // Get notes and save changes
         EditText notesView = findViewById(R.id.notes);
         String myNotes = notesView.getText().toString();
-        currentCache.setNotes(myNotes);
+        currentGeocache.setNotes(myNotes);
 
-        // Replace position of this cache in tour
-        tour.setCacheInTour(currentCacheIndex, currentCache);
-
-        // Finally save changes to file
-        String rootPath = App.getTourRoot();
-        //tour.toFile(rootPath);
-        GeocachingTour.write(rootPath, tour);
-
-        // update the element we just changed
-        String allToursFilePath = App.getAllToursFilePath();
-        TourList.update(allToursFilePath, tour.getSummary());
-
-        // Toast t = Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT);
-        // t.show();
-
-        // Intent intent = new Intent(this, TourActivity.class);
-        // intent.putExtra("_tourName", tour.getName());
-        // startActivity(intent);
+        currentGeocache.saveChanges();
     }
 
     public void onNeedsMaintenanceCheckboxClicked(View view) {
 
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
         if(needsMaintenanceCheckBox.isChecked())
-            currentCache.setNeedsMaintenance(true);
-        else currentCache.setNeedsMaintenance(false);
+            currentGeocache.setNeedsMaintenance(true);
+        else currentGeocache.setNeedsMaintenance(false);
 
     }
 
@@ -200,8 +183,8 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         CheckBox foundTrackableCheckBox = findViewById(R.id.foundTrackableCheckBox);
         if(foundTrackableCheckBox.isChecked())
-            currentCache.setFoundTrackable(true);
-        else currentCache.setFoundTrackable(false);
+            currentGeocache.setFoundTrackable(true);
+        else currentGeocache.setFoundTrackable(false);
 
     }
 
@@ -209,8 +192,8 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         CheckBox droppedTrackableCheckBox = findViewById(R.id.droppedTrackableCheckBox);
         if(droppedTrackableCheckBox.isChecked())
-            currentCache.setDroppedTrackable(true);
-        else currentCache.setDroppedTrackable(false);
+            currentGeocache.setDroppedTrackable(true);
+        else currentGeocache.setDroppedTrackable(false);
 
     }
 
@@ -218,8 +201,8 @@ public class CacheDetailActivity extends AppCompatActivity {
 
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
         if(favouritePointCheckBox.isChecked())
-            currentCache.setFavouritePoint(true);
-        else currentCache.setFavouritePoint(false);
+            currentGeocache.setFavouritePoint(true);
+        else currentGeocache.setFavouritePoint(false);
 
     }
 

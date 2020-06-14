@@ -1,6 +1,6 @@
 package net.teamtruta.tiaires;
 
-enum FoundEnumType
+public enum FoundEnumType
 {
     NotAttempted(""),
     DNF("Didn't find it"),
@@ -9,7 +9,7 @@ enum FoundEnumType
     Disabled("Temporarily Disable Listing"),
     NeedsMaintenance("Needs Maintenance");
 
-    private String foundTypeString;
+    public String foundTypeString;
 
     public String getTypeString(){
         return foundTypeString;

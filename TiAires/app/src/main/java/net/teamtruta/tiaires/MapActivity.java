@@ -34,7 +34,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Intent intent = getIntent();
+       /* Intent intent = getIntent();
         tourName = intent.getExtras().getString("_tourName");
         setTitle(tourName);
         tour = GeocachingTour.read(App.getTourRoot(), tourName);
@@ -43,7 +43,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if(focusOnCache){
             String cacheCode = intent.getExtras().getString("geocacheCode");
             cacheToFocusOn = tour.getCacheInTour(cacheCode);
-        }
+        }*/
         Log.d("TAG", "Focus: " + focusOnCache);
     }
 
@@ -73,7 +73,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
         List<LatLng> allCacheCoordinates = new ArrayList<>();
-        for(GeocacheInTour gcit : tour.getTourGeocaches()){
+        for(GeocacheInTour gcit : tour._tourCaches){
 
             LatLng geocacheCoordinates = gcit.getGeocache().getLatLng();
             allCacheCoordinates.add(geocacheCoordinates);

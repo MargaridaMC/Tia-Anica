@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
+public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
 
     private GeocachingScrapper scrapper;
     private List<String> geocacheCodesList;
-    PostGeocachingScrapping delegate;
-    private List<Geocache> caches = new ArrayList<Geocache>();
+    GeocachingTour delegate;
+    private List<Geocache> caches = new ArrayList<>();
 
     GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geocacheCodesList){
         this.scrapper = scrapper;
@@ -22,10 +22,10 @@ public class GeocachingScrappingTask extends AsyncTask<String, Void, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(String... tourName)
+    protected Integer doInBackground(Void... voids)
     {
         Map<String, String> properties = new HashMap<>();
-        properties.put("TourName", tourName[0]);
+        //properties.put("TourName", tourName[0]);
         properties.put("NumCaches", Integer.toString(geocacheCodesList.size()));
         Analytics.trackEvent("GeocachingScrappingTask.doBackground", properties);
 

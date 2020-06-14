@@ -9,9 +9,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class Geocache {
     private String _code;
     private String _name;
@@ -27,6 +27,33 @@ public class Geocache {
     private int _favourites;
     private ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
     private String _DNFRisk = "";
+
+    static DbConnection _dbConnection;
+
+    public Geocache(String _code, String _name, Coordinate _latitude, Coordinate _longitude, String _size, String _difficulty, String _terrain, CacheTypeEnum _type, FoundEnumType _foundIt, String _hint, int _favourites) {
+        this._code = _code;
+        this._name = _name;
+        this._latitude = _latitude;
+        this._longitude = _longitude;
+        this._size = _size;
+        this._difficulty = _difficulty;
+        this._terrain = _terrain;
+        this._type = _type;
+        this._foundIt = _foundIt;
+        this._hint = _hint;
+        this._favourites = _favourites;
+    }
+
+    public Geocache() {
+
+    }
+
+    public Geocache(DbConnection dbConnection) {
+        _dbConnection = dbConnection;
+    }
+
+    public static void save(List<Long> cacheListIds) {
+    }
 
     // These set and get methods needs to be public otherwise the serialization will not work.
     public String getCode(){ return _code; }
@@ -103,8 +130,6 @@ public class Geocache {
 
     }
 
-
-
     boolean isDNFRisk(){
         return !_DNFRisk.equals("");
     }
@@ -141,7 +166,6 @@ public class Geocache {
 
     }
 
-
     boolean hasHint(){
 
         return !_hint.equals("NO MATCH");
@@ -176,4 +200,35 @@ public class Geocache {
         else return "DNF Risk";
 
     }
+
+    static long existsInDb(String code, DbConnection dbConnection){
+        return dbConnection.getCacheDetailTable().contains(code);
+    }
+
+    static List<Long> getGeocaches(List<String> requestedCaches, DbConnection dbConnection, GeocachingTour geocachingTour){
+
+        List<Long> cacheListIds = new ArrayList<>();
+        List<String> cachesToGet = new ArrayList<>();
+
+        // First check if any of the caches already exist in the database
+        for(String c : requestedCaches){
+            long cacheID = existsInDb(c, dbConnection);
+            if(cacheID != -1L){
+                cacheListIds.add(cacheID);
+            } else {
+                cachesToGet.add(c);
+            }
+        }
+
+        // Scrape the remaining caches
+        String authCookie = App.getAuthenticationCookie();
+        GeocachingScrapper scrapper = new GeocachingScrapper(authCookie);
+        GeocachingScrappingTask geocachingScrappingTask = new GeocachingScrappingTask(scrapper, cachesToGet);
+        geocachingScrappingTask.delegate = geocachingTour;
+        geocachingScrappingTask.execute();
+
+        return cacheListIds;
+    }
+
+
 }

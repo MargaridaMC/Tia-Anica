@@ -1,6 +1,5 @@
 package net.teamtruta.tiaires;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +10,17 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourViewHolder> {
 
-    private ArrayList<GeocachingTourSummary> _tourList;
+    private List<GeocachingTour> _tourList;
     private ItemClickListener onClickListener;
 
     // data is passed into the constructor
-    TourListAdapter(ArrayList<GeocachingTourSummary> data, ItemClickListener listener) {
+    TourListAdapter(List<GeocachingTour> data, ItemClickListener listener){
 
-        _tourList = data;
+        this._tourList = data;
         this.onClickListener = listener;
     }
 
@@ -35,21 +34,20 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(TourViewHolder holder, int position) {
-        //String animal = mData._tourList(position);
-        GeocachingTourSummary tourSummary = _tourList.get(position);
+        GeocachingTour tour = _tourList.get(position);
 
         // Set tour title
-        holder.tourTitle.setText(tourSummary.getName());
+        holder.tourTitle.setText(tour.getName());
 
         // Set tour symbol
-        if(tourSummary.getIsCurrentTour()){
+        if(tour._isCurrentTour){
             holder.tourSymbol.setImageResource(R.drawable.star);
         }
 
         // Write progress in text
-        int numFinds = tourSummary.getNumFound();
-        int numDNFS = tourSummary.getNumDNF();
-        int totalCaches = tourSummary.getSize(); // # TODO -- this breaks the OO model...
+        long numFinds = tour.getNumFound();
+        long numDNFS = tour.getNumDNF();
+        long totalCaches = tour.getSize(); // # TODO -- this breaks the OO model...
 
         String progressText = numFinds + " + " + numDNFS + " / " + totalCaches;
         holder.tourProgressText.setText(progressText);
@@ -97,8 +95,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
 
             if (onClickListener != null) {
                 int position = getAdapterPosition();
-                String tourName = _tourList.get(position).getName();
-                onClickListener.onItemClick(view, position, tourName);
+                //String tourName = _tourList.get(position).getName();
+                onClickListener.onItemClick(view, position, _tourList.get(position)._id);
             }
         }
 
@@ -106,6 +104,6 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener  {
-        void onItemClick(View view, int position, String tourName);
+        void onItemClick(View view, int position, Long tourID);
     }
 }
