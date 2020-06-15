@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         }
 
         // Delete all Cache details that are in the database but unused
-        // new CacheDetailDbTable(this).collectCacheDetailGarbage();
+        new CacheDetailDbTable(this).collectCacheDetailGarbage();
 
     }
 

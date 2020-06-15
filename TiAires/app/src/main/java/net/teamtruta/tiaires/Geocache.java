@@ -1,7 +1,5 @@
 package net.teamtruta.tiaires;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.time.ZoneId;
@@ -9,8 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Stream;
 
 public class Geocache {
     private String _code;
@@ -25,10 +21,11 @@ public class Geocache {
     private FoundEnumType _foundIt; // 0 - no, 1 - DNF, 2 - yes
     private String _hint;
     private int _favourites;
-    private ArrayList<GeocacheLog> _recentLogs = new ArrayList<>();
+    private List<GeocacheLog> _recentLogs = new ArrayList<>();
     private String _DNFRisk = "";
 
     static DbConnection _dbConnection;
+    long _id;
 
     public Geocache(String _code, String _name, Coordinate _latitude, Coordinate _longitude, String _size, String _difficulty, String _terrain, CacheTypeEnum _type, FoundEnumType _foundIt, String _hint, int _favourites) {
         this._code = _code;
@@ -44,15 +41,28 @@ public class Geocache {
         this._favourites = _favourites;
     }
 
+    public Geocache(String _code, String _name, Coordinate _latitude, Coordinate _longitude, String _size, String _difficulty, String _terrain, CacheTypeEnum _type, FoundEnumType _foundIt, String _hint, int _favourites, List<GeocacheLog> recentLogs, long id) {
+        this._code = _code;
+        this._name = _name;
+        this._latitude = _latitude;
+        this._longitude = _longitude;
+        this._size = _size;
+        this._difficulty = _difficulty;
+        this._terrain = _terrain;
+        this._type = _type;
+        this._foundIt = _foundIt;
+        this._hint = _hint;
+        this._favourites = _favourites;
+        this._recentLogs = recentLogs;
+        this._id = id;
+    }
+
     public Geocache() {
 
     }
 
     public Geocache(DbConnection dbConnection) {
         _dbConnection = dbConnection;
-    }
-
-    public static void save(List<Long> cacheListIds) {
     }
 
     // These set and get methods needs to be public otherwise the serialization will not work.
@@ -89,11 +99,10 @@ public class Geocache {
     public int getFavourites(){ return _favourites; }
     public void setFavourites(int favourites){ this._favourites = favourites;}
 
-    public ArrayList<GeocacheLog> getRecentLogs(){ return _recentLogs;}
+    public List<GeocacheLog> getRecentLogs(){ return _recentLogs;}
     public void setRecentLogs(ArrayList<GeocacheLog> recentLogs){this._recentLogs = recentLogs;}
 
     public String getDNFRisk(){return _DNFRisk; }
-    public void setDNFRisk(String risk){this._DNFRisk = risk;}
 
     LatLng getLatLng(){
 
@@ -107,9 +116,9 @@ public class Geocache {
         // I'm not going to comment what I think about this line of _code, esp if compared with the C# version.
         // #language-of-the-flintstones
 
-        GeocacheLog lastLog = _recentLogs.stream().filter(log -> log.logType == FoundEnumType.Found).findFirst().get();
+        GeocacheLog lastLog = _recentLogs.stream().filter(log -> log.getLogType() == FoundEnumType.Found).findFirst().get();
 
-        return ChronoUnit.DAYS.between(lastLog.logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        return ChronoUnit.DAYS.between(lastLog.getLogDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
     public double AverageDaysBetweenFinds()
@@ -117,7 +126,7 @@ public class Geocache {
         if (_recentLogs == null || _recentLogs.size() == 0)
             return 0;
 
-        long daysDifference = ChronoUnit.DAYS.between(_recentLogs.get(_recentLogs.size()-1).logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+        long daysDifference = ChronoUnit.DAYS.between(_recentLogs.get(_recentLogs.size()-1).getLogDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
                 new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
         return daysDifference / (double) _recentLogs.size();
@@ -126,7 +135,7 @@ public class Geocache {
     int countDNFsInLastLogs(int numberOfLogsToCheck){
 
         List<GeocacheLog> logsToCheck = _recentLogs.subList(0, numberOfLogsToCheck);
-        return (int) logsToCheck.stream().filter(log -> log.logType == FoundEnumType.DNF).count();
+        return (int) logsToCheck.stream().filter(log -> log.getLogType() == FoundEnumType.DNF).count();
 
     }
 
@@ -137,12 +146,12 @@ public class Geocache {
     public String setDNFRisk(){
 
         GeocacheLog lastLog = _recentLogs.get(0);
-        if(lastLog.logType == FoundEnumType.Disabled) {
+        if(lastLog.getLogType() == FoundEnumType.Disabled) {
             _DNFRisk = "Disabled";
             return _DNFRisk;
         }
 
-        if(lastLog.logType == FoundEnumType.NeedsMaintenance) {
+        if(lastLog.getLogType() == FoundEnumType.NeedsMaintenance) {
             _DNFRisk = "Needs Maintenance";
             return _DNFRisk;
         }
@@ -154,9 +163,9 @@ public class Geocache {
             _DNFRisk = "DNFs in last " + maxLogs + ": " + nDNFs;
 
             // Count DNFs since last log
-            if(_recentLogs.get(0).logType == FoundEnumType.DNF){
+            if(_recentLogs.get(0).getLogType() == FoundEnumType.DNF){
                 int i = 0;
-                while (_recentLogs.get(i).logType == FoundEnumType.DNF) i++;
+                while (_recentLogs.get(i).getLogType() == FoundEnumType.DNF) i++;
                 _DNFRisk += " including last " + i;
             }
 
@@ -174,15 +183,15 @@ public class Geocache {
 
     Date getLastFindDate(){
 
-        Object[] allFinds = _recentLogs.stream().filter(log -> log.logType.equals(FoundEnumType.Found)).toArray();
+        Object[] allFinds = _recentLogs.stream().filter(log -> log.getLogType().equals(FoundEnumType.Found)).toArray();
         GeocacheLog lastFind = (GeocacheLog) allFinds[allFinds.length - 1];
-        return lastFind.logDate;
+        return lastFind.getLogDate();
 
     }
 
     Date getLastLogDate(){
 
-        return _recentLogs.get(0).logDate;
+        return _recentLogs.get(0).getLogDate();
 
     }
 
@@ -193,9 +202,9 @@ public class Geocache {
     public String getDNFRiskShort() {
 
         GeocacheLog lastLog = _recentLogs.get(0);
-        if(lastLog.logType == FoundEnumType.Disabled)
+        if(lastLog.getLogType() == FoundEnumType.Disabled)
             return "Disabled";
-        if(lastLog.logType == FoundEnumType.NeedsMaintenance)
+        if(lastLog.getLogType() == FoundEnumType.NeedsMaintenance)
             return  "Needs Maintenance";
         else return "DNF Risk";
 

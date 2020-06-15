@@ -2,6 +2,9 @@ package net.teamtruta.tiaires
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun SQLiteDatabase.doQuery(tableName: String, columns : Array<String>, selection : String? = null,
                                    selectionArgs : Array<String>? = null, groupBy : String? = null,
@@ -40,3 +43,17 @@ inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T) : T{
 }
 
 fun Boolean.toInt() = if (this) 1 else 0
+
+val DATE_STRING_FORMAT = "dd.MMM.yyyy"
+
+
+fun Date.toFormattedString() : String{
+    val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT)
+    return dateFormat.format(this)
+}
+
+fun String.toDate() : Date?{
+    //val format = "E MMM dd hh:mm:ss z yyyy"
+    val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT)
+    return dateFormat.parse(this)
+}

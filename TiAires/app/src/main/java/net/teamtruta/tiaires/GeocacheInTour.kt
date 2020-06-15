@@ -33,11 +33,11 @@ class GeocacheInTour {
 
     fun setNewVisit(visit: FoundEnumType) {
         this.visit = visit
-        val success = _dbConnection!!.cacheTable.setGeocacheVisit(this)
+        val success = _dbConnection!!.cacheTable.updateEntry(this)
     }
 
     fun saveChanges() {
-        val success = _dbConnection!!.cacheTable.setGeocacheVisit(this)
+        val success = _dbConnection!!.cacheTable.updateEntry(this)
     }
 
     companion object {

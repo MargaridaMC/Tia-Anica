@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 
-class CacheDetailDbTable(context: Context)  {
+class CacheDetailDbTable(private val context: Context)  {
 
     private val TAG = CacheDetailDbTable::class.simpleName
     private val dbHelper = TiAiresDb(context)
@@ -12,6 +12,7 @@ class CacheDetailDbTable(context: Context)  {
     fun store(gc : Geocache) : Long{
         val db = dbHelper.writableDatabase
         val values = ContentValues()
+
         with(values){
             put(CacheDetailEntry.NAME_COL, gc.name)
             put(CacheDetailEntry.CODE_COL, gc.code)
@@ -27,9 +28,21 @@ class CacheDetailDbTable(context: Context)  {
         }
 
         val id = db.transaction { insert(CacheDetailEntry.TABLE_NAME, null, values) }
+        gc._id = id
 
+        LogDbTable(context).storeLogsInCache(gc)
+        db.close()
         Log.d(TAG, "Stored new Geocache In Tour to the DB $gc")
         return id
+    }
+
+    fun store(caches: MutableList<Geocache>): MutableList<Long> {
+
+        val cacheIds = mutableListOf<Long>()
+        for(gc in caches){
+            cacheIds.add(store(gc))
+        }
+        return cacheIds
     }
 
     fun getGeocache(geocacheID: Long) : Geocache {
@@ -38,20 +51,27 @@ class CacheDetailDbTable(context: Context)  {
         val columns = CacheDetailEntry.getAllColumns()
 
         val cursor = db.doQuery(CacheDetailEntry.TABLE_NAME, columns, "${CacheDetailEntry._ID} = ${geocacheID}")
-        cursor.moveToFirst()
-        val name = cursor.getString(CacheDetailEntry.NAME_COL)
-        val code = cursor.getString(CacheDetailEntry.CODE_COL)
-        val type = CacheTypeEnum.valueOfString(cursor.getString(CacheDetailEntry.TYPE_COL))
-        val size = cursor.getString(CacheDetailEntry.SIZE_COL)
-        val terrain = cursor.getString(CacheDetailEntry.TERRAIN_COL)
-        val difficulty = cursor.getString(CacheDetailEntry.DIF_COL)
-        val visitType = FoundEnumType.valueOfString(cursor.getString(CacheDetailEntry.FIND_COL))
-        val hint = cursor.getString(CacheDetailEntry.HINT_COL)
-        val latitude = Coordinate(cursor.getDouble(CacheDetailEntry.LAT_COL))
-        val longitude = Coordinate(cursor.getDouble(CacheDetailEntry.LON_COL))
-        val nFavs = cursor.getInt(CacheDetailEntry.CODE_COL)
 
-        val gc = Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visitType, hint, nFavs)
+        // Let's get all the logs that are associated with this cache
+        val logList = LogDbTable(context).getAllLogsInCache(geocacheID)
+
+        val gc : Geocache =
+                with(cursor){
+                    moveToFirst()
+                    val name = getString(CacheDetailEntry.NAME_COL)
+                    val code = getString(CacheDetailEntry.CODE_COL)
+                    val type = CacheTypeEnum.valueOfString(getString(CacheDetailEntry.TYPE_COL))
+                    val size = getString(CacheDetailEntry.SIZE_COL)
+                    val terrain = getString(CacheDetailEntry.TERRAIN_COL)
+                    val difficulty = getString(CacheDetailEntry.DIF_COL)
+                    val visitType = FoundEnumType.valueOfString(getString(CacheDetailEntry.FIND_COL))
+                    val hint = getString(CacheDetailEntry.HINT_COL)
+                    val latitude = Coordinate(getDouble(CacheDetailEntry.LAT_COL))
+                    val longitude = Coordinate(getDouble(CacheDetailEntry.LON_COL))
+                    val nFavs = getInt(CacheDetailEntry.CODE_COL)
+                    Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visitType, hint, nFavs, logList, geocacheID)
+                }
+
         cursor.close()
         db.close()
         return gc
@@ -76,24 +96,47 @@ class CacheDetailDbTable(context: Context)  {
 
         Log.d(TAG, "Cache Detail Garbage Collection called")
 
+        val idToDelete = mutableListOf<Long>()
+        val SQL_QUERY = "SELECT  ${CacheDetailEntry._ID} FROM ${CacheDetailEntry.TABLE_NAME} " +
+                "WHERE ${CacheDetailEntry._ID} NOT IN (" +
+                "SELECT DISTINCT (${CacheEntry.CACHE_DETAIL_ID_FK_COL}) FROM ${CacheEntry.TABLE_NAME}" +
+                ")"
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery(SQL_QUERY, null)
+        if(cursor.moveToFirst()){
+            idToDelete.add(cursor.getLong(CacheDetailEntry._ID))
+        }
+        cursor.close()
+        db.close()
+
+        // Delete Logs pertaining to this cache and then the cache
+        val logTable = LogDbTable(context)
+        for(id in idToDelete){
+            logTable.deleteLogsInCache(id)
+            deleteEntry(id)
+        }
+/*
+
         val SQL_GARBAGE_COLLECTION_QUERY = "DELETE FROM ${CacheDetailEntry.TABLE_NAME} " +
                 "WHERE ${CacheDetailEntry._ID} NOT IN (" +
                 "SELECT DISTINCT (${CacheEntry.CACHE_DETAIL_ID_FK_COL}) FROM ${CacheEntry.TABLE_NAME}" +
                 ")"
-
         val db = dbHelper.writableDatabase
         db.execSQL(SQL_GARBAGE_COLLECTION_QUERY)
+*/
 
-        db.close()
     }
 
-    fun store(caches: MutableList<Geocache>): MutableList<Long> {
 
-        val cacheIds = mutableListOf<Long>()
-        for(gc in caches){
-            cacheIds.add(store(gc))
-        }
-        return cacheIds
+    fun deleteEntry(id : Long){
+
+        // First delete all logs related to this cache
+        LogDbTable(context).deleteLogsInCache(id)
+
+        // The delete entries to this cache
+        val db = dbHelper.writableDatabase
+        db.delete(CacheDetailEntry.TABLE_NAME, "${CacheDetailEntry._ID} = ?", arrayOf("$id"))
+        db.close()
     }
 
 }

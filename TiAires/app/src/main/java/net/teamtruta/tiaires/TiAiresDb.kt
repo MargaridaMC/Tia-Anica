@@ -30,6 +30,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${CacheEntry.FOUND_TRACKABLE_COL} INTEGER," +
             "${CacheEntry.DROPPED_TRACKABLE_COL} INTEGER," +
             "${CacheEntry.FAV_POINT_COL} INTEGER," +
+            "${CacheEntry.ORDER_COL} INTEGER," +
             "${CacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
             "${CacheEntry.CACHE_DETAIL_ID_FK_COL} INTEGER," + // REFERENCES ${CacheDetailEntry.TABLE_NAME}(${CacheDetailEntry._ID})" +
             "FOREIGN KEY(${CacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME} ON DELETE CASCADE," +
@@ -58,8 +59,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     private val SQL_CREATE_LOG_TABLE = "CREATE TABLE ${LogEntry.TABLE_NAME}(" +
             "${LogEntry._ID} INTEGER PRIMARY KEY," +
             "${LogEntry.LOG_DATE_COL} TEXT," +
-            "${LogEntry.LOG_TYPE_COL} INTEGER," +
-            "${LogEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME} ON DELETE CASCADE" +
+            "${LogEntry.LOG_TYPE_COL} TEXT," +
+            "${LogEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME}" +
             ")"
 
     // Query to delete all tables

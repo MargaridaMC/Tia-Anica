@@ -11,7 +11,7 @@ import java.util.List;
 public class GeocachingTour implements PostGeocachingScrapping
 {
     private String _name;
-    List<GeocacheInTour> _tourCaches = new ArrayList();
+    List<GeocacheInTour> _tourCaches = new ArrayList<>();
     boolean _isCurrentTour = false;
     long _id = -1L;
     DbConnection _dbConnection;
@@ -85,7 +85,7 @@ public class GeocachingTour implements PostGeocachingScrapping
     void removeFromTour(String code)
     {
         final String upperCode = code.toUpperCase();
-        _dbConnection.getCacheTable().removeCache(upperCode);
+        _dbConnection.getCacheTable().deleteCache(upperCode);
     }
 
     public void addToTour(List<String> cachesToGet) { // TODO: trocar isto por uma classe básica de todas as collecções?

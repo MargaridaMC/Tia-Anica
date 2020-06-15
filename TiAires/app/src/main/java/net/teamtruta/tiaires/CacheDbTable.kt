@@ -5,12 +5,12 @@ import android.content.Context
 import android.database.Cursor
 import android.database.DatabaseUtils
 import android.util.Log
+import java.lang.Exception
 
 class CacheDbTable (private val context: Context) {
 
     private val TAG = CacheDbTable::class.simpleName
     private val dbHelper = TiAiresDb(context)
-
 
     fun getAllCachesInTour(tourID: Long, dbConnection : DbConnection): List<GeocacheInTour>{
 
@@ -19,7 +19,7 @@ class CacheDbTable (private val context: Context) {
         // Query database for all caches with this foreign key
         val db = dbHelper.readableDatabase
         val columns = CacheEntry.getAllColumns()
-        val cursor = db.doQuery(CacheEntry.TABLE_NAME, columns, "${CacheEntry.TOUR_ID_FK_COL} = ${tourID}")
+        val cursor = db.doQuery(CacheEntry.TABLE_NAME, columns, "${CacheEntry.TOUR_ID_FK_COL} = ${tourID}", orderBy = CacheEntry.ORDER_COL)
         while(cursor.moveToNext()){
             val geocacheInTour = cursor.getGeocacheInTour(dbConnection)
             allCaches.add(geocacheInTour)
@@ -55,28 +55,51 @@ class CacheDbTable (private val context: Context) {
 
     fun storeNew(tourIDFK: Long, geocacheIDFK: Long) : Long{
 
-        val gc = GeocacheInTour()
+        val geocacheInTour = GeocacheInTour()
+        val geocache = CacheDetailDbTable(context).getGeocache(geocacheIDFK)
         val db = dbHelper.writableDatabase
+
+        // Get index for next element in order
+        // val cursor = db.doQuery(CacheEntry.TABLE_NAME, arrayOf("MAX(${CacheEntry.ORDER_COL})"), "${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourIDFK"))
+        val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) FROM ${CacheEntry.TABLE_NAME} " +
+                "WHERE ${CacheEntry.TOUR_ID_FK_COL} = $tourIDFK", null)
+        val orderIdx = try{
+            cursor.moveToFirst()
+            cursor.getInt(CacheEntry.ORDER_COL) + 1
+        } catch (e : Exception){
+            -1
+        }
+
         val values = ContentValues()
         with(values){
-            put(CacheEntry.FOUND_DATE_COL, gc.foundDate?.toString())
-            put(CacheEntry.NEEDS_MAINTENANCE_COL, gc.needsMaintenance)
-            put(CacheEntry.VISIT_COL, gc.visit.typeString)
-            put(CacheEntry.NOTES_COL, gc.notes)
-            put(CacheEntry.FOUND_TRACKABLE_COL, gc.foundTrackable)
-            put(CacheEntry.DROPPED_TRACKABLE_COL, gc.droppedTrackable)
-            put(CacheEntry.FAV_POINT_COL, gc.favouritePoint)
+
+            // If we have already found this cache then we want that information to be included in the Geocache In Tour
+            if(geocache.foundIt == FoundEnumType.Found || geocache.foundIt == FoundEnumType.DNF){
+                put(CacheEntry.VISIT_COL, geocache.foundIt.typeString)
+            } else {
+                put(CacheEntry.VISIT_COL, geocacheInTour.visit.typeString)
+            }
+
+            put(CacheEntry.FOUND_DATE_COL, geocacheInTour.foundDate?.toString())
+            put(CacheEntry.NEEDS_MAINTENANCE_COL, geocacheInTour.needsMaintenance)
+            put(CacheEntry.NOTES_COL, geocacheInTour.notes)
+            put(CacheEntry.FOUND_TRACKABLE_COL, geocacheInTour.foundTrackable)
+            put(CacheEntry.DROPPED_TRACKABLE_COL, geocacheInTour.droppedTrackable)
+            put(CacheEntry.FAV_POINT_COL, geocacheInTour.favouritePoint)
             put(CacheEntry.TOUR_ID_FK_COL, tourIDFK)
             put(CacheEntry.CACHE_DETAIL_ID_FK_COL, geocacheIDFK)
+            put(CacheEntry.ORDER_COL, orderIdx)
         }
 
         val id = db.transaction { insert(CacheEntry.TABLE_NAME, null, values) }
 
-        Log.d(TAG, "Stored new GeocacheInTour to the DB $gc")
+        Log.d(TAG, "Stored new GeocacheInTour to the DB $geocacheInTour")
+
+        cursor.close()
+        db.close()
 
         return id
     }
-
 
     fun getTourCacheCodes(tourID: Long):List<String>{
 
@@ -102,7 +125,7 @@ class CacheDbTable (private val context: Context) {
         return cacheCodes
     }
 
-    fun removeCache(code: String) {
+    fun deleteCache(code: String) {
         val db = dbHelper.writableDatabase
         val QUERY = "DELETE FROM ${CacheEntry.TABLE_NAME} " +
                 "WHERE ${CacheEntry.CACHE_DETAIL_ID_FK_COL} IN (" +
@@ -113,26 +136,29 @@ class CacheDbTable (private val context: Context) {
         db.close()
     }
 
+    fun deleteEntry(id : Long) : Int{
+        val db = dbHelper.writableDatabase
+        return db.delete(CacheEntry.TABLE_NAME, "${CacheEntry._ID} = ?", arrayOf("$id"))
+    }
+
     fun addCachesToTour(tourID : Long, newGeocaches: MutableList<Long>) {
         for(geocacheID in newGeocaches){
             storeNew(tourID, geocacheID)
         }
     }
 
-    fun setGeocacheVisit(geocache : GeocacheInTour) : Boolean{
+    fun updateEntry (geocache : GeocacheInTour) : Boolean{
 
         val db = dbHelper.writableDatabase
         val values = ContentValues()
         with(values){
+            put(CacheEntry.NOTES_COL, geocache.notes)
             put(CacheEntry.VISIT_COL,  geocache.visit.typeString)
-            //if(geocache.foundDate == null) putNull(CacheEntry.FOUND_DATE_COL)
-            //else put(CacheEntry.FOUND_DATE_COL, geocache.foundDate.toString())
-            put(CacheEntry.FOUND_DATE_COL, geocache.foundDate?.toString())
             put(CacheEntry.NEEDS_MAINTENANCE_COL, geocache.needsMaintenance)
-            put(CacheEntry.FAV_POINT_COL, geocache.favouritePoint)
+            put(CacheEntry.FOUND_DATE_COL, geocache.foundDate?.toString())
             put(CacheEntry.FOUND_TRACKABLE_COL, geocache.foundTrackable)
             put(CacheEntry.DROPPED_TRACKABLE_COL, geocache.droppedTrackable)
-            put(CacheEntry.NOTES_COL, geocache.notes)
+            put(CacheEntry.FAV_POINT_COL, geocache.favouritePoint)
         }
 
         val nLinesChanged = db.update(CacheEntry.TABLE_NAME, values, "${CacheEntry._ID} = ?", arrayOf("${geocache._id}"))
@@ -141,7 +167,6 @@ class CacheDbTable (private val context: Context) {
 
         return nLinesChanged == 1
     }
-
 
     fun getGeocacheFromID(cacheID : Long, dbConnection : DbConnection) : GeocacheInTour{
 

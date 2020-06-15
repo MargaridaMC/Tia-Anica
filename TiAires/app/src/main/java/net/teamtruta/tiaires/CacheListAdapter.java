@@ -1,5 +1,6 @@
 package net.teamtruta.tiaires;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
 
@@ -119,14 +122,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         // Set information line 1: Found: date - \heart nFavs - Hint/No hint
         holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
-/*
 
-        List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
+       List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
         for(int i=0; i<10;i++){
             Drawable square;
-            if(last10Logs.get(i).logType == FoundEnumType.Found){
+            if(last10Logs.get(i).getLogType() == FoundEnumType.Found){
                 square = App.getContext().getDrawable(R.drawable.green_square);
-            } else if( last10Logs.get(i).logType == FoundEnumType.DNF ){
+            } else if( last10Logs.get(i).getLogType() == FoundEnumType.DNF ){
                 square = App.getContext().getDrawable(R.drawable.red_square);
             } else {
                 square = App.getContext().getDrawable(R.drawable.blue_square);
@@ -141,10 +143,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             holder.lastLogsLayout.addView(squareImageView);
 
         }
-*/
 
-
-        holder.hint.setText(getHintText(geocache));
+      holder.hint.setText(getHintText(geocache));
 
 
         // Set DNF information if required

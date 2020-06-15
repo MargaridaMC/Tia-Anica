@@ -28,10 +28,11 @@ object CacheEntry : BaseColumns{
     val FAV_POINT_COL = "favouritePoint"
     val TOUR_ID_FK_COL = "tourID_FK"
     val CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
+    val ORDER_COL = "orderBy"
     fun getAllColumns(): Array<String> {
         return arrayOf(_ID, FOUND_DATE_COL, NEEDS_MAINTENANCE_COL, VISIT_COL,
                 NOTES_COL, FOUND_TRACKABLE_COL, DROPPED_TRACKABLE_COL, FAV_POINT_COL,
-                TOUR_ID_FK_COL, CACHE_DETAIL_ID_FK_COL)
+                TOUR_ID_FK_COL, CACHE_DETAIL_ID_FK_COL, ORDER_COL)
     }
 }
 
