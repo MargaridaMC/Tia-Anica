@@ -54,12 +54,19 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${CacheDetailEntry.FAV_COL} INTEGER" +
             ")"
 
-    // TODO: 4. Log Table
+    // 4. Log Table
+    private val SQL_CREATE_LOG_TABLE = "CREATE TABLE ${LogEntry.TABLE_NAME}(" +
+            "${LogEntry._ID} INTEGER PRIMARY KEY," +
+            "${LogEntry.LOG_DATE_COL} TEXT," +
+            "${LogEntry.LOG_TYPE_COL} INTEGER," +
+            "${LogEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME} ON DELETE CASCADE" +
+            ")"
 
     // Query to delete all tables
     private val SQL_DELETE_TABLES = "DROP TABLE IF EXISTS ${TourEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${CacheEntry.TABLE_NAME};" +
-            "DROP TABLE IF EXISTS ${CacheDetailEntry.TABLE_NAME};" // TODO:delete log table
+            "DROP TABLE IF EXISTS ${CacheDetailEntry.TABLE_NAME};" +
+            "DROP TABLE IF EXISTS ${LogEntry.TABLE_NAME};"
 
 
 
@@ -71,7 +78,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         db?.execSQL(SQL_CREATE_TOUR_TABLE)
         db?.execSQL(SQL_CREATE_CACHE_DETAIL_TABLE)
         db?.execSQL(SQL_CREATE_CACHE_TABLE)
-        // TODO: create logs table
+        db?.execSQL(SQL_CREATE_LOG_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

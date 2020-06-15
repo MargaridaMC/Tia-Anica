@@ -57,12 +57,14 @@ object CacheDetailEntry : BaseColumns{
     }
 }
 
-/*
 object LogEntry : BaseColumns{
 
     val TABLE_NAME = "log"
     val _ID = "id"
-    // Check what more info you need for logs: type of visit, date and actual log
+    val LOG_TYPE_COL = "type"
+    val LOG_DATE_COL = "date"
     val CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
-
-}*/
+    fun getAllColumns(): Array<String> {
+        return arrayOf(_ID, LOG_TYPE_COL, LOG_DATE_COL, CACHE_DETAIL_ID_FK_COL)
+    }
+}

@@ -9,6 +9,7 @@ import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -314,11 +315,16 @@ public class GeocachingScrapper {
         try{ // Try first date format
             while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
             {
-                GeocacheLog log = new GeocacheLog();
+
+                FoundEnumType logType = FoundEnumType.valueOfString( matcher.group(1));
+                Date logDate = dateFormatter0.parse(matcherDates.group(1));
+                GeocacheLog log = new GeocacheLog(logType, logDate);
+
+                /*GeocacheLog log = new GeocacheLog();
                 String typeString = matcher.group(1);
                 log.logType = FoundEnumType.valueOfString(typeString);
                 String dateString = matcherDates.group(1);
-                log.logDate = dateFormatter0.parse(dateString);
+                log.logDate = dateFormatter0.parse(dateString);*/
 
                 recentLogs.add(log);
                 logsParsed++;
@@ -332,11 +338,16 @@ public class GeocachingScrapper {
 
                 while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
                 {
-                    GeocacheLog log = new GeocacheLog();
+
+                    FoundEnumType logType = FoundEnumType.valueOfString( matcher.group(1));
+                    Date logDate = dateFormatter1.parse(matcherDates.group(1));
+                    GeocacheLog log = new GeocacheLog(logType, logDate);
+
+                    /*GeocacheLog log = new GeocacheLog();
                     String typeString = matcher.group(1);
                     log.logType = FoundEnumType.valueOfString(typeString);
                     String dateString = matcherDates.group(1);
-                    log.logDate = dateFormatter1.parse(dateString);
+                    log.logDate = dateFormatter1.parse(dateString);*/
 
                     recentLogs.add(log);
                     logsParsed++;

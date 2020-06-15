@@ -35,7 +35,6 @@ public class App extends Application {
             builder.setPositiveButton(mContext.getString(R.string.ok), (dialog, id) -> {
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 mContext.startActivity(intent);
-                return;
             });
             builder.setNegativeButton(mContext.getString(R.string.cancel), ((dialog, which) -> {
             }));
