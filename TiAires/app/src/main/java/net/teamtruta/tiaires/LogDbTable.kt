@@ -58,7 +58,7 @@ class LogDbTable (context: Context){
         return id
     }
 
-    fun getAllLogsInCache(geocacheID: Long): List<GeocacheLog>? {
+    fun getAllLogsInCache(geocacheID: Long): List<GeocacheLog> {
 
         val allLogs = mutableListOf<GeocacheLog>()
         val db = dbHelper.readableDatabase

@@ -30,9 +30,9 @@ public class GeocachingTour implements PostGeocachingScrapping
         this._id = _dbConnection.getTourTable().storeNewTour(_name, _isCurrentTour);
     }
 
-    public GeocachingTour(DbConnection dbConnection) {
+/*    public GeocachingTour(DbConnection dbConnection) {
         this._dbConnection = dbConnection;
-    }
+    }*/
 
     static GeocachingTour getGeocachingTourFromID(long id, DbConnection dbConnection){
         GeocachingTour tour = dbConnection.getTourTable().getTour(id, dbConnection);
@@ -105,13 +105,13 @@ public class GeocachingTour implements PostGeocachingScrapping
         }
 
         // Get the IDs of the new caches we obtained and add them to the database
-        cachesAlreadyInDb = Geocache.getGeocaches(cachesToGet, _dbConnection, this);
+        cachesAlreadyInDb = Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this);
 
     }
 
     public void changeName(String newTourName) {
         this._name = newTourName;
-        boolean success =_dbConnection.getTourTable().changeName(_id, newTourName);
+        _dbConnection.getTourTable().changeName(_id, newTourName);
     }
 
     @Override
@@ -124,5 +124,4 @@ public class GeocachingTour implements PostGeocachingScrapping
 }
 
 // TODO: I need some unit tests on this
-// TODO: add support to say a given trackable was found or left
 // TODO: rever nomenclatura. Geocache ou GeoCache ou cache ou TourCache ?

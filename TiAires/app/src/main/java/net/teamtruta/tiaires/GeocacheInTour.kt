@@ -5,43 +5,37 @@ import java.util.*
 /**
  * GeocacheInTour
  */
-class GeocacheInTour {
-    // These set and get methods needs to be public otherwise the serialization will not work.
-    var geocache: Geocache? = null
+class GeocacheInTour(val geocache: Geocache, var notes : String = "",
+                     var visit: FoundEnumType = FoundEnumType.NotAttempted,
+                     var needsMaintenance : Boolean = false, var foundDate : Date? = null,
+                     var foundTrackable : Boolean = false, var droppedTrackable : Boolean = false,
+                     var favouritePoint : Boolean = false, val _id : Long = -1,
+                     val _dbConnection : DbConnection? = null) {
 
     // the following fields have the "In Tour" semantics. So if a cache was found but not in the tour, _found will be = NotAttempted; same logic applies to other fields.
-    var notes = ""
+/*    constructor(geocache: Geocache, dbConnection: DbConnection) :
+            this(geocache, visit = geocache.foundIt, _dbConnection = dbConnection)*/
 
-    // não gosto deste nome. attempt, visit, ...?
-    var visit : FoundEnumType = FoundEnumType.NotAttempted
-    var needsMaintenance = false
-    var foundDate: Date? = null
-    var foundTrackable = false
-    var droppedTrackable = false
-    var favouritePoint = false
-    @JvmField
-    var _id: Long = 0
-    var _dbConnection: DbConnection? = null
+    constructor(geocache: Geocache) : this(geocache = geocache, _dbConnection = null)
 
-    constructor(gc: Geocache?, dbConnection: DbConnection?) {
+    /*constructor(gc: Geocache, dbConnection: DbConnection?) {
         geocache = gc
         _dbConnection = dbConnection
         // TODO: what if we've already done this cache?
     }
 
-    constructor() {}
+    constructor() {}*/
 
     fun setNewVisit(visit: FoundEnumType) {
         this.visit = visit
-        val success = _dbConnection!!.cacheTable.updateEntry(this)
+        _dbConnection?.cacheTable?.updateEntry(this) //returns a boolean to check for success
     }
 
     fun saveChanges() {
-        val success = _dbConnection!!.cacheTable.updateEntry(this)
+        _dbConnection?.cacheTable?.updateEntry(this)
     }
 
     companion object {
-        @JvmStatic
         fun getGeocacheFromID(cacheID: Long, dbConnection: DbConnection): GeocacheInTour {
             return dbConnection.cacheTable.getGeocacheFromID(cacheID, dbConnection)
         }

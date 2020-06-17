@@ -52,7 +52,7 @@ fun Date.toFormattedString() : String{
     return dateFormat.format(this)
 }
 
-fun String.toDate() : Date?{
+fun String.toDate() : Date{
     //val format = "E MMM dd hh:mm:ss z yyyy"
     val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT)
     return dateFormat.parse(this)

@@ -55,8 +55,9 @@ class CacheDbTable (private val context: Context) {
 
     fun storeNew(tourIDFK: Long, geocacheIDFK: Long) : Long{
 
-        val geocacheInTour = GeocacheInTour()
         val geocache = CacheDetailDbTable(context).getGeocache(geocacheIDFK)
+        val geocacheInTour = GeocacheInTour(geocache)
+
         val db = dbHelper.writableDatabase
 
         // Get index for next element in order
@@ -136,10 +137,10 @@ class CacheDbTable (private val context: Context) {
         db.close()
     }
 
-    fun deleteEntry(id : Long) : Int{
+/*    fun deleteEntry(id : Long) : Int{
         val db = dbHelper.writableDatabase
         return db.delete(CacheEntry.TABLE_NAME, "${CacheEntry._ID} = ?", arrayOf("$id"))
-    }
+    }*/
 
     fun addCachesToTour(tourID : Long, newGeocaches: MutableList<Long>) {
         for(geocacheID in newGeocaches){
@@ -185,20 +186,18 @@ class CacheDbTable (private val context: Context) {
 
         val geocacheID = getLong(CacheEntry.CACHE_DETAIL_ID_FK_COL)
         val gc = CacheDetailDbTable(context).getGeocache(geocacheID)
-        val geocacheInTour = GeocacheInTour(gc, dbConnection)
 
-        geocacheInTour._id = getLong(CacheEntry._ID)
-        geocacheInTour.notes = getString(CacheEntry.NOTES_COL)
-        geocacheInTour.visit = FoundEnumType.valueOfString(getString(CacheEntry.VISIT_COL))
-        // TODO: set found date
-        //val foundDate = cursor.getString(CacheEntry.FOUND_DATE_COL)
-        //geocacheInTour.foundDate = (foundDate)
-        geocacheInTour.needsMaintenance = getBoolean(CacheEntry.NEEDS_MAINTENANCE_COL)
-        geocacheInTour.foundTrackable = getBoolean(CacheEntry.FOUND_TRACKABLE_COL)
-        geocacheInTour.droppedTrackable = getBoolean(CacheEntry.DROPPED_TRACKABLE_COL)
-        geocacheInTour.favouritePoint = getBoolean(CacheEntry.FAV_POINT_COL)
+        val _id = getLong(CacheEntry._ID)
+        val notes = getString(CacheEntry.NOTES_COL)
+        val visit = FoundEnumType.valueOfString(getString(CacheEntry.VISIT_COL))
+        val foundDate = getString(CacheEntry.FOUND_DATE_COL)?.toDate()
+        val needsMaintenance = getBoolean(CacheEntry.NEEDS_MAINTENANCE_COL)
+        val foundTrackable = getBoolean(CacheEntry.FOUND_TRACKABLE_COL)
+        val droppedTrackable = getBoolean(CacheEntry.DROPPED_TRACKABLE_COL)
+        val favouritePoint = getBoolean(CacheEntry.FAV_POINT_COL)
 
-        return geocacheInTour
+        return GeocacheInTour(gc, notes, visit, needsMaintenance,
+                foundDate, foundTrackable, droppedTrackable, favouritePoint, _id, dbConnection)
     }
 }
 

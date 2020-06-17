@@ -44,13 +44,13 @@ public class CacheDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         long cacheID = intent.getLongExtra(App.CACHE_ID_EXTRA,  -1L);
         _tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1L);
-        if(cacheID == -1L){
+        /*if(cacheID == -1L){
             // TODO: Something went wrong
         } else {
 
-        }
+        }*/
 
-        currentGeocache = GeocacheInTour.getGeocacheFromID(cacheID, _dbConnection);
+        currentGeocache = GeocacheInTour.Companion.getGeocacheFromID(cacheID, _dbConnection);
 
         // Set Cache Title
         ActionBar ab = getSupportActionBar();

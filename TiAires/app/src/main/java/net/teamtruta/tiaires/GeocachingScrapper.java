@@ -1,5 +1,7 @@
 package net.teamtruta.tiaires;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,6 +23,8 @@ import java.util.regex.Pattern;
 public class GeocachingScrapper {
 
     //private String _username, _password;
+
+    private String TAG = GeocachingScrapper.class.getSimpleName();
 
     private static final String GEOCACHING_URL = "https://www.geocaching.com";
     private static final String LOGIN_PAGE = "/account/signin";
@@ -160,10 +164,10 @@ public class GeocachingScrapper {
     {
         code = code.toUpperCase();
 
-        System.out.println("Getting cache " + code);
-        Geocache gc = new Geocache();
+        Log.d(TAG, "Getting cache " + code);
+        //Geocache gc = new Geocache();
 
-        gc.setCode(code);
+        //gc.setCode(code);
 
         // Obtain the HTML of the page, sending the authentication cookie
         URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
@@ -185,10 +189,13 @@ public class GeocachingScrapper {
         Pattern pattern = Pattern.compile(regexNamePattern);
         Matcher matcher = pattern.matcher(pageContents);
 
+        String name;
         if (matcher.find( )) {
-            gc.setName(matcher.group(1));
+            name = matcher.group(1);
+            //gc.setName(matcher.group(1));
         } else {
-            gc.setName("NO MATCH");
+            //gc.setName("NO MATCH");
+            name = "NO MATCH";
         }
 
         // 2. Get coordinates. eg: <span id="uxLatLon">N 48° 08.192 E 011° 33.158</span>
@@ -196,14 +203,19 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexLatLongPattern);
         matcher = pattern.matcher(pageContents);
 
+        Coordinate latitude, longitude;
         if (matcher.find()) {
             String latitudeString = matcher.group(1);
             String longitudeString = matcher.group(2);
-            gc.setLatitude(new Coordinate(latitudeString));
-            gc.setLongitude(new Coordinate(longitudeString));
+            latitude = new Coordinate(latitudeString);
+            longitude = new Coordinate(longitudeString);
+//            gc.setLatitude(new Coordinate(latitudeString));
+//            gc.setLongitude(new Coordinate(longitudeString));
         } else {
-            gc.setLatitude(null);
-            gc.setLongitude(null);
+            latitude = null;
+            longitude = null;
+//            gc.setLatitude(null);
+//            gc.setLongitude(null);
         }
 
         // 3. Get Size
@@ -211,12 +223,14 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexSize);
         matcher = pattern.matcher(pageContents);
 
+        String size;
         if (matcher.find()) {
-            String size = matcher.group(1);
-            gc.setSize(size);
-            gc.setSize(size.substring(0,1).toUpperCase() +size.substring(1));
+            size = matcher.group(1);
+            size = size.substring(0,1).toUpperCase() + size.substring(1);
+            //gc.setSize(size.substring(0,1).toUpperCase() + size.substring(1));
         } else {
-            gc.setSize("NO MATCH");
+            size = "NO MATCH";
+            //gc.setSize("NO MATCH");
         }
 
         // 4. Get Difficulty and Terrain (both use the same regex, repeated instances)
@@ -225,18 +239,24 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexDifficulty);
         matcher = pattern.matcher(pageContents);
 
+        String difficulty, terrain;
         if (matcher.find()) {
-            gc.setDifficulty(matcher.group(1));
+            difficulty = matcher.group(1);
+            //gc.setDifficulty(matcher.group(1));
 
             if(matcher.find()) {
-                gc.setTerrain( matcher.group(1));
+                terrain = matcher.group(1);
+                //gc.setTerrain( matcher.group(1));
             }
             else {
-                gc.setTerrain("NO MATCH");
+                terrain = "NO MATCH";
+                //gc.setTerrain("NO MATCH");
             }
         } else {
-            gc.setDifficulty("NO MATCH");
-            gc.setTerrain("NO MATCH");
+            difficulty = "NO MATCH";
+            terrain = "NO MATCH";
+//            gc.setDifficulty("NO MATCH");
+//            gc.setTerrain("NO MATCH");
         }
 
         // 5. Get the cache type
@@ -244,10 +264,13 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexType);
         matcher = pattern.matcher(pageContents);
 
+        CacheTypeEnum type;
         if (matcher.find()) {
-            gc.setType(CacheTypeEnum.valueOfString(matcher.group(1)));
+            type = CacheTypeEnum.valueOfString(matcher.group(1));
+            //gc.setType(CacheTypeEnum.valueOfString(matcher.group(1)));
         } else {
-            gc.setType(CacheTypeEnum.Other);
+            type = CacheTypeEnum.Other;
+            //gc.setType(CacheTypeEnum.Other);
         }
 
         // 6. Have I found it?
@@ -255,10 +278,13 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexFound);
         matcher = pattern.matcher(pageContents);
 
+        FoundEnumType visit;
         if (matcher.find()) {
-            gc.setFoundIt(matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF);
+            visit = matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF;
+            //gc.setFoundIt(matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF);
         } else {
-            gc.setFoundIt(FoundEnumType.NotAttempted);
+            visit = FoundEnumType.NotAttempted;
+            //gc.setFoundIt(FoundEnumType.NotAttempted);
         }
 
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
@@ -267,21 +293,27 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexHint);
         matcher = pattern.matcher(pageContents);
 
+        String hint;
         if (matcher.find()) {
             String group = matcher.group(1);
             String temp = group;
             //temp = temp.replaceAll(" ", "");
             temp = temp.trim();
             System.out.println(temp.length());
-            if(temp.length()==0) gc.setHint("NO MATCH");
+            if(temp.length()==0) {
+                hint = "NO MATCH";
+                //gc.setHint("NO MATCH");
+            }
             else {
-                String hint = Rot13.Decode(group);
+                hint = Rot13.Decode(group);
                 hint = hint.trim();
-                gc.setHint(hint.replaceAll("<oe>", "\n"));
+                hint = hint.replaceAll("<oe>", "\n");
+                //gc.setHint(hint.replaceAll("<oe>", "\n"));
             }
 
         } else {
-            gc.setHint("NO MATCH");
+            hint = "NO MATCH";
+            //gc.setHint("NO MATCH");
         }
 
 
@@ -290,10 +322,13 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexFavourites);
         matcher = pattern.matcher(pageContents);
 
+        int favourites;
         if (matcher.find()) {
-            gc.setFavourites(Integer.parseInt(matcher.group(1)));
+            favourites = Integer.parseInt(matcher.group(1));
+            //gc.setFavourites(Integer.parseInt(matcher.group(1)));
         } else {
-            gc.setFavourites(0);
+            favourites = 0;
+            //gc.setFavourites(0);
         }
 
         // 9. Last logs and their dates
@@ -358,7 +393,7 @@ public class GeocachingScrapper {
 
         }
 
-        gc.setRecentLogs(recentLogs);
+        //gc.setRecentLogs(recentLogs);
         // else do nothing -- the collection will be non-null but empty
 
 
@@ -370,9 +405,10 @@ public class GeocachingScrapper {
         httpConnection.disconnect();
 
         // Check if cache is a DNF risk
-        gc.setDNFRisk();
+        //gc.setDNFRisk();
 
-        return gc;
+        return new Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visit,
+                hint, favourites, recentLogs);
     }
 
     private String getTokenFromHtmlBody(StringBuffer htmlPage)
