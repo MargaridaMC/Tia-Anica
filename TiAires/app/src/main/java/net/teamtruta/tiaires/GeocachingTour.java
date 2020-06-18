@@ -12,11 +12,11 @@ public class GeocachingTour implements PostGeocachingScrapping
 {
     private String _name;
     List<GeocacheInTour> _tourCaches = new ArrayList<>();
-    boolean _isCurrentTour = false;
-    long _id = -1L;
+    boolean _isCurrentTour;
+    long _id;
     DbConnection _dbConnection;
-
     List<Long> cachesAlreadyInDb = new ArrayList<>();
+    TourCreationActivity delegate;
 
     // Constructor for when you are creating a new tour
     GeocachingTour(String name, boolean isCurrentTour, DbConnection dbConnection){
@@ -119,6 +119,7 @@ public class GeocachingTour implements PostGeocachingScrapping
         List<Long> newlyLoadedCachesIDs = _dbConnection.getCacheDetailTable().store(newlyLoadedCaches);
         cachesAlreadyInDb.addAll(newlyLoadedCachesIDs);
         _dbConnection.getCacheTable().addCachesToTour(_id, cachesAlreadyInDb);
+        delegate.onTourCreated();
     }
 
 }

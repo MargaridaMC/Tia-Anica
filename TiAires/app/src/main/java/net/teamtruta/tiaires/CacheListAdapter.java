@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
@@ -302,6 +304,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
+    @NotNull
     public CacheListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_cache_layout, parent, false);
