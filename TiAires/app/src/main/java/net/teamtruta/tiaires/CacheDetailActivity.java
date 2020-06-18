@@ -108,6 +108,12 @@ public class CacheDetailActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        saveChanges();
+        onSupportNavigateUp();
+    }
+
 
 
     public void cacheFound(){
