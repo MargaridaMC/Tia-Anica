@@ -25,11 +25,11 @@ class GeocacheInTour(val geocache: Geocache, var notes : String = "",
     }
 
     constructor() {}*/
-
+/*
     fun setNewVisit(visit: FoundEnumType) {
         this.visit = visit
         _dbConnection?.cacheTable?.updateEntry(this) //returns a boolean to check for success
-    }
+    }*/
 
     fun saveChanges() {
         _dbConnection?.cacheTable?.updateEntry(this)

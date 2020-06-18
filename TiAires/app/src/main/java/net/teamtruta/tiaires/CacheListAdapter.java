@@ -317,7 +317,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // recentlyVisitedCachePosition = position;
 
         GeocacheInTour selectedGeocache = tour._tourCaches.get(position);
-        selectedGeocache.setNewVisit(visit);
+        selectedGeocache.setVisit(visit);
+        selectedGeocache.saveChanges();
 
         onVisitListener.onVisit(visit.toString());
     }

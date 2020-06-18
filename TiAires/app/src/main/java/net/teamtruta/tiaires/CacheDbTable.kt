@@ -156,7 +156,7 @@ class CacheDbTable (private val context: Context) {
             put(CacheEntry.NOTES_COL, geocache.notes)
             put(CacheEntry.VISIT_COL,  geocache.visit.typeString)
             put(CacheEntry.NEEDS_MAINTENANCE_COL, geocache.needsMaintenance)
-            put(CacheEntry.FOUND_DATE_COL, geocache.foundDate?.toString())
+            put(CacheEntry.FOUND_DATE_COL, geocache.foundDate?.toFormattedString())
             put(CacheEntry.FOUND_TRACKABLE_COL, geocache.foundTrackable)
             put(CacheEntry.DROPPED_TRACKABLE_COL, geocache.droppedTrackable)
             put(CacheEntry.FAV_POINT_COL, geocache.favouritePoint)
