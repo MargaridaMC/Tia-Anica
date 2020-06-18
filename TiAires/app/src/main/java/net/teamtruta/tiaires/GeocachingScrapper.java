@@ -267,10 +267,22 @@ public class GeocachingScrapper {
         CacheTypeEnum type;
         if (matcher.find()) {
             type = CacheTypeEnum.valueOfString(matcher.group(1));
-            //gc.setType(CacheTypeEnum.valueOfString(matcher.group(1)));
         } else {
             type = CacheTypeEnum.Other;
-            //gc.setType(CacheTypeEnum.Other);
+        }
+
+        // If this is a mystery cache then check if it is solved
+        if(type == CacheTypeEnum.Mystery){
+
+            String regexMysterySolved = "\"isUserDefined\":([a-z]+),";
+            pattern = Pattern.compile(regexMysterySolved);
+            matcher = pattern.matcher(pageContents);
+            if (matcher.find()) {
+                boolean isSolved =  matcher.group(1).equals("true");
+                if(isSolved){
+                    type = CacheTypeEnum.Solved;
+                }
+            }
         }
 
         // 6. Have I found it?

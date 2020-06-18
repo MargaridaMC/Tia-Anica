@@ -4,6 +4,7 @@ public enum CacheTypeEnum{
 
     Traditional("Traditional Geocache"),
     Mystery("Mystery Cache"),
+    Solved("Solved Cache"),
     Multi("Multi"),
     Earth("EarthCache"),
     Letterbox("Letterbox Hybrid"),
@@ -30,7 +31,7 @@ public enum CacheTypeEnum{
         return typeString;
     }
 
-    private CacheTypeEnum(String type){
+    CacheTypeEnum(String type){
         this.typeString = type;
     }
 

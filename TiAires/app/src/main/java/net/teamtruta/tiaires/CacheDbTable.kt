@@ -19,7 +19,7 @@ class CacheDbTable (private val context: Context) {
         // Query database for all caches with this foreign key
         val db = dbHelper.readableDatabase
         val columns = CacheEntry.getAllColumns()
-        val cursor = db.doQuery(CacheEntry.TABLE_NAME, columns, "${CacheEntry.TOUR_ID_FK_COL} = ${tourID}", orderBy = CacheEntry.ORDER_COL)
+        val cursor = db.doQuery(CacheEntry.TABLE_NAME, columns, "${CacheEntry.TOUR_ID_FK_COL} = ${tourID}")//, orderBy = CacheEntry.ORDER_COL)
         while(cursor.moveToNext()){
             val geocacheInTour = cursor.getGeocacheInTour(dbConnection)
             allCaches.add(geocacheInTour)

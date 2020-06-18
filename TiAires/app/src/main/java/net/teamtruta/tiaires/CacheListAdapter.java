@@ -53,78 +53,83 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         // Set cache type symbol
         CacheTypeEnum cacheType = geocache.getType();
-        Drawable cacheSymbolDrawable;
+        int drawableID;
 
         if(geocacheInTour.getVisit() == FoundEnumType.Found){
-            cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_found);
+            drawableID = R.drawable.cache_icon_found;
         } else if(geocacheInTour.getVisit() == FoundEnumType.DNF){
-            cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_dnf);
+            drawableID = R.drawable.cache_icon_dnf;
         } else {
 
             switch (cacheType){
                 case Traditional:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_traditional);
+                    drawableID = R.drawable.cache_icon_type_traditional;
                     break;
                 case Mystery:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_mystery);
+                    drawableID = R.drawable.cache_icon_type_mystery;
                     break;
                 case Multi:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_multi);
+                    drawableID = R.drawable.cache_icon_type_multi;
                     break;
                 case Earth:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_earth);
+                    drawableID = R.drawable.cache_icon_type_earth;
                     break;
                 case Letterbox:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_letterbox);
+                    drawableID = R.drawable.cache_icon_type_letterbox;
                     break;
                 case Event:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_event);
+                    drawableID = R.drawable.cache_icon_type_event;
                     break;
                 case CITO:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_cito);
+                    drawableID = R.drawable.cache_icon_type_cito;
                     break;
                 case Mega:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_mega);
+                    drawableID = R.drawable.cache_icon_type_mega;
                     break;
                 case Giga:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_giga);
+                    drawableID = R.drawable.cache_icon_type_giga;
                     break;
                 case Wherigo:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_wherigo);
+                    drawableID = R.drawable.cache_icon_type_wherigo;
                     break;
                 case HQ:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_hq);
+                    drawableID = R.drawable.cache_icon_type_hq;
                     break;
                 case GPSAdventures:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_gps_adventures);
+                    drawableID = R.drawable.cache_icon_type_gps_adventures;
                     break;
                 case HQCelebration:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_hq_celebration);
+                    drawableID = R.drawable.cache_icon_type_hq_celebration;
                     break;
                 case HQBlockParty:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_hq_blockparty);
+                    drawableID = R.drawable.cache_icon_type_hq_blockparty;
                     break;
                 case CommunityCelebration:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_community_event);
+                    drawableID = R.drawable.cache_icon_type_community_event;
                     break;
                 case Virtual:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_virtual);
+                    drawableID = R.drawable.cache_icon_type_virtual;
                     break;
                 case Webcam:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_webcam);
+                    drawableID = R.drawable.cache_icon_type_webcam;
                     break;
                 case ProjectAPE:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_project_ape);
+                    drawableID = R.drawable.cache_icon_type_project_ape;
                     break;
                 case Locationless:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.cache_icon_type_locationless);
+                    drawableID = R.drawable.cache_icon_type_locationless;
+                    break;
+                case Solved:
+                    drawableID = R.drawable.cache_icon_solved;
                     break;
                 default:
-                    cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), R.drawable.shrug);
+                    drawableID = R.drawable.shrug;
                     break;
             }
         }
 
+
+        Drawable cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
         holder.cacheSymbol.setImageDrawable(cacheSymbolDrawable);
 
         holder.cacheInfo0.setText(getCacheInfoLine0(geocache));

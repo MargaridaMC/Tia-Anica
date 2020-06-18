@@ -68,7 +68,7 @@ class CacheDetailDbTable(private val context: Context)  {
                     val hint = getString(CacheDetailEntry.HINT_COL)
                     val latitude = Coordinate(getDouble(CacheDetailEntry.LAT_COL))
                     val longitude = Coordinate(getDouble(CacheDetailEntry.LON_COL))
-                    val nFavs = getInt(CacheDetailEntry.CODE_COL)
+                    val nFavs = getInt(CacheDetailEntry.FAV_COL)
                     Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visitType, hint, nFavs, logList, geocacheID)
                 }
 
