@@ -41,30 +41,6 @@ public class CoordinateOffsetActivity extends AppCompatActivity
     LocationManager locationManager;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    private final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(final Location location) {
-            //your code here
-            TextView txtLat = findViewById(R.id.coordinates);
-            String fullCoordinates = "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude();
-            txtLat.setText(fullCoordinates);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.d("Latitude", "status");
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            Log.d("Latitude", "enable");
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            Log.d("Latitude", "disable");
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,10 +198,10 @@ public class CoordinateOffsetActivity extends AppCompatActivity
             return;
         }
 
-        if(coordinate == null){
+        /*if(coordinate == null || !coordinate.getFullCoordinates().equals(initialCoordinatesString)){
             coordinate = new Coordinate(initialCoordinatesString);
         }
-
+*/
         Coordinate newCoordinate = coordinate.offset(angleDeg, distanceInMeters);
 
         TextView result = findViewById(R.id.result);
@@ -320,7 +296,7 @@ public class CoordinateOffsetActivity extends AppCompatActivity
                         locationNotAccessibleAlert();
                     }
                     else{
-                        TextView txtLat = findViewById(R.id.coordinates);
+                        EditText txtLat = findViewById(R.id.coordinates);
                         coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
                         txtLat.setText(coordinate.getFullCoordinates());
 
@@ -330,10 +306,10 @@ public class CoordinateOffsetActivity extends AppCompatActivity
                     }
                 }
                 else{
-                    TextView txtLat = findViewById(R.id.coordinates);
+                    EditText et_coordinates = findViewById(R.id.coordinates);
                     coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
                     String fullCoordinates = coordinate.getFullCoordinates();
-                    txtLat.setText(fullCoordinates);
+                    et_coordinates.setText(fullCoordinates);
 
                     new AlertDialog.Builder(CoordinateOffsetActivity.this)
                             .setMessage("Used coordinates from GPS signal.")
@@ -364,5 +340,28 @@ public class CoordinateOffsetActivity extends AppCompatActivity
             startActivity(mapIntent);
         };
 
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            //your code here
+/*            TextView txtLat = findViewById(R.id.coordinates);
+            String fullCoordinates = "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude();
+            txtLat.setText(fullCoordinates);*/
+        }
 
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.d("Latitude", "status");
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.d("Latitude", "enable");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.d("Latitude", "disable");
+        }
+    };
 }

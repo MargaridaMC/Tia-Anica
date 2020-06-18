@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/initial_coordinates"
             android:theme="@style/AppTheme.TextField"
+            android:focusable="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/angle_in_degrees"
                     android:theme="@style/AppTheme.TextField"
+                    android:focusable="false"
                     app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
                     app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
                     app:layout_constraintTop_toBottomOf="@+id/InitialCoordinates" />
@@ -87,6 +89,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/distance_in_m"
                     android:theme="@style/AppTheme.TextField"
+                    android:focusable="false"
                     app:layout_constraintEnd_toEndOf="@+id/InitialCoordinates"
                     app:layout_constraintStart_toStartOf="@+id/InitialCoordinates"
                     app:layout_constraintTop_toBottomOf="@+id/angleID" />

@@ -1,6 +1,7 @@
 package com.example.mg.tiaanica;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,9 +21,9 @@ class Coordinate implements CoordinateOffset{
     private Double lonMin = null;
     private String lonDir = "E";
 
-    Coordinate(String coord) {
+    Coordinate(String coordinateString) {
 
-        boolean success = parse(coord);
+        boolean success = parse(coordinateString);
         if(!success) {
             System.out.println("Couldn't parse coordinates");
         }
@@ -38,6 +39,15 @@ class Coordinate implements CoordinateOffset{
 
     Coordinate(double lat, double lon){
 
+        if(lat < 0){
+            latDir = "S";
+            //lat = -lat;
+        }
+        if(lon < 0){
+            lonDir = "W";
+            //lon = -lon;
+        }
+
         this.lat = lat;
         this.lon = lon;
 
@@ -51,6 +61,7 @@ class Coordinate implements CoordinateOffset{
         this.lonMin = lonValues[1];
     }
 
+    @NonNull
     private Boolean parse(String input){
 
         input = input.trim();
@@ -93,7 +104,6 @@ class Coordinate implements CoordinateOffset{
                 lat = DM2Decimal(latDeg, latMin, latDir);
                 lon = DM2Decimal(lonDeg, lonMin, lonDir);
 
-                return true;
             } else {// if (latDeg != null && latMin == null){
 
                 lat = latDeg;
@@ -110,14 +120,15 @@ class Coordinate implements CoordinateOffset{
                                 lonDir.equalsIgnoreCase("-")
                 ) lon = -lon;
 
-                return true;
             }
+            return true;
 
         } //else  {// bad input format }
 
         return false;
     }
 
+    @NonNull
     private Boolean parseLatitude(String input) {
         input = input.trim();
 
@@ -145,7 +156,6 @@ class Coordinate implements CoordinateOffset{
 
             if(latDeg != null && latMin != null) {
                 lat = DM2Decimal(latDeg, latMin, latDir);
-                return true;
             } else {//if (latDeg != null && latMin == null){
 
                 lat = latDeg;
@@ -155,8 +165,8 @@ class Coordinate implements CoordinateOffset{
                                 latDir.equalsIgnoreCase("-")
                 ) lat = -lat;
 
-                return true;
             }
+            return true;
 
         } //else  {
             // bad input format
@@ -165,6 +175,7 @@ class Coordinate implements CoordinateOffset{
         return false;
     }
 
+    @NonNull
     private Boolean parseLongitude(String input) {
         input = input.trim();
 
@@ -193,7 +204,6 @@ class Coordinate implements CoordinateOffset{
             if(lonDeg != null && lonMin != null) {
                 lon = DM2Decimal(lonDeg, lonMin, lonDir);
 
-                return true;
             } else {// if (lonDeg != null && lonMin == null){
 
                 lon = lonDeg;
@@ -203,8 +213,8 @@ class Coordinate implements CoordinateOffset{
                                 lonDir.equalsIgnoreCase("-")
                 ) lon = -lon;
 
-                return true;
             }
+            return true;
 
         } //else  {
             // bad input format
@@ -213,6 +223,7 @@ class Coordinate implements CoordinateOffset{
         return false;
     }
 
+    @NonNull
     private Double parseDouble(String numberStr){
         try {
             return Double.parseDouble(numberStr);
@@ -254,7 +265,7 @@ class Coordinate implements CoordinateOffset{
     private static double[] Decimal2DM(Double coordinates){
 
         double degrees = (double) coordinates.intValue();
-        double minutes = (coordinates - degrees) * 60;
+        double minutes = Math.abs(coordinates - degrees) * 60;
         minutes = Math.round(minutes * 1000d) / 1000d;
 
         if(minutes==60.0) {
@@ -262,11 +273,13 @@ class Coordinate implements CoordinateOffset{
             minutes = 0.0;
         }
 
-        return new double[] {degrees, minutes};
+        return new double[] { Math.abs(degrees), minutes};
 
     }
 
     public Coordinate offset(double angle, double distanceInMeters){
+
+        // An angle of 0 means go north, 90 - East ...
 
         Coordinate newCoordinate = new Coordinate(this.lat, this.lon);
 
@@ -274,7 +287,6 @@ class Coordinate implements CoordinateOffset{
         double Y = lon;
 
         double rad = Math.PI * angle / 180;
-
         double xRad = Math.PI * X / 180; // convert to radians
         double yRad = Math.PI * Y / 180;
 
@@ -305,8 +317,12 @@ class Coordinate implements CoordinateOffset{
         return newCoordinate;
     }
 
+    @SuppressLint("DefaultLocale")
     String getFullCoordinates() {
 
+        // Latitude
+
+        /*
         String latDegInt = StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2);
         @SuppressLint("DefaultLocale") String latMinStr = String.format("%.3f", latMin);
         latMinStr = StringUtils.leftPad(latMinStr, 6, "0");
@@ -317,6 +333,18 @@ class Coordinate implements CoordinateOffset{
         lonMinStr = StringUtils.leftPad(lonMinStr, 6, "0");
         String longitude = lonDir + lonDegInt + "°" + " " + lonMinStr;
 
-        return latitude + " " + longitude;
+        return latitude + " " + longitude;*/
+
+        return latDir +
+                StringUtils.leftPad(Integer.toString(latDeg.intValue()), 2) +
+                "° " +
+                StringUtils.leftPad(String.format("%.3f", latMin), 6, "0") +
+
+                // Longitude
+                " " +
+                lonDir +
+                StringUtils.leftPad(Integer.toString(lonDeg.intValue()), 2) +
+                "° " +
+                StringUtils.leftPad(String.format("%.3f", lonMin), 6, "0");
     }
 }
