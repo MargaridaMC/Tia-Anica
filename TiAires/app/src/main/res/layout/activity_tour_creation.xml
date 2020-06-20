@@ -84,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin"
-        android:text="Create Tour"
+        android:text="@string/create_tour"
         android:textAppearance="@style/MainText"
         android:textColor="@color/white"
         android:backgroundTint="@color/colorPrimaryDark"
@@ -93,38 +93,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/progress_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/light_grey"
-        android:padding="@dimen/margin"
-        android:visibility="invisible"
-        app:layout_constraintTop_toTopOf="@+id/geocache_codes"
-        app:layout_constraintBottom_toBottomOf="@+id/geocache_codes"
-        app:layout_constraintStart_toStartOf="@+id/geocache_codes"
-        app:layout_constraintEnd_toEndOf="@+id/geocache_codes">
-
-        <ProgressBar
-            android:id="@+id/progress_circular"
-            android:layout_width="wrap_content"
+       <include layout="@layout/getting_tour_progress_bar"
+           android:id="@+id/progress_layout"
+           android:layout_width="wrap_content"
+           android:visibility="invisible"
             android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleLarge"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="@+id/geocache_codes"
+            app:layout_constraintBottom_toBottomOf="@+id/geocache_codes"
+            app:layout_constraintStart_toStartOf="@+id/geocache_codes"
+            app:layout_constraintEnd_toEndOf="@+id/geocache_codes"/>
 
-        <TextView
-            android:id="@+id/progress_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Getting your tour."
-            android:layout_marginTop="@dimen/margin"
-            app:layout_constraintTop_toBottomOf="@+id/progress_circular"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

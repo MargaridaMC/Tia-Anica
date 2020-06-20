@@ -13,7 +13,6 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
 
     private GeocachingScrapper scrapper;
     private List<String> geocacheCodesList;
-    GeocachingTour delegate;
     private List<Geocache> caches = new ArrayList<>();
 
     GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geocacheCodesList){
@@ -57,7 +56,8 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if(result == 1){
-            delegate.onGeocachingScrappingTaskResult(caches);
+            //delegate.onGeocachingScrappingTaskResult(caches, cachesAlreadyInDb);
+            Geocache.Companion.onGeocachesObtained(caches);
         }
     }
 }

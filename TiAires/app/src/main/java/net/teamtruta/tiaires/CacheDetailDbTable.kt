@@ -9,7 +9,7 @@ class CacheDetailDbTable(private val context: Context)  {
     private val TAG = CacheDetailDbTable::class.simpleName
     private val dbHelper = TiAiresDb(context)
 
-    fun store(gc : Geocache) : Long{
+    fun store(gc : Geocache, overwrite: Boolean) : Long{
         val db = dbHelper.writableDatabase
         val values = ContentValues()
 
@@ -27,8 +27,14 @@ class CacheDetailDbTable(private val context: Context)  {
             put(CacheDetailEntry.FAV_COL, gc.favourites)
         }
 
-        val id = db.transaction { insert(CacheDetailEntry.TABLE_NAME, null, values) }
-        gc._id = id
+        var id : Long = -1L
+        if (overwrite){
+            db.update(CacheDetailEntry.TABLE_NAME, values,
+                    "${CacheDetailEntry._ID} = ?", arrayOf("${gc._id}"))
+        } else {
+            id = db.insert(CacheDetailEntry.TABLE_NAME, null, values)
+            gc._id = id
+        }
 
         LogDbTable(context).storeLogsInCache(gc)
         db.close()
@@ -36,11 +42,11 @@ class CacheDetailDbTable(private val context: Context)  {
         return id
     }
 
-    fun store(caches: MutableList<Geocache>): MutableList<Long> {
+    fun store(caches: MutableList<Geocache>, overwrite: Boolean): MutableList<Long> {
 
         val cacheIds = mutableListOf<Long>()
         for(gc in caches){
-            cacheIds.add(store(gc))
+            cacheIds.add(store(gc, overwrite))
         }
         return cacheIds
     }
@@ -138,6 +144,28 @@ class CacheDetailDbTable(private val context: Context)  {
         db.delete(CacheDetailEntry.TABLE_NAME, "${CacheDetailEntry._ID} = ?", arrayOf("$id"))
         db.close()
     }
+
+    fun update(obtainedCaches: MutableList<Geocache>) {
+
+        for(gc in obtainedCaches){
+            val db = dbHelper.readableDatabase
+            val cursor = db.doQuery(CacheDetailEntry.TABLE_NAME, arrayOf(CacheDetailEntry._ID),
+                    "${CacheDetailEntry.CODE_COL} = ?", arrayOf(gc.code))
+            cursor.moveToFirst()
+            val id = cursor.getLong(CacheDetailEntry._ID)
+            db.close()
+            cursor.close()
+            if(id != -1L){
+                gc._id = id
+                store(gc, true)
+            }
+
+
+        }
+
+
+    }
+
 
 }
 

@@ -30,4 +30,7 @@
     </string-array>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="reload_tour">Reload Tour</string>
+    <string name="create_tour">Create Tour</string>
+    <string name="getting_your_tour">Getting your tour.</string>
 </resources>

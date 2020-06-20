@@ -16,54 +16,20 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
                 recentLogs: ArrayList<GeocacheLog>) : this(code, name, latitude, longitude, size,
             difficulty, terrain, type, visit, hint, favourites, recentLogs, 0, "")
 
-/*
-    constructor() {}
-
-    constructor(dbConnection: DbConnection?) {
-        _dbConnection = dbConnection
-    }
-
-    fun setRecentLogs(recentLogs: ArrayList<GeocacheLog>?) {
-        this.recentLogs = recentLogs
-    }
-*/
-
     val latLng: LatLng
         get() = LatLng(latitude.value, longitude.value)
 
- /*   fun countDNFsInLastLogs(numberOfLogsToCheck: Int): Int {
-        val logsToCheck = recentLogs.subList(0, numberOfLogsToCheck)
-        return logsToCheck.stream().filter { (logType) -> logType == FoundEnumType.DNF }.count().toInt()
-    }*/
+    val dNFRiskShort: String
+        get() {
+            val logType = recentLogs[0].logType
+            if (logType == FoundEnumType.Disabled) return "Disabled"
+            return if (logType == FoundEnumType.NeedsMaintenance) "Needs Maintenance" else "DNF Risk"
+        }
+
 
     fun isDNFRisk(): Boolean {
         return dNFRisk != ""
     }
-
-    /*fun setDNFRisk(): String {
-        val (logType) = recentLogs[0]
-        if (logType == FoundEnumType.Disabled) {
-            dNFRisk = "Disabled"
-            return dNFRisk
-        }
-        if (logType == FoundEnumType.NeedsMaintenance) {
-            dNFRisk = "Needs Maintenance"
-            return dNFRisk
-        }
-        val maxLogs = 10
-        val nDNFs = countDNFsInLastLogs(maxLogs)
-        if (nDNFs >= 2) {
-            dNFRisk = "DNFs in last $maxLogs: $nDNFs"
-
-            // Count DNFs since last log
-            if (recentLogs[0].logType == FoundEnumType.DNF) {
-                var i = 0
-                while (recentLogs[i].logType == FoundEnumType.DNF) i++
-                dNFRisk += " including last $i"
-            }
-        }
-        return dNFRisk
-    }*/
 
     fun hasHint(): Boolean {
         return hint != "NO MATCH"
@@ -74,31 +40,89 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
         return recentLogs.subList(0, n + 1)
     }
 
-    val dNFRiskShort: String
-        get() {
-            val logType = recentLogs[0].logType
-            if (logType == FoundEnumType.Disabled) return "Disabled"
-            return if (logType == FoundEnumType.NeedsMaintenance) "Needs Maintenance" else "DNF Risk"
-        }
 
     companion object {
 
-        //var _dbConnection: DbConnection? = null
+        lateinit var geocachingTourDelegate: GeocachingTour
+        lateinit var dbConnection: DbConnection
+        var cachesAlreadyInDb: MutableList<Long> = mutableListOf()
+        private var overwrite : Boolean = false
 
-        fun existsInDb(code: String?, dbConnection: DbConnection): Long {
+        private fun existsInDb(code: String?, dbConnection: DbConnection): Long {
             return dbConnection.cacheDetailTable.contains(code!!)
         }
 
+        fun getGeocaches(requestedGeocacheCodes: List<String>, dbConnection: DbConnection,
+                         geocachingTourDelegate: GeocachingTour, overwrite : Boolean = false) {
 
-        fun getGeocaches(requestedCaches: List<String>, dbConnection: DbConnection, geocachingTour: GeocachingTour): List<Long> {
-            val cacheListIds: MutableList<Long> = ArrayList()
+            this.geocachingTourDelegate = geocachingTourDelegate
+            this.dbConnection = dbConnection
+
+            if(overwrite){
+                this.overwrite = overwrite
+                getGeocaches(requestedGeocacheCodes)
+                return
+            }
+
+            val cachesToGet: MutableList<String> = ArrayList()
+
+            // First check if any of the caches already exist in the database
+            for (c in requestedGeocacheCodes) {
+                val cacheID = existsInDb(c, dbConnection)
+                if (cacheID != -1L) {
+                    cachesAlreadyInDb.add(cacheID)
+                } else {
+                    cachesToGet.add(c)
+                }
+            }
+
+            getGeocaches(cachesToGet)
+        }
+
+        private fun getGeocaches(requestedGeocacheCodes: List<String>) {
+            val authCookie = App.getAuthenticationCookie()
+            val scrapper = GeocachingScrapper(authCookie)
+            val geocachingScrappingTask = GeocachingScrappingTask(scrapper, requestedGeocacheCodes)
+            geocachingScrappingTask.execute()
+        }
+
+        fun onGeocachesObtained(obtainedCaches: MutableList<Geocache>) {
+            // Store newly obtained caches
+
+            if(overwrite){
+
+                dbConnection.cacheDetailTable.update(obtainedCaches)
+
+            } else {
+                val obtainedCacheIDs = dbConnection.cacheDetailTable.store(obtainedCaches, false)
+                cachesAlreadyInDb.addAll(obtainedCacheIDs)
+                dbConnection.cacheTable.addCachesToTour(geocachingTourDelegate._id, cachesAlreadyInDb)
+            }
+
+            geocachingTourDelegate.onAllGeocachesObtained(overwrite)
+        }
+    }
+}
+/*
+
+        fun reloadCaches(requestedCaches: List<Long>){
+            // Scrape the remaining caches
+            val authCookie = App.getAuthenticationCookie()
+            val scrapper = GeocachingScrapper(authCookie)
+            val geocachingScrappingTask = GeocachingScrappingTask(scrapper, cachesToGet)
+            geocachingScrappingTask.execute()
+        }
+*/
+
+       /* fun getGeocaches(requestedCaches: List<String>, dbConnection: DbConnection, geocachingTour: GeocachingTour) {
+            val cachesAlreadyInDb: MutableList<Long> = ArrayList()
             val cachesToGet: MutableList<String> = ArrayList()
 
             // First check if any of the caches already exist in the database
             for (c in requestedCaches) {
                 val cacheID = existsInDb(c, dbConnection)
                 if (cacheID != -1L) {
-                    cacheListIds.add(cacheID)
+                    cachesAlreadyInDb.add(cacheID)
                 } else {
                     cachesToGet.add(c)
                 }
@@ -107,39 +131,10 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
             // Scrape the remaining caches
             val authCookie = App.getAuthenticationCookie()
             val scrapper = GeocachingScrapper(authCookie)
-            val geocachingScrappingTask = GeocachingScrappingTask(scrapper, cachesToGet)
+            val geocachingScrappingTask = GeocachingScrappingTask(scrapper, cachesToGet, cachesAlreadyInDb)
             geocachingScrappingTask.delegate = geocachingTour
             geocachingScrappingTask.execute()
-            return cacheListIds
+
         }
-    }
+    }*/
 
-
-    /*fun CountDaysSinceLastFind(): Long {
-        if (recentLogs == null || recentLogs!!.size == 0) return 0
-
-        // I'm not going to comment what I think about this line of _code, esp if compared with the C# version.
-        // #language-of-the-flintstones
-        val (_, logDate) = recentLogs!!.stream().filter { (logType) -> logType == FoundEnumType.Found }.findFirst().get()
-        return ChronoUnit.DAYS.between(logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
-    }
-
-    fun AverageDaysBetweenFinds(): Double {
-        if (recentLogs == null || recentLogs!!.size == 0) return 0
-        val daysDifference = ChronoUnit.DAYS.between(recentLogs!![recentLogs!!.size - 1].logDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
-        return daysDifference / recentLogs!!.size.toDouble()
-    }
-
-        val lastFindDate: Date
-        get() {
-            val allFinds = recentLogs.stream().filter { (logType) -> logType == FoundEnumType.Found }.toArray()
-            val (_, logDate) = allFinds[allFinds.size - 1] as GeocacheLog
-            return logDate
-        }
-
-    val lastLogDate: Date
-        get() = recentLogs[0].logDate
-
-*/
-}

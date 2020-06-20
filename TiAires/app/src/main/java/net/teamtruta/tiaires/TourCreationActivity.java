@@ -160,7 +160,7 @@ public class TourCreationActivity extends AppCompatActivity
         _progressBar = findViewById(R.id.progress_layout);
         _progressBar.setVisibility(View.VISIBLE);
 
-        _tour.delegate = this;
+        _tour.tourCreationActivityDelegate = this;
         _tour.addToTour(_geocacheCodesList);
 
     }

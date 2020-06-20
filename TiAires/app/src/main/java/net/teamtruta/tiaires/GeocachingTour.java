@@ -8,15 +8,17 @@ import java.util.List;
  * GeocachingTour class, representing a tour to go out and find them gaches. Includes a list of Geocaches in tour, among others.
  */
 
-public class GeocachingTour implements PostGeocachingScrapping
+public class GeocachingTour// implements PostGeocachingScrapping
 {
-    private String _name;
-    List<GeocacheInTour> _tourCaches = new ArrayList<>();
-    boolean _isCurrentTour;
     long _id;
+    private String _name;
+    boolean _isCurrentTour;
+    List<GeocacheInTour> _tourCaches = new ArrayList<>();
     DbConnection _dbConnection;
-    List<Long> cachesAlreadyInDb = new ArrayList<>();
-    TourCreationActivity delegate;
+
+    //List<Long> cachesAlreadyInDb = new ArrayList<>();
+    TourCreationActivity tourCreationActivityDelegate;
+    TourActivity tourActivityDelegate;
 
     // Constructor for when you are creating a new tour
     GeocachingTour(String name, boolean isCurrentTour, DbConnection dbConnection){
@@ -78,7 +80,6 @@ public class GeocachingTour implements PostGeocachingScrapping
     }
 
     static List<GeocachingTour> getAllTours(DbConnection dbConnection){
-
         return dbConnection.getTourTable().getAllTours(dbConnection);
     }
 
@@ -105,7 +106,7 @@ public class GeocachingTour implements PostGeocachingScrapping
         }
 
         // Get the IDs of the new caches we obtained and add them to the database
-        cachesAlreadyInDb = Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this);
+        Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this, false);
 
     }
 
@@ -114,14 +115,39 @@ public class GeocachingTour implements PostGeocachingScrapping
         _dbConnection.getTourTable().changeName(_id, newTourName);
     }
 
-    @Override
-    public void onGeocachingScrappingTaskResult(List<Geocache> newlyLoadedCaches) {
+    void onAllGeocachesObtained(boolean reloading){
+        if(reloading){
+            tourActivityDelegate.onFinishedReloadingCaches();
+        } else {
+            tourCreationActivityDelegate.onTourCreated();
+        }
+
+    }
+
+    public void reloadTourCaches() {
+
+        Geocache.Companion.getGeocaches(getTourCacheCodes(), _dbConnection, this, true);
+
+    }
+
+/*    @Override
+    public void onGeocachingScrappingTaskResult(List<Geocache> newlyLoadedCaches, List<Long> cachesAlreadyInDb) {
         List<Long> newlyLoadedCachesIDs = _dbConnection.getCacheDetailTable().store(newlyLoadedCaches);
         cachesAlreadyInDb.addAll(newlyLoadedCachesIDs);
         _dbConnection.getCacheTable().addCachesToTour(_id, cachesAlreadyInDb);
         delegate.onTourCreated();
-    }
+    }*/
 
+   /* public void reloadTourCaches() {
+        List<Long> tourCachesIDs = new ArrayList<>();
+        for(GeocacheInTour gc : _tourCaches){
+            tourCachesIDs.add(gc.getGeocache().get_id());
+        }
+
+        cachesAlreadyInDb = Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this);
+
+        _dbConnection.getCacheDetailTable().reloadCaches(tourCachesIDs);
+    }*/
 }
 
 // TODO: I need some unit tests on this

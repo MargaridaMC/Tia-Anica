@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.DatabaseUtils
 import android.util.Log
-import java.lang.Exception
 
 class CacheDbTable (private val context: Context) {
 
@@ -62,14 +61,14 @@ class CacheDbTable (private val context: Context) {
 
         // Get index for next element in order
         // val cursor = db.doQuery(CacheEntry.TABLE_NAME, arrayOf("MAX(${CacheEntry.ORDER_COL})"), "${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourIDFK"))
-        val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) FROM ${CacheEntry.TABLE_NAME} " +
+        /*val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) FROM ${CacheEntry.TABLE_NAME} " +
                 "WHERE ${CacheEntry.TOUR_ID_FK_COL} = $tourIDFK", null)
         val orderIdx = try{
             cursor.moveToFirst()
             cursor.getInt(CacheEntry.ORDER_COL) + 1
         } catch (e : Exception){
             -1
-        }
+        }*/
 
         val values = ContentValues()
         with(values){
@@ -89,14 +88,14 @@ class CacheDbTable (private val context: Context) {
             put(CacheEntry.FAV_POINT_COL, geocacheInTour.favouritePoint)
             put(CacheEntry.TOUR_ID_FK_COL, tourIDFK)
             put(CacheEntry.CACHE_DETAIL_ID_FK_COL, geocacheIDFK)
-            put(CacheEntry.ORDER_COL, orderIdx)
+            //put(CacheEntry.ORDER_COL, orderIdx)
         }
 
         val id = db.transaction { insert(CacheEntry.TABLE_NAME, null, values) }
 
         Log.d(TAG, "Stored new GeocacheInTour to the DB $geocacheInTour")
 
-        cursor.close()
+        //cursor.close()
         db.close()
 
         return id
