@@ -168,16 +168,10 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             Analytics.trackEvent("TourActivity.deleteTour", properties);
 
             // Delete Tour
-            int nRowsDeleted = new TourDbTable(this).deleteTour(tourID);
-            if(nRowsDeleted == 1){
-                // Successfully deleted tour
-                Intent intent = new Intent(context, MainActivity.class);
-                startActivity(intent);
-            } else {
-                Log.e(TAG, "Could not delete tour with ID: " + tourID + " and name: " + tourName);
-                Toast.makeText(this, "An error occurred: couldn't delete selected tour.", Toast.LENGTH_LONG).show();
-            }
+            _tour.deleteTour();
 
+            Intent intent = new Intent(context, MainActivity.class);
+            startActivity(intent);
 
         });
 

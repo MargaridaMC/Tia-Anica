@@ -33,8 +33,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${CacheEntry.ORDER_COL} INTEGER," +
             "${CacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
             "${CacheEntry.CACHE_DETAIL_ID_FK_COL} INTEGER," + // REFERENCES ${CacheDetailEntry.TABLE_NAME}(${CacheDetailEntry._ID})" +
-            "FOREIGN KEY(${CacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME} ON DELETE CASCADE," +
-            "FOREIGN KEY(${CacheEntry.CACHE_DETAIL_ID_FK_COL}) REFERENCES ${CacheDetailEntry.TABLE_NAME} ON DELETE CASCADE," +
+            "FOREIGN KEY(${CacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME}," +
+            "FOREIGN KEY(${CacheEntry.CACHE_DETAIL_ID_FK_COL}) REFERENCES ${CacheDetailEntry.TABLE_NAME}," +
             "UNIQUE (${CacheEntry.CACHE_DETAIL_ID_FK_COL}, ${CacheEntry.TOUR_ID_FK_COL})" +
             ")"
 

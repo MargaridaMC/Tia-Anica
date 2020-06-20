@@ -65,9 +65,11 @@ class TourDbTable(context: Context) {
 
     fun deleteTour(tourID : Long) : Int{
 
+        // Delete Tour
         val db = dbHelper.writableDatabase
         val nLinesDeleted = db.delete(TourEntry.TABLE_NAME, "${TourEntry._ID} = ?", arrayOf("$tourID"))
         db.close()
+
         return nLinesDeleted
     }
 

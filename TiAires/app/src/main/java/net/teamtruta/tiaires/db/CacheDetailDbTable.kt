@@ -167,6 +167,25 @@ class CacheDetailDbTable(private val context: Context)  {
 
     }
 
+    fun getIDFromCode(code: String): Long {
+
+        val db = dbHelper.readableDatabase
+
+        val cursor = db.doQuery(CacheDetailEntry.TABLE_NAME, arrayOf(CacheDetailEntry._ID),
+        "${CacheDetailEntry.CODE_COL} = ?", arrayOf(code))
+
+        val id = if(cursor.moveToFirst()){
+            cursor.getLong(CacheDetailEntry._ID)
+        } else {
+            -1L
+        }
+
+        cursor.close()
+        db.close()
+
+        return id
+    }
+
 
 }
 

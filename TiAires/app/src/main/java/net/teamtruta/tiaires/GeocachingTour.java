@@ -79,7 +79,7 @@ public class GeocachingTour
     void removeFromTour(String code)
     {
         final String upperCode = code.toUpperCase();
-        _dbConnection.getCacheTable().deleteCache(upperCode);
+        _dbConnection.getCacheTable().deleteCache(upperCode, _id);
     }
 
     public void addToTour(List<String> cachesToGet) { // TODO: trocar isto por uma classe básica de todas as collecções?
@@ -123,6 +123,14 @@ public class GeocachingTour
 
         Geocache.Companion.getGeocaches(getTourCacheCodes(), _dbConnection, this, true);
 
+    }
+
+    public void deleteTour() {
+        // Delete Tour
+        _dbConnection.getTourTable().deleteTour(_id);
+
+        // Delete all GeocacheInTour in this tour
+        _dbConnection.getCacheTable().deleteAllCachesInTour(_id);
     }
 
 /*    @Override

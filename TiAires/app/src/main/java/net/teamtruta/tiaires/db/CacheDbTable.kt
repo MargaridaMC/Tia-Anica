@@ -102,7 +102,7 @@ class CacheDbTable (private val context: Context) {
         return id
     }
 
-    fun getTourCacheCodes(tourID: Long):List<String>{
+    /*fun getTourCacheCodes(tourID: Long):List<String>{
 
         val db = dbHelper.readableDatabase
         val cacheCodes = mutableListOf<String>()
@@ -124,16 +124,26 @@ class CacheDbTable (private val context: Context) {
         db.close()
 
         return cacheCodes
-    }
+    }*/
 
-    fun deleteCache(code: String) {
+    fun deleteCache(code: String, tourIDFK: Long) {
+
+        // Get the ID corresponding to the geocache with this code
+        val id = CacheDetailDbTable(context).getIDFromCode(code)
+
         val db = dbHelper.writableDatabase
-        val QUERY = "DELETE FROM ${CacheEntry.TABLE_NAME} " +
+        /*val QUERY = "DELETE FROM ${CacheEntry.TABLE_NAME} " +
                 "WHERE ${CacheEntry.CACHE_DETAIL_ID_FK_COL} IN (" +
                 "SELECT ${CacheDetailEntry._ID} " +
                 "FROM ${CacheDetailEntry.TABLE_NAME} " +
                 "WHERE ${CacheDetailEntry.CODE_COL} = ?)"
-        db.execSQL(QUERY, arrayOf(code))
+
+        db.execSQL(QUERY, arrayOf(code))*/
+
+        db.delete(CacheEntry.TABLE_NAME,
+                "${CacheEntry.CACHE_DETAIL_ID_FK_COL} = ? AND ${CacheEntry.TOUR_ID_FK_COL} = ?",
+                            arrayOf("$id", "$tourIDFK"))
+
         db.close()
     }
 
@@ -198,6 +208,13 @@ class CacheDbTable (private val context: Context) {
 
         return GeocacheInTour(gc, notes, visit, needsMaintenance,
                 foundDate, foundTrackable, droppedTrackable, favouritePoint, _id, dbConnection)
+    }
+
+    fun deleteAllCachesInTour(_id: Long) {
+        val db = dbHelper.readableDatabase
+        db.delete(CacheEntry.TABLE_NAME, "${CacheEntry.TOUR_ID_FK_COL} = ?",
+                arrayOf("$_id"))
+        db.close()
     }
 }
 
