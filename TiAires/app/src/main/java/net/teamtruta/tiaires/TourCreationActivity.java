@@ -16,6 +16,9 @@ import android.widget.EditText;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
+import net.teamtruta.tiaires.db.CacheDbTable;
+import net.teamtruta.tiaires.db.DbConnection;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,10 +84,8 @@ public class TourCreationActivity extends AppCompatActivity
             _tour = GeocachingTour.read(rootPath, _originalTourName);//GeocachingTour.fromFile(rootPath, _originalTourName);
 */
             // get the codes of the caches to put in the text field
-            //List<String> allCodes = tour.getTourCacheCodes();
-            List<String> allCodes = new CacheDbTable(this).getTourCacheCodes(tourID);
             EditText geocacheCodesView = findViewById(R.id.geocache_codes);
-            String allCodesString = allCodes.toString();
+            String allCodesString = _tour.getTourCacheCodes().toString();
             geocacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
         }
         else

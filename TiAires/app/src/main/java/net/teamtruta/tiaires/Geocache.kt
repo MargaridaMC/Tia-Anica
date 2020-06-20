@@ -1,6 +1,7 @@
 package net.teamtruta.tiaires
 
 import com.google.android.gms.maps.model.LatLng
+import net.teamtruta.tiaires.db.DbConnection
 import java.util.*
 
 class Geocache(val code: String, val name: String, val latitude: Coordinate,

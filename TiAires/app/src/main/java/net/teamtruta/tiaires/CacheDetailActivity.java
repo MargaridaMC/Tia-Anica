@@ -15,6 +15,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
+import net.teamtruta.tiaires.db.DbConnection;
+
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 
 import java.util.Calendar;

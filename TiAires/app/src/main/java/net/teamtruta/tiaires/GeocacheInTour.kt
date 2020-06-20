@@ -1,5 +1,6 @@
 package net.teamtruta.tiaires
 
+import net.teamtruta.tiaires.db.DbConnection
 import java.util.*
 
 /**

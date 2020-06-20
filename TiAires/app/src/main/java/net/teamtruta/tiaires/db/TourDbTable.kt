@@ -1,10 +1,10 @@
-package net.teamtruta.tiaires
+package net.teamtruta.tiaires.db
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.util.Log
-import java.util.ArrayList
+import net.teamtruta.tiaires.*
 
 class TourDbTable(context: Context) {
 

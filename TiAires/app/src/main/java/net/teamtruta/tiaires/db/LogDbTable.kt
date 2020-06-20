@@ -1,7 +1,8 @@
-package net.teamtruta.tiaires
+package net.teamtruta.tiaires.db
 
 import android.content.ContentValues
 import android.content.Context
+import net.teamtruta.tiaires.*
 import java.util.*
 
 class LogDbTable (context: Context){
@@ -45,8 +46,6 @@ class LogDbTable (context: Context){
         val db = dbHelper.writableDatabase
         val values = ContentValues()
 
-        val dateString = log.logDate.toString()
-
         with(values){
             put(LogEntry.CACHE_DETAIL_ID_FK_COL, cacheID)
             put(LogEntry.LOG_DATE_COL, log.logDate.toFormattedString())
@@ -65,7 +64,7 @@ class LogDbTable (context: Context){
         val cursor = db.doQuery(LogEntry.TABLE_NAME, LogEntry.getAllColumns(), "${LogEntry.CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$geocacheID"))
         while(cursor.moveToNext()){
             val logType = FoundEnumType.valueOfString(cursor.getString(LogEntry.LOG_TYPE_COL))
-            val logDate : Date = cursor.getString(LogEntry.LOG_DATE_COL).toDate() ?: continue
+            val logDate : Date = cursor.getString(LogEntry.LOG_DATE_COL).toDate()
             val log = GeocacheLog(logType, logDate)
             allLogs.add(log)
         }

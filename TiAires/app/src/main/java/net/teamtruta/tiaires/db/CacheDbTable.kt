@@ -1,10 +1,11 @@
-package net.teamtruta.tiaires
+package net.teamtruta.tiaires.db
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.DatabaseUtils
 import android.util.Log
+import net.teamtruta.tiaires.*
 
 class CacheDbTable (private val context: Context) {
 
@@ -168,7 +169,7 @@ class CacheDbTable (private val context: Context) {
         return nLinesChanged == 1
     }
 
-    fun getGeocacheFromID(cacheID : Long, dbConnection : DbConnection) : GeocacheInTour{
+    fun getGeocacheFromID(cacheID : Long, dbConnection : DbConnection) : GeocacheInTour {
 
         val db = dbHelper.readableDatabase
 
@@ -181,7 +182,7 @@ class CacheDbTable (private val context: Context) {
         return geocacheInTour
     }
 
-    fun Cursor.getGeocacheInTour(dbConnection : DbConnection) : GeocacheInTour{
+    fun Cursor.getGeocacheInTour(dbConnection : DbConnection) : GeocacheInTour {
 
         val geocacheID = getLong(CacheEntry.CACHE_DETAIL_ID_FK_COL)
         val gc = CacheDetailDbTable(context).getGeocache(geocacheID)

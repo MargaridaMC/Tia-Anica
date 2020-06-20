@@ -180,7 +180,6 @@ public class GeocachingScrapper {
         httpConnection.setRequestProperty("Cookie", _groundspeakAuthCookie);
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
         int status = httpConnection.getResponseCode();
-        // System.out.println("Status GetGeocacheDetails GET= " + status);
 
         String pageContents = readHttpRequest(httpConnection).toString();
 
@@ -192,9 +191,7 @@ public class GeocachingScrapper {
         String name;
         if (matcher.find( )) {
             name = matcher.group(1);
-            //gc.setName(matcher.group(1));
         } else {
-            //gc.setName("NO MATCH");
             name = "NO MATCH";
         }
 
@@ -209,13 +206,9 @@ public class GeocachingScrapper {
             String longitudeString = matcher.group(2);
             latitude = new Coordinate(latitudeString);
             longitude = new Coordinate(longitudeString);
-//            gc.setLatitude(new Coordinate(latitudeString));
-//            gc.setLongitude(new Coordinate(longitudeString));
         } else {
             latitude = null;
             longitude = null;
-//            gc.setLatitude(null);
-//            gc.setLongitude(null);
         }
 
         // 3. Get Size
@@ -227,10 +220,8 @@ public class GeocachingScrapper {
         if (matcher.find()) {
             size = matcher.group(1);
             size = size.substring(0,1).toUpperCase() + size.substring(1);
-            //gc.setSize(size.substring(0,1).toUpperCase() + size.substring(1));
         } else {
             size = "NO MATCH";
-            //gc.setSize("NO MATCH");
         }
 
         // 4. Get Difficulty and Terrain (both use the same regex, repeated instances)
@@ -242,21 +233,16 @@ public class GeocachingScrapper {
         String difficulty, terrain;
         if (matcher.find()) {
             difficulty = matcher.group(1);
-            //gc.setDifficulty(matcher.group(1));
 
             if(matcher.find()) {
                 terrain = matcher.group(1);
-                //gc.setTerrain( matcher.group(1));
             }
             else {
                 terrain = "NO MATCH";
-                //gc.setTerrain("NO MATCH");
             }
         } else {
             difficulty = "NO MATCH";
             terrain = "NO MATCH";
-//            gc.setDifficulty("NO MATCH");
-//            gc.setTerrain("NO MATCH");
         }
 
         // 5. Get the cache type

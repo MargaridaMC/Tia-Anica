@@ -1,4 +1,4 @@
-package net.teamtruta.tiaires
+package net.teamtruta.tiaires.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

@@ -28,6 +28,9 @@ import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
 
+import net.teamtruta.tiaires.db.DbConnection;
+import net.teamtruta.tiaires.db.TourDbTable;
+
 import java.util.HashMap;
 import java.util.Map;
 

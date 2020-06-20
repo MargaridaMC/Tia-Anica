@@ -1,27 +1,29 @@
 package net.teamtruta.tiaires;
 
+import net.teamtruta.tiaires.db.DbConnection;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * GeocachingTour class, representing a tour to go out and find them gaches. Includes a list of Geocaches in tour, among others.
  */
 
-public class GeocachingTour// implements PostGeocachingScrapping
+public class GeocachingTour
 {
-    long _id;
+    public long _id;
     private String _name;
     boolean _isCurrentTour;
-    List<GeocacheInTour> _tourCaches = new ArrayList<>();
+    public List<GeocacheInTour> _tourCaches = new ArrayList<>();
     DbConnection _dbConnection;
 
-    //List<Long> cachesAlreadyInDb = new ArrayList<>();
     TourCreationActivity tourCreationActivityDelegate;
     TourActivity tourActivityDelegate;
-
+//38 55 23
     // Constructor for when you are creating a new tour
-    GeocachingTour(String name, boolean isCurrentTour, DbConnection dbConnection){
+    public GeocachingTour(String name, boolean isCurrentTour, DbConnection dbConnection){
         if(name == null) {
             _name = new Date().toString();
         } else {
@@ -32,10 +34,6 @@ public class GeocachingTour// implements PostGeocachingScrapping
         this._id = _dbConnection.getTourTable().storeNewTour(_name, _isCurrentTour);
     }
 
-/*    public GeocachingTour(DbConnection dbConnection) {
-        this._dbConnection = dbConnection;
-    }*/
-
     static GeocachingTour getGeocachingTourFromID(long id, DbConnection dbConnection){
         GeocachingTour tour = dbConnection.getTourTable().getTour(id, dbConnection);
         tour._dbConnection = dbConnection;
@@ -43,7 +41,7 @@ public class GeocachingTour// implements PostGeocachingScrapping
         return tour;
     }
 
-    GeocachingTour(String name, long id, boolean isCurrentTour, DbConnection dbConnection){
+    public GeocachingTour(String name, long id, boolean isCurrentTour, DbConnection dbConnection){
         this._name = name;
         this._id = id;
         this._isCurrentTour = isCurrentTour;
@@ -69,13 +67,8 @@ public class GeocachingTour// implements PostGeocachingScrapping
 
     public List<String> getTourCacheCodes() {
 
-        List<String> codes = new ArrayList<>();
-
-        for(GeocacheInTour geocache:_tourCaches){
-            codes.add(geocache.getGeocache().getCode());
-        }
-
-        return codes;
+        return _tourCaches.stream().map(GeocacheInTour::getGeocache)
+                .map(Geocache::getCode).collect(Collectors.toList());
 
     }
 
@@ -91,6 +84,9 @@ public class GeocachingTour// implements PostGeocachingScrapping
 
     public void addToTour(List<String> cachesToGet) { // TODO: trocar isto por uma classe básica de todas as collecções?
 
+        // Remove any repeated caches
+        cachesToGet = cachesToGet.stream().distinct().collect(Collectors.toList());
+
         // Process the deltas from the old list to the new list
         // 1. Remove from the original tour caches that are not in the new one
         List<String> cachesAlreadyInTour = getTourCacheCodes();//new CacheDbTable(this).getTourCacheCodes(tourID);
@@ -101,9 +97,8 @@ public class GeocachingTour// implements PostGeocachingScrapping
         }
 
         // 2. Remove from the list of caches to fetch, those we already have loaded
-        for (String loadedCache : cachesAlreadyInTour) {
-            cachesToGet.remove(loadedCache); // don't get the information again. If the list doesn't containt the cache nothing will happen
-        }
+        cachesToGet = cachesToGet.stream().filter(str -> !cachesAlreadyInTour.contains(str))
+                .collect(Collectors.toList());
 
         // Get the IDs of the new caches we obtained and add them to the database
         Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this, false);

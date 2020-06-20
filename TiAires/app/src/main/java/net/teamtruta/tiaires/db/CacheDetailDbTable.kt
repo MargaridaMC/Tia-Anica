@@ -1,8 +1,9 @@
-package net.teamtruta.tiaires
+package net.teamtruta.tiaires.db
 
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import net.teamtruta.tiaires.*
 
 class CacheDetailDbTable(private val context: Context)  {
 
