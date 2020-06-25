@@ -183,7 +183,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         holder.goToButton.setOnClickListener(v -> {
             if(goToOnClickListener!=null){
-                goToOnClickListener.onGoToClick(geocache.getCode());
+                goToOnClickListener.onGoToClick(geocache);
             }
         });
 
@@ -394,7 +394,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     }
 
     interface GoToOnClickListener{
-        void onGoToClick(String code);
+        void onGoToClick(Geocache geocache);
     }
 
     interface OnVisitListener{

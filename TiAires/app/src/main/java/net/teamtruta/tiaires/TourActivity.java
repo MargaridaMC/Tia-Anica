@@ -11,13 +11,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -209,7 +212,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     @Override
-    public void onGoToClick(String code){
+    public void onGoToClick(Geocache geocache){
 
         // Open geocache in Geocache app or website
         /*
@@ -220,11 +223,32 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         startActivity(i);
         */
-        Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra("_tourName", _tour.getName());
-        intent.putExtra("focusOnCache", true);
-        intent.putExtra("geocacheCode", code);
-        startActivity(intent);
+        /*Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra(App.TOUR_ID_EXTRA, _tour._id);
+        intent.putExtra(App.CACHE_ID_EXTRA, cacheID);
+        intent.putExtra(App.FOCUS_ON_CACHE_EXTRA, true);
+        startActivity(intent);*/
+
+        AlertDialog.Builder chooser = new AlertDialog.Builder(this)
+                .setMessage("Which app would you like to use to go to this cache?")
+                .setPositiveButton("Geocaching", (dialog, which) -> {
+                    String url = "https://coord.info/" + geocache.getCode();
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+
+                    i.setData(Uri.parse(url));
+
+                    startActivity(i);
+                })
+                .setNegativeButton("Google Maps", (dialog, which) -> {
+                    Uri gmmIntentUri = Uri.parse(String.format(getResources().getString(R.string.coordinates_format),
+                            geocache.getLatitude().getValue(), geocache.getLongitude().getValue()));
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    startActivity(mapIntent);
+                })
+                .setNeutralButton("Cancel", (dialog, which) -> {});
+
+        chooser.create().show();
+
 
     }
 

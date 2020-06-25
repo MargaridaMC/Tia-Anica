@@ -13,16 +13,22 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import net.teamtruta.tiaires.db.CacheDbTable;
+import net.teamtruta.tiaires.db.CacheDetailDbTable;
+import net.teamtruta.tiaires.db.DbConnection;
+import net.teamtruta.tiaires.db.TourDbTable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
-    String tourName;
     GeocachingTour tour;
+    Geocache cacheToFocusOn;
     boolean focusOnCache;
-    GeocacheInTour cacheToFocusOn;
+
+    String TAG = MapActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +40,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-       /* Intent intent = getIntent();
-        tourName = intent.getExtras().getString("_tourName");
-        setTitle(tourName);
-        tour = GeocachingTour.read(App.getTourRoot(), tourName);
+        Intent intent = getIntent();
+        long tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1L);
+        if(tourID != -1L){
+            tour = new TourDbTable(this).getTour(tourID, new DbConnection(this));
+        } else {
+            // TODO : something went wrong
+            return;
+        }
 
-        focusOnCache = intent.getBooleanExtra("focusOnCache", false);
+        setTitle(tour.getName());
+
+        focusOnCache = intent.getBooleanExtra(App.FOCUS_ON_CACHE_EXTRA, false);
         if(focusOnCache){
-            String cacheCode = intent.getExtras().getString("geocacheCode");
-            cacheToFocusOn = tour.getCacheInTour(cacheCode);
-        }*/
-        Log.d("TAG", "Focus: " + focusOnCache);
+            long cacheID = intent.getLongExtra(App.CACHE_ID_EXTRA, -1L);
+            cacheToFocusOn = new CacheDetailDbTable(this).getGeocache(cacheID);
+
+            Log.d(TAG, "Focus: " + cacheToFocusOn);
+        }
+
     }
 
 
@@ -64,8 +78,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Find the center or focus on the clicked cache
         if(focusOnCache){
-            Coordinate latitude = cacheToFocusOn.getGeocache().getLatitude();
-            Coordinate longitude = cacheToFocusOn.getGeocache().getLongitude();
+            Coordinate latitude = cacheToFocusOn.getLatitude();
+            Coordinate longitude = cacheToFocusOn.getLongitude();
             centre = new LatLng(latitude.getValue(), longitude.getValue());
             map.addMarker(new MarkerOptions().position(centre));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(centre, 13.0f));
@@ -82,6 +96,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         centre = computeCentroid(allCacheCoordinates);
         map.moveCamera(CameraUpdateFactory.newLatLng(centre));
+
+        Log.d(TAG, "Created Map.");
     }
 
     private LatLng computeCentroid(List<LatLng> points) {
