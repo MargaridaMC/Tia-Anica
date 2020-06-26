@@ -49,6 +49,7 @@
                     android:backgroundTint="@color/colorLight"
                     android:singleLine="true"
                     android:maxLength="20"
+                    android:inputType="textCapWords"
                     app:layout_constraintStart_toEndOf="@id/toolbar"
                     app:layout_constraintTop_toBottomOf="@id/tour_name_view"
                     app:layout_constraintEnd_toEndOf="parent"/>
