@@ -35,4 +35,6 @@
     <string name="getting_your_tour">Getting your tour.</string>
 
     <string name="coordinates_format">geo:0,0?q=%f,0%f</string>
+    <string name="geocache_codes">Geocache codes:</string>
+    <string name="tour_name">Tour name</string>
 </resources>

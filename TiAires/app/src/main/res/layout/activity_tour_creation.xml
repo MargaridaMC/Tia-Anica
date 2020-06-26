@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin"
-                    android:text="Tour name"
+                    android:text="@string/tour_name"
                     android:textColor="@color/white"
                     android:textSize="@dimen/main_text_size"
                     app:layout_constraintStart_toEndOf="@id/toolbar"
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
-        android:text="Geocache codes:"
+        android:text="@string/geocache_codes"
         android:textAppearance="@style/MainText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/action_bar" />
