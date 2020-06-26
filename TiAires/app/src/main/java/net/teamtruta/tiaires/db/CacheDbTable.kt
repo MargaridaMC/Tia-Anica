@@ -19,7 +19,8 @@ class CacheDbTable (private val context: Context) {
         // Query database for all caches with this foreign key
         val db = dbHelper.readableDatabase
         val columns = CacheEntry.getAllColumns()
-        val cursor = db.doQuery(CacheEntry.TABLE_NAME, columns, "${CacheEntry.TOUR_ID_FK_COL} = ${tourID}")//, orderBy = CacheEntry.ORDER_COL)
+        val cursor = db.doQuery(CacheEntry.TABLE_NAME, columns,
+                "${CacheEntry.TOUR_ID_FK_COL} = $tourID", orderBy = CacheEntry.ORDER_COL)
         while(cursor.moveToNext()){
             val geocacheInTour = cursor.getGeocacheInTour(dbConnection)
             allCaches.add(geocacheInTour)
@@ -61,15 +62,14 @@ class CacheDbTable (private val context: Context) {
         val db = dbHelper.writableDatabase
 
         // Get index for next element in order
-        // val cursor = db.doQuery(CacheEntry.TABLE_NAME, arrayOf("MAX(${CacheEntry.ORDER_COL})"), "${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourIDFK"))
-        /*val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) FROM ${CacheEntry.TABLE_NAME} " +
-                "WHERE ${CacheEntry.TOUR_ID_FK_COL} = $tourIDFK", null)
+        val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) AS ${CacheEntry.ORDER_COL} FROM ${CacheEntry.TABLE_NAME} " +
+                "WHERE ${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourIDFK"))
         val orderIdx = try{
             cursor.moveToFirst()
-            cursor.getInt(CacheEntry.ORDER_COL) + 1
+            cursor.getInt(CacheEntry.ORDER_COL) + 1000
         } catch (e : Exception){
-            -1
-        }*/
+            1000
+        }
 
         val values = ContentValues()
         with(values){
@@ -89,42 +89,19 @@ class CacheDbTable (private val context: Context) {
             put(CacheEntry.FAV_POINT_COL, geocacheInTour.favouritePoint)
             put(CacheEntry.TOUR_ID_FK_COL, tourIDFK)
             put(CacheEntry.CACHE_DETAIL_ID_FK_COL, geocacheIDFK)
-            //put(CacheEntry.ORDER_COL, orderIdx)
+            put(CacheEntry.ORDER_COL, orderIdx)
         }
 
         val id = db.transaction { insert(CacheEntry.TABLE_NAME, null, values) }
 
         Log.d(TAG, "Stored new GeocacheInTour to the DB $geocacheInTour")
 
-        //cursor.close()
+        cursor.close()
         db.close()
 
         return id
     }
 
-    /*fun getTourCacheCodes(tourID: Long):List<String>{
-
-        val db = dbHelper.readableDatabase
-        val cacheCodes = mutableListOf<String>()
-        val SQL_QUERY = "SELECT ${CacheDetailEntry.CODE_COL} " +
-                "FROM ${CacheDetailEntry.TABLE_NAME} " +
-                "WHERE ${CacheDetailEntry._ID} IN (" +
-                    "SELECT ${CacheEntry.CACHE_DETAIL_ID_FK_COL} " +
-                    "FROM ${CacheEntry.TABLE_NAME} " +
-                    "WHERE ${CacheEntry.TOUR_ID_FK_COL} = ?" +
-                ")"
-
-        val cursor = db.rawQuery(SQL_QUERY, arrayOf("$tourID"))
-        while(cursor.moveToNext()){
-            val code = cursor.getString(CacheDetailEntry.CODE_COL)
-            cacheCodes.add(code)
-        }
-
-        cursor.close()
-        db.close()
-
-        return cacheCodes
-    }*/
 
     fun deleteCache(code: String, tourIDFK: Long) {
 
@@ -132,25 +109,12 @@ class CacheDbTable (private val context: Context) {
         val id = CacheDetailDbTable(context).getIDFromCode(code)
 
         val db = dbHelper.writableDatabase
-        /*val QUERY = "DELETE FROM ${CacheEntry.TABLE_NAME} " +
-                "WHERE ${CacheEntry.CACHE_DETAIL_ID_FK_COL} IN (" +
-                "SELECT ${CacheDetailEntry._ID} " +
-                "FROM ${CacheDetailEntry.TABLE_NAME} " +
-                "WHERE ${CacheDetailEntry.CODE_COL} = ?)"
-
-        db.execSQL(QUERY, arrayOf(code))*/
-
         db.delete(CacheEntry.TABLE_NAME,
                 "${CacheEntry.CACHE_DETAIL_ID_FK_COL} = ? AND ${CacheEntry.TOUR_ID_FK_COL} = ?",
                             arrayOf("$id", "$tourIDFK"))
 
         db.close()
     }
-
-/*    fun deleteEntry(id : Long) : Int{
-        val db = dbHelper.writableDatabase
-        return db.delete(CacheEntry.TABLE_NAME, "${CacheEntry._ID} = ?", arrayOf("$id"))
-    }*/
 
     fun addCachesToTour(tourID : Long, newGeocaches: MutableList<Long>) {
         for(geocacheID in newGeocaches){
@@ -170,6 +134,7 @@ class CacheDbTable (private val context: Context) {
             put(CacheEntry.FOUND_TRACKABLE_COL, geocache.foundTrackable)
             put(CacheEntry.DROPPED_TRACKABLE_COL, geocache.droppedTrackable)
             put(CacheEntry.FAV_POINT_COL, geocache.favouritePoint)
+            put(CacheEntry.ORDER_COL, geocache.orderIdx)
         }
 
         val nLinesChanged = db.update(CacheEntry.TABLE_NAME, values, "${CacheEntry._ID} = ?", arrayOf("${geocache._id}"))
@@ -205,9 +170,10 @@ class CacheDbTable (private val context: Context) {
         val foundTrackable = getBoolean(CacheEntry.FOUND_TRACKABLE_COL)
         val droppedTrackable = getBoolean(CacheEntry.DROPPED_TRACKABLE_COL)
         val favouritePoint = getBoolean(CacheEntry.FAV_POINT_COL)
-
+        val orderIdx = getInt(CacheEntry.ORDER_COL)
         return GeocacheInTour(gc, notes, visit, needsMaintenance,
-                foundDate, foundTrackable, droppedTrackable, favouritePoint, _id, dbConnection)
+                foundDate, foundTrackable, droppedTrackable, favouritePoint, orderIdx,
+                _id, dbConnection)
     }
 
     fun deleteAllCachesInTour(_id: Long) {

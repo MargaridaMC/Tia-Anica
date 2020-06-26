@@ -342,12 +342,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
 
-       /* tour.swapCachePositions(fromPosition, toPosition);
-
+        tour.swapCachePositions(fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
-
-        GeocachingTour.write(App.getTourRoot(), tour);*/
-
         return true;
     }
 

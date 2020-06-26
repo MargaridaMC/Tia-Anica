@@ -10,8 +10,8 @@ class GeocacheInTour(val geocache: Geocache, var notes : String = "",
                      var visit: FoundEnumType = FoundEnumType.NotAttempted,
                      var needsMaintenance : Boolean = false, var foundDate : Date? = null,
                      var foundTrackable : Boolean = false, var droppedTrackable : Boolean = false,
-                     var favouritePoint : Boolean = false, val _id : Long = -1,
-                     val _dbConnection : DbConnection? = null) {
+                     var favouritePoint : Boolean = false, var orderIdx : Int = -1,
+                     val _id : Long = -1, val _dbConnection : DbConnection? = null) {
 
     // the following fields have the "In Tour" semantics. So if a cache was found but not in the tour, _found will be = NotAttempted; same logic applies to other fields.
 /*    constructor(geocache: Geocache, dbConnection: DbConnection) :

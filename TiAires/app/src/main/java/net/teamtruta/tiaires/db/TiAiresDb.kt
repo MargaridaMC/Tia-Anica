@@ -1,9 +1,12 @@
 package net.teamtruta.tiaires.db
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import net.teamtruta.tiaires.doQuery
+import net.teamtruta.tiaires.getLong
 
 class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -88,7 +91,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         Log.d(TAG, "Called TiAiresDb onUpgrade")
 
-        if(oldVersion == 10){
+        if(oldVersion <= 10){
             // What needs to be done:
             // - Remove on delete cascade from tour_id_fk and cache_id_fk
             // - Create constraint for UNIQUE(tour_id_fk, cache_id_fk) and erase duplicates
@@ -125,6 +128,23 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
         }
 
+        // Fill in order column if it is currently null or 0
+        if(oldVersion <= 11){
+
+            val cursor = db?.doQuery(CacheEntry.TABLE_NAME, arrayOf(CacheEntry._ID),
+                    "${CacheEntry.ORDER_COL} IS NULL OR ${CacheEntry.ORDER_COL} = 0",
+                    arrayOf())
+                    ?: return
+
+            while(cursor.moveToNext()){
+                val id = cursor.getLong(CacheEntry._ID)
+                val values = ContentValues()
+                values.put(CacheEntry.ORDER_COL, id*1000)
+                db.update(CacheEntry.TABLE_NAME, values,
+                        "${CacheEntry._ID} = ?", arrayOf("$id"))
+            }
+        }
+
     }
 
     override fun onOpen(db: SQLiteDatabase?) {
@@ -133,6 +153,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         // Foreign Key support is not enabled by default.
         // This command enables it every time the database is opened
         db?.execSQL("PRAGMA foreign_keys=ON")
+
     }
 
 }

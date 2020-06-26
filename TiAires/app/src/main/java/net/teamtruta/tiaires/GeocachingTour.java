@@ -21,7 +21,7 @@ public class GeocachingTour
 
     TourCreationActivity tourCreationActivityDelegate;
     TourActivity tourActivityDelegate;
-//38 55 23
+
     // Constructor for when you are creating a new tour
     public GeocachingTour(String name, boolean isCurrentTour, DbConnection dbConnection){
         if(name == null) {
@@ -126,31 +126,42 @@ public class GeocachingTour
     }
 
     public void deleteTour() {
-        // Delete Tour
-        _dbConnection.getTourTable().deleteTour(_id);
 
         // Delete all GeocacheInTour in this tour
         _dbConnection.getCacheTable().deleteAllCachesInTour(_id);
+
+        // Delete Tour
+        _dbConnection.getTourTable().deleteTour(_id);
+
+
     }
 
-/*    @Override
-    public void onGeocachingScrappingTaskResult(List<Geocache> newlyLoadedCaches, List<Long> cachesAlreadyInDb) {
-        List<Long> newlyLoadedCachesIDs = _dbConnection.getCacheDetailTable().store(newlyLoadedCaches);
-        cachesAlreadyInDb.addAll(newlyLoadedCachesIDs);
-        _dbConnection.getCacheTable().addCachesToTour(_id, cachesAlreadyInDb);
-        delegate.onTourCreated();
-    }*/
+    public void swapCachePositions(int fromPosition, int toPosition) {
 
-   /* public void reloadTourCaches() {
-        List<Long> tourCachesIDs = new ArrayList<>();
-        for(GeocacheInTour gc : _tourCaches){
-            tourCachesIDs.add(gc.getGeocache().get_id());
+        GeocacheInTour movedGeocache = _tourCaches.get(fromPosition);
+
+        boolean movingCacheDown = fromPosition < toPosition;
+        if(movingCacheDown){
+            if(toPosition == (_tourCaches.size() - 1)) {
+                movedGeocache.setOrderIdx(_tourCaches.get(toPosition).getOrderIdx() + 1000);
+            } else {
+                movedGeocache.setOrderIdx((int) ((_tourCaches.get(toPosition + 1).getOrderIdx() +
+                        _tourCaches.get(toPosition).getOrderIdx()) / 2.0));
+            }
+        } else {
+
+            if(toPosition == 0){
+                movedGeocache.setOrderIdx((int) (_tourCaches.get(toPosition).getOrderIdx() / 2.0));
+            } else {
+                movedGeocache.setOrderIdx((int) ((_tourCaches.get(toPosition).getOrderIdx() +
+                        _tourCaches.get(toPosition - 1).getOrderIdx()) / 2.0));
+            }
+
         }
+        _dbConnection.getCacheTable().updateEntry(movedGeocache);
 
-        cachesAlreadyInDb = Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this);
+    }
 
-        _dbConnection.getCacheDetailTable().reloadCaches(tourCachesIDs);
-    }*/
 }
 
 // TODO: I need some unit tests on this
