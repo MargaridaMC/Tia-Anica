@@ -46,7 +46,7 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
 
         lateinit var geocachingTourDelegate: GeocachingTour
         lateinit var dbConnection: DbConnection
-        var cachesAlreadyInDb: MutableList<Long> = mutableListOf()
+        lateinit var cachesAlreadyInDb: MutableList<Long>
         private var overwrite : Boolean = false
 
         private fun existsInDb(code: String?, dbConnection: DbConnection): Long {
@@ -58,6 +58,7 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
 
             this.geocachingTourDelegate = geocachingTourDelegate
             this.dbConnection = dbConnection
+            cachesAlreadyInDb =  mutableListOf()
 
             if(overwrite){
                 this.overwrite = overwrite

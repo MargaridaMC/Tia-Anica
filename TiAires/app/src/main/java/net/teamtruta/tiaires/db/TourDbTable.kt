@@ -6,7 +6,7 @@ import android.database.Cursor
 import android.util.Log
 import net.teamtruta.tiaires.*
 
-class TourDbTable(context: Context) {
+class TourDbTable(val context: Context) {
 
     private val TAG = TourDbTable::class.simpleName
     private var dbHelper : TiAiresDb = TiAiresDb(context)
@@ -67,6 +67,7 @@ class TourDbTable(context: Context) {
 
         // Delete Tour
         val db = dbHelper.writableDatabase
+        CacheDbTable(context).deleteAllCachesInTour(tourID)
         val nLinesDeleted = db.delete(TourEntry.TABLE_NAME, "${TourEntry._ID} = ?", arrayOf("$tourID"))
         db.close()
 

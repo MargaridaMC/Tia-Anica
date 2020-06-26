@@ -87,9 +87,6 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         Log.d(TAG, "Called TiAiresDb onUpgrade")
-        /*db?.execSQL(SQL_DELETE_TABLES)
-        onCreate(db)*/
-
 
         if(oldVersion == 10){
             // What needs to be done:
