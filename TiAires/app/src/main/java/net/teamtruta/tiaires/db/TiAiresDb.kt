@@ -21,6 +21,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             ")"
 
     // 2. Cache table
+    //private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE cache(id INTEGER PRIMARY KEY,foundDate TEXT,needsMaintenance INTEGER,visit TEXT,notes TEXT,foundTrackable INTEGER,droppedTrackable INTEGER,favouritePoint INTEGER,orderBy INTEGER,tourID_FK INTEGER,cacheDetailID_FK INTEGER,FOREIGN KEY(tourID_FK) REFERENCES tour ON DELETE CASCADE,FOREIGN KEY(cacheDetailID_FK) REFERENCES cacheDetail ON DELETE CASCADE)"
+
     private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE ${CacheEntry.TABLE_NAME}(" +
             "${CacheEntry._ID} INTEGER PRIMARY KEY," +
             "${CacheEntry.FOUND_DATE_COL} TEXT," + // Can be changed to REAL or INTEGER according to convenience
@@ -85,8 +87,47 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         Log.d(TAG, "Called TiAiresDb onUpgrade")
-        db?.execSQL(SQL_DELETE_TABLES)
-        onCreate(db)
+        /*db?.execSQL(SQL_DELETE_TABLES)
+        onCreate(db)*/
+
+
+        if(oldVersion == 10){
+            // What needs to be done:
+            // - Remove on delete cascade from tour_id_fk and cache_id_fk
+            // - Create constraint for UNIQUE(tour_id_fk, cache_id_fk) and erase duplicates
+            // To do that in SQLite we need to create a new table with the constraints we want
+            // and transfer the data there.
+
+            // Rename old table
+            val tempTableName = "${CacheEntry.TABLE_NAME}OLD"
+            val SQL_RENAME_TABLE = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName"
+            db?.execSQL(SQL_RENAME_TABLE)
+
+            // Create new one with desired constraints
+            db?.execSQL(SQL_CREATE_CACHE_TABLE)
+
+            // Transfer data from old one to the new one
+            val SQL_TRANSFER_DATA = "INSERT INTO ${CacheEntry.TABLE_NAME} (" +
+                    "${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
+                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
+                    "${CacheEntry.NOTES_COL}, ${CacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
+                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
+                    "${CacheEntry.CACHE_DETAIL_ID_FK_COL})" +
+                    "SELECT ${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
+                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
+                    "${CacheEntry.NOTES_COL}, ${CacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
+                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
+                    CacheEntry.CACHE_DETAIL_ID_FK_COL +
+                    " FROM $tempTableName"
+            db?.execSQL(SQL_TRANSFER_DATA)
+
+            // DELETE old table
+            db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
+        }
+
     }
 
     override fun onOpen(db: SQLiteDatabase?) {
