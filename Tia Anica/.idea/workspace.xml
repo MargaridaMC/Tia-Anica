@@ -75,8 +75,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="270f83aa-3083-499c-850e-86c7c0837bb3" name="Default" comment="Corrected onLocationChangeListener to not alter the coordinates in CoordinateOffsetActivity">
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/CacheListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/CacheListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingTour.java" beforeDir="false" afterPath="$PROJECT_DIR$/../TiAires/app/src/main/java/net/teamtruta/tiaires/GeocachingTour.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -917,9 +918,10 @@
     <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1591717599670" />
     <state x="1543" y="-256" key="CommitChangelistDialog2/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591687285887" />
     <state x="189" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1592513016381" />
-    <state x="1800" y="-95" key="FileChooserDialogImpl" timestamp="1591629838613">
-      <screen x="1366" y="-256" width="1280" height="984" />
+    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1593166869638">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1593166869638" />
     <state x="1800" y="-95" key="FileChooserDialogImpl/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591629838613" />
     <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1591531851328" />
     <state width="1323" height="254" key="GridCell.Tab.0.bottom" timestamp="1592512566067">
@@ -988,10 +990,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="100" y="100" width="1166" height="528" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1366.728@0.0.1366.728" timestamp="1591474913850" />
-    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1591818318074">
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1593166861033">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1591629618698" />
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728/1366.-256.1280.984@0.0.1366.728" timestamp="1593166861033" />
     <state x="1721" y="-2" key="com.intellij.ide.util.TipDialog/0.0.1366.728/1366.-256.1280.984@1366.-256.1280.984" timestamp="1591686357825" />
     <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1591818318074" />
     <state x="492" y="281" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1591530597667">

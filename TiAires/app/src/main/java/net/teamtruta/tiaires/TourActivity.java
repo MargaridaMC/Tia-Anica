@@ -9,11 +9,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.graphics.drawable.ColorDrawable;
@@ -32,7 +29,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.appcenter.analytics.Analytics;
 
 import net.teamtruta.tiaires.db.DbConnection;
-import net.teamtruta.tiaires.db.TourDbTable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +113,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         //  Setup ping sound
         setupAudio();
 
-        // Setup swipe to refresh action
+       /* // Setup swipe to refresh action
         SwipeRefreshLayout swipeToRefreshLayout = findViewById(R.id.swiperefresh);
         swipeToRefreshLayout.setOnRefreshListener(
                 () -> {
@@ -126,15 +122,15 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
                     // The method calls setRefreshing(false) when it's finished.
                     reloadTourCaches();
                 }
-        );
+        );*/
     }
 
     private void reloadTourCaches() {
         ConstraintLayout progressBar = findViewById(R.id.progress_layout);
         progressBar.setVisibility(View.VISIBLE);
 
-        SwipeRefreshLayout swipeToRefreshLayout = findViewById(R.id.swiperefresh);
-        swipeToRefreshLayout.setRefreshing(false);
+        //SwipeRefreshLayout swipeToRefreshLayout = findViewById(R.id.swiperefresh);
+        //swipeToRefreshLayout.setRefreshing(false);
 
         _tour.tourActivityDelegate = this;
         _tour.reloadTourCaches();
