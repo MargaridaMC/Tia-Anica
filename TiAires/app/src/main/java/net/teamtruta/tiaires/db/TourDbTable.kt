@@ -6,7 +6,7 @@ import android.database.Cursor
 import android.util.Log
 import net.teamtruta.tiaires.*
 
-class TourDbTable(val context: Context) {
+class TourDbTable(private val context: Context) {
 
     private val TAG = TourDbTable::class.simpleName
     private var dbHelper : TiAiresDb = TiAiresDb(context)

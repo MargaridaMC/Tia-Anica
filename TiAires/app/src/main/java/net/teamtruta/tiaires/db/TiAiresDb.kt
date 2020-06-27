@@ -122,7 +122,9 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                     "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
                     "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
                     CacheEntry.CACHE_DETAIL_ID_FK_COL +
-                    " FROM $tempTableName"
+                    " FROM (" +
+                    " SELECT * FROM $tempTableName " +
+                    "GROUP BY ${CacheEntry.TOUR_ID_FK_COL}, ${CacheEntry.CACHE_DETAIL_ID_FK_COL})"
             db?.execSQL(SQL_TRANSFER_DATA)
 
             // DELETE old table
