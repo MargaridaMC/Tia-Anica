@@ -44,7 +44,7 @@ inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T) : T{
 
 //fun Boolean.toInt() = if (this) 1 else 0
 
-val DATE_STRING_FORMAT = "dd.MMM.yyyy"
+val DATE_STRING_FORMAT = "dd.MMM.yyyy HH:mm"
 
 fun Date.toFormattedString() : String{
     val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT)

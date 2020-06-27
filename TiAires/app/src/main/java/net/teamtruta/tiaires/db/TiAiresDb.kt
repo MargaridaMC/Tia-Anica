@@ -5,8 +5,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import net.teamtruta.tiaires.doQuery
-import net.teamtruta.tiaires.getLong
+import net.teamtruta.tiaires.*
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -143,6 +144,27 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                 db.update(CacheEntry.TABLE_NAME, values,
                         "${CacheEntry._ID} = ?", arrayOf("$id"))
             }
+
+            cursor.close()
+        }
+
+        // Update date format in Log Table
+        if(oldVersion <= 12){
+            val cursor = db?.doQuery(LogEntry.TABLE_NAME,
+                    arrayOf(LogEntry._ID, LogEntry.LOG_DATE_COL))
+
+            val dateFormat: DateFormat = SimpleDateFormat("dd.MMM.yyyy")
+            while (cursor!= null && cursor.moveToNext()){
+                val id = cursor.getLong(LogEntry._ID)
+                val dateString = cursor.getString(LogEntry.LOG_DATE_COL)
+                val date = dateFormat.parse(dateString)
+                val values = ContentValues()
+                values.put(LogEntry.LOG_DATE_COL, date.toFormattedString())
+                db.update(LogEntry.TABLE_NAME, values,
+                        "${LogEntry._ID} = ?", arrayOf("$id"))
+            }
+
+            cursor?.close()
         }
 
     }
