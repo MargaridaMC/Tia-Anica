@@ -47,6 +47,16 @@
         app:layout_constraintTop_toBottomOf="@+id/cache_visit_button" />
 
     <CheckBox
+        android:id="@+id/favouritePointCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:onClick="onFavouritePointCheckboxClicked"
+        android:text="@string/favourite_point"
+        app:layout_constraintEnd_toEndOf="@+id/cache_visit_button"
+        app:layout_constraintTop_toBottomOf="@+id/cache_visit_button" />
+
+    <CheckBox
         android:id="@+id/foundTrackableCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,15 +65,16 @@
         app:layout_constraintStart_toStartOf="@+id/needsMaintenanceCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/needsMaintenanceCheckBox" />
 
-    <CheckBox
-        android:id="@+id/favouritePointCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin"
-        android:text="@string/favourite_point"
-        android:onClick="onFavouritePointCheckboxClicked"
-        app:layout_constraintStart_toStartOf="@+id/droppedTrackableCheckBox"
-        app:layout_constraintTop_toBottomOf="@+id/cache_visit_button" />
+    <EditText
+        android:id="@+id/foundTrackableEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginStart="@dimen/margin"
+        app:layout_constraintStart_toEndOf="@+id/foundTrackableCheckBox"
+        app:layout_constraintTop_toTopOf="@+id/foundTrackableCheckBox"
+        app:layout_constraintBottom_toBottomOf="@+id/foundTrackableCheckBox"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <CheckBox
         android:id="@+id/droppedTrackableCheckBox"
@@ -71,8 +82,19 @@
         android:layout_height="wrap_content"
         android:text="@string/dropped_trackable"
         android:onClick="onDroppedTrackableCheckboxClicked"
-        app:layout_constraintEnd_toEndOf="@+id/cache_visit_button"
-        app:layout_constraintTop_toBottomOf="@+id/favouritePointCheckBox" />
+        app:layout_constraintStart_toStartOf="@+id/foundTrackableCheckBox"
+        app:layout_constraintTop_toBottomOf="@+id/foundTrackableCheckBox"/>
+
+    <EditText
+        android:id="@+id/droppedTrackableEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginStart="@dimen/margin"
+        app:layout_constraintStart_toEndOf="@+id/droppedTrackableCheckBox"
+        app:layout_constraintTop_toTopOf="@+id/droppedTrackableCheckBox"
+        app:layout_constraintBottom_toBottomOf="@+id/droppedTrackableCheckBox"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <EditText
         android:id="@+id/notes"
@@ -89,8 +111,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/foundTrackableCheckBox"
+        app:layout_constraintTop_toBottomOf="@+id/droppedTrackableCheckBox"
         />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/photo_checkbox"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintBottom_toBottomOf="@id/notes"
+        app:layout_constraintEnd_toEndOf="@id/notes"/>
 
 <!--
     <Button

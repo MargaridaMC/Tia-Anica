@@ -116,8 +116,6 @@ public class CacheDetailActivity extends AppCompatActivity {
         onSupportNavigateUp();
     }
 
-
-
     public void cacheFound(){
 
         // Cache was found
@@ -194,6 +192,10 @@ public class CacheDetailActivity extends AppCompatActivity {
             currentGeocache.setFoundTrackable(true);
         else currentGeocache.setFoundTrackable(false);
 
+        // Focus attention on text box to fill in value
+        EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
+        foundTrackableEditText.requestFocus();
+
     }
 
     public void onDroppedTrackableCheckboxClicked(View view) {
@@ -203,6 +205,9 @@ public class CacheDetailActivity extends AppCompatActivity {
             currentGeocache.setDroppedTrackable(true);
         else currentGeocache.setDroppedTrackable(false);
 
+        // Focus attention on text box to fill in value
+        EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
+        droppedTrackableEditText.requestFocus();
     }
 
     public void onFavouritePointCheckboxClicked(View view) {

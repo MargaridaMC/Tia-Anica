@@ -66,12 +66,6 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             startActivity(intent);
         }
 
-        /*String rootPath = App.getTourRoot();
-        File tourFolder = new File(rootPath);
-        if(!tourFolder.exists()){
-            tourFolder.mkdir();
-        }
-        Log.d(TAG, "Tours data folder exists: " + tourFolder.exists());*/
 
         // Get all tours
         List<GeocachingTour> tourList = GeocachingTour.getAllTours(dbConnection); //new TourDbTable(this).getAllTours(dbConnection);
