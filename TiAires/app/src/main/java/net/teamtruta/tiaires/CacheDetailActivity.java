@@ -80,12 +80,27 @@ public class CacheDetailActivity extends AppCompatActivity {
         });
 
         // Set Checkboxes
+        // 1. Needs Maintenace Checkbox
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
         if(this.currentGeocache.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
+
+        // 2. FoundTrackable Checkbox and EditText
         CheckBox foundTrackableCheckBox = findViewById(R.id.foundTrackableCheckBox);
-        if(this.currentGeocache.getFoundTrackable()) foundTrackableCheckBox.setChecked(true);
+        if(currentGeocache.getFoundTrackable() != null){
+            foundTrackableCheckBox.setChecked(true);
+            EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
+            foundTrackableEditText.setText(currentGeocache.getFoundTrackable());
+        }
+
+        // 3. DroppedTrackable Checkbox and EditText
         CheckBox droppedTrackableCheckBox = findViewById(R.id.droppedTrackableCheckBox);
-        if(this.currentGeocache.getDroppedTrackable()) droppedTrackableCheckBox.setChecked(true);
+        if(currentGeocache.getDroppedTrackable() != null){
+            droppedTrackableCheckBox.setChecked(true);
+            EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
+            droppedTrackableEditText.setText(currentGeocache.getDroppedTrackable());
+        }
+
+        // 4. Favourite Point Checkbox
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
         if(this.currentGeocache.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
 
@@ -168,11 +183,21 @@ public class CacheDetailActivity extends AppCompatActivity {
     {
         Analytics.trackEvent("CacheDetailActivity.saveChanges");
 
-        // Get notes and save changes
+        // Get notes
         EditText notesView = findViewById(R.id.notes);
         String myNotes = notesView.getText().toString();
         currentGeocache.setNotes(myNotes);
 
+        // Get trackable information
+        EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
+        String foundTrackableString = foundTrackableEditText.getText().toString().trim();
+        currentGeocache.setFoundTrackable(foundTrackableString.isEmpty() ? null : foundTrackableString);
+
+        EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
+        String droppedTrackableString = droppedTrackableEditText.getText().toString().trim();
+        currentGeocache.setDroppedTrackable(droppedTrackableString.isEmpty() ? null : droppedTrackableString);
+
+        // save changes
         currentGeocache.saveChanges();
     }
 
@@ -188,26 +213,43 @@ public class CacheDetailActivity extends AppCompatActivity {
     public void onFoundTrackableCheckboxClicked(View view) {
 
         CheckBox foundTrackableCheckBox = findViewById(R.id.foundTrackableCheckBox);
-        if(foundTrackableCheckBox.isChecked())
-            currentGeocache.setFoundTrackable(true);
-        else currentGeocache.setFoundTrackable(false);
-
-        // Focus attention on text box to fill in value
         EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
-        foundTrackableEditText.requestFocus();
+
+        if(foundTrackableCheckBox.isChecked()){
+
+            // Focus attention on text box to fill in value
+            foundTrackableEditText.requestFocus();
+
+            //currentGeocache.setFoundTrackable(true);
+        }
+
+        else{
+            currentGeocache.setFoundTrackable(null);
+
+            // Delete inputted trackable code in editText area
+            foundTrackableEditText.setText("");
+        }
 
     }
 
     public void onDroppedTrackableCheckboxClicked(View view) {
 
         CheckBox droppedTrackableCheckBox = findViewById(R.id.droppedTrackableCheckBox);
-        if(droppedTrackableCheckBox.isChecked())
-            currentGeocache.setDroppedTrackable(true);
-        else currentGeocache.setDroppedTrackable(false);
-
-        // Focus attention on text box to fill in value
         EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
-        droppedTrackableEditText.requestFocus();
+
+        if(droppedTrackableCheckBox.isChecked()){
+            //currentGeocache.setDroppedTrackable(true);
+
+            // Focus attention on text box to fill in value
+            droppedTrackableEditText.requestFocus();
+        }
+
+        else{
+            currentGeocache.setDroppedTrackable(null);
+            droppedTrackableEditText.setText("");
+        }
+
+
     }
 
     public void onFavouritePointCheckboxClicked(View view) {

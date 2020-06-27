@@ -33,8 +33,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${CacheEntry.NEEDS_MAINTENANCE_COL} INTEGER," + // No Boolean in SQLITE
             "${CacheEntry.VISIT_COL} TEXT," + // Matches an Enum
             "${CacheEntry.NOTES_COL} TEXT," +
-            "${CacheEntry.FOUND_TRACKABLE_COL} INTEGER," +
-            "${CacheEntry.DROPPED_TRACKABLE_COL} INTEGER," +
+            "${CacheEntry.FOUND_TRACKABLE_COL} TEXT," + // Previously: INTEGER
+            "${CacheEntry.DROPPED_TRACKABLE_COL} TEXT," + // Previously: INTEGER
             "${CacheEntry.FAV_POINT_COL} INTEGER," +
             "${CacheEntry.ORDER_COL} INTEGER," +
             "${CacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
@@ -75,8 +75,6 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "DROP TABLE IF EXISTS ${CacheEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${CacheDetailEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${LogEntry.TABLE_NAME};"
-
-
 
     override fun onCreate(db: SQLiteDatabase?) {
         // Create all the tables required
@@ -167,6 +165,39 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             }
 
             cursor?.close()
+        }
+
+        // Change type  of columns FoundTrackable and Dropped Trackable to TEXT
+        // so we can save the trackable codes
+        if(oldVersion <= 13){
+
+            // Rename old table to a different name
+            val tempTableName = "${CacheEntry.TABLE_NAME}OLD"
+            val SQL_RENAME_TABLE = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName"
+            db?.execSQL(SQL_RENAME_TABLE)
+
+            // Create new table with appropriate structure
+            db?.execSQL(SQL_CREATE_CACHE_TABLE)
+
+            // Transfer data from old one to the new one
+            val SQL_TRANSFER_DATA = "INSERT INTO ${CacheEntry.TABLE_NAME} (" +
+                    "${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
+                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
+                    "${CacheEntry.NOTES_COL}, ${CacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
+                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
+                    "${CacheEntry.CACHE_DETAIL_ID_FK_COL})" +
+                    "SELECT ${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
+                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
+                    "${CacheEntry.NOTES_COL}, NULL, NULL, ${CacheEntry.FAV_POINT_COL}, " +
+                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
+                    CacheEntry.CACHE_DETAIL_ID_FK_COL +
+                    " FROM  $tempTableName "
+            db?.execSQL(SQL_TRANSFER_DATA)
+
+            // Delete original table
+            db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
         }
 
     }

@@ -75,6 +75,7 @@
         android:gravity="top|start"
         android:background="@drawable/text_box_with_border"
         android:theme="@style/EditText"
+        android:inputType="textCapSentences|textMultiLine|textFilter"
         app:layout_constraintBottom_toTopOf="@id/create_tour_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -35,21 +35,26 @@ class CacheDbTable (private val context: Context) {
     fun getSizeOfTour(tourID : Long) : Long{
 
         val db = dbHelper.readableDatabase
-        val nEntries = DatabaseUtils.queryNumEntries(db, CacheEntry.TABLE_NAME, "${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourID"))
+        val nEntries = DatabaseUtils.queryNumEntries(db, CacheEntry.TABLE_NAME,
+                "${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourID"))
         db.close()
         return nEntries
     }
 
     fun getNumberDNFInTour(tourID: Long):Long{
         val db = dbHelper.readableDatabase
-        val nEntries = DatabaseUtils.queryNumEntries(db, CacheEntry.TABLE_NAME, "${CacheEntry.TOUR_ID_FK_COL} = ? AND ${CacheEntry.VISIT_COL} = ?", arrayOf("$tourID", FoundEnumType.DNF.typeString))
+        val nEntries = DatabaseUtils.queryNumEntries(db, CacheEntry.TABLE_NAME,
+                "${CacheEntry.TOUR_ID_FK_COL} = ? AND ${CacheEntry.VISIT_COL} = ?",
+                arrayOf("$tourID", FoundEnumType.DNF.typeString))
         db.close()
         return nEntries
     }
 
     fun getNumberFindInTour(tourID: Long):Long{
         val db = dbHelper.readableDatabase
-        val nEntries = DatabaseUtils.queryNumEntries(db, CacheEntry.TABLE_NAME, "${CacheEntry.TOUR_ID_FK_COL} = ? AND ${CacheEntry.VISIT_COL} = ?", arrayOf("$tourID", FoundEnumType.Found.typeString))
+        val nEntries = DatabaseUtils.queryNumEntries(db, CacheEntry.TABLE_NAME,
+                "${CacheEntry.TOUR_ID_FK_COL} = ? AND ${CacheEntry.VISIT_COL} = ?",
+                arrayOf("$tourID", FoundEnumType.Found.typeString))
         db.close()
         return nEntries
     }
@@ -62,7 +67,8 @@ class CacheDbTable (private val context: Context) {
         val db = dbHelper.writableDatabase
 
         // Get index for next element in order
-        val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) AS ${CacheEntry.ORDER_COL} FROM ${CacheEntry.TABLE_NAME} " +
+        val cursor = db.rawQuery("SELECT MAX(${CacheEntry.ORDER_COL}) AS ${CacheEntry.ORDER_COL} " +
+                "FROM ${CacheEntry.TABLE_NAME} " +
                 "WHERE ${CacheEntry.TOUR_ID_FK_COL} = ?", arrayOf("$tourIDFK"))
         val orderIdx = try{
             cursor.moveToFirst()
@@ -167,8 +173,8 @@ class CacheDbTable (private val context: Context) {
         val visit = FoundEnumType.valueOfString(getString(CacheEntry.VISIT_COL))
         val foundDate = getString(CacheEntry.FOUND_DATE_COL)?.toDate()
         val needsMaintenance = getBoolean(CacheEntry.NEEDS_MAINTENANCE_COL)
-        val foundTrackable = getBoolean(CacheEntry.FOUND_TRACKABLE_COL)
-        val droppedTrackable = getBoolean(CacheEntry.DROPPED_TRACKABLE_COL)
+        val foundTrackable = getStringOrNull(CacheEntry.FOUND_TRACKABLE_COL)
+        val droppedTrackable = getStringOrNull(CacheEntry.DROPPED_TRACKABLE_COL)
         val favouritePoint = getBoolean(CacheEntry.FAV_POINT_COL)
         val orderIdx = getInt(CacheEntry.ORDER_COL)
         return GeocacheInTour(gc, notes, visit, needsMaintenance,
