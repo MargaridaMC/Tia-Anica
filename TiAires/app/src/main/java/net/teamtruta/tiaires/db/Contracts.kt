@@ -3,7 +3,7 @@ package net.teamtruta.tiaires.db
 import android.provider.BaseColumns
 
 val DATABASE_NAME = "tiaires.db"
-val DATABASE_VERSION = 14
+val DATABASE_VERSION = 15
 
 object TourEntry : BaseColumns{
     val TABLE_NAME = "tour"
@@ -29,10 +29,11 @@ object CacheEntry : BaseColumns{
     val TOUR_ID_FK_COL = "tourID_FK"
     val CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
     val ORDER_COL = "orderBy"
+    val IMAGE_COL = "image"
     fun getAllColumns(): Array<String> {
         return arrayOf(_ID, FOUND_DATE_COL, NEEDS_MAINTENANCE_COL, VISIT_COL,
                 NOTES_COL, FOUND_TRACKABLE_COL, DROPPED_TRACKABLE_COL, FAV_POINT_COL,
-                TOUR_ID_FK_COL, CACHE_DETAIL_ID_FK_COL, ORDER_COL)
+                TOUR_ID_FK_COL, CACHE_DETAIL_ID_FK_COL, ORDER_COL, IMAGE_COL)
     }
 }
 

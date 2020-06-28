@@ -96,6 +96,7 @@ class CacheDbTable (private val context: Context) {
             put(CacheEntry.TOUR_ID_FK_COL, tourIDFK)
             put(CacheEntry.CACHE_DETAIL_ID_FK_COL, geocacheIDFK)
             put(CacheEntry.ORDER_COL, orderIdx)
+            put(CacheEntry.IMAGE_COL, geocacheInTour.pathToImage)
         }
 
         val id = db.transaction { insert(CacheEntry.TABLE_NAME, null, values) }
@@ -141,6 +142,7 @@ class CacheDbTable (private val context: Context) {
             put(CacheEntry.DROPPED_TRACKABLE_COL, geocache.droppedTrackable)
             put(CacheEntry.FAV_POINT_COL, geocache.favouritePoint)
             put(CacheEntry.ORDER_COL, geocache.orderIdx)
+            put(CacheEntry.IMAGE_COL, geocache.pathToImage)
         }
 
         val nLinesChanged = db.update(CacheEntry.TABLE_NAME, values, "${CacheEntry._ID} = ?", arrayOf("${geocache._id}"))
@@ -177,9 +179,10 @@ class CacheDbTable (private val context: Context) {
         val droppedTrackable = getStringOrNull(CacheEntry.DROPPED_TRACKABLE_COL)
         val favouritePoint = getBoolean(CacheEntry.FAV_POINT_COL)
         val orderIdx = getInt(CacheEntry.ORDER_COL)
+        val imagePath = getStringOrNull(CacheEntry.IMAGE_COL)
         return GeocacheInTour(gc, notes, visit, needsMaintenance,
-                foundDate, foundTrackable, droppedTrackable, favouritePoint, orderIdx,
-                _id, dbConnection)
+                foundDate, foundTrackable, droppedTrackable, favouritePoint,
+                orderIdx, imagePath, _id, dbConnection)
     }
 
     fun deleteAllCachesInTour(_id: Long) {

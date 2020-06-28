@@ -37,6 +37,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${CacheEntry.DROPPED_TRACKABLE_COL} TEXT," + // Previously: INTEGER
             "${CacheEntry.FAV_POINT_COL} INTEGER," +
             "${CacheEntry.ORDER_COL} INTEGER," +
+            "${CacheEntry.IMAGE_COL} TEXT," +
             "${CacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
             "${CacheEntry.CACHE_DETAIL_ID_FK_COL} INTEGER," + // REFERENCES ${CacheDetailEntry.TABLE_NAME}(${CacheDetailEntry._ID})" +
             "FOREIGN KEY(${CacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME}," +
@@ -200,6 +201,12 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
         }
 
+        // Add column for image path in cache table
+        if(oldVersion <= 14){
+            val SQL_ADD_COLUMN = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
+                    "ADD ${CacheEntry.IMAGE_COL} TEXT"
+            db?.execSQL(SQL_ADD_COLUMN)
+        }
     }
 
     override fun onOpen(db: SQLiteDatabase?) {

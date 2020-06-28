@@ -1,5 +1,6 @@
 package net.teamtruta.tiaires
 
+import android.graphics.Bitmap
 import net.teamtruta.tiaires.db.DbConnection
 import java.util.*
 
@@ -11,7 +12,8 @@ class GeocacheInTour(val geocache: Geocache, var notes : String = "",
                      var needsMaintenance : Boolean = false, var foundDate : Date? = null,
                      var foundTrackable : String? = null, var droppedTrackable : String? = null,
                      var favouritePoint : Boolean = false, var orderIdx : Int = -1,
-                     val _id : Long = -1, private val _dbConnection : DbConnection? = null) {
+                     var pathToImage : String? = null, val _id : Long = -1,
+                     private val _dbConnection : DbConnection? = null) {
 
     // the following fields have the "In Tour" semantics. So if a cache was found but not in the tour, _found will be = NotAttempted; same logic applies to other fields.
 
