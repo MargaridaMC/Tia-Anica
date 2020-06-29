@@ -133,8 +133,7 @@
         android:layout_height="wrap_content"
         android:button="@drawable/photo_checkbox"
         android:layout_marginEnd="@dimen/margin"
-        android:layout_marginBottom="@dimen/margin"
-        android:onClick="takePhoto"
+        android:onClick="showPhotoPopup"
         app:layout_constraintBottom_toBottomOf="@id/notes"
         app:layout_constraintEnd_toEndOf="@id/notes"/>
 

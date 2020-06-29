@@ -3,9 +3,9 @@ package net.teamtruta.tiaires;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -14,10 +14,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
@@ -34,7 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CacheDetailActivity extends AppCompatActivity {
+public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     GeocacheInTour currentGeocache;
 
@@ -131,11 +136,9 @@ public class CacheDetailActivity extends AppCompatActivity {
         // Setup photo
         CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
         if(currentGeocache.getPathToImage() != null){
-            ImageView imageView = findViewById(R.id.photo_iv);
-            imageView.setImageBitmap(BitmapFactory.decodeFile(currentGeocache.getPathToImage()));
-            photoCheckBox.setVisibility(View.INVISIBLE);
+            photoCheckBox.setChecked(true);
         } else {
-            photoCheckBox.setVisibility(View.VISIBLE);
+            photoCheckBox.setChecked(false);
         }
     }
 
@@ -315,11 +318,10 @@ public class CacheDetailActivity extends AppCompatActivity {
     }
 
     public void takePhoto(View view){
+        takePhoto();
+    }
 
-        // Set the checkbox to checked
-        CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
-        photoCheckBox.setChecked(true);
-
+    public void takePhoto(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -348,39 +350,8 @@ public class CacheDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             galleryAddPic();
-
-            ImageView imageView = findViewById(R.id.photo_iv);
-            Bitmap bitmap = getBitmapToFit(currentPhotoPath, imageView);
-            imageView.setImageBitmap(bitmap);
-
-            CheckBox photoCheckbox = findViewById(R.id.photo_checkbox);
-            photoCheckbox.setVisibility(View.INVISIBLE);
-
         }
     }
-
-    private Bitmap getBitmapToFit(String path, ImageView imageView) {
-        // Get the dimensions of the View
-        int targetW = imageView.getWidth();
-        int targetH = imageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-
-        return BitmapFactory.decodeFile(path, bmOptions);
-    }
-
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -410,5 +381,84 @@ public class CacheDetailActivity extends AppCompatActivity {
 
     }
 
+    public void showPhotoPopup(View view){
 
+        // If the current cache has no photo then go straight into the photo taking
+        if(currentGeocache.getPathToImage() == null){
+            takePhoto();
+            // Set the checkbox to checked
+            CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
+            photoCheckBox.setChecked(true);
+            return;
+        }
+
+        // Set the checkbox to checked
+        CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
+        photoCheckBox.setChecked(true);
+
+        PopupMenu popup = new PopupMenu(this, view);
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.photo_actions);
+        popup.show();
+    }
+
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.take_new_photo:
+                takePhoto();
+                return true;
+            case R.id.show_cache_photo:
+                showCachePhoto();
+                return true;
+            case R.id.delete_cache_photo:
+                deleteCachePhoto();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void deleteCachePhoto() {
+        File fdelete = new File(currentGeocache.getPathToImage());
+
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                System.out.println("file Deleted :" );
+            } else {
+                System.out.println("file not Deleted :");
+            }
+        }
+        currentGeocache.setPathToImage(null);
+        CheckBox photoCheckbox = findViewById(R.id.photo_checkbox);
+        photoCheckbox.setChecked(false);
+    }
+
+/*  // Throws an exception because it exposes App files to the system
+    void showCachePhoto(){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse("file://" + currentGeocache.getPathToImage()), "image/*");
+        startActivity(intent);
+    }
+*/
+
+    public void showCachePhoto() {
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(dialogInterface -> {
+            //nothing;
+        });
+
+        ImageView imageView = new ImageView(this);
+        imageView.setImageURI(Uri.parse(currentGeocache.getPathToImage()));
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.show();
+    }
 }

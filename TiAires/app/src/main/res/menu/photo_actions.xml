@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/take_new_photo"
+        android:title="@string/take_new_photo"/>
+
+    <item
+        android:id="@+id/show_cache_photo"
+        android:title="@string/show_cache_photo"/>
+
+    <item
+        android:id="@+id/delete_cache_photo"
+        android:title="@string/delete_cache_photo"/>
+
+</menu>

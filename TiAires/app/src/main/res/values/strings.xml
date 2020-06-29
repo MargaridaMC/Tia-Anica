@@ -37,4 +37,7 @@
     <string name="coordinates_format">geo:0,0?q=%f,0%f</string>
     <string name="geocache_codes">Geocache codes:</string>
     <string name="tour_name">Tour name</string>
+    <string name="take_new_photo">Take New Photo</string>
+    <string name="show_cache_photo">Show Cache Photo</string>
+    <string name="delete_cache_photo">Delete Cache Photo</string>
 </resources>
