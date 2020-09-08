@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
@@ -194,7 +195,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.white));
         }
 
+        // Setup expansion
         holder.view.setOnClickListener(expandCacheDetail(position, holder));
+        setHolderExpanded(holder, geocache, false);
 
     }
 
@@ -208,45 +211,41 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     private View.OnClickListener expandCacheDetail(int position, ViewHolder holder) {
 
         Geocache geocache = tour._tourCaches.get(position).getGeocache();
+        return v -> setHolderExpanded(holder, geocache, !holder.expanded);
+    }
 
-        return v -> {
+    void setHolderExpanded(ViewHolder holder, Geocache geocache, boolean expand){
+        if(expand){
+            // Expand
+            holder.expanded = true;
 
-            if(!holder.expanded){
-
-                holder.expanded = true;
-
-                // Remove hint indication from line 1
-                if(geocache.hasHint()){
-                    holder.cacheInfo1.setText(getCacheInfoLine1(geocache, false));
-                    holder.hint.setVisibility(View.VISIBLE);
-                }
-
-                // Change arrow on the left
-                holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_up));
-
-                // Show extra information
-                holder.extraInfoLayout.setVisibility(View.VISIBLE);
-
-                // Show DNF information if needed
-                if(geocache.isDNFRisk())
-                    holder.dnfInfo.setVisibility(View.GONE);
-
-            } else {
-
-                // Hide extra information
-                if(geocache.hasHint()){
-                    holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
-                    holder.hint.setVisibility(View.GONE);
-                }
-                holder.expanded = false;
-                holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_down));
-                holder.extraInfoLayout.setVisibility(View.GONE);
-                if(geocache.isDNFRisk())
-                    holder.dnfInfo.setVisibility(View.VISIBLE);
-
+            // Remove hint indication from line 1
+            if(geocache.hasHint()){
+                holder.cacheInfo1.setText(getCacheInfoLine1(geocache, false));
+                holder.hint.setVisibility(View.VISIBLE);
             }
 
-        };
+            // Change arrow on the left
+            holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_up));
+
+            // Show extra information
+            holder.extraInfoLayout.setVisibility(View.VISIBLE);
+
+            // Show DNF information if needed
+            if(geocache.isDNFRisk())
+                holder.dnfInfo.setVisibility(View.GONE);
+        } else {
+            // Hide extra information
+            if(geocache.hasHint()){
+                holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
+                holder.hint.setVisibility(View.GONE);
+            }
+            holder.expanded = false;
+            holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_down));
+            holder.extraInfoLayout.setVisibility(View.GONE);
+            if(geocache.isDNFRisk())
+                holder.dnfInfo.setVisibility(View.VISIBLE);
+        }
     }
 
     private Spanned getCacheInfoLine0(Geocache geocache){
@@ -342,8 +341,11 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
 
-        tour.swapCachePositions(fromPosition, toPosition);
+        Collections.swap(tour._tourCaches, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
+        //tour.swapCachePositions(fromPosition, toPosition);
+        tour.updateTourCaches();
+
         return true;
     }
 
