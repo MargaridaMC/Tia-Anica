@@ -53,7 +53,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         holder.cacheName.setText(geocache.getName());
 
         // Set cache type symbol
-        CacheTypeEnum cacheType = geocache.getType();
+        CacheTypeEnum cacheType = geocacheInTour.getGeocache().getType();
         int drawableID;
 
         if(geocacheInTour.getVisit() == FoundEnumType.Found){
@@ -61,74 +61,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         } else if(geocacheInTour.getVisit() == FoundEnumType.DNF){
             drawableID = R.drawable.cache_icon_dnf;
         } else {
-
-            switch (cacheType){
-                case Traditional:
-                    drawableID = R.drawable.cache_icon_type_traditional;
-                    break;
-                case Mystery:
-                    drawableID = R.drawable.cache_icon_type_mystery;
-                    break;
-                case Multi:
-                    drawableID = R.drawable.cache_icon_type_multi;
-                    break;
-                case Earth:
-                    drawableID = R.drawable.cache_icon_type_earth;
-                    break;
-                case Letterbox:
-                    drawableID = R.drawable.cache_icon_type_letterbox;
-                    break;
-                case Event:
-                    drawableID = R.drawable.cache_icon_type_event;
-                    break;
-                case CITO:
-                    drawableID = R.drawable.cache_icon_type_cito;
-                    break;
-                case Mega:
-                    drawableID = R.drawable.cache_icon_type_mega;
-                    break;
-                case Giga:
-                    drawableID = R.drawable.cache_icon_type_giga;
-                    break;
-                case Wherigo:
-                    drawableID = R.drawable.cache_icon_type_wherigo;
-                    break;
-                case HQ:
-                    drawableID = R.drawable.cache_icon_type_hq;
-                    break;
-                case GPSAdventures:
-                    drawableID = R.drawable.cache_icon_type_gps_adventures;
-                    break;
-                case HQCelebration:
-                    drawableID = R.drawable.cache_icon_type_hq_celebration;
-                    break;
-                case HQBlockParty:
-                    drawableID = R.drawable.cache_icon_type_hq_blockparty;
-                    break;
-                case CommunityCelebration:
-                    drawableID = R.drawable.cache_icon_type_community_event;
-                    break;
-                case Virtual:
-                    drawableID = R.drawable.cache_icon_type_virtual;
-                    break;
-                case Webcam:
-                    drawableID = R.drawable.cache_icon_type_webcam;
-                    break;
-                case ProjectAPE:
-                    drawableID = R.drawable.cache_icon_type_project_ape;
-                    break;
-                case Locationless:
-                    drawableID = R.drawable.cache_icon_type_locationless;
-                    break;
-                case Solved:
-                    drawableID = R.drawable.cache_icon_solved;
-                    break;
-                default:
-                    drawableID = R.drawable.shrug;
-                    break;
-            }
+            drawableID = GeocacheIcon.getIconDrawable(geocacheInTour.getGeocache().getType());
         }
-
 
         Drawable cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
         holder.cacheSymbol.setImageDrawable(cacheSymbolDrawable);

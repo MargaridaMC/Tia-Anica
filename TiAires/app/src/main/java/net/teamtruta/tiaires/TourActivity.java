@@ -189,14 +189,14 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void goToMap(View view){
-
+/*
         Toast t = Toast.makeText(this, "Not yet implemented.", Toast.LENGTH_SHORT);
         t.show();
-
-        /*Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra("_tourName", this.tourName);
+*/
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
         startActivity(intent);
-         */
+
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.teamtruta.tiaires
 
-import com.google.android.gms.maps.model.LatLng
+//import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 import net.teamtruta.tiaires.db.DbConnection
 import java.util.*
 
