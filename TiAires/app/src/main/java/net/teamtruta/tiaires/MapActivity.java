@@ -1,14 +1,21 @@
 package net.teamtruta.tiaires;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.location.LocationManager;
 import android.os.Bundle;
+
 import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 // classes needed to initialize map
@@ -42,8 +49,8 @@ import static com.mapbox.mapboxsdk.style.expressions.Expression.match;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.stop;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 
 import java.util.ArrayList;
 
@@ -61,6 +68,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     String TAG = MapActivity.class.getSimpleName();
     GeocachingTour _tour;
+    long tourID;
     DbConnection dbConnection;
 
     @Override
@@ -75,8 +83,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Get the ID of the tour that was clicked on
         Intent intent = getIntent();
-        long tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1);
-        if(tourID == -1){
+        tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1);
+        if (tourID == -1) {
             // Something went wrong
             Log.e(TAG, "Could not get clicked tour.");
             Toast.makeText(this, "An error occurred: couldn't get the requested tour", Toast.LENGTH_LONG).show();
@@ -92,6 +100,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle(_tour.getName());
+
     }
 
     @Override
@@ -101,11 +110,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         LatLng location;
-        for(GeocacheInTour gcit : _tour._tourCaches){
+        for (GeocacheInTour gcit : _tour._tourCaches) {
             location = gcit.getGeocache().getLatLng();
             Feature feature = Feature.fromGeometry(
                     Point.fromLngLat(location.getLongitude(), location.getLatitude()));
-            if(gcit.getVisit() == FoundEnumType.Found || gcit.getVisit() == FoundEnumType.DNF){
+            if (gcit.getVisit() == FoundEnumType.Found || gcit.getVisit() == FoundEnumType.DNF) {
                 feature.addStringProperty("type", gcit.getVisit().getTypeString());
             } else {
                 feature.addStringProperty("type", gcit.getGeocache().getType().getTypeString());//getCacheIconResource(gcit.getGeocache().getType()));
@@ -122,7 +131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         for (CacheTypeEnum type : CacheTypeEnum.values()) {
             String typeString = type.getTypeString();
-            if(typeString == null) break;
+            if (typeString == null) break;
             styleBuilder.withImage(typeString, BitmapFactory.decodeResource(
                     MapActivity.this.getResources(), GeocacheIcon.getIconDrawable(typeString)));
         }
@@ -157,12 +166,42 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         stop(FoundEnumType.Found.getTypeString(), FoundEnumType.Found.getTypeString()),
                         stop(FoundEnumType.DNF.getTypeString(), FoundEnumType.DNF.getTypeString()))),
                         iconAllowOverlap(true),
-                        iconAnchor(Property.ICON_ANCHOR_CENTER))
+                        iconAnchor(Property.ICON_ANCHOR_CENTER),
+                        iconSize(0.4f))
         );
 
         mapboxMap.setStyle(styleBuilder, this::enableLocationComponent);
+        mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
 
-        mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2500);
+        // Set my location FAB onClickListener
+        Activity context = this;
+        findViewById(R.id.my_location_fab).setOnClickListener(view -> {
+
+            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+
+            try {
+                mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(new LatLng(
+                                locationComponent.getLastKnownLocation().getLatitude(),
+                                locationComponent.getLastKnownLocation().getLongitude()))
+                        , 2500);
+            } catch (Exception e) {
+
+                if (PermissionsManager.areLocationPermissionsGranted(context)) {
+                    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                    boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    if (!gps_enabled)
+                        Toast.makeText(context, "Please turn on your GPS", Toast.LENGTH_SHORT).show();
+                    else
+                        enableLocationComponent(mapboxMap.getStyle());
+
+                } else {
+                    permissionsManager = new PermissionsManager((PermissionsListener) context);
+                    permissionsManager.requestLocationPermissions(context);
+                }
+
+
+            }
+        });
     }
 
     @Override
@@ -218,24 +257,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             locationComponent.setLocationComponentEnabled(true);
             // Set the component's camera mode
             //locationComponent.setCameraMode(CameraMode.TRACKING);
+
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
-    }
-
-    private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addImage("destination-icon-id",
-                BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
-        GeoJsonSource geoJsonSource = new GeoJsonSource("destination-source-id");
-        loadedMapStyle.addSource(geoJsonSource);
-        SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-source-id");
-        destinationSymbolLayer.withProperties(
-                iconImage("destination-icon-id"),
-                iconAllowOverlap(true),
-                iconIgnorePlacement(true)
-        );
-        loadedMapStyle.addLayer(destinationSymbolLayer);
     }
 
 
@@ -275,26 +301,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id  = item.getItemId();
+
+        // click on icon to go back
+        //triangle icon on the main android toolbar.
+
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed Called");
+        Intent intent = new Intent(this, TourActivity.class);
+        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
-    String getCacheIconResource(CacheTypeEnum cacheType){
-        switch (cacheType){
-            case Traditional:
-                return "R.drawable.cache_icon_type_traditional";
-            case Mystery:
-                return "R.drawable.cache_icon_type_mystery";
 
-            case Multi:
-                return "R.drawable.cache_icon_type_multi";
-
-
-            default:
-                return "R.drawable.shrug";
-
-        }
-    }
 }

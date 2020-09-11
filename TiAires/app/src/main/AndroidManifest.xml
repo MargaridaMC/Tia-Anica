@@ -44,7 +44,7 @@
             android:name=".MapActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.teamtruta.tiaires.MainActivity" />
+                android:value="net.teamtruta.tiaires.TourActivity" />
         </activity>
         <activity
             android:name=".CacheDetailActivity"
