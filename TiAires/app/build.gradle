@@ -31,6 +31,8 @@ dependencies {
     implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1@aar') {
         transitive = true
     }
+    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.0.0'
+
     def appCenterSdkVersion = '3.0.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
@@ -53,6 +55,7 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
 
     //implementation project(':mapbox-android-sdk-9.3.0')
     // https://mvnrepository.com/artifact/org.jxmapviewer/jxmapviewer2

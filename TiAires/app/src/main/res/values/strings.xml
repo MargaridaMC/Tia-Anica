@@ -44,4 +44,5 @@
     <string name="user_location_permission_not_granted">Please grant location permission!</string>
     <string name="user_location_permission_explanation">We need to have your location to show you where you are on the map.</string>
     <string name="navigation_guidance_day">blablabla</string>
+    <string name="tap_on_marker_instruction">Tap on a marker</string>
 </resources>
