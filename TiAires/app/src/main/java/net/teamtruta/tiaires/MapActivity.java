@@ -8,7 +8,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -22,13 +24,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 // classes needed to initialize map
-import com.mapbox.geojson.Geometry;
 import com.mapbox.geojson.LineString;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.BubbleLayout;
@@ -49,11 +51,12 @@ import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.style.layers.CircleLayer;
+import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.turf.TurfMeasurement;
 
 import net.teamtruta.tiaires.db.DbConnection;
 
@@ -64,6 +67,8 @@ import static com.mapbox.mapboxsdk.style.expressions.Expression.match;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.stop;
 import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
 import static com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_ROUND;
+import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
+import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
@@ -74,8 +79,9 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
-import com.mapbox.turf.TurfMeasurement;
+import static com.mapbox.turf.TurfConstants.UNIT_KILOMETERS;
 
 import java.util.ArrayList;
 
@@ -90,20 +96,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private PermissionsManager permissionsManager;
 
     private static final String GEOJSON_SOURCE_ID = "GEOJSON_SOURCE_ID";
+    private static final String LINE_GEOJSON_SOURCE_ID = "LINE_GEOJSON_SOURCE_ID";
     private static final String MARKER_LAYER_ID = "MARKER_LAYER_ID";
     private static final String CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID";
+    private static final String LINE_LAYER_ID = "LINE_LAYER_ID";
+
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_TYPE = "type";
     private static final String PROPERTY_DIFFICULTY = "difficulty";
     private static final String PROPERTY_TERRAIN = "terrain";
+    private static final String PROPERTY_FAVOURITES = "favourites";
     private static final String PROPERTY_SELECTED = "selected";
-    private static final int CIRCLE_COLOR = Color.RED;
-    private static final int LINE_COLOR = CIRCLE_COLOR;
-    private static final float CIRCLE_RADIUS = 6f;
+    private static final String PROPERTY_CODE = "code";
+    private static final int LINE_COLOR = Color.RED;
     private static final float LINE_WIDTH = 4f;
 
-    private static final String CIRCLE_LAYER_ID = "CIRCLE_LAYER_ID";
-    private static final String LINE_LAYER_ID = "LINE_LAYER_ID";
+    private static final String DISTANCE_UNITS = UNIT_KILOMETERS;
+
 
     String TAG = MapActivity.class.getSimpleName();
     GeocachingTour _tour;
@@ -112,6 +121,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
+    List<Point> routeCoordinates;
+    private static final HashMap<String, View> viewMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +160,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
 
-        featureCollection = getData();
+        getData();
         mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
             setUpData(featureCollection);
             enableLocationComponent(style);
@@ -160,6 +171,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Set my location FAB onClickListener
         setupMyLocationFAB();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.map_menu, menu);
+        return true;
     }
 
     private void setupMyLocationFAB() {
@@ -262,6 +281,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return handleClickIcon(mapboxMap.getProjection().toScreenLocation(point));
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -294,6 +314,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             onBackPressed();
             return true;
         }
+        if (id == R.id.action_see_lines){
+            toggleLineLayer();
+            toggleTourDistance();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -306,12 +331,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
+    private LatLng convertToLatLng(Feature feature) {
+        Point symbolPoint = (Point) feature.geometry();
+        return new LatLng(symbolPoint.latitude(), symbolPoint.longitude());
+    }
+
     private boolean handleClickIcon(PointF screenPoint) {
 
         // Display text box with info
         List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID);
         if (!features.isEmpty()) {
+
             String name = features.get(0).getStringProperty(PROPERTY_NAME);
+
             List<Feature> featureList = featureCollection.features();
             if (featureList != null) {
                 for (int i = 0; i < featureList.size(); i++) {
@@ -320,15 +352,45 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             setFeatureSelectState(featureList.get(i), false);
                         } else {
                             setSelected(i);
+
                         }
+                        return true;
                     }
                 }
             }
-            return true;
+
         } else {
-            return false;
+
+            List<Feature> infoWindows = mapboxMap.queryRenderedFeatures(
+                    screenPoint, CALLOUT_LAYER_ID);
+
+            if(!infoWindows.isEmpty()){
+
+                Feature window = infoWindows.get(0);
+
+                String name = window.getStringProperty(PROPERTY_NAME);
+                PointF symbolScreenPoint =
+                        mapboxMap.getProjection().toScreenLocation(convertToLatLng(window));
+
+                View view = viewMap.get(name);
+                View button = view.findViewById(R.id.go_to_button);
+                // create hitbox for button
+                Rect hitRectText = new Rect();
+                button.getHitRect(hitRectText);
+                // move hitbox to location of symbol
+                hitRectText.offset((int) symbolScreenPoint.x, (int) symbolScreenPoint.y);
+                // offset to consider box's size
+                hitRectText.offset(- view.getWidth() / 2, - view.getHeight() - 50);
+
+                if (hitRectText.contains((int) screenPoint.x, (int) screenPoint.y)) {
+                    // user clicked on marker
+                    goToCache( window.getStringProperty(PROPERTY_CODE));
+                    return true;
+                }
+            }
         }
 
+        return false;
 
     }
 
@@ -360,19 +422,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    public FeatureCollection getData(){
+    public void getData(){
 
         List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
+        routeCoordinates = new ArrayList<>();
+
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         LatLng location;
         for (GeocacheInTour gcit : _tour._tourCaches) {
             location = gcit.getGeocache().getLatLng();
-            Feature feature = Feature.fromGeometry(
-                    Point.fromLngLat(location.getLongitude(), location.getLatitude()));
+
+            Point p = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+            routeCoordinates.add(p);
+
+            Feature feature = Feature.fromGeometry(p);
 
             feature.addStringProperty(PROPERTY_NAME, gcit.getGeocache().getName());
             feature.addStringProperty(PROPERTY_DIFFICULTY, gcit.getGeocache().getDifficulty());
             feature.addStringProperty(PROPERTY_TERRAIN, gcit.getGeocache().getTerrain());
+            feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(gcit.getGeocache().getFavourites()));
+            feature.addStringProperty(PROPERTY_CODE, gcit.getGeocache().getCode());
             feature.addBooleanProperty(PROPERTY_SELECTED, false);
 
             if (gcit.getVisit() == FoundEnumType.Found || gcit.getVisit() == FoundEnumType.DNF) {
@@ -385,7 +454,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             builder.include(location);
         }
         mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
-        return FeatureCollection.fromFeatures(symbolLayerIconFeatureList);
+
+        featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList);
     }
 
 
@@ -402,7 +472,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 setUpImage(style);
                 setUpMarkerLayer(style);
                 setUpInfoWindowLayer(style);
-                //setupLineCircleLayer(style);
+                setupLineLayer(style);
             });
         }
     }
@@ -414,6 +484,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
         loadedStyle.addSource(source);
+
+        FeatureCollection lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
+                LineString.fromLngLats(routeCoordinates))});
+        loadedStyle.addSource(new GeoJsonSource(LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
     }
 
     /**
@@ -491,26 +565,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         iconAllowOverlap(true),
 
                         /* offset the info window to be above the marker */
-                        iconOffset(new Float[] {-2f, -28f})
+                        iconOffset(new Float[] {-2f, -20f})
                 )
 /* add a filter to show only when selected feature property is true */
                 .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
     }
 
-    private void setupLineCircleLayer(@NonNull Style loadedStyle){
-        // Style and add the CircleLayer to the map
-        loadedStyle.addLayer(new CircleLayer(CIRCLE_LAYER_ID, GEOJSON_SOURCE_ID).withProperties(
-                circleColor(CIRCLE_COLOR),
-                circleRadius(CIRCLE_RADIUS)
-        ));
+    private void setupLineLayer(@NonNull Style loadedStyle){
 
         // Style and add the LineLayer to the map. The LineLayer is placed below the CircleLayer.
-        loadedStyle.addLayerBelow(new LineLayer(LINE_LAYER_ID, GEOJSON_SOURCE_ID).withProperties(
-                        lineColor(LINE_COLOR),
-                        lineWidth(LINE_WIDTH),
-                        lineJoin(LINE_JOIN_ROUND)
-                ), CIRCLE_LAYER_ID);
+        loadedStyle.addLayerBelow(new LineLayer(LINE_LAYER_ID, LINE_GEOJSON_SOURCE_ID).withProperties(
+                    lineColor(LINE_COLOR),
+                    lineWidth(LINE_WIDTH),
+                    lineJoin(LINE_JOIN_ROUND),
+                    visibility(NONE)
+                ), MARKER_LAYER_ID);
     }
+
 
     /**
      * AsyncTask to generate Bitmap from Views to be used as iconImage in a SymbolLayer.
@@ -523,7 +594,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     private static class GenerateViewIconTask extends AsyncTask<FeatureCollection, Void, HashMap<String, Bitmap>> {
 
-        private final HashMap<String, View> viewMap = new HashMap<>();
+
         private final WeakReference<MapActivity> activityRef;
         private final boolean refreshSource;
 
@@ -552,13 +623,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             inflater.inflate(R.layout.symbol_layer_info_window_layout_callout, null);
 
                     String name = feature.getStringProperty(PROPERTY_NAME);
-                    TextView titleTextView = bubbleLayout.findViewById(R.id.info_window_title);
+                    TextView titleTextView = bubbleLayout.findViewById(R.id.cache_title);
                     titleTextView.setText(name);
 
-                    String difficulty = feature.getStringProperty(PROPERTY_DIFFICULTY);
-                    String terrain = feature.getStringProperty(PROPERTY_TERRAIN);
-                    TextView descriptionTextView = bubbleLayout.findViewById(R.id.info_window_description);
-                    descriptionTextView.setText("D: " + difficulty + ", T: " + terrain);
+                    TextView descriptionTextView = bubbleLayout.findViewById(R.id.cache_description);
+                    descriptionTextView.setText(String.format(activity.getString(R.string.cache_description_box),
+                            feature.getStringProperty(PROPERTY_DIFFICULTY),
+                            feature.getStringProperty(PROPERTY_TERRAIN),
+                            feature.getStringProperty(PROPERTY_FAVOURITES)));
 
                     int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                     bubbleLayout.measure(measureSpec, measureSpec);
@@ -578,6 +650,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         }
 
+
+
         @Override
         protected void onPostExecute(HashMap<String, Bitmap> bitmapHashMap) {
             super.onPostExecute(bitmapHashMap);
@@ -589,6 +663,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         }
+    }
+
+    public boolean goToCache(String code) {
+
+        String url = "https://coord.info/" + code;
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+        return true;
     }
 
     /**
@@ -628,6 +711,44 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             view.draw(canvas);
             return bitmap;
         }
+    }
+
+    private void toggleLineLayer() {
+        mapboxMap.getStyle(style -> {
+            Layer layer = style.getLayer(LINE_LAYER_ID);
+            if (layer != null) {
+                if (VISIBLE.equals(layer.getVisibility().getValue())) {
+                    layer.setProperties(visibility(NONE));
+                } else {
+                    layer.setProperties(visibility(VISIBLE));
+                }
+            }
+        });
+    }
+
+    private void toggleTourDistance(){
+
+        TextView lineLengthTextView = findViewById(R.id.line_distance);
+        if(lineLengthTextView.getVisibility() == View.INVISIBLE){
+            computeTourDistance();
+            lineLengthTextView.setVisibility(View.VISIBLE);
+        } else {
+            lineLengthTextView.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    private void computeTourDistance(){
+        double distance = 0;
+
+        for(int i = 1; i < routeCoordinates.size(); i++){
+            distance += TurfMeasurement.distance(routeCoordinates.get(i), routeCoordinates.get(i - 1));
+        }
+
+        TextView lineLengthTextView = findViewById(R.id.line_distance);
+        lineLengthTextView.setText(String.format(getString(R.string.line_distance),
+                distance, DISTANCE_UNITS));
+
     }
 
 }

@@ -45,4 +45,8 @@
     <string name="user_location_permission_explanation">We need to have your location to show you where you are on the map.</string>
     <string name="navigation_guidance_day">blablabla</string>
     <string name="tap_on_marker_instruction">Tap on a marker</string>
+    <string name="cache_description_box">D: %s, T: %s, Favs: %s</string>
+    <string name="go_to_geaocaching_app">Go To Geaocaching App</string>
+    <string name="lines">See Lines</string>
+    <string name="line_distance">Full distance of tour is: %.0f %s</string>
 </resources>
