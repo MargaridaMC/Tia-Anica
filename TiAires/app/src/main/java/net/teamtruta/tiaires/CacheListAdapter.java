@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -96,22 +95,14 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
         for(int i=0; i<10;i++){
-
-            ImageView iv = new ImageView(App.getContext());
-
+            TextView tv = (TextView) holder.lastLogsLayout.getChildAt(i);
             if(last10Logs.get(i).getLogType() == FoundEnumType.Found){
-                iv.setImageDrawable(ContextCompat.getDrawable(holder.view.getContext(), R.drawable.green_square));
+                tv.setTextColor(holder.view.getContext().getColor(R.color.colorPrimary));
             } else if( last10Logs.get(i).getLogType() == FoundEnumType.DNF ){
-                iv.setImageDrawable(ContextCompat.getDrawable(holder.view.getContext(), R.drawable.red_square));
+                tv.setTextColor(holder.view.getContext().getColor(R.color.red));
             } else {
-                iv.setImageDrawable(ContextCompat.getDrawable(holder.view.getContext(), R.drawable.blue_square));
+                tv.setTextColor(holder.view.getContext().getColor(R.color.blue));
             }
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(4,0,4,0);
-            iv.setLayoutParams(layoutParams);
-
-            holder.lastLogsLayout.addView(iv, i);
 
         }
 
@@ -184,6 +175,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             if(geocache.isDNFRisk())
                 holder.dnfInfo.setVisibility(View.GONE);
 
+            holder.extraInfoArrow.setChecked(true);
+
         } else {
             // Hide extra information
             if(geocache.hasHint()){
@@ -195,6 +188,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             if(geocache.isDNFRisk())
                 holder.dnfInfo.setVisibility(View.VISIBLE);
 
+            holder.extraInfoArrow.setChecked(false);
         }
     }
 
@@ -202,8 +196,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
         String info = "";
         if(geocache.isDNFRisk()){
-            String red = String.valueOf(App.getContext().getColor(R.color.red));
-            info = "<font color=\"" + red + "\">" + geocache.getDNFRiskShort() + "</font>";
+            info = "<font color='red'>" + geocache.getDNFRiskShort() + "</font>";
         }
 
         return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);

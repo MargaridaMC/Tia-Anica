@@ -132,6 +132,56 @@
             android:columnCount="10"
             android:rowCount="1">
 
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
+            <TextView
+                android:text="@string/square"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/very_large_text_size"/>
+
         </GridLayout>
 
         <TextView
@@ -178,9 +228,8 @@
 
     <CheckBox
         android:id="@+id/extra_info_arrow"
-        android:layout_width="@dimen/tiny_icon_size"
-        android:layout_height="@dimen/tiny_icon_size"
-        android:layout_marginBottom="@dimen/tiny_icon_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:button="@drawable/more_info_arrow"
         app:layout_constraintStart_toStartOf="@id/cache_symbol"
         app:layout_constraintEnd_toEndOf="@id/cache_symbol"
