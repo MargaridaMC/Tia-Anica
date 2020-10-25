@@ -112,19 +112,18 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
 
         // 6. Set DNF information if required
-        Spanned dnfInfo = getDNFInfo(geocache);
-        if(!dnfInfo.toString().equals("")) { // Cache is a DNF risk
-            holder.dnfInfo.setText(dnfInfo);
+        if(geocache.isDNFRisk()){
+
+            String dnfString = App.getContext().getString(R.string.dnf_risk);
+            dnfString = String.format(dnfString, geocache.getDNFRisk());
+
+            holder.dnfInfo.setText(HtmlCompat.fromHtml(
+                    dnfString,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY));
             holder.dnfInfo.setVisibility(View.VISIBLE);
-
-            String dnfRiskString = "<b>DNF Risk</b>:  <i>" + geocache.getDNFRisk() + "</i>";
-            holder.dnfInfoExpanded.setText(HtmlCompat.fromHtml(dnfRiskString, HtmlCompat.FROM_HTML_MODE_LEGACY));
-            holder.dnfInfoExpanded.setVisibility(View.VISIBLE);
-
         }
 
-
-        // 7. Set listener for edit button
+       // 7. Set listener for edit button
         holder.editButton.setOnClickListener(v -> {
             if(editOnClickListener!=null){
                 editOnClickListener.onEditClick(geocacheInTour.get_id());
@@ -166,16 +165,12 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
             // Remove hint indication from line 1
             if(geocache.hasHint()){
-                holder.cacheHasHint.setVisibility(View.INVISIBLE);
+                holder.cacheHasHint.setVisibility(View.GONE);
                 holder.hint.setVisibility(View.VISIBLE);
             }
 
             // Show extra information
             holder.extraInfoLayout.setVisibility(View.VISIBLE);
-
-            // Show DNF information if needed
-            if(geocache.isDNFRisk())
-                holder.dnfInfo.setVisibility(View.GONE);
 
             holder.extraInfoArrow.setChecked(true);
 
@@ -187,21 +182,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             }
 
             holder.extraInfoLayout.setVisibility(View.GONE);
-            if(geocache.isDNFRisk())
-                holder.dnfInfo.setVisibility(View.VISIBLE);
-
             holder.extraInfoArrow.setChecked(false);
         }
-    }
-
-    private Spanned getDNFInfo(Geocache geocache){
-
-        String info = "";
-        if(geocache.isDNFRisk()){
-            info = "<font color='red'>" + geocache.getDNFRiskShort() + "</font>";
-        }
-
-        return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
     @NotNull
@@ -274,7 +256,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             cacheSize = v.findViewById(R.id.cache_size);
             cacheFavs = v.findViewById(R.id.cache_favs);
             cacheHasHint = v.findViewById(R.id.cache_has_hint);
-            dnfInfo = v.findViewById(R.id.dnf_info);
+            dnfInfo = v.findViewById(R.id.dnf_risk);
             dnfInfoExpanded = v.findViewById(R.id.dnf_info_expanded);
             hint = v.findViewById(R.id.hint);
             editButton = v.findViewById(R.id.edit_button);

@@ -76,8 +76,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_0"
-        app:layout_constraintStart_toStartOf="@+id/cache_info_0"
-        app:layout_constraintEnd_toEndOf="@+id/cache_info_0"
+        app:layout_constraintStart_toStartOf="@+id/cache_title"
+        app:layout_constraintEnd_toEndOf="@+id/cache_title"
         android:orientation="horizontal">
 
         <TextView
@@ -97,21 +97,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/dnf_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:theme="@style/TextView"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
-        app:layout_constraintEnd_toEndOf="@+id/cache_title"
-        app:layout_constraintStart_toStartOf="@+id/cache_title"
-        />
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/expandable_info"

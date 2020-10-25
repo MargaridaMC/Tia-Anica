@@ -10,22 +10,22 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
                val terrain: String, val type: CacheTypeEnum = CacheTypeEnum.Other,
                val foundIt: FoundEnumType = FoundEnumType.NotAttempted,
                val hint: String, val favourites: Int = 0, val recentLogs: List<GeocacheLog>,
-               var _id: Long = 0, var dNFRisk: String = "") {
+               var _id: Long = 0) {
 
     constructor(code: String, name: String, latitude: Coordinate, longitude: Coordinate,
                 size: String, difficulty: String, terrain: String, type: CacheTypeEnum,
                 visit: FoundEnumType, hint: String, favourites: Int,
                 recentLogs: ArrayList<GeocacheLog>) : this(code, name, latitude, longitude, size,
-            difficulty, terrain, type, visit, hint, favourites, recentLogs, 0, "")
+            difficulty, terrain, type, visit, hint, favourites, recentLogs, 0)
 
     val latLng: LatLng
         get() = LatLng(latitude.value, longitude.value)
 
-    val dNFRiskShort: String
+    val dNFRisk: String
         get() {
-            val logType = recentLogs[0].logType
-            if (logType == FoundEnumType.Disabled) return "Disabled"
-            return if (logType == FoundEnumType.NeedsMaintenance) "Needs Maintenance" else "DNF Risk"
+            if (foundIt == FoundEnumType.Disabled) return "DISABLED"
+            if (recentLogs.any { it.logType == FoundEnumType.NeedsMaintenance }) return "NEEDS MAINTENANCE"
+            return ""
         }
 
 
