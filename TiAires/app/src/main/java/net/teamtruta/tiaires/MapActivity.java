@@ -69,8 +69,6 @@ import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
 import static com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_ROUND;
 import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
 import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;

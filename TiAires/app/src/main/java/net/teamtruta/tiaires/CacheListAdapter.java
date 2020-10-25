@@ -1,12 +1,13 @@
 package net.teamtruta.tiaires;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+
 
 class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
 
@@ -49,17 +51,18 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         GeocacheInTour geocacheInTour = tour._tourCaches.get(position);
         Geocache geocache = geocacheInTour.getGeocache();
 
-        // Set cache name
+        // 1. Set cache name
         holder.cacheName.setText(geocache.getName());
 
-        // Set cache type symbol
-        CacheTypeEnum cacheType = geocacheInTour.getGeocache().getType();
+        // 2. Set cache type symbol
         int drawableID;
 
         if(geocacheInTour.getVisit() == FoundEnumType.Found){
             drawableID = R.drawable.cache_icon_found;
         } else if(geocacheInTour.getVisit() == FoundEnumType.DNF){
             drawableID = R.drawable.cache_icon_dnf;
+        } else if(geocacheInTour.getVisit() == FoundEnumType.Disabled){
+            drawableID = R.drawable.cache_icon_disabled50x50;
         } else {
             drawableID = GeocacheIcon.getIconDrawable(geocacheInTour.getGeocache().getType());
         }
@@ -67,36 +70,57 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         Drawable cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
         holder.cacheSymbol.setImageDrawable(cacheSymbolDrawable);
 
-        holder.cacheInfo0.setText(getCacheInfoLine0(geocache));
+        // 3. Set information line 1: Code, difficulty and terrain and Size
+        holder.cacheCode.setText(geocache.getCode());
 
-        // Set information line 1: Found: date - \heart nFavs - Hint/No hint
-        holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
+        String difTerString = App.getContext().getString(R.string.cache_dif_ter);
+        String difficulty = geocache.getDifficulty();
+        String terrain = geocache.getTerrain();
+        String diffString = ((Double.parseDouble(difficulty) > 4) ?
+                "<font color='red'>" + difficulty + "</font>/" : difficulty);
+        String terString = ((Double.parseDouble(terrain) > 4) ?
+                "<font color='red'>" + terrain + "</font>/" : terrain);
+        holder.cacheDifTer.setText( HtmlCompat.fromHtml(String.format(difTerString, diffString, terString),
+                HtmlCompat.FROM_HTML_MODE_LEGACY));
 
-       List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
+        String sizeString = App.getContext().getString(R.string.cache_size);
+        holder.cacheSize.setText(String.format(sizeString, geocache.getSize()));
+
+
+        // 4. Set information line 2: Favorites and whether cache has hint
+        String favString = App.getContext().getString(R.string.cache_favs);
+        holder.cacheFavs.setText(String.format(favString, geocache.getFavourites()));
+        if(geocache.hasHint()){
+            holder.cacheHasHint.setText(App.getContext().getString(R.string.cache_has_hint));
+        }
+
+        List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
         for(int i=0; i<10;i++){
-            Drawable square;
+
+            ImageView iv = new ImageView(App.getContext());
+
             if(last10Logs.get(i).getLogType() == FoundEnumType.Found){
-                square = App.getContext().getDrawable(R.drawable.green_square);
+                iv.setImageDrawable(ContextCompat.getDrawable(holder.view.getContext(), R.drawable.green_square));
             } else if( last10Logs.get(i).getLogType() == FoundEnumType.DNF ){
-                square = App.getContext().getDrawable(R.drawable.red_square);
+                iv.setImageDrawable(ContextCompat.getDrawable(holder.view.getContext(), R.drawable.red_square));
             } else {
-                square = App.getContext().getDrawable(R.drawable.blue_square);
+                iv.setImageDrawable(ContextCompat.getDrawable(holder.view.getContext(), R.drawable.blue_square));
             }
 
-            Context context = App.getContext();
-            ImageView squareImageView = new ImageView(context);
-            squareImageView.setImageDrawable(square);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(4,0,4,0);
-            squareImageView.setLayoutParams(layoutParams);
-            holder.lastLogsLayout.addView(squareImageView);
+            iv.setLayoutParams(layoutParams);
+
+            holder.lastLogsLayout.addView(iv, i);
 
         }
 
-      holder.hint.setText(getHintText(geocache));
+
+        // 5. Cache Hint
+        holder.hint.setText(getHintText(geocache));
 
 
-        // Set DNF information if required
+        // 6. Set DNF information if required
         Spanned dnfInfo = getDNFInfo(geocache);
         if(!dnfInfo.toString().equals("")) { // Cache is a DNF risk
             holder.dnfInfo.setText(dnfInfo);
@@ -109,29 +133,30 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         }
 
 
-        // Set listener for edit button
+        // 7. Set listener for edit button
         holder.editButton.setOnClickListener(v -> {
             if(editOnClickListener!=null){
                 editOnClickListener.onEditClick(geocacheInTour.get_id());
             }
         });
 
+        // 8. Set listener for go-to-cache button
         holder.goToButton.setOnClickListener(v -> {
             if(goToOnClickListener!=null){
                 goToOnClickListener.onGoToClick(geocache);
             }
         });
 
-        // Make section grey if cache has been visited
+        // 9. Make section grey if cache has been visited
         if(geocacheInTour.getVisit() == FoundEnumType.Found || geocacheInTour.getVisit() == FoundEnumType.DNF){
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         } else {
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.white));
         }
 
-        // Setup expansion
-        holder.view.setOnClickListener(expandCacheDetail(position, holder));
-        setHolderExpanded(holder, geocache, false);
+        // 10. Setup expansion
+        holder.view.setOnClickListener(v -> expandHolder(holder, geocache));
+        holder.extraInfoArrow.setOnClickListener(v -> expandHolder(holder, geocache));
 
     }
 
@@ -142,25 +167,15 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     }
 
-    private View.OnClickListener expandCacheDetail(int position, ViewHolder holder) {
+    void expandHolder(ViewHolder holder, Geocache geocache){
 
-        Geocache geocache = tour._tourCaches.get(position).getGeocache();
-        return v -> setHolderExpanded(holder, geocache, !holder.expanded);
-    }
-
-    void setHolderExpanded(ViewHolder holder, Geocache geocache, boolean expand){
-        if(expand){
-            // Expand
-            holder.expanded = true;
+        if(holder.extraInfoArrow.isChecked() || holder.extraInfoLayout.getVisibility() != View.VISIBLE){
 
             // Remove hint indication from line 1
             if(geocache.hasHint()){
-                holder.cacheInfo1.setText(getCacheInfoLine1(geocache, false));
+                holder.cacheHasHint.setVisibility(View.INVISIBLE);
                 holder.hint.setVisibility(View.VISIBLE);
             }
-
-            // Change arrow on the left
-            holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_up));
 
             // Show extra information
             holder.extraInfoLayout.setVisibility(View.VISIBLE);
@@ -168,69 +183,19 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             // Show DNF information if needed
             if(geocache.isDNFRisk())
                 holder.dnfInfo.setVisibility(View.GONE);
+
         } else {
             // Hide extra information
             if(geocache.hasHint()){
-                holder.cacheInfo1.setText(getCacheInfoLine1(geocache, true));
+                holder.cacheHasHint.setVisibility(View.VISIBLE);
                 holder.hint.setVisibility(View.GONE);
             }
-            holder.expanded = false;
-            holder.extraInfoArrow.setImageDrawable(App.getContext().getDrawable(R.drawable.double_arrow_down));
+
             holder.extraInfoLayout.setVisibility(View.GONE);
             if(geocache.isDNFRisk())
                 holder.dnfInfo.setVisibility(View.VISIBLE);
+
         }
-    }
-
-    private Spanned getCacheInfoLine0(Geocache geocache){
-        // Set information line 0: code - D/T: _/_ - Size: _
-        String info = geocache.getCode() + " - D/T: ";
-
-        double difficulty = Double.parseDouble(geocache.getDifficulty());
-        double terrain = Double.parseDouble(geocache.getTerrain());
-
-        String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
-
-        if(difficulty >= 4){
-            info += "<font color=\"" + red + "\">" + geocache.getDifficulty() + "</font>" + "/";
-        } else {
-            info += geocache.getDifficulty() + "/";
-        }
-
-        if(terrain >= 4){
-            info += "<font color=\"" + red + "\">" + geocache.getTerrain() + "</font>";
-        } else {
-            info += geocache.getTerrain();
-        }
-
-        info += " - Size: " + geocache.getSize();
-
-        return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
-
-    }
-
-    private Spanned getCacheInfoLine1(Geocache geocache, boolean withHint){
-
-        String red = String.valueOf(App.getContext().getColor(R.color.red));//"#CF2A27";
-
-       /* Date lastLogDate = geocache.getLastLogDate();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "dd/MMM/yy");
-        String info = "Last log: " + simpleDateFormat.format(lastLogDate) + "- &#9825; " + geocache.getFavourites();
-*/
-
-       String info = "- &#9825; " + geocache.getFavourites();
-        if(withHint){
-
-            info += " - ";
-
-            if(!geocache.hasHint()){
-                info += "<font color=\"" + red+ "\">NO HINT</font>";
-            } else {
-                info += "HINT";
-            }
-        }
-
-        return HtmlCompat.fromHtml(info, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
     private Spanned getDNFInfo(Geocache geocache){
@@ -288,18 +253,20 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         View view;
         TextView cacheName;
         ImageView cacheSymbol;
-        TextView cacheInfo0;
-        TextView cacheInfo1;
+        TextView cacheCode;
+        TextView cacheDifTer;
+        TextView cacheSize;
+        TextView cacheFavs;
+        TextView cacheHasHint;
         TextView dnfInfo;
         TextView dnfInfoExpanded;
         TextView hint;
         Button editButton;
         Button goToButton;
         ConstraintLayout layout;
-        boolean expanded = false;
         ConstraintLayout extraInfoLayout;
-        ImageView extraInfoArrow;
-        LinearLayout lastLogsLayout;
+        CheckBox extraInfoArrow;
+        GridLayout lastLogsLayout;
 
         ViewHolder(View v){
             super(v);
@@ -307,8 +274,11 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
             cacheName = v.findViewById(R.id.cache_title);
             cacheSymbol = v.findViewById(R.id.cache_symbol);
-            cacheInfo0 = v.findViewById(R.id.cache_info_0);
-            cacheInfo1 = v.findViewById(R.id.cache_info_1);
+            cacheCode = v.findViewById(R.id.cache_code);
+            cacheDifTer = v.findViewById(R.id.cache_dif_ter);
+            cacheSize = v.findViewById(R.id.cache_size);
+            cacheFavs = v.findViewById(R.id.cache_favs);
+            cacheHasHint = v.findViewById(R.id.cache_has_hint);
             dnfInfo = v.findViewById(R.id.dnf_info);
             dnfInfoExpanded = v.findViewById(R.id.dnf_info_expanded);
             hint = v.findViewById(R.id.hint);

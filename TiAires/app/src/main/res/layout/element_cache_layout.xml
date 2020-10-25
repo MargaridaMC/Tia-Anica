@@ -30,26 +30,76 @@
         app:layout_constraintStart_toEndOf="@+id/cache_symbol"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <TextView
+    <LinearLayout
         android:id="@+id/cache_info_0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/TextView"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/cache_title"
-        app:layout_constraintEnd_toEndOf="@+id/cache_title"
         app:layout_constraintStart_toStartOf="@+id/cache_title"
-        />
+        app:layout_constraintEnd_toEndOf="@+id/cache_title">
 
-    <TextView
+        <TextView
+            android:id="@+id/cache_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"
+            android:text="@string/dash"/>
+
+        <TextView
+            android:id="@+id/cache_dif_ter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"
+            android:text="@string/dash"/>
+
+        <TextView
+            android:id="@+id/cache_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/cache_info_1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/TextView"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_0"
-        app:layout_constraintEnd_toEndOf="@+id/cache_info_0"
         app:layout_constraintStart_toStartOf="@+id/cache_info_0"
-        />
+        app:layout_constraintEnd_toEndOf="@+id/cache_info_0"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cache_favs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/cache_has_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"
+            android:text="@string/cache_has_no_hint"/>
+
+        <TextView
+            android:id="@+id/dnf_risk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextView"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/dnf_info"
@@ -58,8 +108,8 @@
         android:theme="@style/TextView"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
-        app:layout_constraintEnd_toEndOf="@+id/cache_info_1"
-        app:layout_constraintStart_toStartOf="@+id/cache_info_1"
+        app:layout_constraintEnd_toEndOf="@+id/cache_title"
+        app:layout_constraintStart_toStartOf="@+id/cache_title"
         />
 
 
@@ -69,17 +119,20 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
-        app:layout_constraintEnd_toEndOf="@+id/cache_info_1"
-        app:layout_constraintStart_toStartOf="@+id/cache_info_1">
+        app:layout_constraintEnd_toEndOf="@+id/cache_title"
+        app:layout_constraintStart_toStartOf="@+id/cache_title">
 
-        <LinearLayout
-            android:paddingBottom="@dimen/line_space"
-            android:orientation="horizontal"
+        <GridLayout
             android:id="@+id/last10LogsSquares"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/line_space"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:columnCount="10"
+            android:rowCount="1">
+
+        </GridLayout>
 
         <TextView
             android:id="@+id/hint"
@@ -123,14 +176,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ImageView
+    <CheckBox
         android:id="@+id/extra_info_arrow"
         android:layout_width="@dimen/tiny_icon_size"
         android:layout_height="@dimen/tiny_icon_size"
         android:layout_marginBottom="@dimen/tiny_icon_size"
+        android:button="@drawable/more_info_arrow"
         app:layout_constraintStart_toStartOf="@id/cache_symbol"
         app:layout_constraintEnd_toEndOf="@id/cache_symbol"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/double_arrow_down" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

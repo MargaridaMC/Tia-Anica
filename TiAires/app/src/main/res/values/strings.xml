@@ -49,4 +49,12 @@
     <string name="go_to_geaocaching_app">Go To Geaocaching App</string>
     <string name="lines">See Lines</string>
     <string name="line_distance">Full distance of tour is: %.0f %s</string>
+    <string name="dash">\u0020-\u0020</string>
+    <string name="cache_dif_ter">D/T: %1$s/%2$s</string>
+    <string name="cache_size">Size: %1$s</string>
+    <string name="cache_has_hint">\u0020- HINT</string>
+    <string name="cache_has_no_hint">\u0020- <font color='red'>NO HINT</font></string>
+    <string name="cache_favs">❤ %1$d</string>
+    <string name="square">■</string>
+
 </resources>
