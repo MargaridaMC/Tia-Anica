@@ -139,7 +139,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         });
 
         // 9. Make section grey if cache has been visited
-        if(geocacheInTour.getVisit() == FoundEnumType.Found || geocacheInTour.getVisit() == FoundEnumType.DNF){
+        if(geocacheInTour.getVisit() == FoundEnumType.Found
+                || geocacheInTour.getVisit() == FoundEnumType.DNF
+                || geocacheInTour.getVisit() == FoundEnumType.Disabled){
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         } else {
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.white));

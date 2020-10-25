@@ -30,7 +30,6 @@ public class GeocachingScrapper {
     private static final String LOGIN_PAGE = "/account/signin";
     private static final String GEOCACHE_PAGE = "/geocache/"; // eg, https://www.geocaching.com/geocache/GC6B4AK
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3980.0 Safari/537.36 Edg/80.0.355.1";
-    private String _requestVerificationCookie;
     private String _groundspeakAuthCookie;
 
     public GeocachingScrapper() {
@@ -60,7 +59,7 @@ public class GeocachingScrapper {
 
         StringBuffer pageContent = readHttpRequest(httpConnection);
         String tokenValue = getTokenFromHtmlBody(pageContent);
-        _requestVerificationCookie = httpConnection.getHeaderField("Set-Cookie").split(";")[0];
+        String _requestVerificationCookie = httpConnection.getHeaderField("Set-Cookie").split(";")[0];
 
         // System.out.println("status GET= " + status);
         // System.out.println("Token in HTML = " + tokenValue);
@@ -271,6 +270,7 @@ public class GeocachingScrapper {
             }
         }
 
+
         // 6. Have I found it?
         String regexFound = "<strong id=\"ctl00_ContentBody_GeoNav_logText\">(Did Not Find|Found It!)</strong>";
         pattern = Pattern.compile(regexFound);
@@ -279,11 +279,18 @@ public class GeocachingScrapper {
         FoundEnumType visit;
         if (matcher.find()) {
             visit = matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF;
-            //gc.setFoundIt(matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF);
         } else {
             visit = FoundEnumType.NotAttempted;
-            //gc.setFoundIt(FoundEnumType.NotAttempted);
         }
+
+        // Check if it is disabled
+        String regexDisabled = "This cache is temporarily unavailable.";
+        pattern = Pattern.compile(regexDisabled);
+        matcher = pattern.matcher(pageContents);
+        if (matcher.find()){
+            visit = FoundEnumType.Disabled;
+        }
+
 
         // 7. Hint. Note: \x28 is "("" and \x29 is ")"
         //String regexHint = "<a id=\"ctl00_ContentBody_lnkDH\" onclick=\"dht\\(this\\);return&#32;false;\" title=\"Decrypt\" href=\"../seek/#\">Decrypt</a>\\) </p><div id=\"div_hint\" class=\"span-8 WrapFix\">\\s*(.*?)</div><div id='dk'";

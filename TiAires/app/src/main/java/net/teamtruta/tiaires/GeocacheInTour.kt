@@ -1,6 +1,5 @@
 package net.teamtruta.tiaires
 
-import android.graphics.Bitmap
 import net.teamtruta.tiaires.db.DbConnection
 import java.util.*
 

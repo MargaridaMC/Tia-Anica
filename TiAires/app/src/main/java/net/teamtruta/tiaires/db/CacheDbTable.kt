@@ -81,7 +81,8 @@ class CacheDbTable (private val context: Context) {
         with(values){
 
             // If we have already found this cache then we want that information to be included in the Geocache In Tour
-            if(geocache.foundIt == FoundEnumType.Found || geocache.foundIt == FoundEnumType.DNF){
+            if(geocache.foundIt == FoundEnumType.Found || geocache.foundIt == FoundEnumType.DNF
+                    || geocache.foundIt == FoundEnumType.Disabled){
                 put(CacheEntry.VISIT_COL, geocache.foundIt.typeString)
             } else {
                 put(CacheEntry.VISIT_COL, geocacheInTour.visit.typeString)
