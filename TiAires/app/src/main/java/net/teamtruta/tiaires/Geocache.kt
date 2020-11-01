@@ -1,22 +1,23 @@
 package net.teamtruta.tiaires
 
-//import com.google.android.gms.maps.model.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLng
 import net.teamtruta.tiaires.db.DbConnection
-import java.util.*
+import kotlin.collections.ArrayList
 
 class Geocache(val code: String, val name: String, val latitude: Coordinate,
                val longitude: Coordinate, val size: String, val difficulty: String,
                val terrain: String, val type: CacheTypeEnum = CacheTypeEnum.Other,
                val foundIt: FoundEnumType = FoundEnumType.NotAttempted,
                val hint: String, val favourites: Int = 0, val recentLogs: List<GeocacheLog>,
+               val attributes: List<GeocacheAttributeEnum> = listOf(),
                var _id: Long = 0) {
 
     constructor(code: String, name: String, latitude: Coordinate, longitude: Coordinate,
                 size: String, difficulty: String, terrain: String, type: CacheTypeEnum,
                 visit: FoundEnumType, hint: String, favourites: Int,
-                recentLogs: ArrayList<GeocacheLog>) : this(code, name, latitude, longitude, size,
-            difficulty, terrain, type, visit, hint, favourites, recentLogs, 0)
+                recentLogs: ArrayList<GeocacheLog>, attributes: List<GeocacheAttributeEnum>) :
+            this(code, name, latitude, longitude, size, difficulty, terrain, type, visit, hint,
+                    favourites, recentLogs, attributes, 0)
 
     val latLng: LatLng
         get() = LatLng(latitude.value, longitude.value)
@@ -93,9 +94,7 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
             // Store newly obtained caches
 
             if(overwrite){
-
                 dbConnection.cacheDetailTable.update(obtainedCaches)
-
             } else {
                 val obtainedCacheIDs = dbConnection.cacheDetailTable.store(obtainedCaches, false)
                 cachesAlreadyInDb.addAll(obtainedCacheIDs)
@@ -106,38 +105,3 @@ class Geocache(val code: String, val name: String, val latitude: Coordinate,
         }
     }
 }
-/*
-
-        fun reloadCaches(requestedCaches: List<Long>){
-            // Scrape the remaining caches
-            val authCookie = App.getAuthenticationCookie()
-            val scrapper = GeocachingScrapper(authCookie)
-            val geocachingScrappingTask = GeocachingScrappingTask(scrapper, cachesToGet)
-            geocachingScrappingTask.execute()
-        }
-*/
-
-       /* fun getGeocaches(requestedCaches: List<String>, dbConnection: DbConnection, geocachingTour: GeocachingTour) {
-            val cachesAlreadyInDb: MutableList<Long> = ArrayList()
-            val cachesToGet: MutableList<String> = ArrayList()
-
-            // First check if any of the caches already exist in the database
-            for (c in requestedCaches) {
-                val cacheID = existsInDb(c, dbConnection)
-                if (cacheID != -1L) {
-                    cachesAlreadyInDb.add(cacheID)
-                } else {
-                    cachesToGet.add(c)
-                }
-            }
-
-            // Scrape the remaining caches
-            val authCookie = App.getAuthenticationCookie()
-            val scrapper = GeocachingScrapper(authCookie)
-            val geocachingScrappingTask = GeocachingScrappingTask(scrapper, cachesToGet, cachesAlreadyInDb)
-            geocachingScrappingTask.delegate = geocachingTour
-            geocachingScrappingTask.execute()
-
-        }
-    }*/
-

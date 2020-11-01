@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -150,6 +151,21 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         holder.view.setOnClickListener(v -> expandHolder(holder, geocache));
         holder.extraInfoArrow.setOnClickListener(v -> expandHolder(holder, geocache));
 
+        // 11. Add Cache Attributes
+        if(geocache.getAttributes().size() > 0){
+            for(GeocacheAttributeEnum attribute: geocache.getAttributes()){
+                ImageView iv = new ImageView(App.getContext());
+                iv.setImageDrawable(App.getContext().getDrawable(
+                        GeocacheAttributeIcon.getGeocacheAttributeIcon(attribute)));
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size),
+                        (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size));
+                layoutParams.setMarginEnd((int) App.getContext().getResources().getDimension(R.dimen.tiny_padding));
+                iv.setLayoutParams(layoutParams);
+                holder.attributeList.addView(iv);
+            }
+        }
+
     }
 
     private Spanned getHintText(Geocache geocache) {
@@ -174,6 +190,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
             holder.extraInfoArrow.setChecked(true);
 
+            // Show attributes
+            holder.attributeList.setVisibility(View.VISIBLE);
+
         } else {
             // Hide extra information
             if(geocache.hasHint()){
@@ -183,6 +202,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
             holder.extraInfoLayout.setVisibility(View.GONE);
             holder.extraInfoArrow.setChecked(false);
+
+            // Hide attributes
+            holder.attributeList.setVisibility(View.GONE);
         }
     }
 
@@ -244,6 +266,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         ConstraintLayout extraInfoLayout;
         CheckBox extraInfoArrow;
         GridLayout lastLogsLayout;
+        LinearLayout attributeList;
 
         ViewHolder(View v){
             super(v);
@@ -265,7 +288,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             extraInfoLayout = v.findViewById(R.id.expandable_info);
             extraInfoArrow = v.findViewById(R.id.extra_info_arrow);
             lastLogsLayout = v.findViewById(R.id.last10LogsSquares);
-
+            attributeList = v.findViewById(R.id.cache_attributes);
         }
 
     }

@@ -26,7 +26,6 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
     // 2. Cache table
     //private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE cache(id INTEGER PRIMARY KEY,foundDate TEXT,needsMaintenance INTEGER,visit TEXT,notes TEXT,foundTrackable INTEGER,droppedTrackable INTEGER,favouritePoint INTEGER,orderBy INTEGER,tourID_FK INTEGER,cacheDetailID_FK INTEGER,FOREIGN KEY(tourID_FK) REFERENCES tour ON DELETE CASCADE,FOREIGN KEY(cacheDetailID_FK) REFERENCES cacheDetail ON DELETE CASCADE)"
-
     private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE ${CacheEntry.TABLE_NAME}(" +
             "${CacheEntry._ID} INTEGER PRIMARY KEY," +
             "${CacheEntry.FOUND_DATE_COL} TEXT," + // Can be changed to REAL or INTEGER according to convenience
@@ -71,11 +70,19 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${LogEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME}" +
             ")"
 
+    // 5. Attribute Table
+    private  val SQL_CREATE_ATTRIBUTE_TABLE: String = "CREATE TABLE ${AttributeEntry.TABLE_NAME}(" +
+            "${AttributeEntry._ID} INTEGER PRIMARY KEY," +
+            "${AttributeEntry.ATTRIBUTE_TYPE} TEXT," +
+            "${AttributeEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME}" +
+            ")"
+
     // Query to delete all tables
     private val SQL_DELETE_TABLES = "DROP TABLE IF EXISTS ${TourEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${CacheEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${CacheDetailEntry.TABLE_NAME};" +
-            "DROP TABLE IF EXISTS ${LogEntry.TABLE_NAME};"
+            "DROP TABLE IF EXISTS ${LogEntry.TABLE_NAME};" +
+            "DROP TABLE IF EXISTS ${AttributeEntry.TABLE_NAME};"
 
     override fun onCreate(db: SQLiteDatabase?) {
         // Create all the tables required
@@ -86,6 +93,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         db?.execSQL(SQL_CREATE_CACHE_DETAIL_TABLE)
         db?.execSQL(SQL_CREATE_CACHE_TABLE)
         db?.execSQL(SQL_CREATE_LOG_TABLE)
+        db?.execSQL(SQL_CREATE_ATTRIBUTE_TABLE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -206,6 +215,11 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             val SQL_ADD_COLUMN = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
                     "ADD ${CacheEntry.IMAGE_COL} TEXT"
             db?.execSQL(SQL_ADD_COLUMN)
+        }
+
+        if(oldVersion <= 15){
+            // Create table for attributes
+            db?.execSQL(SQL_CREATE_ATTRIBUTE_TABLE)
         }
     }
 

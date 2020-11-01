@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/cache_symbol"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
+        android:layout_width="@dimen/large_icon_size"
+        android:layout_height="@dimen/large_icon_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/cache_title"
         app:srcCompat="@drawable/cache_icon_type_traditional" />
@@ -36,8 +36,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/cache_title"
-        app:layout_constraintStart_toStartOf="@+id/cache_title"
-        app:layout_constraintEnd_toEndOf="@+id/cache_title">
+        app:layout_constraintEnd_toStartOf="@id/go_to_button"
+        app:layout_constraintStart_toEndOf="@+id/cache_symbol">
 
         <TextView
             android:id="@+id/cache_code"
@@ -76,8 +76,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_0"
-        app:layout_constraintStart_toStartOf="@+id/cache_title"
-        app:layout_constraintEnd_toEndOf="@+id/cache_title"
+        app:layout_constraintEnd_toStartOf="@id/go_to_button"
+        app:layout_constraintStart_toEndOf="@+id/cache_symbol"
         android:orientation="horizontal">
 
         <TextView
@@ -107,8 +107,8 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
-        app:layout_constraintEnd_toEndOf="@+id/cache_title"
-        app:layout_constraintStart_toStartOf="@+id/cache_title">
+        app:layout_constraintEnd_toStartOf="@id/go_to_button"
+        app:layout_constraintStart_toEndOf="@+id/cache_symbol">
 
         <GridLayout
             android:id="@+id/last10LogsSquares"
@@ -191,6 +191,18 @@
             android:theme="@style/TextView"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/hint"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/cache_attributes"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:theme="@style/TextView"
+            android:layout_marginTop="@dimen/line_space"
+            app:layout_constraintTop_toBottomOf="@+id/dnf_info_expanded"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -360,12 +361,6 @@ public class GeocachingScrapper {
                 Date logDate = dateFormatter0.parse(matcherDates.group(1));
                 GeocacheLog log = new GeocacheLog(logType, logDate);
 
-                /*GeocacheLog log = new GeocacheLog();
-                String typeString = matcher.group(1);
-                log.logType = FoundEnumType.valueOfString(typeString);
-                String dateString = matcherDates.group(1);
-                log.logDate = dateFormatter0.parse(dateString);*/
-
                 recentLogs.add(log);
                 logsParsed++;
             }
@@ -383,12 +378,6 @@ public class GeocachingScrapper {
                     Date logDate = dateFormatter1.parse(matcherDates.group(1));
                     GeocacheLog log = new GeocacheLog(logType, logDate);
 
-                    /*GeocacheLog log = new GeocacheLog();
-                    String typeString = matcher.group(1);
-                    log.logType = FoundEnumType.valueOfString(typeString);
-                    String dateString = matcherDates.group(1);
-                    log.logDate = dateFormatter1.parse(dateString);*/
-
                     recentLogs.add(log);
                     logsParsed++;
                 }
@@ -396,6 +385,17 @@ public class GeocachingScrapper {
                 e1.printStackTrace();
             }
 
+        }
+
+        // 10. Get cache attributes
+        List<GeocacheAttributeEnum> attributes = new ArrayList();
+        for(GeocacheAttributeEnum attribute: GeocacheAttributeEnum.values()){
+            String atString = attribute.attributeString;
+            pattern = Pattern.compile(atString);
+            matcher = pattern.matcher(pageContents);
+            if(matcher.find()){
+                attributes.add(attribute);
+            }
         }
 
         //gc.setRecentLogs(recentLogs);
@@ -413,7 +413,7 @@ public class GeocachingScrapper {
         //gc.setDNFRisk();
 
         return new Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visit,
-                hint, favourites, recentLogs);
+                hint, favourites, recentLogs, attributes);
     }
 
     private String getTokenFromHtmlBody(StringBuffer htmlPage)

@@ -37,8 +37,12 @@ class CacheDetailDbTable(private val context: Context)  {
             gc._id = id
         }
 
-        LogDbTable(context).storeLogsInCache(gc)
         db.close()
+
+        // Store also the attributes
+        CacheAttributeDbTable(context).store(gc, overwrite)
+        LogDbTable(context).storeLogsInCache(gc, overwrite)
+
         Log.d(TAG, "Stored new Geocache In Tour to the DB $gc")
         return id
     }
@@ -59,8 +63,9 @@ class CacheDetailDbTable(private val context: Context)  {
 
         val cursor = db.doQuery(CacheDetailEntry.TABLE_NAME, columns, "${CacheDetailEntry._ID} = ${geocacheID}")
 
-        // Let's get all the logs that are associated with this cache
+        // Let's get all the logs that are associated with this cache as well as its attributes
         val logList = LogDbTable(context).getAllLogsInCache(geocacheID)
+        val attributes = CacheAttributeDbTable(context).getAttributesFromCacheID(geocacheID)
 
         val gc : Geocache =
                 with(cursor){
@@ -76,7 +81,8 @@ class CacheDetailDbTable(private val context: Context)  {
                     val latitude = Coordinate(getDouble(CacheDetailEntry.LAT_COL))
                     val longitude = Coordinate(getDouble(CacheDetailEntry.LON_COL))
                     val nFavs = getInt(CacheDetailEntry.FAV_COL)
-                    Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visitType, hint, nFavs, logList, geocacheID)
+                    Geocache(code, name, latitude, longitude, size, difficulty, terrain, type,
+                            visitType, hint, nFavs, logList, attributes, geocacheID)
                 }
 
         cursor.close()
@@ -116,31 +122,26 @@ class CacheDetailDbTable(private val context: Context)  {
         cursor.close()
         db.close()
 
-        // Delete Logs pertaining to this cache and then the cache
+        // Delete Logs and attributes pertaining to this cache and then the cache
         val logTable = LogDbTable(context)
+        val attributeTable = CacheAttributeDbTable(context)
         for(id in idToDelete){
             logTable.deleteLogsInCache(id)
+            attributeTable.deleteAttributesInCache(id)
             deleteEntry(id)
         }
-/*
-
-        val SQL_GARBAGE_COLLECTION_QUERY = "DELETE FROM ${CacheDetailEntry.TABLE_NAME} " +
-                "WHERE ${CacheDetailEntry._ID} NOT IN (" +
-                "SELECT DISTINCT (${CacheEntry.CACHE_DETAIL_ID_FK_COL}) FROM ${CacheEntry.TABLE_NAME}" +
-                ")"
-        val db = dbHelper.writableDatabase
-        db.execSQL(SQL_GARBAGE_COLLECTION_QUERY)
-*/
 
     }
-
 
     fun deleteEntry(id : Long){
 
         // First delete all logs related to this cache
         LogDbTable(context).deleteLogsInCache(id)
 
-        // The delete entries to this cache
+        // Then delete all attributes related to this cache
+        CacheAttributeDbTable(context).deleteAttributesInCache(id)
+
+        // Then delete entries to this cache
         val db = dbHelper.writableDatabase
         db.delete(CacheDetailEntry.TABLE_NAME, "${CacheDetailEntry._ID} = ?", arrayOf("$id"))
         db.close()
@@ -153,12 +154,16 @@ class CacheDetailDbTable(private val context: Context)  {
             val cursor = db.doQuery(CacheDetailEntry.TABLE_NAME, arrayOf(CacheDetailEntry._ID),
                     "${CacheDetailEntry.CODE_COL} = ?", arrayOf(gc.code))
             cursor.moveToFirst()
+
             val id = cursor.getLong(CacheDetailEntry._ID)
             db.close()
             cursor.close()
+
             if(id != -1L){
+                // Update Cache Detail Entry
                 gc._id = id
                 store(gc, true)
+
             }
 
 
@@ -185,7 +190,6 @@ class CacheDetailDbTable(private val context: Context)  {
 
         return id
     }
-
 
 }
 

@@ -46,6 +46,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
+                <Button
+                    android:layout_width="@dimen/medium_icon_size"
+                    android:layout_height="@dimen/medium_icon_size"
+                    android:background="@drawable/attribute_info"
+                    android:onClick="showAttributeInfo"
+                    android:layout_marginEnd="@dimen/margin"
+                    app:layout_constraintEnd_toStartOf="@+id/tour_progress"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

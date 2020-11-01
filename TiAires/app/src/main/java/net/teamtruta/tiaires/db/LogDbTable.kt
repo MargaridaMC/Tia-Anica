@@ -11,25 +11,6 @@ class LogDbTable (context: Context){
     private val TAG = LogDbTable::class.simpleName
     private val dbHelper = TiAiresDb(context)
 
-/*
-    fun deleteEntry(id: Long) : Int{
-
-        val db = dbHelper.writableDatabase
-        val nLinesDeleted = db.delete(LogEntry.TABLE_NAME, "${LogEntry._ID} = ?", arrayOf("$id"))
-        db.close()
-        return nLinesDeleted
-    }
-
-
-    fun deleteEntries(ids : List<Long>) : Int {
-        var totalLinesDeleted = 0
-        for(id in ids){
-            totalLinesDeleted += deleteEntry(id)
-        }
-        return totalLinesDeleted
-    }
-*/
-
     fun deleteLogsInCache(cacheID : Long) : Int{
         Log.d(TAG, "Deleted logs with cacheID: $cacheID")
         val db = dbHelper.writableDatabase
@@ -38,7 +19,11 @@ class LogDbTable (context: Context){
         return nLinesDeleted
     }
 
-    fun storeLogsInCache(gc : Geocache){
+    fun storeLogsInCache(gc : Geocache, overwrite : Boolean = false){
+
+        // If overwrite simply delete all logs pertaining to this cache and then rewrite them
+        if(overwrite)
+            deleteLogsInCache(gc._id)
 
         val recentLogs = gc.recentLogs
         for(log in recentLogs){

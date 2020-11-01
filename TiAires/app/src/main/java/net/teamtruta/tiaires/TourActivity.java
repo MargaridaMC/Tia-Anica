@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +32,10 @@ import com.microsoft.appcenter.analytics.Analytics;
 
 import net.teamtruta.tiaires.db.DbConnection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener, CacheListAdapter.OnVisitListener {
 
@@ -71,7 +75,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             return;
         }
 
-        _tour = GeocachingTour.getGeocachingTourFromID(tourID, dbConnection);//new GeocachingTour(tourID, dbConnection);//new CacheDbTable(this).getGeocachingTour(tourID);
+        _tour = GeocachingTour.getGeocachingTourFromID(tourID, dbConnection);
         String tourName = _tour.getName();
 
         // Set title
@@ -189,10 +193,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void goToMap(View view){
-/*
-        Toast t = Toast.makeText(this, "Not yet implemented.", Toast.LENGTH_SHORT);
-        t.show();
-*/
+
         Intent intent = new Intent(this, MapActivity.class);
         intent.putExtra(App.TOUR_ID_EXTRA, tourID);
         startActivity(intent);
@@ -211,20 +212,6 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     public void onGoToClick(Geocache geocache){
 
         // Open geocache in Geocache app or website
-        /*
-        String url = "https://coord.info/" + code;
-        Intent i = new Intent(Intent.ACTION_VIEW);
-
-        i.setData(Uri.parse(url));
-
-        startActivity(i);
-        */
-        /*Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra(App.TOUR_ID_EXTRA, _tour._id);
-        intent.putExtra(App.CACHE_ID_EXTRA, cacheID);
-        intent.putExtra(App.FOCUS_ON_CACHE_EXTRA, true);
-        startActivity(intent);*/
-
         AlertDialog.Builder chooser = new AlertDialog.Builder(this)
                 .setMessage("Which app would you like to use to go to this cache?")
                 .setPositiveButton("Geocaching", (dialog, which) -> {
@@ -313,5 +300,23 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     public void reloadTour(View view) {
         reloadTourCaches();
+    }
+
+    public void showAttributeInfo(View view){
+
+        ArrayList<GeocacheAttributeEnum> allAttributesList = _tour._tourCaches.stream()
+                .flatMap(x -> x.getGeocache().getAttributes().stream()).distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        final Dialog dialog = new Dialog(this);
+
+        View dialogView = getLayoutInflater().inflate(R.layout.attribute_dialog, null);
+        ListView lv = dialogView.findViewById(R.id.attribute_list_dialog);
+
+        GeocacheAttributeListAdapter listAdapter = new GeocacheAttributeListAdapter(this, allAttributesList);
+        lv.setAdapter(listAdapter);
+        dialog.setContentView(dialogView);
+        dialog.show();
+
     }
 }
