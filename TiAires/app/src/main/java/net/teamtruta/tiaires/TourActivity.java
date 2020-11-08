@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.graphics.drawable.ColorDrawable;
@@ -308,15 +309,25 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
                 .flatMap(x -> x.getGeocache().getAttributes().stream()).distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        final Dialog dialog = new Dialog(this);
+        if(allAttributesList.size() == 0){
 
-        View dialogView = getLayoutInflater().inflate(R.layout.attribute_dialog, null);
-        ListView lv = dialogView.findViewById(R.id.attribute_list_dialog);
+            // Tell user that this tour doesn't need anything special
+            AlertDialog.Builder builder = new AlertDialog.Builder( this);
+            builder.setMessage("Looks like this tour doesn't have any special requirements!");
+            builder.setPositiveButton("OK", (dialog, which) -> {});
+            AlertDialog dialog = builder.show();
 
-        GeocacheAttributeListAdapter listAdapter = new GeocacheAttributeListAdapter(this, allAttributesList);
-        lv.setAdapter(listAdapter);
-        dialog.setContentView(dialogView);
-        dialog.show();
+        } else {
+            final Dialog dialog = new Dialog(this);
+            View dialogView = getLayoutInflater().inflate(R.layout.attribute_dialog, null);
+            ListView lv = dialogView.findViewById(R.id.attribute_list_dialog);
+
+            GeocacheAttributeListAdapter listAdapter = new GeocacheAttributeListAdapter(this, allAttributesList);
+            lv.setAdapter(listAdapter);
+            dialog.setContentView(dialogView);
+            dialog.show();
+        }
+
 
     }
 }

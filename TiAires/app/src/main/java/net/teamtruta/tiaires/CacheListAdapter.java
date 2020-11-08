@@ -191,7 +191,8 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             holder.extraInfoArrow.setChecked(true);
 
             // Show attributes
-            holder.attributeList.setVisibility(View.VISIBLE);
+            if(geocache.getAttributes().size() != 0)
+                holder.attributeList.setVisibility(View.VISIBLE);
 
         } else {
             // Hide extra information
