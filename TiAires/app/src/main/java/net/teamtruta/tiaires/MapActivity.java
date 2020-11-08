@@ -451,7 +451,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             symbolLayerIconFeatureList.add(feature);
             builder.include(location);
         }
-        mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
+
+        // If there is only one cache in the list the LatLngBoundsBuilder will fail to build-
+        // If that is the case just focus on the cache
+        if( _tour._tourCaches.size() == 1){
+            mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(_tour._tourCaches.get(0).getGeocache().getLatLng()), 2000);
+        } else {
+            mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
+        }
 
         featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList);
     }
