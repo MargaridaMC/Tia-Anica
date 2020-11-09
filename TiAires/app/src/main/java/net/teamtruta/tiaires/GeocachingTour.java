@@ -5,6 +5,7 @@ import net.teamtruta.tiaires.db.DbConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 /**
@@ -145,60 +146,25 @@ public class GeocachingTour
 
     }
 
+    public int getLastVisitedCache(){
 
-    /*
-    public void swapCachePositions(int fromPosition, int toPosition) {
+        GeocacheInTour lastVisistedGeocache = _tourCaches.stream()
+                .filter(x -> x.getGeocache().getFoundIt() != FoundEnumType.NotAttempted)
+                .reduce((first, second) -> second)
+                .orElse(null);
 
-        Log.d(this.getClass().getSimpleName(), "Moving item from position: " + fromPosition + " to position " + toPosition);
-
-        GeocacheInTour cache0 = _tourCaches.get(fromPosition);
-        GeocacheInTour cache1 = _tourCaches.get(toPosition);
-
-        Log.d(this.getClass().getSimpleName(), "Cache 0 original idx: " + cache0.getOrderIdx() + " Cache1 original idx: " + cache1.getOrderIdx());
-
-        int temp = cache0.getOrderIdx();
-
-        cache0.setOrderIdx(cache1.getOrderIdx());
-        cache1.setOrderIdx(temp);
-
-        Log.d(this.getClass().getSimpleName(), "Cache 0 new idx: " + cache0.getOrderIdx() + " Cache1 new idx: " + cache1.getOrderIdx());
-
-        _dbConnection.getCacheTable().updateEntry(cache0);
-        _dbConnection.getCacheTable().updateEntry(cache1);
-
-
-        //Log.d(this.getClass().getSimpleName(), "Moving item from idx: " + cache0.getOrderIdx() + " to position " + cache1.getOrderIdx());
-
-        /*
-        GeocacheInTour movedGeocache = _tourCaches.get(fromPosition);
-
-        Log.d(this.getClass().getSimpleName(), "Moved cache: " + movedGeocache.getGeocache().getName() + " from position " + fromPosition + " to position " + toPosition);
-        Log.d(this.getClass().getSimpleName(), "From position has order index " + _tourCaches.get(fromPosition).getOrderIdx() + " and to position has index "+ _tourCaches.get(toPosition).getOrderIdx());
-
-        boolean movingCacheDown = fromPosition < toPosition;
-        if(movingCacheDown){
-            if(toPosition == (_tourCaches.size() - 1)) {
-                movedGeocache.setOrderIdx(_tourCaches.get(toPosition).getOrderIdx() + 1000);
-            } else {
-                movedGeocache.setOrderIdx((int) ((_tourCaches.get(toPosition + 1).getOrderIdx() +
-                        _tourCaches.get(toPosition).getOrderIdx()) / 2.0));
-            }
-        } else {
-
-            if(toPosition == 0){
-                movedGeocache.setOrderIdx((int) (_tourCaches.get(toPosition).getOrderIdx() / 2.0));
-            } else {
-                movedGeocache.setOrderIdx((int) ((_tourCaches.get(toPosition).getOrderIdx() +
-                        _tourCaches.get(toPosition - 1).getOrderIdx()) / 2.0));
-            }
-
+        if(lastVisistedGeocache == null){
+            return 0;
         }
-        _dbConnection.getCacheTable().updateEntry(movedGeocache);
-        Log.d(this.getClass().getSimpleName(), "Final moved cache order idx is: " + movedGeocache.getOrderIdx());
-         */
 
 
-   // }
+        ListIterator<GeocacheInTour> it = _tourCaches.listIterator();
+        while (it.hasNext()) {
+            if(it.next() == lastVisistedGeocache) return it.nextIndex();
+        }
+
+        return 0;
+    }
 
 }
 

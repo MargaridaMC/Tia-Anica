@@ -490,8 +490,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
         loadedStyle.addSource(source);
 
+        List<Point> remainingRouteCoordinates = routeCoordinates.subList(_tour.getLastVisitedCache() - 1, routeCoordinates.size());
+
         FeatureCollection lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
-                LineString.fromLngLats(routeCoordinates))});
+                LineString.fromLngLats(remainingRouteCoordinates))});
         loadedStyle.addSource(new GeoJsonSource(LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
     }
 
@@ -746,7 +748,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void computeTourDistance(){
         double distance = 0;
 
-        for(int i = 1; i < routeCoordinates.size(); i++){
+        for(int i = _tour.getLastVisitedCache(); i < routeCoordinates.size(); i++){
             distance += TurfMeasurement.distance(routeCoordinates.get(i), routeCoordinates.get(i - 1));
         }
 

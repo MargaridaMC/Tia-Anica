@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.graphics.drawable.ColorDrawable;
@@ -87,11 +86,16 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         // Set List
         RecyclerView cacheListView = findViewById(R.id.tour_view);
-        cacheListView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        cacheListView.setLayoutManager(layoutManager);
         CacheListAdapter cacheListAdapter = new CacheListAdapter(_tour, this, this);
         CacheListAdapter.onVisitListener = this;
         cacheListView.setAdapter(cacheListAdapter);
 
+        // Focus recyclerView on last visited cache
+        int lastVisitedCacheIndex = _tour.getLastVisitedCache();
+        int centerOfScreen = cacheListView.getHeight() / 2;
+        layoutManager.scrollToPositionWithOffset(lastVisitedCacheIndex, centerOfScreen);
 
         // Create diving line between elements
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
@@ -101,33 +105,10 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         // Add swipe to visit action
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CacheInteractionCallback(cacheListAdapter));
         itemTouchHelper.attachToRecyclerView(cacheListView);
-/*
-
-        // Show dialog if there were caches that were not obtained
-        String geocachesNotObtainedString = intent.getStringExtra("geocachesNotObtained");
-        if(!(geocachesNotObtainedString == null)){
-            AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-            builder.setMessage("Unable to get geocaches: " + geocachesNotObtainedString + ". Please make sure there aren't any typos in the cache codes.");
-            builder.setPositiveButton(getString(R.string.ok), ((dialog, which) -> {}));
-            android.app.AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-
-        */
 
         //  Setup ping sound
         setupAudio();
 
-       /* // Setup swipe to refresh action
-        SwipeRefreshLayout swipeToRefreshLayout = findViewById(R.id.swiperefresh);
-        swipeToRefreshLayout.setOnRefreshListener(
-                () -> {
-                    Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
-                    // This method performs the actual data-refresh operation.
-                    // The method calls setRefreshing(false) when it's finished.
-                    reloadTourCaches();
-                }
-        );*/
     }
 
     private void reloadTourCaches() {
@@ -315,7 +296,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             AlertDialog.Builder builder = new AlertDialog.Builder( this);
             builder.setMessage("Looks like this tour doesn't have any special requirements!");
             builder.setPositiveButton("OK", (dialog, which) -> {});
-            AlertDialog dialog = builder.show();
+            builder.show();
 
         } else {
             final Dialog dialog = new Dialog(this);
