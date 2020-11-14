@@ -7,4 +7,6 @@
         android:title="@string/lines"
         app:showAsAction="always"
         android:icon="@drawable/eye"/>
+
+
 </menu>

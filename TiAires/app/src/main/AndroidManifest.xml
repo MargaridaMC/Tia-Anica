@@ -41,7 +41,9 @@
             android:value="@string/google_maps_key" />-->
 
         <activity
-            android:name=".MapActivity">
+            android:name=".MapActivity"
+            android:parentActivityName=".TourActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.teamtruta.tiaires.TourActivity" />

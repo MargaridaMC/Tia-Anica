@@ -48,7 +48,8 @@
     <string name="cache_description_box">D: %s, T: %s, Favs: %s</string>
     <string name="go_to_geocaching_app">Go To Geocaching App</string>
     <string name="lines">See Lines</string>
-    <string name="line_distance">Remaining distance in tour is: %.0f %s</string>
+    <string name="full_tour_distance">Full distance in tour is: %.0f %s</string>
+    <string name="remaining_tour_distance">Remaining distance in tour is: %.0f %s</string>
     <string name="dash">\u0020-\u0020</string>
     <string name="cache_dif_ter">D/T: %1$s/%2$s</string>
     <string name="cache_size">Size: %1$s</string>

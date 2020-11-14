@@ -21,6 +21,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -94,10 +95,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private PermissionsManager permissionsManager;
 
     private static final String GEOJSON_SOURCE_ID = "GEOJSON_SOURCE_ID";
-    private static final String LINE_GEOJSON_SOURCE_ID = "LINE_GEOJSON_SOURCE_ID";
+    private static final String FULL_TOUR_LINE_GEOJSON_SOURCE_ID = "FULL_TOUR_LINE_GEOJSON_SOURCE_ID";
+    private static final String REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID = "REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID";
     private static final String MARKER_LAYER_ID = "MARKER_LAYER_ID";
     private static final String CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID";
-    private static final String LINE_LAYER_ID = "LINE_LAYER_ID";
+    private static final String FULL_TOUR_LINE_LAYER_ID = "FULL_TOUR_LINE_LAYER_ID";
+    private static final String REMAINING_TOUR_LINE_LAYER_ID = "REMAINING_TOUR_LINE_LAYER_ID";
 
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_TYPE = "type";
@@ -121,6 +124,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FeatureCollection featureCollection;
     List<Point> routeCoordinates;
     private static final HashMap<String, View> viewMap = new HashMap<>();
+    private double fullTourDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,11 +151,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         _tour = GeocachingTour.getGeocachingTourFromID(tourID, dbConnection);
 
         // Set title
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         ActionBar ab = getSupportActionBar();
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle(_tour.getName());
 
+        // Set click listener for the tour distance checkbox
+        setTourDistanceCheckBox();
     }
 
     @Override
@@ -170,12 +179,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Set my location FAB onClickListener
         setupMyLocationFAB();
 
+        // Compute the full distance of the tour
+        fullTourDistance = computeTourDistance(0);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.map_menu, menu);
+        //getMenuInflater().inflate(R.menu.map_menu, menu);
         return true;
     }
 
@@ -310,11 +321,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (id == android.R.id.home) {
             onBackPressed();
-            return true;
-        }
-        if (id == R.id.action_see_lines){
-            toggleLineLayer();
-            toggleTourDistance();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -487,14 +493,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     private void setupSource(@NonNull Style loadedStyle) {
 
+        // Set source for caches
         source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
         loadedStyle.addSource(source);
 
-        List<Point> remainingRouteCoordinates = routeCoordinates.subList(_tour.getLastVisitedCache() - 1, routeCoordinates.size());
-
+        // Set source for route lines for whole tour
         FeatureCollection lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
+                LineString.fromLngLats(routeCoordinates))});
+        loadedStyle.addSource(new GeoJsonSource(FULL_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
+
+        // Set source for route lines for remaining tour
+        int lastVisitedCache = _tour.getLastVisitedCache();
+        List<Point> remainingRouteCoordinates;
+        if(lastVisitedCache == 0){
+            remainingRouteCoordinates = routeCoordinates.subList(0, routeCoordinates.size());
+        } else {
+            remainingRouteCoordinates = routeCoordinates.subList(lastVisitedCache - 1, routeCoordinates.size());
+        }
+        lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
                 LineString.fromLngLats(remainingRouteCoordinates))});
-        loadedStyle.addSource(new GeoJsonSource(LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
+        loadedStyle.addSource(new GeoJsonSource(REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
     }
 
     /**
@@ -581,12 +599,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void setupLineLayer(@NonNull Style loadedStyle){
 
         // Style and add the LineLayer to the map. The LineLayer is placed below the CircleLayer.
-        loadedStyle.addLayerBelow(new LineLayer(LINE_LAYER_ID, LINE_GEOJSON_SOURCE_ID).withProperties(
+        loadedStyle.addLayerBelow(new LineLayer(FULL_TOUR_LINE_LAYER_ID, FULL_TOUR_LINE_GEOJSON_SOURCE_ID).withProperties(
                     lineColor(LINE_COLOR),
                     lineWidth(LINE_WIDTH),
                     lineJoin(LINE_JOIN_ROUND),
                     visibility(NONE)
                 ), MARKER_LAYER_ID);
+
+        loadedStyle.addLayerBelow(new LineLayer(REMAINING_TOUR_LINE_LAYER_ID, REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID).withProperties(
+                lineColor(LINE_COLOR),
+                lineWidth(LINE_WIDTH),
+                lineJoin(LINE_JOIN_ROUND),
+                visibility(NONE)
+        ), MARKER_LAYER_ID);
+    }
+
+    private void setTourDistanceCheckBox() {
+        TriStatesCheckBox checkBox = findViewById(R.id.distance_checkbox);
+        checkBox.setOnClickListener(v -> {
+            switch (checkBox.getState()){
+                case(TriStatesCheckBox.INDETERMINATE):
+                    showRemainingTourLineLayer();
+                    break;
+                case(TriStatesCheckBox.CHECKED):
+                    hideRemainingTourLineLayer();
+                    showFullTourLineLayer();
+                    break;
+                case(TriStatesCheckBox.UNCHECKED):
+                    hideFullTourLineLayer();
+                    break;
+                default:
+                    hideRemainingTourLineLayer();
+                    hideFullTourLineLayer();
+                    break;
+            }
+        });
     }
 
 
@@ -720,42 +767,72 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void toggleLineLayer() {
+    private void showFullTourLineLayer(){
         mapboxMap.getStyle(style -> {
-            Layer layer = style.getLayer(LINE_LAYER_ID);
-            if (layer != null) {
-                if (VISIBLE.equals(layer.getVisibility().getValue())) {
-                    layer.setProperties(visibility(NONE));
-                } else {
-                    layer.setProperties(visibility(VISIBLE));
-                }
-            }
+            Layer layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID);
+            layer.setProperties(visibility(VISIBLE));
         });
+
+        showFullTourDistance();
     }
 
-    private void toggleTourDistance(){
+    private void hideFullTourLineLayer(){
+        mapboxMap.getStyle(style -> {
+            Layer layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID);
+            layer.setProperties(visibility(NONE));
+        });
 
+        findViewById(R.id.line_distance).setVisibility(View.INVISIBLE);
+    }
+
+    private void showRemainingTourLineLayer(){
+
+        mapboxMap.getStyle(style -> {
+            Layer layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID);
+            layer.setProperties(visibility(VISIBLE));
+        });
+
+        showRemainingTourDistance();
+    }
+
+    private void hideRemainingTourLineLayer(){
+
+        mapboxMap.getStyle(style -> {
+            Layer layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID);
+            layer.setProperties(visibility(NONE));
+        });
+
+        findViewById(R.id.line_distance).setVisibility(View.INVISIBLE);
+    }
+
+    private void showFullTourDistance(){
         TextView lineLengthTextView = findViewById(R.id.line_distance);
-        if(lineLengthTextView.getVisibility() == View.INVISIBLE){
-            computeTourDistance();
-            lineLengthTextView.setVisibility(View.VISIBLE);
-        } else {
-            lineLengthTextView.setVisibility(View.INVISIBLE);
-        }
+        lineLengthTextView.setVisibility(View.VISIBLE);
 
+        lineLengthTextView.setText(String.format(getString(R.string.full_tour_distance),
+                fullTourDistance, DISTANCE_UNITS));
     }
 
-    private void computeTourDistance(){
+    private void showRemainingTourDistance(){
+        TextView lineLengthTextView = findViewById(R.id.line_distance);
+        lineLengthTextView.setVisibility(View.VISIBLE);
+
+        lineLengthTextView.setText(String.format(getString(R.string.remaining_tour_distance),
+                computeTourDistance(_tour.getLastVisitedCache()), DISTANCE_UNITS));
+    }
+
+
+    private double computeTourDistance(int startCacheIDX ){
         double distance = 0;
 
-        for(int i = _tour.getLastVisitedCache(); i < routeCoordinates.size(); i++){
+        if(startCacheIDX == 0)
+            startCacheIDX = 1;
+
+        for(int i = startCacheIDX; i < routeCoordinates.size(); i++){
             distance += TurfMeasurement.distance(routeCoordinates.get(i), routeCoordinates.get(i - 1));
         }
 
-        TextView lineLengthTextView = findViewById(R.id.line_distance);
-        lineLengthTextView.setText(String.format(getString(R.string.line_distance),
-                distance, DISTANCE_UNITS));
-
+        return distance;
     }
 
 }
