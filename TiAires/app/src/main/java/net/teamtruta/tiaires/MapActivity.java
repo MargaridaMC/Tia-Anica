@@ -112,7 +112,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int LINE_COLOR = Color.RED;
     private static final float LINE_WIDTH = 4f;
 
-    private static final String DISTANCE_UNITS = UNIT_KILOMETERS;
+    //private static final String DISTANCE_UNITS = UNIT_KILOMETERS;
 
 
     String TAG = MapActivity.class.getSimpleName();
@@ -810,7 +810,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         lineLengthTextView.setVisibility(View.VISIBLE);
 
         lineLengthTextView.setText(String.format(getString(R.string.full_tour_distance),
-                fullTourDistance, DISTANCE_UNITS));
+                fullTourDistance, "kms"));
     }
 
     private void showRemainingTourDistance(){
@@ -818,7 +818,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         lineLengthTextView.setVisibility(View.VISIBLE);
 
         lineLengthTextView.setText(String.format(getString(R.string.remaining_tour_distance),
-                computeTourDistance(_tour.getLastVisitedCache()), DISTANCE_UNITS));
+                computeTourDistance(_tour.getLastVisitedCache()), "kms"));
     }
 
 
