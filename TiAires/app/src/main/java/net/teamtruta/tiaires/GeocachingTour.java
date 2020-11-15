@@ -148,19 +148,20 @@ public class GeocachingTour
 
     public int getLastVisitedCache(){
 
-        GeocacheInTour lastVisistedGeocache = _tourCaches.stream()
-                .filter(x -> x.getGeocache().getFoundIt() != FoundEnumType.NotAttempted)
+        GeocacheInTour lastVisitedGeocache = _tourCaches.stream()
+                .filter(x -> x.getGeocache().getFoundIt() == FoundEnumType.Found ||
+                        x.getGeocache().getFoundIt() == FoundEnumType.DNF)
                 .reduce((first, second) -> second)
                 .orElse(null);
 
-        if(lastVisistedGeocache == null){
+        if(lastVisitedGeocache == null){
             return 0;
         }
 
 
         ListIterator<GeocacheInTour> it = _tourCaches.listIterator();
         while (it.hasNext()) {
-            if(it.next() == lastVisistedGeocache) return it.nextIndex();
+            if(it.next() == lastVisitedGeocache) return it.nextIndex();
         }
 
         return 0;

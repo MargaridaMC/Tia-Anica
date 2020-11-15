@@ -94,8 +94,8 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         // Focus recyclerView on last visited cache
         int lastVisitedCacheIndex = _tour.getLastVisitedCache();
-        int centerOfScreen = cacheListView.getHeight() / 2;
-        layoutManager.scrollToPositionWithOffset(lastVisitedCacheIndex, centerOfScreen);
+        int centerOfScreen = getResources().getDisplayMetrics().heightPixels / 2;
+        layoutManager.scrollToPositionWithOffset(lastVisitedCacheIndex + 1, centerOfScreen);
 
         // Create diving line between elements
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
