@@ -59,5 +59,6 @@
     <string name="square">■</string>
     <string name="dnf_risk">&#160;- &lt;font color=\'#CF2A27\'>%1$s&lt;/font></string>
     <string name="password_placeholder">aaaaaaaaaaaa</string>
+    <string name="authetication">Authetication</string>
 
 </resources>

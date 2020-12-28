@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        /*
         if (id == R.id.action_login) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
@@ -135,7 +136,11 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-
+        */
+        if (id == R.id.go_to_login_page){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
