@@ -10,8 +10,10 @@ import java.util.Map;
 
 public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
 
+    String TAG = LoginTask.class.getSimpleName();
+
     private boolean _success = false;
-    private GeocachingLogin _delegate;
+    private final GeocachingLogin _delegate;
     private GeocachingScrapper gs;
 
     private String _username;
@@ -33,7 +35,7 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
         gs = params[0];
 
         try{
-            Log.d("TAG", "Here we are in Async");
+            Log.d(TAG, "Running login task");
             // Login can be done either with username and password or with an authentication cookie
             if(_username != null && _password != null){
                 _success = gs.login(_username, _password);
@@ -56,7 +58,7 @@ public class LoginTask extends AsyncTask<GeocachingScrapper, Void, Integer> {
 
         } catch (Exception e){
             e.fillInStackTrace();
-            Log.d("TAG", "Something went wrong");
+            Log.d(TAG, "Something went wrong");
             return 0;
         }
     }

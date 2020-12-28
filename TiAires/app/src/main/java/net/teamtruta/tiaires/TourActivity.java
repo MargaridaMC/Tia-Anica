@@ -67,7 +67,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         // Get the ID of the tour that was clicked on
         Intent intent = getIntent();
-        tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1);//intent.getLongExtra(MainActivity.TOUR_ID_EXTRA, -1);
+        tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1);
         if(tourID == -1){
             // Something went wrong
             Log.e(TAG, "Could not get clicked tour.");

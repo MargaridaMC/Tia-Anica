@@ -95,13 +95,14 @@ public class GeocachingScrapper {
         status = httpConnection.getResponseCode();
 
         String pageContents = readHttpRequest(httpConnection).toString();
-        if(pageContents.contains("Your password is incorrect")) return false;
+        if(pageContents.contains("Your password is incorrect") || pageContents.contains("Your password or username/email is incorrect")) return false;
 
         _groundspeakAuthCookie = httpConnection.getHeaderField("Set-Cookie");
         // System.out.println("Groundspeak cookie received after post: " +
         // _groundspeakAuthCookie);
 
         // System.out.println("status POST= " + status);
+        status = httpConnection.getResponseCode();
 
         httpConnection.disconnect();
 

@@ -6,11 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +21,8 @@ import android.widget.Toast;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_GO;
 
 public class LoginActivity extends AppCompatActivity implements  GeocachingLogin{
+
+    String TAG = LoginActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         if(!username.equals("")){
             EditText usernameField = findViewById(R.id.username);
             usernameField.setText(username);
-            passwordField.setText("aaaaaaaaaaaa");
+            passwordField.setText(R.string.password_placeholder);
         }
 
     }
@@ -96,16 +94,16 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
-        Log.d("TAG", "Cookie: " + authCookie);
+        Log.d(TAG, "Cookie: " + authCookie);
 
-        Log.d("TAG", "username: " + username);
-        Log.d("TAG", "pass: " + password);
+        Log.d(TAG, "username: " + username);
+        Log.d(TAG, "pass: " + password);
 
         if(username.equals("") || password.equals("")){
             //One of the input fields is empty. Request filling up the fields
 
             if(!authCookie.equals("")){
-                Log.d("TAG", authCookie);
+                Log.d(TAG, authCookie);
                 login(authCookie);
                 return;
             }
@@ -124,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
     private void login(String authCookie){
         // Login to geocaching.com using authentication cookie
 
-        Log.d("TAG", "Trying to Login using authentication cookie");
+        Log.d(TAG, "Trying to Login using authentication cookie");
 
         Toast t = Toast.makeText(this, "Trying to Login", Toast.LENGTH_SHORT);
         t.show();
@@ -140,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
     private void login(String username, String password){
         //Login to geocaching.com using username and password
 
-        Log.d("TAG", "Trying to Login using username and password");
+        Log.d(TAG, "Trying to Login using username and password");
 
         Toast t = Toast.makeText(this, "Trying to Login", Toast.LENGTH_SHORT);
         t.show();
@@ -177,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
 
             editor.apply();
 
-            Log.d("TAG", "Saved authentication key to shared preferences");
+            Log.d(TAG, "Saved authentication key to shared preferences");
 
             // Allow user to logout from now on
             Button logoutButton = findViewById(R.id.logout_button);
@@ -190,7 +188,7 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
         }
 
         // Not necessary if error message already shows on top
-        /*else {
+        else {
 
             failedLoginMessage.setVisibility(View.VISIBLE);
 
@@ -198,7 +196,6 @@ public class LoginActivity extends AppCompatActivity implements  GeocachingLogin
             t.show();
 
         }
-        */
     }
 
     public void logout(View view){

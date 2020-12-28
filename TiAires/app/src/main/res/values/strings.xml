@@ -9,7 +9,7 @@
     <string name="found">Found</string>
     <string name="dnf">DNF</string>
     <string name="notes_hint">Write notes and trackable codes here</string>
-    <string name="failed_login_message">Login failed, please check input and try again.</string>
+    <string name="failed_login_message">Login failed, please check your username and password and try again.</string>
     <string name="login_button">Login to geocaching.com</string>
     <string name="logout_button">Logout from geocaching.com</string>
     <string name="preference_file_key">tiaires_preference_file</string>
@@ -58,5 +58,6 @@
     <string name="cache_favs">❤ %1$d</string>
     <string name="square">■</string>
     <string name="dnf_risk">&#160;- &lt;font color=\'#CF2A27\'>%1$s&lt;/font></string>
+    <string name="password_placeholder">aaaaaaaaaaaa</string>
 
 </resources>
