@@ -92,6 +92,8 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         holder.geoCacheFavs.setText(String.format(favString, geoCache.getFavourites()));
         if(geoCache.hasHint()){
             holder.geoCacheHasHint.setText(App.getContext().getString(R.string.geo_cache_has_hint));
+        } else {
+            holder.geoCacheHasHint.setText(App.getContext().getString(R.string.geo_cache_has_no_hint));
         }
 
         List<GeoCacheLog> last10Logs = geoCache.getLastNLogs(10);
