@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
 
         // Get all tours
-        List<GeocachingTour> tourList = GeocachingTour.getAllTours(dbConnection); //new TourDbTable(this).getAllTours(dbConnection);
+        List<GeocachingTour> tourList = GeocachingTour.getAllTours(dbConnection);
         if(tourList.size() == 0){
             setContentView(R.layout.activity_main_nothing_to_show);
         } else {

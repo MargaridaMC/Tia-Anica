@@ -148,6 +148,11 @@ public class GeocachingTour
 
     public int getLastVisitedCache(){
 
+        List<String> visitedGeocaches = _tourCaches.stream()
+                .filter(x -> x.getGeocache().getFoundIt() == FoundEnumType.Found ||
+                        x.getGeocache().getFoundIt() == FoundEnumType.DNF)
+                .map(x -> x.getGeocache().getName()).collect(Collectors.toList());
+
         GeocacheInTour lastVisitedGeocache = _tourCaches.stream()
                 .filter(x -> x.getGeocache().getFoundIt() == FoundEnumType.Found ||
                         x.getGeocache().getFoundIt() == FoundEnumType.DNF)

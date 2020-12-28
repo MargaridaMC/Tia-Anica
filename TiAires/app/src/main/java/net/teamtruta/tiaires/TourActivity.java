@@ -47,7 +47,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     DbConnection dbConnection;
 
-    private String TAG = TourActivity.class.getSimpleName();
+    private final String TAG = TourActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +94,10 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
         // Focus recyclerView on last visited cache
         int lastVisitedCacheIndex = _tour.getLastVisitedCache();
-        int centerOfScreen = getResources().getDisplayMetrics().heightPixels / 2;
-        layoutManager.scrollToPositionWithOffset(lastVisitedCacheIndex + 1, centerOfScreen);
+        //int centerOfScreen = getResources().getDisplayMetrics().heightPixels / 2;
+        //layoutManager.scrollToPositionWithOffset(lastVisitedCacheIndex - 1, centerOfScreen);
+        if(lastVisitedCacheIndex > 2) lastVisitedCacheIndex -= 2;
+        layoutManager.scrollToPosition(lastVisitedCacheIndex);
 
         // Create diving line between elements
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
