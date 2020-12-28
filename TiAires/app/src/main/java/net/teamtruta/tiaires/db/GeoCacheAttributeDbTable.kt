@@ -3,31 +3,31 @@ package net.teamtruta.tiaires.db
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
-import net.teamtruta.tiaires.Geocache
-import net.teamtruta.tiaires.GeocacheAttributeEnum
+import net.teamtruta.tiaires.GeoCache
+import net.teamtruta.tiaires.GeoCacheAttributeEnum
 import net.teamtruta.tiaires.doQuery
 import net.teamtruta.tiaires.getString
 
-class CacheAttributeDbTable (context: Context) {
+class GeoCacheAttributeDbTable (context: Context) {
 
-    private val TAG = CacheAttributeDbTable::class.simpleName
+    private val TAG = GeoCacheAttributeDbTable::class.simpleName
     private val dbHelper = TiAiresDb(context)
 
-    fun store(gc: Geocache, overwrite: Boolean = false) : Long{
+    fun store(gc: GeoCache, overwrite: Boolean = false) : Long{
 
-        // If overwriting simply delete all entries with this cache ID and readd them
+        // If overwriting simply delete all entries with this geocache ID and readd them
         if(overwrite){
-            deleteAttributesInCache(gc._id)
+            deleteAttributesInGeoCache(gc._id)
         }
 
         val db = dbHelper.writableDatabase
 
-        for(attribute: GeocacheAttributeEnum in gc.attributes){
+        for(attribute: GeoCacheAttributeEnum in gc.attributes){
 
             val values = ContentValues()
             with(values){
                 put(AttributeEntry.ATTRIBUTE_TYPE, attribute.attributeString)
-                put(AttributeEntry.CACHE_DETAIL_ID_FK_COL, gc._id)
+                put(AttributeEntry.GEO_CACHE_DETAIL_ID_FK_COL, gc._id)
             }
 
             val id: Long = db.insert(AttributeEntry.TABLE_NAME, null, values)
@@ -38,27 +38,27 @@ class CacheAttributeDbTable (context: Context) {
         return 1L
     }
 
-    fun deleteAttributesInCache(cacheID: Long): Int {
+    fun deleteAttributesInGeoCache(geoCacheID: Long): Int {
 
-        Log.d(TAG, "Deleted attributes with cacheID: $cacheID")
+        Log.d(TAG, "Deleted attributes with geoCacheID: $geoCacheID")
 
         val db = dbHelper.writableDatabase
         val nLinesDeleted =  db.delete(AttributeEntry.TABLE_NAME,
-                "${AttributeEntry.CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$cacheID"))
+                "${AttributeEntry.GEO_CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$geoCacheID"))
         db.close()
         return nLinesDeleted
 
     }
 
-    fun getAttributesFromCacheID(cacheId: Long): List<GeocacheAttributeEnum>{
+    fun getAttributesFromGeoCacheID(geoCacheId: Long): List<GeoCacheAttributeEnum>{
 
         val db = dbHelper.readableDatabase
-        val attributes = mutableListOf<GeocacheAttributeEnum>()
+        val attributes = mutableListOf<GeoCacheAttributeEnum>()
         val cursor = db.doQuery(AttributeEntry.TABLE_NAME, arrayOf(AttributeEntry.ATTRIBUTE_TYPE),
-                "${AttributeEntry.CACHE_DETAIL_ID_FK_COL} = ?", arrayOf(cacheId.toString()))
+                "${AttributeEntry.GEO_CACHE_DETAIL_ID_FK_COL} = ?", arrayOf(geoCacheId.toString()))
 
         while(cursor.moveToNext()){
-            attributes.add(GeocacheAttributeEnum.valueOfString(
+            attributes.add(GeoCacheAttributeEnum.valueOfString(
                     cursor.getString(AttributeEntry.ATTRIBUTE_TYPE)))
         }
 

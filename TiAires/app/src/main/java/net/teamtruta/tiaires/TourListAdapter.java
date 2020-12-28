@@ -47,17 +47,17 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         // Write progress in text
         long numFinds = tour.getNumFound();
         long numDNFS = tour.getNumDNF();
-        long totalCaches = tour.getSize(); // # TODO -- this breaks the OO model...
+        long totalGeoCaches = tour.getSize(); // # TODO -- this breaks the OO model...
 
-        String progressText = numFinds + " + " + numDNFS + " / " + totalCaches;
+        String progressText = numFinds + " + " + numDNFS + " / " + totalGeoCaches;
         holder.tourProgressText.setText(progressText);
 
         // Fill in progress
-        double progress = ((double) numFinds + (double) numDNFS) / (double) totalCaches * 100.;
+        double progress = ((double) numFinds + (double) numDNFS) / (double) totalGeoCaches * 100.;
         holder.tourProgress.setProgress((int) progress);
 
         // Grey out section if tour is done
-        if(numFinds + numDNFS == totalCaches){
+        if(numFinds + numDNFS == totalGeoCaches){
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         }
 

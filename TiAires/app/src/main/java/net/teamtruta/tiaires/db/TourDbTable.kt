@@ -37,7 +37,7 @@ class TourDbTable(private val context: Context) {
         val allTourNames = mutableListOf<GeocachingTour>()
         while(cursor.moveToNext()){
             val tour = cursor.getGeocachingTour(dbConnection)
-            tour._tourCaches = dbConnection.cacheTable.getAllCachesInTour(tour._id, dbConnection)
+            tour._tourGeoCaches = dbConnection.geoCacheTable.getAllGeoCachesInTour(tour._id, dbConnection)
             allTourNames.add(tour)
         }
 
@@ -67,7 +67,7 @@ class TourDbTable(private val context: Context) {
 
         // Delete Tour
         val db = dbHelper.writableDatabase
-        CacheDbTable(context).deleteAllCachesInTour(tourID)
+        GeoCacheDbTable(context).deleteAllGeoCachesInTour(tourID)
         val nLinesDeleted = db.delete(TourEntry.TABLE_NAME, "${TourEntry._ID} = ?", arrayOf("$tourID"))
         db.close()
 

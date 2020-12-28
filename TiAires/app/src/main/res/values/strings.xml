@@ -16,14 +16,14 @@
     <string name="authentication_cookie_key">AuthCookie</string>
     <string name="tour_folder">Tours</string>
     <string name="nothing_to_show">Nothing show.\nPlease create a tour to view it.\n\n(better than staying home!)</string>
-    <string name="current_cache_extra">currentCache</string>
+    <string name="current_geo_cache_extra">currentGeoCache</string>
     <string name="password_tag">Password</string>
     <string name="username_tag">Username or Email</string>
     <string name="needs_maintenance">Needs Maintenance</string>
     <string name="found_trackable">Found Trackable</string>
     <string name="favourite_point">Favourite Point</string>
     <string name="dropped_trackable">Dropped Trackable</string>
-    <string-array name="cache_visit_options">
+    <string-array name="geo_cache_visit_options">
         <item>Not Found</item>
         <item>Found</item>
         <item>DNF</item>
@@ -35,30 +35,30 @@
     <string name="getting_your_tour">Getting your tour.</string>
 
     <string name="coordinates_format">geo:0,0?q=%f,0%f</string>
-    <string name="geocache_codes">Geocache codes:</string>
+    <string name="geo_cache_codes">Geocache codes:</string>
     <string name="tour_name">Tour name</string>
     <string name="take_new_photo">Take New Photo</string>
-    <string name="show_cache_photo">Show Cache Photo</string>
-    <string name="delete_cache_photo">Delete Cache Photo</string>
+    <string name="show_geo_cache_photo">Show Geocache Photo</string>
+    <string name="delete_geo_cache_photo">Delete Geocache Photo</string>
 
     <string name="user_location_permission_not_granted">Please grant location permission!</string>
     <string name="user_location_permission_explanation">We need to have your location to show you where you are on the map.</string>
     <string name="navigation_guidance_day">blablabla</string>
     <string name="tap_on_marker_instruction">Tap on a marker</string>
-    <string name="cache_description_box">D: %s, T: %s, Favs: %s</string>
+    <string name="geo_cache_description_box">D: %s, T: %s, Favs: %s</string>
     <string name="go_to_geocaching_app">Go To Geocaching App</string>
     <string name="lines">See Lines</string>
     <string name="full_tour_distance">Full distance in tour is: %.0f %s</string>
     <string name="remaining_tour_distance">Remaining distance in tour is: %.0f %s</string>
     <string name="dash">\u0020-\u0020</string>
-    <string name="cache_dif_ter">D/T: %1$s/%2$s</string>
-    <string name="cache_size">Size: %1$s</string>
-    <string name="cache_has_hint">\u0020- HINT</string>
-    <string name="cache_has_no_hint">\u0020- <font color='#CF2A27'>NO HINT</font></string>
-    <string name="cache_favs">❤ %1$d</string>
+    <string name="geo_cache_dif_ter">D/T: %1$s/%2$s</string>
+    <string name="geo_cache_size">Size: %1$s</string>
+    <string name="geo_cache_has_hint">\u0020- HINT</string>
+    <string name="geo_cache_has_no_hint">\u0020- <font color='#CF2A27'>NO HINT</font></string>
+    <string name="geo_cache_favs">❤ %1$d</string>
     <string name="square">■</string>
     <string name="dnf_risk">&#160;- &lt;font color=\'#CF2A27\'>%1$s&lt;/font></string>
     <string name="password_placeholder">aaaaaaaaaaaa</string>
-    <string name="authetication">Authetication</string>
+    <string name="authentication">Authentication</string>
 
 </resources>

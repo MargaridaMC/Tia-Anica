@@ -11,19 +11,19 @@ class LogDbTable (context: Context){
     private val TAG = LogDbTable::class.simpleName
     private val dbHelper = TiAiresDb(context)
 
-    fun deleteLogsInCache(cacheID : Long) : Int{
-        Log.d(TAG, "Deleted logs with cacheID: $cacheID")
+    fun deleteLogsInGeoCache(geoCacheID : Long) : Int{
+        Log.d(TAG, "Deleted logs with geoCacheID: $geoCacheID")
         val db = dbHelper.writableDatabase
-        val nLinesDeleted =  db.delete(LogEntry.TABLE_NAME, "${LogEntry.CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$cacheID"))
+        val nLinesDeleted =  db.delete(LogEntry.TABLE_NAME, "${LogEntry.GEO_CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$geoCacheID"))
         db.close()
         return nLinesDeleted
     }
 
-    fun storeLogsInCache(gc : Geocache, overwrite : Boolean = false){
+    fun storeLogsInGeoCache(gc : GeoCache, overwrite : Boolean = false){
 
         // If overwrite simply delete all logs pertaining to this cache and then rewrite them
         if(overwrite)
-            deleteLogsInCache(gc._id)
+            deleteLogsInGeoCache(gc._id)
 
         val recentLogs = gc.recentLogs
         for(log in recentLogs){
@@ -32,14 +32,14 @@ class LogDbTable (context: Context){
 
     }
 
-    fun store(log : GeocacheLog, cacheID : Long) : Long{
+    fun store(log : GeoCacheLog, geoCacheID : Long) : Long{
         val db = dbHelper.writableDatabase
         val values = ContentValues()
 
         with(values){
-            put(LogEntry.CACHE_DETAIL_ID_FK_COL, cacheID)
+            put(LogEntry.GEO_CACHE_DETAIL_ID_FK_COL, geoCacheID)
             put(LogEntry.LOG_DATE_COL, log.logDate.toFormattedString())
-            put(LogEntry.LOG_TYPE_COL, log.logType.typeString)
+            put(LogEntry.LOG_TYPE_COL, log.logType.visitOutcomeString)
         }
 
         val id = db.insert(LogEntry.TABLE_NAME, null, values)
@@ -47,15 +47,15 @@ class LogDbTable (context: Context){
         return id
     }
 
-    fun getAllLogsInCache(geocacheID: Long): List<GeocacheLog> {
+    fun getAllLogsInGeoCache(geoCacheID: Long): List<GeoCacheLog> {
 
-        val allLogs = mutableListOf<GeocacheLog>()
+        val allLogs = mutableListOf<GeoCacheLog>()
         val db = dbHelper.readableDatabase
-        val cursor = db.doQuery(LogEntry.TABLE_NAME, LogEntry.getAllColumns(), "${LogEntry.CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$geocacheID"))
+        val cursor = db.doQuery(LogEntry.TABLE_NAME, LogEntry.getAllColumns(), "${LogEntry.GEO_CACHE_DETAIL_ID_FK_COL} = ?", arrayOf("$geoCacheID"))
         while(cursor.moveToNext()){
-            val logType = FoundEnumType.valueOfString(cursor.getString(LogEntry.LOG_TYPE_COL))
+            val logType = VisitOutcomeEnum.valueOfString(cursor.getString(LogEntry.LOG_TYPE_COL))
             val logDate : Date = cursor.getString(LogEntry.LOG_DATE_COL).toDate()
-            val log = GeocacheLog(logType, logDate)
+            val log = GeoCacheLog(logType, logDate)
             allLogs.add(log)
         }
 

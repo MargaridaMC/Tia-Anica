@@ -15,7 +15,7 @@ object TourEntry : BaseColumns{
     }
 }
 
-object CacheEntry : BaseColumns{
+object GeoCacheEntry : BaseColumns{
 
     val TABLE_NAME = "cache"
     val _ID = "id"
@@ -27,18 +27,18 @@ object CacheEntry : BaseColumns{
     val DROPPED_TRACKABLE_COL = "droppedTrackable"
     val FAV_POINT_COL = "favouritePoint"
     val TOUR_ID_FK_COL = "tourID_FK"
-    val CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
+    val GEO_CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
     val ORDER_COL = "orderBy"
     val IMAGE_COL = "image"
     fun getAllColumns(): Array<String> {
         return arrayOf(_ID, FOUND_DATE_COL, NEEDS_MAINTENANCE_COL, VISIT_COL,
                 NOTES_COL, FOUND_TRACKABLE_COL, DROPPED_TRACKABLE_COL, FAV_POINT_COL,
-                TOUR_ID_FK_COL, CACHE_DETAIL_ID_FK_COL, ORDER_COL, IMAGE_COL)
+                TOUR_ID_FK_COL, GEO_CACHE_DETAIL_ID_FK_COL, ORDER_COL, IMAGE_COL)
     }
 }
 
 
-object CacheDetailEntry : BaseColumns{
+object GeoCacheDetailEntry : BaseColumns{
 
     val TABLE_NAME = "cacheDetail"
     val _ID = "id"
@@ -65,9 +65,9 @@ object LogEntry : BaseColumns{
     val _ID = "id"
     val LOG_TYPE_COL = "type"
     val LOG_DATE_COL = "date"
-    val CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
+    val GEO_CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
     fun getAllColumns(): Array<String> {
-        return arrayOf(_ID, LOG_TYPE_COL, LOG_DATE_COL, CACHE_DETAIL_ID_FK_COL)
+        return arrayOf(_ID, LOG_TYPE_COL, LOG_DATE_COL, GEO_CACHE_DETAIL_ID_FK_COL)
     }
 }
 
@@ -75,5 +75,5 @@ object AttributeEntry : BaseColumns{
     val TABLE_NAME = "attribute"
     val _ID = "id"
     val ATTRIBUTE_TYPE = "type"
-    val CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
+    val GEO_CACHE_DETAIL_ID_FK_COL = "cacheDetailID_FK"
 }

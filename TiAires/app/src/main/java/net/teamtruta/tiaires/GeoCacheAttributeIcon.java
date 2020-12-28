@@ -1,13 +1,14 @@
 package net.teamtruta.tiaires;
 
-public class GeocacheAttributeIcon {
+public class GeoCacheAttributeIcon
+{
 
-    public static int getGeocacheAttributeIcon(GeocacheAttributeEnum attribute){
+    public static int getGeoCacheAttributeIcon(GeoCacheAttributeEnum attribute){
 
         int drawableID = -1;
         switch (attribute){
             case NightCache:
-                drawableID = R.drawable.attribute_nightcache;
+                drawableID = R.drawable.attribute_night_geo_cache;
                 break;
             case BoatRequired:
                 drawableID = R.drawable.attribute_boat_required;
@@ -16,7 +17,7 @@ public class GeocacheAttributeIcon {
                 drawableID = R.drawable.attribute_dangerous_area;
                 break;
             case TeamworkCache:
-                drawableID = R.drawable.attribute_teamwork_cache;
+                drawableID = R.drawable.attribute_teamwork_geo_cache;
                 break;
             case MayRequireSkis:
                 drawableID = R.drawable.attribute_skiis_required;
@@ -60,8 +61,8 @@ public class GeocacheAttributeIcon {
 
     }
 
-    public static int getGeocacheAttributeIcon(String cacheAttributeTypeString){
-        GeocacheAttributeEnum attributeType = GeocacheAttributeEnum.valueOfString(cacheAttributeTypeString);
-        return getGeocacheAttributeIcon(attributeType);
+    public static int getGeoCacheAttributeIcon(String geoCacheAttributeTypeString){
+        GeoCacheAttributeEnum attributeType = GeoCacheAttributeEnum.valueOfString(geoCacheAttributeTypeString);
+        return getGeoCacheAttributeIcon(attributeType);
     }
 }

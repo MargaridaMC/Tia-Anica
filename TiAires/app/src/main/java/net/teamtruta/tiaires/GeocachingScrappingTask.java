@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
 
-    private GeocachingScrapper scrapper;
-    private List<String> geocacheCodesList;
-    private List<Geocache> caches = new ArrayList<>();
+    private final GeocachingScrapper scrapper;
+    private final List<String> geoCacheCodesList;
+    private final List<GeoCache> geoCaches = new ArrayList<>();
 
-    GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geocacheCodesList){
+    GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geoCacheCodesList){
         this.scrapper = scrapper;
-        this.geocacheCodesList = geocacheCodesList;
+        this.geoCacheCodesList = geoCacheCodesList;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
     {
         Map<String, String> properties = new HashMap<>();
         //properties.put("TourName", tourName[0]);
-        properties.put("NumCaches", Integer.toString(geocacheCodesList.size()));
+        properties.put("NumCaches", Integer.toString(geoCacheCodesList.size()));
         Analytics.trackEvent("GeocachingScrappingTask.doBackground", properties);
 
         // Check that we can login
@@ -38,11 +38,11 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
         }
         */
 
-        for(String code : geocacheCodesList)
+        for(String code : geoCacheCodesList)
         {
             try {
-                Geocache geocache = scrapper.getGeocacheDetails(code);
-                caches.add(geocache);
+                GeoCache geoCache = scrapper.getGeoCacheDetails(code);
+                geoCaches.add(geoCache);
             }
             catch (Exception e)
             {
@@ -56,8 +56,7 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if(result == 1){
-            //delegate.onGeocachingScrappingTaskResult(caches, cachesAlreadyInDb);
-            Geocache.Companion.onGeocachesObtained(caches);
+            GeoCache.Companion.onGeoCachesObtained(geoCaches);
         }
     }
 }

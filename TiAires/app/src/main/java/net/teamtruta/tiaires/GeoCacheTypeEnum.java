@@ -1,7 +1,7 @@
 package net.teamtruta.tiaires;
 
-public enum CacheTypeEnum{
-
+public enum GeoCacheTypeEnum
+{
     Traditional("Traditional Geocache"),
     Mystery("Mystery Cache"),
     Solved("Solved Cache"),
@@ -31,12 +31,12 @@ public enum CacheTypeEnum{
         return typeString;
     }
 
-    CacheTypeEnum(String type){
+    GeoCacheTypeEnum(String type){
         this.typeString = type;
     }
 
-    public static CacheTypeEnum valueOfString(String typeString) {
-        for (CacheTypeEnum e : values()) {
+    public static GeoCacheTypeEnum valueOfString(String typeString) {
+        for (GeoCacheTypeEnum e : values()) {
             if (e.typeString.equals(typeString)) {
                 return e;
             }

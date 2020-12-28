@@ -6,20 +6,20 @@
     android:paddingEnd="@dimen/small_padding"
     android:paddingTop="@dimen/small_padding"
     android:paddingBottom="@dimen/small_padding"
-    android:id="@+id/element_cache_layout">
+    android:id="@+id/element_geo_cache_layout">
 
 
     <ImageView
-        android:id="@+id/cache_symbol"
+        android:id="@+id/geo_cache_symbol"
         android:layout_width="@dimen/large_icon_size"
         android:layout_height="@dimen/large_icon_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/cache_title"
-        app:srcCompat="@drawable/cache_icon_type_traditional" />
+        app:layout_constraintTop_toTopOf="@id/geo_cache_title"
+        app:srcCompat="@drawable/geo_cache_icon_type_traditional" />
 
 
     <TextView
-        android:id="@+id/cache_title"
+        android:id="@+id/geo_cache_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_padding"
@@ -27,20 +27,20 @@
         android:textAppearance="@style/MainText"
         android:paddingBottom="2dp"
         app:layout_constraintEnd_toStartOf="@id/go_to_button"
-        app:layout_constraintStart_toEndOf="@+id/cache_symbol"
+        app:layout_constraintStart_toEndOf="@+id/geo_cache_symbol"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/cache_info_0"
+        android:id="@+id/geo_cache_info_0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/cache_title"
+        app:layout_constraintTop_toBottomOf="@+id/geo_cache_title"
         app:layout_constraintEnd_toStartOf="@id/go_to_button"
-        app:layout_constraintStart_toEndOf="@+id/cache_symbol">
+        app:layout_constraintStart_toEndOf="@+id/geo_cache_symbol">
 
         <TextView
-            android:id="@+id/cache_code"
+            android:id="@+id/geo_cache_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"/>
@@ -52,7 +52,7 @@
             android:text="@string/dash"/>
 
         <TextView
-            android:id="@+id/cache_dif_ter"
+            android:id="@+id/geo_cache_dif_ter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"/>
@@ -64,7 +64,7 @@
             android:text="@string/dash"/>
 
         <TextView
-            android:id="@+id/cache_size"
+            android:id="@+id/geo_cache_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"/>
@@ -72,25 +72,25 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/cache_info_1"
+        android:id="@+id/geo_cache_info_1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/cache_info_0"
+        app:layout_constraintTop_toBottomOf="@+id/geo_cache_info_0"
         app:layout_constraintEnd_toStartOf="@id/go_to_button"
-        app:layout_constraintStart_toEndOf="@+id/cache_symbol"
+        app:layout_constraintStart_toEndOf="@+id/geo_cache_symbol"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/cache_favs"
+            android:id="@+id/geo_cache_favs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/cache_has_hint"
+            android:id="@+id/geo_cache_has_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"
-            android:text="@string/cache_has_no_hint"/>
+            android:text="@string/geo_cache_has_no_hint"/>
 
         <TextView
             android:id="@+id/dnf_risk"
@@ -106,9 +106,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/cache_info_1"
+        app:layout_constraintTop_toBottomOf="@+id/geo_cache_info_1"
         app:layout_constraintEnd_toStartOf="@id/go_to_button"
-        app:layout_constraintStart_toEndOf="@+id/cache_symbol">
+        app:layout_constraintStart_toEndOf="@+id/geo_cache_symbol">
 
         <GridLayout
             android:id="@+id/last10LogsSquares"
@@ -195,7 +195,7 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <LinearLayout
-            android:id="@+id/cache_attributes"
+            android:id="@+id/geo_cache_attributes"
             android:orientation="horizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -231,8 +231,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:button="@drawable/more_info_arrow"
-        app:layout_constraintStart_toStartOf="@id/cache_symbol"
-        app:layout_constraintEnd_toEndOf="@id/cache_symbol"
+        app:layout_constraintStart_toStartOf="@id/geo_cache_symbol"
+        app:layout_constraintEnd_toEndOf="@id/geo_cache_symbol"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

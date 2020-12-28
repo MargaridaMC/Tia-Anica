@@ -24,42 +24,42 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${TourEntry.CURRENT_TOUR_COL} INTEGER" +
             ")"
 
-    // 2. Cache table
+    // 2. GeoCache table
     //private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE cache(id INTEGER PRIMARY KEY,foundDate TEXT,needsMaintenance INTEGER,visit TEXT,notes TEXT,foundTrackable INTEGER,droppedTrackable INTEGER,favouritePoint INTEGER,orderBy INTEGER,tourID_FK INTEGER,cacheDetailID_FK INTEGER,FOREIGN KEY(tourID_FK) REFERENCES tour ON DELETE CASCADE,FOREIGN KEY(cacheDetailID_FK) REFERENCES cacheDetail ON DELETE CASCADE)"
-    private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE ${CacheEntry.TABLE_NAME}(" +
-            "${CacheEntry._ID} INTEGER PRIMARY KEY," +
-            "${CacheEntry.FOUND_DATE_COL} TEXT," + // Can be changed to REAL or INTEGER according to convenience
-            "${CacheEntry.NEEDS_MAINTENANCE_COL} INTEGER," + // No Boolean in SQLITE
-            "${CacheEntry.VISIT_COL} TEXT," + // Matches an Enum
-            "${CacheEntry.NOTES_COL} TEXT," +
-            "${CacheEntry.FOUND_TRACKABLE_COL} TEXT," + // Previously: INTEGER
-            "${CacheEntry.DROPPED_TRACKABLE_COL} TEXT," + // Previously: INTEGER
-            "${CacheEntry.FAV_POINT_COL} INTEGER," +
-            "${CacheEntry.ORDER_COL} INTEGER," +
-            "${CacheEntry.IMAGE_COL} TEXT," +
-            "${CacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
-            "${CacheEntry.CACHE_DETAIL_ID_FK_COL} INTEGER," + // REFERENCES ${CacheDetailEntry.TABLE_NAME}(${CacheDetailEntry._ID})" +
-            "FOREIGN KEY(${CacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME}," +
-            "FOREIGN KEY(${CacheEntry.CACHE_DETAIL_ID_FK_COL}) REFERENCES ${CacheDetailEntry.TABLE_NAME}," +
-            "UNIQUE (${CacheEntry.CACHE_DETAIL_ID_FK_COL}, ${CacheEntry.TOUR_ID_FK_COL})" +
+    private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE ${GeoCacheEntry.TABLE_NAME}(" +
+            "${GeoCacheEntry._ID} INTEGER PRIMARY KEY," +
+            "${GeoCacheEntry.FOUND_DATE_COL} TEXT," + // Can be changed to REAL or INTEGER according to convenience
+            "${GeoCacheEntry.NEEDS_MAINTENANCE_COL} INTEGER," + // No Boolean in SQLITE
+            "${GeoCacheEntry.VISIT_COL} TEXT," + // Matches an Enum
+            "${GeoCacheEntry.NOTES_COL} TEXT," +
+            "${GeoCacheEntry.FOUND_TRACKABLE_COL} TEXT," + // Previously: INTEGER
+            "${GeoCacheEntry.DROPPED_TRACKABLE_COL} TEXT," + // Previously: INTEGER
+            "${GeoCacheEntry.FAV_POINT_COL} INTEGER," +
+            "${GeoCacheEntry.ORDER_COL} INTEGER," +
+            "${GeoCacheEntry.IMAGE_COL} TEXT," +
+            "${GeoCacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
+            "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL} INTEGER," + // REFERENCES ${CacheDetailEntry.TABLE_NAME}(${CacheDetailEntry._ID})" +
+            "FOREIGN KEY(${GeoCacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME}," +
+            "FOREIGN KEY(${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL}) REFERENCES ${GeoCacheDetailEntry.TABLE_NAME}," +
+            "UNIQUE (${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL})" +
             ")"
 
 
 
-    // 3. Cache Detail table
-    private val SQL_CREATE_CACHE_DETAIL_TABLE = "CREATE TABLE ${CacheDetailEntry.TABLE_NAME}(" +
-            "${CacheDetailEntry._ID} INTEGER PRIMARY KEY," +
-            "${CacheDetailEntry.NAME_COL} TEXT," +
-            "${CacheDetailEntry.CODE_COL} TEXT UNIQUE," +
-            "${CacheDetailEntry.TYPE_COL} INTEGER," + // Matches an Enum
-            "${CacheDetailEntry.SIZE_COL} TEXT," +
-            "${CacheDetailEntry.TERRAIN_COL} TEXT," +
-            "${CacheDetailEntry.DIF_COL} TEXT," +
-            "${CacheDetailEntry.FIND_COL} TEXT," +
-            "${CacheDetailEntry.HINT_COL} TEXT," +
-            "${CacheDetailEntry.LAT_COL} REAL," + // ?
-            "${CacheDetailEntry.LON_COL} REAL," +
-            "${CacheDetailEntry.FAV_COL} INTEGER" +
+    // 3. GeoCache Detail table
+    private val SQL_CREATE_CACHE_DETAIL_TABLE = "CREATE TABLE ${GeoCacheDetailEntry.TABLE_NAME}(" +
+            "${GeoCacheDetailEntry._ID} INTEGER PRIMARY KEY," +
+            "${GeoCacheDetailEntry.NAME_COL} TEXT," +
+            "${GeoCacheDetailEntry.CODE_COL} TEXT UNIQUE," +
+            "${GeoCacheDetailEntry.TYPE_COL} INTEGER," + // Matches an Enum
+            "${GeoCacheDetailEntry.SIZE_COL} TEXT," +
+            "${GeoCacheDetailEntry.TERRAIN_COL} TEXT," +
+            "${GeoCacheDetailEntry.DIF_COL} TEXT," +
+            "${GeoCacheDetailEntry.FIND_COL} TEXT," +
+            "${GeoCacheDetailEntry.HINT_COL} TEXT," +
+            "${GeoCacheDetailEntry.LAT_COL} REAL," + // ?
+            "${GeoCacheDetailEntry.LON_COL} REAL," +
+            "${GeoCacheDetailEntry.FAV_COL} INTEGER" +
             ")"
 
     // 4. Log Table
@@ -67,20 +67,20 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${LogEntry._ID} INTEGER PRIMARY KEY," +
             "${LogEntry.LOG_DATE_COL} TEXT," +
             "${LogEntry.LOG_TYPE_COL} TEXT," +
-            "${LogEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME}" +
+            "${LogEntry.GEO_CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${GeoCacheDetailEntry.TABLE_NAME}" +
             ")"
 
     // 5. Attribute Table
     private  val SQL_CREATE_ATTRIBUTE_TABLE: String = "CREATE TABLE ${AttributeEntry.TABLE_NAME}(" +
             "${AttributeEntry._ID} INTEGER PRIMARY KEY," +
             "${AttributeEntry.ATTRIBUTE_TYPE} TEXT," +
-            "${AttributeEntry.CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${CacheDetailEntry.TABLE_NAME}" +
+            "${AttributeEntry.GEO_CACHE_DETAIL_ID_FK_COL} INTEGER REFERENCES ${GeoCacheDetailEntry.TABLE_NAME}" +
             ")"
 
     // Query to delete all tables
     private val SQL_DELETE_TABLES = "DROP TABLE IF EXISTS ${TourEntry.TABLE_NAME};" +
-            "DROP TABLE IF EXISTS ${CacheEntry.TABLE_NAME};" +
-            "DROP TABLE IF EXISTS ${CacheDetailEntry.TABLE_NAME};" +
+            "DROP TABLE IF EXISTS ${GeoCacheEntry.TABLE_NAME};" +
+            "DROP TABLE IF EXISTS ${GeoCacheDetailEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${LogEntry.TABLE_NAME};" +
             "DROP TABLE IF EXISTS ${AttributeEntry.TABLE_NAME};"
 
@@ -108,8 +108,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             // and transfer the data there.
 
             // Rename old table
-            val tempTableName = "${CacheEntry.TABLE_NAME}OLD"
-            val SQL_RENAME_TABLE = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
+            val tempTableName = "${GeoCacheEntry.TABLE_NAME}OLD"
+            val SQL_RENAME_TABLE = "ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
                     "RENAME TO $tempTableName"
             db?.execSQL(SQL_RENAME_TABLE)
 
@@ -117,22 +117,22 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             db?.execSQL(SQL_CREATE_CACHE_TABLE)
 
             // Transfer data from old one to the new one
-            val SQL_TRANSFER_DATA = "INSERT INTO ${CacheEntry.TABLE_NAME} (" +
-                    "${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
-                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
-                    "${CacheEntry.NOTES_COL}, ${CacheEntry.FOUND_TRACKABLE_COL}, " +
-                    "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
-                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
-                    "${CacheEntry.CACHE_DETAIL_ID_FK_COL})" +
-                    "SELECT ${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
-                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
-                    "${CacheEntry.NOTES_COL}, ${CacheEntry.FOUND_TRACKABLE_COL}, " +
-                    "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
-                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
-                    CacheEntry.CACHE_DETAIL_ID_FK_COL +
+            val SQL_TRANSFER_DATA = "INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
+                    "${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
+                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
+                    "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
+                    "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})" +
+                    "SELECT ${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
+                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
+                    "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
+                    "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                    GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL +
                     " FROM (" +
                     " SELECT * FROM $tempTableName " +
-                    "GROUP BY ${CacheEntry.TOUR_ID_FK_COL}, ${CacheEntry.CACHE_DETAIL_ID_FK_COL})"
+                    "GROUP BY ${GeoCacheEntry.TOUR_ID_FK_COL}, ${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})"
             db?.execSQL(SQL_TRANSFER_DATA)
 
             // DELETE old table
@@ -142,17 +142,17 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         // Fill in order column if it is currently null or 0
         if(oldVersion <= 11){
 
-            val cursor = db?.doQuery(CacheEntry.TABLE_NAME, arrayOf(CacheEntry._ID),
-                    "${CacheEntry.ORDER_COL} IS NULL OR ${CacheEntry.ORDER_COL} = 0",
+            val cursor = db?.doQuery(GeoCacheEntry.TABLE_NAME, arrayOf(GeoCacheEntry._ID),
+                    "${GeoCacheEntry.ORDER_COL} IS NULL OR ${GeoCacheEntry.ORDER_COL} = 0",
                     arrayOf())
                     ?: return
 
             while(cursor.moveToNext()){
-                val id = cursor.getLong(CacheEntry._ID)
+                val id = cursor.getLong(GeoCacheEntry._ID)
                 val values = ContentValues()
-                values.put(CacheEntry.ORDER_COL, id*1000)
-                db.update(CacheEntry.TABLE_NAME, values,
-                        "${CacheEntry._ID} = ?", arrayOf("$id"))
+                values.put(GeoCacheEntry.ORDER_COL, id*1000)
+                db.update(GeoCacheEntry.TABLE_NAME, values,
+                        "${GeoCacheEntry._ID} = ?", arrayOf("$id"))
             }
 
             cursor.close()
@@ -182,8 +182,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         if(oldVersion <= 13){
 
             // Rename old table to a different name
-            val tempTableName = "${CacheEntry.TABLE_NAME}OLD"
-            val SQL_RENAME_TABLE = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
+            val tempTableName = "${GeoCacheEntry.TABLE_NAME}OLD"
+            val SQL_RENAME_TABLE = "ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
                     "RENAME TO $tempTableName"
             db?.execSQL(SQL_RENAME_TABLE)
 
@@ -191,18 +191,18 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             db?.execSQL(SQL_CREATE_CACHE_TABLE)
 
             // Transfer data from old one to the new one
-            val SQL_TRANSFER_DATA = "INSERT INTO ${CacheEntry.TABLE_NAME} (" +
-                    "${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
-                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
-                    "${CacheEntry.NOTES_COL}, ${CacheEntry.FOUND_TRACKABLE_COL}, " +
-                    "${CacheEntry.DROPPED_TRACKABLE_COL}, ${CacheEntry.FAV_POINT_COL}, " +
-                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
-                    "${CacheEntry.CACHE_DETAIL_ID_FK_COL})" +
-                    "SELECT ${CacheEntry._ID}, ${CacheEntry.FOUND_DATE_COL}, " +
-                    "${CacheEntry.NEEDS_MAINTENANCE_COL}, ${CacheEntry.VISIT_COL}, " +
-                    "${CacheEntry.NOTES_COL}, NULL, NULL, ${CacheEntry.FAV_POINT_COL}, " +
-                    "${CacheEntry.ORDER_COL}, ${CacheEntry.TOUR_ID_FK_COL}, " +
-                    CacheEntry.CACHE_DETAIL_ID_FK_COL +
+            val SQL_TRANSFER_DATA = "INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
+                    "${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
+                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
+                    "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
+                    "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})" +
+                    "SELECT ${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
+                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
+                    "${GeoCacheEntry.NOTES_COL}, NULL, NULL, ${GeoCacheEntry.FAV_POINT_COL}, " +
+                    "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                    GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL +
                     " FROM  $tempTableName "
             db?.execSQL(SQL_TRANSFER_DATA)
 
@@ -212,8 +212,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
         // Add column for image path in cache table
         if(oldVersion <= 14){
-            val SQL_ADD_COLUMN = "ALTER TABLE ${CacheEntry.TABLE_NAME} " +
-                    "ADD ${CacheEntry.IMAGE_COL} TEXT"
+            val SQL_ADD_COLUMN = "ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+                    "ADD ${GeoCacheEntry.IMAGE_COL} TEXT"
             db?.execSQL(SQL_ADD_COLUMN)
         }
 

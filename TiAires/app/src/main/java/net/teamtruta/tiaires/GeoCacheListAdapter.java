@@ -23,20 +23,20 @@ import java.util.Collections;
 import java.util.List;
 
 
-class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
+class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
 
     private static GeocachingTour tour;
-    private EditOnClickListener editOnClickListener;
-    private GoToOnClickListener goToOnClickListener;
+    private final EditOnClickListener editOnClickListener;
+    private final GoToOnClickListener goToOnClickListener;
 
     static OnVisitListener onVisitListener;
 
-    //private static GeocacheInTour recentlyVisitedCache;
-    //private static int recentlyVisitedCachePosition;
+    //private static GeoCacheInTour recentlyVisitedCache;
+    //private static int recentlyVisitedGeoCachePosition;
 
 
-    CacheListAdapter(GeocachingTour tour, EditOnClickListener editOnClickListener, GoToOnClickListener goToOnClickListener){
-        CacheListAdapter.tour = tour;
+    GeoCacheListAdapter(GeocachingTour tour, EditOnClickListener editOnClickListener, GoToOnClickListener goToOnClickListener){
+        GeoCacheListAdapter.tour = tour;
         this.editOnClickListener = editOnClickListener;
         this.goToOnClickListener = goToOnClickListener;
     }
@@ -48,58 +48,58 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
 
-        GeocacheInTour geocacheInTour = tour._tourCaches.get(position);
-        Geocache geocache = geocacheInTour.getGeocache();
+        GeoCacheInTour geoCacheInTour = tour._tourGeoCaches.get(position);
+        GeoCache geoCache = geoCacheInTour.getGeoCache();
 
-        // 1. Set cache name
-        holder.cacheName.setText(geocache.getName());
+        // 1. Set geoCache name
+        holder.geoCacheName.setText(geoCache.getName());
 
-        // 2. Set cache type symbol
+        // 2. Set geoCache type symbol
         int drawableID;
 
-        if(geocacheInTour.getVisit() == FoundEnumType.Found){
-            drawableID = R.drawable.cache_icon_found;
-        } else if(geocacheInTour.getVisit() == FoundEnumType.DNF){
-            drawableID = R.drawable.cache_icon_dnf;
-        } else if(geocacheInTour.getVisit() == FoundEnumType.Disabled){
-            drawableID = R.drawable.cache_icon_disabled50x50;
+        if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found){
+            drawableID = R.drawable.geo_cache_icon_found;
+        } else if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF){
+            drawableID = R.drawable.geo_cache_icon_dnf;
+        } else if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Disabled){
+            drawableID = R.drawable.geo_cache_icon_disabled50x50;
         } else {
-            drawableID = GeocacheIcon.getIconDrawable(geocacheInTour.getGeocache().getType());
+            drawableID = GeoCacheIcon.getIconDrawable(geoCacheInTour.getGeoCache().getType());
         }
 
-        Drawable cacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
-        holder.cacheSymbol.setImageDrawable(cacheSymbolDrawable);
+        Drawable geoCacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
+        holder.geoCacheSymbol.setImageDrawable(geoCacheSymbolDrawable);
 
         // 3. Set information line 1: Code, difficulty and terrain and Size
-        holder.cacheCode.setText(geocache.getCode());
+        holder.geoCacheCode.setText(geoCache.getCode());
 
-        String difTerString = App.getContext().getString(R.string.cache_dif_ter);
-        String difficulty = geocache.getDifficulty();
-        String terrain = geocache.getTerrain();
+        String difTerString = App.getContext().getString(R.string.geo_cache_dif_ter);
+        String difficulty = geoCache.getDifficulty();
+        String terrain = geoCache.getTerrain();
         String diffString = ((Double.parseDouble(difficulty) > 4) ?
                 "<font color='red'>" + difficulty + "</font>/" : difficulty);
         String terString = ((Double.parseDouble(terrain) > 4) ?
                 "<font color='red'>" + terrain + "</font>/" : terrain);
-        holder.cacheDifTer.setText( HtmlCompat.fromHtml(String.format(difTerString, diffString, terString),
+        holder.geoCacheDifTer.setText( HtmlCompat.fromHtml(String.format(difTerString, diffString, terString),
                 HtmlCompat.FROM_HTML_MODE_LEGACY));
 
-        String sizeString = App.getContext().getString(R.string.cache_size);
-        holder.cacheSize.setText(String.format(sizeString, geocache.getSize()));
+        String sizeString = App.getContext().getString(R.string.geo_cache_size);
+        holder.geoCacheSize.setText(String.format(sizeString, geoCache.getSize()));
 
 
-        // 4. Set information line 2: Favorites and whether cache has hint
-        String favString = App.getContext().getString(R.string.cache_favs);
-        holder.cacheFavs.setText(String.format(favString, geocache.getFavourites()));
-        if(geocache.hasHint()){
-            holder.cacheHasHint.setText(App.getContext().getString(R.string.cache_has_hint));
+        // 4. Set information line 2: Favorites and whether geoCache has hint
+        String favString = App.getContext().getString(R.string.geo_cache_favs);
+        holder.geoCacheFavs.setText(String.format(favString, geoCache.getFavourites()));
+        if(geoCache.hasHint()){
+            holder.geoCacheHasHint.setText(App.getContext().getString(R.string.geo_cache_has_hint));
         }
 
-        List<GeocacheLog> last10Logs = geocache.getLastNLogs(10);
+        List<GeoCacheLog> last10Logs = geoCache.getLastNLogs(10);
         for(int i=0; i<10;i++){
             TextView tv = (TextView) holder.lastLogsLayout.getChildAt(i);
-            if(last10Logs.get(i).getLogType() == FoundEnumType.Found){
+            if(last10Logs.get(i).getLogType() == VisitOutcomeEnum.Found){
                 tv.setTextColor(holder.view.getContext().getColor(R.color.colorPrimary));
-            } else if( last10Logs.get(i).getLogType() == FoundEnumType.DNF ){
+            } else if( last10Logs.get(i).getLogType() == VisitOutcomeEnum.DNF ){
                 tv.setTextColor(holder.view.getContext().getColor(R.color.red));
             } else {
                 tv.setTextColor(holder.view.getContext().getColor(R.color.blue));
@@ -108,15 +108,15 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         }
 
 
-        // 5. Cache Hint
-        holder.hint.setText(getHintText(geocache));
+        // 5. GeoCache Hint
+        holder.hint.setText(getHintText(geoCache));
 
 
         // 6. Set DNF information if required
-        if(geocache.isDNFRisk()){
+        if(geoCache.isDNFRisk()){
 
             String dnfString = App.getContext().getString(R.string.dnf_risk);
-            dnfString = String.format(dnfString, geocache.getDNFRisk());
+            dnfString = String.format(dnfString, geoCache.getDNFRisk());
 
             holder.dnfInfo.setText(HtmlCompat.fromHtml(
                     dnfString,
@@ -127,36 +127,36 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
        // 7. Set listener for edit button
         holder.editButton.setOnClickListener(v -> {
             if(editOnClickListener!=null){
-                editOnClickListener.onEditClick(geocacheInTour.get_id());
+                editOnClickListener.onEditClick(geoCacheInTour.get_id());
             }
         });
 
-        // 8. Set listener for go-to-cache button
+        // 8. Set listener for go-to-geoCache button
         holder.goToButton.setOnClickListener(v -> {
             if(goToOnClickListener!=null){
-                goToOnClickListener.onGoToClick(geocache);
+                goToOnClickListener.onGoToClick(geoCache);
             }
         });
 
-        // 9. Make section grey if cache has been visited
-        if(geocacheInTour.getVisit() == FoundEnumType.Found
-                || geocacheInTour.getVisit() == FoundEnumType.DNF
-                || geocacheInTour.getVisit() == FoundEnumType.Disabled){
+        // 9. Make section grey if geoCache has been visited
+        if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found
+                || geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF
+                || geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Disabled){
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
         } else {
             holder.layout.setBackgroundColor(App.getContext().getColor(R.color.white));
         }
 
         // 10. Setup expansion
-        holder.view.setOnClickListener(v -> expandHolder(holder, geocache));
-        holder.extraInfoArrow.setOnClickListener(v -> expandHolder(holder, geocache));
+        holder.view.setOnClickListener(v -> expandHolder(holder, geoCache));
+        holder.extraInfoArrow.setOnClickListener(v -> expandHolder(holder, geoCache));
 
         // 11. Add Cache Attributes
-        if(geocache.getAttributes().size() > 0){
-            for(GeocacheAttributeEnum attribute: geocache.getAttributes()){
+        if(geoCache.getAttributes().size() > 0){
+            for(GeoCacheAttributeEnum attribute: geoCache.getAttributes()){
                 ImageView iv = new ImageView(App.getContext());
                 iv.setImageDrawable(App.getContext().getDrawable(
-                        GeocacheAttributeIcon.getGeocacheAttributeIcon(attribute)));
+                        GeoCacheAttributeIcon.getGeoCacheAttributeIcon(attribute)));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size),
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size));
@@ -168,20 +168,20 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
 
     }
 
-    private Spanned getHintText(Geocache geocache) {
+    private Spanned getHintText(GeoCache geoCache) {
 
-        String hintString = "<strong>HINT</strong>: <i>" + geocache.getHint() + "</i>";
+        String hintString = "<strong>HINT</strong>: <i>" + geoCache.getHint() + "</i>";
         return HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY);
 
     }
 
-    void expandHolder(ViewHolder holder, Geocache geocache){
+    void expandHolder(ViewHolder holder, GeoCache geoCache){
 
         if(holder.extraInfoArrow.isChecked() || holder.extraInfoLayout.getVisibility() != View.VISIBLE){
 
             // Remove hint indication from line 1
-            if(geocache.hasHint()){
-                holder.cacheHasHint.setVisibility(View.GONE);
+            if(geoCache.hasHint()){
+                holder.geoCacheHasHint.setVisibility(View.GONE);
                 holder.hint.setVisibility(View.VISIBLE);
             }
 
@@ -191,13 +191,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             holder.extraInfoArrow.setChecked(true);
 
             // Show attributes
-            if(geocache.getAttributes().size() != 0)
+            if(geoCache.getAttributes().size() != 0)
                 holder.attributeList.setVisibility(View.VISIBLE);
 
         } else {
             // Hide extra information
-            if(geocache.hasHint()){
-                holder.cacheHasHint.setVisibility(View.VISIBLE);
+            if(geoCache.hasHint()){
+                holder.geoCacheHasHint.setVisibility(View.VISIBLE);
                 holder.hint.setVisibility(View.GONE);
             }
 
@@ -210,13 +210,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     }
 
     @NotNull
-    public CacheListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public GeoCacheListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_cache_layout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_geo_cache_layout, parent, false);
         return new ViewHolder(v);
     }
 
-    static void visitItem(int position, FoundEnumType visit){
+    static void visitItem(int position, VisitOutcomeEnum visit){
 
         // Save the deleted item in case user wants to undo the action;
 
@@ -224,9 +224,9 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
         // recentlyVisitedCache = tour.getCacheInTour(position);
         // recentlyVisitedCachePosition = position;
 
-        GeocacheInTour selectedGeocache = tour._tourCaches.get(position);
-        selectedGeocache.setVisit(visit);
-        selectedGeocache.saveChanges();
+        GeoCacheInTour selectedGeoCache = tour._tourGeoCaches.get(position);
+        selectedGeoCache.setCurrentVisitOutcome(visit);
+        selectedGeoCache.saveChanges();
 
         onVisitListener.onVisit(visit.toString());
     }
@@ -240,7 +240,7 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
 
-        Collections.swap(tour._tourCaches, fromPosition, toPosition);
+        Collections.swap(tour._tourGeoCaches, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         //tour.swapCachePositions(fromPosition, toPosition);
         tour.updateTourCaches();
@@ -251,13 +251,13 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
     static class ViewHolder extends RecyclerView.ViewHolder{
 
         View view;
-        TextView cacheName;
-        ImageView cacheSymbol;
-        TextView cacheCode;
-        TextView cacheDifTer;
-        TextView cacheSize;
-        TextView cacheFavs;
-        TextView cacheHasHint;
+        TextView geoCacheName;
+        ImageView geoCacheSymbol;
+        TextView geoCacheCode;
+        TextView geoCacheDifTer;
+        TextView geoCacheSize;
+        TextView geoCacheFavs;
+        TextView geoCacheHasHint;
         TextView dnfInfo;
         TextView dnfInfoExpanded;
         TextView hint;
@@ -273,33 +273,33 @@ class CacheListAdapter extends RecyclerView.Adapter<CacheListAdapter.ViewHolder>
             super(v);
             view = v;
 
-            cacheName = v.findViewById(R.id.cache_title);
-            cacheSymbol = v.findViewById(R.id.cache_symbol);
-            cacheCode = v.findViewById(R.id.cache_code);
-            cacheDifTer = v.findViewById(R.id.cache_dif_ter);
-            cacheSize = v.findViewById(R.id.cache_size);
-            cacheFavs = v.findViewById(R.id.cache_favs);
-            cacheHasHint = v.findViewById(R.id.cache_has_hint);
+            geoCacheName = v.findViewById(R.id.geo_cache_title);
+            geoCacheSymbol = v.findViewById(R.id.geo_cache_symbol);
+            geoCacheCode = v.findViewById(R.id.geo_cache_code);
+            geoCacheDifTer = v.findViewById(R.id.geo_cache_dif_ter);
+            geoCacheSize = v.findViewById(R.id.geo_cache_size);
+            geoCacheFavs = v.findViewById(R.id.geo_cache_favs);
+            geoCacheHasHint = v.findViewById(R.id.geo_cache_has_hint);
             dnfInfo = v.findViewById(R.id.dnf_risk);
             dnfInfoExpanded = v.findViewById(R.id.dnf_info_expanded);
             hint = v.findViewById(R.id.hint);
             editButton = v.findViewById(R.id.edit_button);
             goToButton = v.findViewById(R.id.go_to_button);
-            layout = v.findViewById(R.id.element_cache_layout);
+            layout = v.findViewById(R.id.element_geo_cache_layout);
             extraInfoLayout = v.findViewById(R.id.expandable_info);
             extraInfoArrow = v.findViewById(R.id.extra_info_arrow);
             lastLogsLayout = v.findViewById(R.id.last10LogsSquares);
-            attributeList = v.findViewById(R.id.cache_attributes);
+            attributeList = v.findViewById(R.id.geo_cache_attributes);
         }
 
     }
 
     interface EditOnClickListener {
-        void onEditClick(long cacheID);
+        void onEditClick(long geoCacheID);
     }
 
     interface GoToOnClickListener{
-        void onGoToClick(Geocache geocache);
+        void onGoToClick(GeoCache geoCache);
     }
 
     interface OnVisitListener{

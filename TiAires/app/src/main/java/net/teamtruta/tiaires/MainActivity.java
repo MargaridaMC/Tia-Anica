@@ -28,7 +28,7 @@ import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 
-import net.teamtruta.tiaires.db.CacheDetailDbTable;
+import net.teamtruta.tiaires.db.GeoCacheDetailDbTable;
 import net.teamtruta.tiaires.db.DbConnection;
 
 public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         }
 
         // Delete all Cache details that are in the database but unused
-        new CacheDetailDbTable(this).collectCacheDetailGarbage();
+        new GeoCacheDetailDbTable(this).collectGeoCacheDetailGarbage();
 
     }
 

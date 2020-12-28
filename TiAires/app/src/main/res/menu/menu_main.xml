@@ -5,7 +5,7 @@
     <item
         android:id="@+id/go_to_login_page"
         android:orderInCategory="100"
-        android:title="@string/authetication"
+        android:title="@string/authentication"
         app:showAsAction="never" />
     <!--
     <item

@@ -11,19 +11,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 // Useful link: https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
 
-public class CacheInteractionCallback extends ItemTouchHelper.SimpleCallback {
+public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback {
 
-    private CacheListAdapter cacheListAdapter;
-    private Drawable foundIcon;
-    private Drawable dnfIcon;
+    private final GeoCacheListAdapter geoCacheListAdapter;
+    private final Drawable foundIcon;
+    private final Drawable dnfIcon;
     private final ColorDrawable background;
 
-    CacheInteractionCallback(CacheListAdapter adapter){
+    GeoCacheInteractionCallback(GeoCacheListAdapter adapter){
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.cacheListAdapter = adapter;
+        this.geoCacheListAdapter = adapter;
 
-        foundIcon = App.getContext().getDrawable(R.drawable.cache_icon_found);
-        dnfIcon = App.getContext().getDrawable(R.drawable.cache_icon_dnf);
+        foundIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_found);
+        dnfIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_dnf);
 
         background = new ColorDrawable(App.getContext().getColor(R.color.light_grey));
 
@@ -49,7 +49,7 @@ public class CacheInteractionCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
-        cacheListAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        geoCacheListAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
 
@@ -62,12 +62,12 @@ public class CacheInteractionCallback extends ItemTouchHelper.SimpleCallback {
 
         // Direction: 32 means swiped right, 16 means swiped left
         if(direction == 32){
-            CacheListAdapter.visitItem(position, FoundEnumType.Found);
+            GeoCacheListAdapter.visitItem(position, VisitOutcomeEnum.Found);
         } else if(direction == 16){
-            CacheListAdapter.visitItem(position, FoundEnumType.DNF);
+            GeoCacheListAdapter.visitItem(position, VisitOutcomeEnum.DNF);
         }
 
-        cacheListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+        geoCacheListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
     }
 
     @Override

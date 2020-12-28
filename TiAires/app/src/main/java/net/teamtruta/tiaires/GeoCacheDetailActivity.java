@@ -39,9 +39,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
+public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    GeocacheInTour currentGeocache;
+    GeoCacheInTour currentGeoCache;
 
     SoundPool soundPool;
     int soundID;
@@ -51,83 +51,83 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
-    String TAG = CacheDetailActivity.class.getSimpleName();
+    String TAG = GeoCacheDetailActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cache_detail);
+        setContentView(R.layout.activity_geo_cache_detail);
 
-        Toolbar toolbar = findViewById(R.id.toolbar_cache_detail);
+        Toolbar toolbar = findViewById(R.id.toolbar_geo_cache_detail);
         setSupportActionBar(toolbar);
 
         // Setup connection to database
         _dbConnection = new DbConnection(this);
 
         Intent intent = getIntent();
-        long cacheID = intent.getLongExtra(App.CACHE_ID_EXTRA,  -1L);
+        long geoCacheID = intent.getLongExtra(App.GEOCACHE_ID_EXTRA,  -1L);
         _tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1L);
-        /*if(cacheID == -1L){
+        /*if(geoCacheID == -1L){
             // TODO: Something went wrong
         } else {
 
         }*/
 
-        currentGeocache = GeocacheInTour.Companion.getGeocacheFromID(cacheID, _dbConnection);
+        currentGeoCache = GeoCacheInTour.Companion.getGeoCacheFromID(geoCacheID, _dbConnection);
 
-        // Set Cache Title
+        // Set GeoCache Title
         ActionBar ab = getSupportActionBar();
         assert ab != null;
-        ab.setTitle(currentGeocache.getGeocache().getName());
+        ab.setTitle(currentGeoCache.getGeoCache().getName());
         ab.setDisplayHomeAsUpEnabled(true);
 
         // Set Not Found / Found / DNF toggle and appropriate onClickListener
-        MultiStateToggleButton cacheVisitButton = this.findViewById(R.id.cache_visit_button);
+        MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
         boolean[] buttonStates = new boolean[] {true, false, false};
 
-        if(this.currentGeocache.getVisit() == FoundEnumType.Found)
+        if(this.currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.Found)
             buttonStates = new boolean[] {false, true, false};
-        else if(this.currentGeocache.getVisit() == FoundEnumType.DNF)
+        else if(this.currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF)
             buttonStates = new boolean[] {false, false, true};
 
-        cacheVisitButton.setStates(buttonStates);
+        geoCacheVisitButton.setStates(buttonStates);
 
-        cacheVisitButton.setOnValueChangedListener(position -> {
+        geoCacheVisitButton.setOnValueChangedListener(position -> {
             if(position == 0){
-                this.currentGeocache.setVisit(FoundEnumType.NotAttempted);
+                this.currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
             }
-            else if(position == 1) cacheFound();
-            else if(position == 2) cacheNotFound();
+            else if(position == 1) geoCacheFound();
+            else if(position == 2) geoCacheNotFound();
         });
 
         // Set Checkboxes
         // 1. Needs Maintenace Checkbox
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
-        if(this.currentGeocache.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
+        if(this.currentGeoCache.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
 
         // 2. FoundTrackable Checkbox and EditText
         CheckBox foundTrackableCheckBox = findViewById(R.id.foundTrackableCheckBox);
-        if(currentGeocache.getFoundTrackable() != null){
+        if(currentGeoCache.getFoundTrackable() != null){
             foundTrackableCheckBox.setChecked(true);
             EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
-            foundTrackableEditText.setText(currentGeocache.getFoundTrackable());
+            foundTrackableEditText.setText(currentGeoCache.getFoundTrackable());
         }
 
         // 3. DroppedTrackable Checkbox and EditText
         CheckBox droppedTrackableCheckBox = findViewById(R.id.droppedTrackableCheckBox);
-        if(currentGeocache.getDroppedTrackable() != null){
+        if(currentGeoCache.getDroppedTrackable() != null){
             droppedTrackableCheckBox.setChecked(true);
             EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
-            droppedTrackableEditText.setText(currentGeocache.getDroppedTrackable());
+            droppedTrackableEditText.setText(currentGeoCache.getDroppedTrackable());
         }
 
         // 4. Favourite Point Checkbox
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
-        if(this.currentGeocache.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
+        if(this.currentGeoCache.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
 
         // Set my notes
         EditText notesSection = findViewById(R.id.notes);
-        String myNotes = this.currentGeocache.getNotes();
+        String myNotes = this.currentGeoCache.getNotes();
         if(!myNotes.equals("")) notesSection.setText(myNotes);
 
         //  Setup ping sound
@@ -135,11 +135,7 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
 
         // Setup photo
         CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
-        if(currentGeocache.getPathToImage() != null){
-            photoCheckBox.setChecked(true);
-        } else {
-            photoCheckBox.setChecked(false);
-        }
+        photoCheckBox.setChecked(currentGeoCache.getPathToImage() != null);
     }
 
     @Override
@@ -159,45 +155,45 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
         onSupportNavigateUp();
     }
 
-    public void cacheFound(){
+    public void geoCacheFound(){
 
-        // Cache was found
+        // Geocache was found
 
-        if(currentGeocache.getVisit() == FoundEnumType.Found){
-            // If cache has already been found and we are clicking on Found again
-            // We want to reverse this -- set cache as not Attempted
-            currentGeocache.setVisit(FoundEnumType.NotAttempted);
-            currentGeocache.setFoundDate(null);
+        if(currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.Found){
+            // If geocache has already been found and we are clicking on Found again
+            // We want to reverse this -- set geocache as not Attempted
+            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
+            currentGeoCache.setFoundDate(null);
 
-            MultiStateToggleButton cacheVisitButton = this.findViewById(R.id.cache_visit_button);
-            cacheVisitButton.setStates(new boolean[] {true, false, false});
+            MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
+            geoCacheVisitButton.setStates(new boolean[] {true, false, false});
 
         } else {
-            // We want to set this cache as found
-            currentGeocache.setVisit(FoundEnumType.Found);
-            currentGeocache.setFoundDate(Calendar.getInstance().getTime());
+            // We want to set this geocache as found
+            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.Found);
+            currentGeoCache.setFoundDate(Calendar.getInstance().getTime());
             playPing();
         }
 
 
     }
 
-    public void cacheNotFound(){
+    public void geoCacheNotFound(){
         // DNF
 
-        if(currentGeocache.getVisit() == FoundEnumType.DNF){
-            // If cache is already a DNF and we are clicking on DNF again
-            // We want to reverse this -- set cache as not Attempted
-            currentGeocache.setVisit(FoundEnumType.NotAttempted);
-            currentGeocache.setFoundDate(null);
+        if(currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF){
+            // If geocache is already a DNF and we are clicking on DNF again
+            // We want to reverse this -- set geocache as not Attempted
+            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
+            currentGeoCache.setFoundDate(null);
 
-            MultiStateToggleButton cacheVisitButton = this.findViewById(R.id.cache_visit_button);
-            cacheVisitButton.setStates(new boolean[] {true, false, false});
+            MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
+            geoCacheVisitButton.setStates(new boolean[] {true, false, false});
 
         } else {
-            // We want to set this cache as DNF
-            currentGeocache.setVisit(FoundEnumType.DNF);
-            currentGeocache.setFoundDate(Calendar.getInstance().getTime());
+            // We want to set this geoCache as DNF
+            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.DNF);
+            currentGeoCache.setFoundDate(Calendar.getInstance().getTime());
 
             playPing();
         }
@@ -205,36 +201,34 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
     }
 
     /**
-     * Handle Saving in the cache in tour activity
+     * Handle Saving in the geoCache in tour activity
      */
     public void saveChanges()
     {
-        Analytics.trackEvent("CacheDetailActivity.saveChanges");
+        Analytics.trackEvent("GeoCacheDetailActivity.saveChanges");
 
         // Get notes
         EditText notesView = findViewById(R.id.notes);
         String myNotes = notesView.getText().toString();
-        currentGeocache.setNotes(myNotes);
+        currentGeoCache.setNotes(myNotes);
 
         // Get trackable information
         EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
         String foundTrackableString = foundTrackableEditText.getText().toString().trim();
-        currentGeocache.setFoundTrackable(foundTrackableString.isEmpty() ? null : foundTrackableString);
+        currentGeoCache.setFoundTrackable(foundTrackableString.isEmpty() ? null : foundTrackableString);
 
         EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
         String droppedTrackableString = droppedTrackableEditText.getText().toString().trim();
-        currentGeocache.setDroppedTrackable(droppedTrackableString.isEmpty() ? null : droppedTrackableString);
+        currentGeoCache.setDroppedTrackable(droppedTrackableString.isEmpty() ? null : droppedTrackableString);
 
         // save changes
-        currentGeocache.saveChanges();
+        currentGeoCache.saveChanges();
     }
 
     public void onNeedsMaintenanceCheckboxClicked(View view) {
 
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
-        if(needsMaintenanceCheckBox.isChecked())
-            currentGeocache.setNeedsMaintenance(true);
-        else currentGeocache.setNeedsMaintenance(false);
+        currentGeoCache.setNeedsMaintenance(needsMaintenanceCheckBox.isChecked());
 
     }
 
@@ -248,11 +242,11 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
             // Focus attention on text box to fill in value
             foundTrackableEditText.requestFocus();
 
-            //currentGeocache.setFoundTrackable(true);
+            //currentGeoCache.setFoundTrackable(true);
         }
 
         else{
-            currentGeocache.setFoundTrackable(null);
+            currentGeoCache.setFoundTrackable(null);
 
             // Delete inputted trackable code in editText area
             foundTrackableEditText.setText("");
@@ -266,14 +260,14 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
         EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
 
         if(droppedTrackableCheckBox.isChecked()){
-            //currentGeocache.setDroppedTrackable(true);
+            //currentGeoCache.setDroppedTrackable(true);
 
             // Focus attention on text box to fill in value
             droppedTrackableEditText.requestFocus();
         }
 
         else{
-            currentGeocache.setDroppedTrackable(null);
+            currentGeoCache.setDroppedTrackable(null);
             droppedTrackableEditText.setText("");
         }
 
@@ -283,9 +277,7 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
     public void onFavouritePointCheckboxClicked(View view) {
 
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
-        if(favouritePointCheckBox.isChecked())
-            currentGeocache.setFavouritePoint(true);
-        else currentGeocache.setFavouritePoint(false);
+        currentGeoCache.setFavouritePoint(favouritePointCheckBox.isChecked());
 
     }
 
@@ -356,7 +348,7 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "GEOCACHEID_" + currentGeocache.get_id() + "_" + timeStamp + "_";
+        String imageFileName = "GEOCACHEID_" + currentGeoCache.get_id() + "_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -366,7 +358,7 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
-        currentGeocache.setPathToImage(currentPhotoPath);
+        currentGeoCache.setPathToImage(currentPhotoPath);
 
         return image;
     }
@@ -383,8 +375,8 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
 
     public void showPhotoPopup(View view){
 
-        // If the current cache has no photo then go straight into the photo taking
-        if(currentGeocache.getPathToImage() == null){
+        // If the current geoCache has no photo then go straight into the photo taking
+        if(currentGeoCache.getPathToImage() == null){
             takePhoto();
             // Set the checkbox to checked
             CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
@@ -410,28 +402,28 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
             case R.id.take_new_photo:
                 takePhoto();
                 return true;
-            case R.id.show_cache_photo:
-                showCachePhoto();
+            case R.id.show_geo_cache_photo:
+                showGeoCachePhoto();
                 return true;
-            case R.id.delete_cache_photo:
-                deleteCachePhoto();
+            case R.id.delete_geo_cache_photo:
+                deleteGeoCachePhoto();
                 return true;
             default:
                 return false;
         }
     }
 
-    private void deleteCachePhoto() {
-        File fdelete = new File(currentGeocache.getPathToImage());
+    private void deleteGeoCachePhoto() {
+        File file = new File(currentGeoCache.getPathToImage());
 
-        if (fdelete.exists()) {
-            if (fdelete.delete()) {
-                System.out.println("file Deleted :" );
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("File Deleted :" );
             } else {
-                System.out.println("file not Deleted :");
+                System.out.println("File not Deleted :");
             }
         }
-        currentGeocache.setPathToImage(null);
+        currentGeoCache.setPathToImage(null);
         CheckBox photoCheckbox = findViewById(R.id.photo_checkbox);
         photoCheckbox.setChecked(false);
     }
@@ -440,12 +432,12 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
     void showCachePhoto(){
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse("file://" + currentGeocache.getPathToImage()), "image/*");
+        intent.setDataAndType(Uri.parse("file://" + currentGeoCache.getPathToImage()), "image/*");
         startActivity(intent);
     }
 */
 
-    public void showCachePhoto() {
+    public void showGeoCachePhoto() {
         Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(
@@ -455,7 +447,7 @@ public class CacheDetailActivity extends AppCompatActivity implements PopupMenu.
         });
 
         ImageView imageView = new ImageView(this);
-        imageView.setImageURI(Uri.parse(currentGeocache.getPathToImage()));
+        imageView.setImageURI(Uri.parse(currentGeoCache.getPathToImage()));
         builder.addContentView(imageView, new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));

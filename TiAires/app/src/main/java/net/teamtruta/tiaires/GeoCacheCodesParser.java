@@ -7,11 +7,12 @@ import java.util.List;
 /**
  * GeocachingTourParser
  */
-public class GeocacheCodesParser {
+public class GeoCacheCodesParser
+{
 
     private GeocachingScrapper _gs;
 
-    public GeocacheCodesParser(GeocachingScrapper gs) throws Exception {
+    public GeoCacheCodesParser(GeocachingScrapper gs) throws Exception {
         if(_gs == null)
         {
             throw new Exception("GeocachingScrapper must be non-null");
@@ -22,7 +23,7 @@ public class GeocacheCodesParser {
         _gs.login(); // TODO: se tentar fazer login mais de uma vez... dizer qq coisa? ou permitir? ou ter outro método de login com force
     }
 
-    public List<Geocache> getCaches(String textWithCodes)
+    public List<GeoCache> getCaches(String textWithCodes)
     {
         if(textWithCodes == null)
         return null;

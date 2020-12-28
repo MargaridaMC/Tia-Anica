@@ -12,8 +12,7 @@ public class App extends Application {
 
     static String TOUR_ID_EXTRA = "tourID";
     static String EDIT_EXTRA = "edit";
-    static String CACHE_ID_EXTRA = "cacheID";
-    public static final String FOCUS_ON_CACHE_EXTRA = "focusOnCache";
+    static String GEOCACHE_ID_EXTRA = "geoCacheID";
 
     @Override
     public void onCreate() {

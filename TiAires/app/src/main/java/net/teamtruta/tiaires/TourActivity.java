@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class TourActivity extends AppCompatActivity implements CacheListAdapter.EditOnClickListener, CacheListAdapter.GoToOnClickListener, CacheListAdapter.OnVisitListener {
+public class TourActivity extends AppCompatActivity implements GeoCacheListAdapter.EditOnClickListener, GeoCacheListAdapter.GoToOnClickListener, GeoCacheListAdapter.OnVisitListener {
 
     GeocachingTour _tour;
     Long tourID = -1L;
@@ -85,35 +85,35 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         setProgressBar();
 
         // Set List
-        RecyclerView cacheListView = findViewById(R.id.tour_view);
+        RecyclerView geoCacheListView = findViewById(R.id.tour_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        cacheListView.setLayoutManager(layoutManager);
-        CacheListAdapter cacheListAdapter = new CacheListAdapter(_tour, this, this);
-        CacheListAdapter.onVisitListener = this;
-        cacheListView.setAdapter(cacheListAdapter);
+        geoCacheListView.setLayoutManager(layoutManager);
+        GeoCacheListAdapter geoCacheListAdapter = new GeoCacheListAdapter(_tour, this, this);
+        GeoCacheListAdapter.onVisitListener = this;
+        geoCacheListView.setAdapter(geoCacheListAdapter);
 
-        // Focus recyclerView on last visited cache
-        int lastVisitedCacheIndex = _tour.getLastVisitedCache();
+        // Focus recyclerView on last visited geocache
+        int lastVisitedCacheIndex = _tour.getLastVisitedGeoCache();
         //int centerOfScreen = getResources().getDisplayMetrics().heightPixels / 2;
         //layoutManager.scrollToPositionWithOffset(lastVisitedCacheIndex - 1, centerOfScreen);
         if(lastVisitedCacheIndex > 2) lastVisitedCacheIndex -= 2;
         layoutManager.scrollToPosition(lastVisitedCacheIndex);
 
         // Create diving line between elements
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(cacheListView.getContext(), LinearLayout.VERTICAL);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(geoCacheListView.getContext(), LinearLayout.VERTICAL);
         dividerItemDecoration.setDrawable(new ColorDrawable(this.getColor(R.color.black)));
-        cacheListView.addItemDecoration(dividerItemDecoration);
+        geoCacheListView.addItemDecoration(dividerItemDecoration);
 
         // Add swipe to visit action
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CacheInteractionCallback(cacheListAdapter));
-        itemTouchHelper.attachToRecyclerView(cacheListView);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new GeoCacheInteractionCallback(geoCacheListAdapter));
+        itemTouchHelper.attachToRecyclerView(geoCacheListView);
 
         //  Setup ping sound
         setupAudio();
 
     }
 
-    private void reloadTourCaches() {
+    private void reloadTourGeoCaches() {
         ConstraintLayout progressBar = findViewById(R.id.progress_layout);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -185,21 +185,21 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     @Override
-    public void onEditClick(long cacheID) {
-        Intent intent = new Intent(this, CacheDetailActivity.class);
+    public void onEditClick(long geoCacheID) {
+        Intent intent = new Intent(this, GeoCacheDetailActivity.class);
         intent.putExtra(App.TOUR_ID_EXTRA, tourID);
-        intent.putExtra(App.CACHE_ID_EXTRA, cacheID);
+        intent.putExtra(App.GEOCACHE_ID_EXTRA, geoCacheID);
         startActivity(intent);
     }
 
     @Override
-    public void onGoToClick(Geocache geocache){
+    public void onGoToClick(GeoCache geoCache){
 
         // Open geocache in Geocache app or website
         AlertDialog.Builder chooser = new AlertDialog.Builder(this)
-                .setMessage("Which app would you like to use to go to this cache?")
+                .setMessage("Which app would you like to use to go to this geocache?")
                 .setPositiveButton("Geocaching", (dialog, which) -> {
-                    String url = "https://coord.info/" + geocache.getCode();
+                    String url = "https://coord.info/" + geoCache.getCode();
                     Intent i = new Intent(Intent.ACTION_VIEW);
 
                     i.setData(Uri.parse(url));
@@ -208,7 +208,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
                 })
                 .setNegativeButton("Google Maps", (dialog, which) -> {
                     Uri gmmIntentUri = Uri.parse(String.format(getResources().getString(R.string.coordinates_format),
-                            geocache.getLatitude().getValue(), geocache.getLongitude().getValue()));
+                            geoCache.getLatitude().getValue(), geoCache.getLongitude().getValue()));
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     startActivity(mapIntent);
                 })
@@ -228,13 +228,13 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     public void share(View view){
 
-        String tourCacheCodesString = _tour.getTourCacheCodes().toString();
-        tourCacheCodesString = tourCacheCodesString.substring(1, tourCacheCodesString.length() - 1);
+        String tourGeoCacheCodesString = _tour.getTourGeoCacheCodes().toString();
+        tourGeoCacheCodesString = tourGeoCacheCodesString.substring(1, tourGeoCacheCodesString.length() - 1);
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("vnd.android.cursor.dir/email");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, _tour.getName());
-        shareIntent.putExtra(Intent.EXTRA_TEXT, tourCacheCodesString);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, tourGeoCacheCodesString);
         this.startActivity(shareIntent);
 
     }
@@ -245,7 +245,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
         // Play ping
         playPing();
 
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.tour_view), "Cache was marked as: " + visit, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.tour_view), "Geocache was marked as: " + visit, Snackbar.LENGTH_LONG);
         snackbar.show();
 
         setProgressBar();
@@ -275,7 +275,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
 
     }
 
-    public void onFinishedReloadingCaches() {
+    public void onFinishedReloadingGeoCaches() {
         Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra(App.TOUR_ID_EXTRA, tourID);
         startActivity(intent);
@@ -283,13 +283,13 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
     }
 
     public void reloadTour(View view) {
-        reloadTourCaches();
+        reloadTourGeoCaches();
     }
 
     public void showAttributeInfo(View view){
 
-        ArrayList<GeocacheAttributeEnum> allAttributesList = _tour._tourCaches.stream()
-                .flatMap(x -> x.getGeocache().getAttributes().stream()).distinct()
+        ArrayList<GeoCacheAttributeEnum> allAttributesList = _tour._tourGeoCaches.stream()
+                .flatMap(x -> x.getGeoCache().getAttributes().stream()).distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if(allAttributesList.size() == 0){
@@ -305,7 +305,7 @@ public class TourActivity extends AppCompatActivity implements CacheListAdapter.
             View dialogView = getLayoutInflater().inflate(R.layout.attribute_dialog, null);
             ListView lv = dialogView.findViewById(R.id.attribute_list_dialog);
 
-            GeocacheAttributeListAdapter listAdapter = new GeocacheAttributeListAdapter(this, allAttributesList);
+            GeoCacheAttributeListAdapter listAdapter = new GeoCacheAttributeListAdapter(this, allAttributesList);
             lv.setAdapter(listAdapter);
             dialog.setContentView(dialogView);
             dialog.show();

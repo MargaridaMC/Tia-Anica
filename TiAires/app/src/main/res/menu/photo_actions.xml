@@ -6,11 +6,11 @@
         android:title="@string/take_new_photo"/>
 
     <item
-        android:id="@+id/show_cache_photo"
-        android:title="@string/show_cache_photo"/>
+        android:id="@+id/show_geo_cache_photo"
+        android:title="@string/show_geo_cache_photo"/>
 
     <item
-        android:id="@+id/delete_cache_photo"
-        android:title="@string/delete_cache_photo"/>
+        android:id="@+id/delete_geo_cache_photo"
+        android:title="@string/delete_geo_cache_photo"/>
 
 </menu>

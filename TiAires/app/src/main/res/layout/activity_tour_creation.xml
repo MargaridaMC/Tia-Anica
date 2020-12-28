@@ -57,18 +57,18 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/geocache_codes_view"
+        android:id="@+id/geo_cache_codes_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
-        android:text="@string/geocache_codes"
+        android:text="@string/geo_cache_codes"
         android:textAppearance="@style/MainText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/action_bar" />
 
     <EditText
-        android:id="@+id/geocache_codes"
+        android:id="@+id/geo_cache_codes"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin"
@@ -79,7 +79,7 @@
         app:layout_constraintBottom_toTopOf="@id/create_tour_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/geocache_codes_view" />
+        app:layout_constraintTop_toBottomOf="@+id/geo_cache_codes_view" />
 
     <Button
         android:id="@+id/create_tour_button"
@@ -100,10 +100,10 @@
            android:layout_width="wrap_content"
            android:visibility="invisible"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@+id/geocache_codes"
-            app:layout_constraintBottom_toBottomOf="@+id/geocache_codes"
-            app:layout_constraintStart_toStartOf="@+id/geocache_codes"
-            app:layout_constraintEnd_toEndOf="@+id/geocache_codes"/>
+            app:layout_constraintTop_toTopOf="@+id/geo_cache_codes"
+            app:layout_constraintBottom_toBottomOf="@+id/geo_cache_codes"
+            app:layout_constraintStart_toStartOf="@+id/geo_cache_codes"
+            app:layout_constraintEnd_toEndOf="@+id/geo_cache_codes"/>
 
 
 

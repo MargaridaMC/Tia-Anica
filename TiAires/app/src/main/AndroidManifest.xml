@@ -49,7 +49,7 @@
                 android:value="net.teamtruta.tiaires.TourActivity" />
         </activity>
         <activity
-            android:name=".CacheDetailActivity"
+            android:name=".GeoCacheDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TourActivity"

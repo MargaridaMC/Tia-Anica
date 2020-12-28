@@ -10,13 +10,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class GeocacheAttributeListAdapter extends BaseAdapter {
+public class GeoCacheAttributeListAdapter extends BaseAdapter {
 
-    private ArrayList<GeocacheAttributeEnum> attributes;
+    private ArrayList<GeoCacheAttributeEnum> attributes;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public GeocacheAttributeListAdapter(Context context, ArrayList<GeocacheAttributeEnum> attributes) {
+    public GeoCacheAttributeListAdapter(Context context, ArrayList<GeoCacheAttributeEnum> attributes) {
         this.attributes = attributes;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
@@ -54,7 +54,7 @@ public class GeocacheAttributeListAdapter extends BaseAdapter {
         }
 
         holder.attributeIcon.setImageDrawable(
-                context.getDrawable(GeocacheAttributeIcon.getGeocacheAttributeIcon(
+                context.getDrawable(GeoCacheAttributeIcon.getGeoCacheAttributeIcon(
                         attributes.get(position))));
         holder.attributeText.setText(attributes.get(position).attributeString);
 

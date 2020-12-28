@@ -16,7 +16,6 @@ import android.widget.EditText;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
-import net.teamtruta.tiaires.db.CacheDbTable;
 import net.teamtruta.tiaires.db.DbConnection;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.regex.Pattern;
 public class TourCreationActivity extends AppCompatActivity
 {
     GeocachingTour _tour = null; // when activity is initially open
-    List<String> _geocacheCodesList = new ArrayList<>();
+    List<String> _geoCacheCodesList = new ArrayList<>();
     ConstraintLayout _progressBar;
     long tourID = -1;
 
@@ -84,9 +83,9 @@ public class TourCreationActivity extends AppCompatActivity
             _tour = GeocachingTour.read(rootPath, _originalTourName);//GeocachingTour.fromFile(rootPath, _originalTourName);
 */
             // get the codes of the caches to put in the text field
-            EditText geocacheCodesView = findViewById(R.id.geocache_codes);
-            String allCodesString = _tour.getTourCacheCodes().toString();
-            geocacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
+            EditText geoCacheCodesView = findViewById(R.id.geo_cache_codes);
+            String allCodesString = _tour.getTourGeoCacheCodes().toString();
+            geoCacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
         }
         else
         {
@@ -108,19 +107,19 @@ public class TourCreationActivity extends AppCompatActivity
         EditText tourNameField = findViewById(R.id.tour_name);
         String _newTourName = tourNameField.getText().toString();
 
-        EditText tourGeocacheCodesField = findViewById(R.id.geocache_codes);
-        String tourGeocacheCodes = tourGeocacheCodesField.getText().toString();
-        tourGeocacheCodes = tourGeocacheCodes.toUpperCase();
+        EditText tourGeoCacheCodesField = findViewById(R.id.geo_cache_codes);
+        String tourGeoCacheCodes = tourGeoCacheCodesField.getText().toString();
+        tourGeoCacheCodes = tourGeoCacheCodes.toUpperCase();
 
         // Extract all codes
-        Matcher m = Pattern.compile("GC[0-9A-Z]+").matcher(tourGeocacheCodes);
+        Matcher m = Pattern.compile("GC[0-9A-Z]+").matcher(tourGeoCacheCodes);
         while (m.find()) {
-            _geocacheCodesList.add(m.group());
+            _geoCacheCodesList.add(m.group());
         }
 
         Map<String, String> properties = new HashMap<>();
         properties.put("TourName", _newTourName);
-        properties.put("NumCaches", Integer.toString(_geocacheCodesList.size()));
+        properties.put("NumGeoCaches", Integer.toString(_geoCacheCodesList.size()));
         Analytics.trackEvent("TourCreationActivity.createTour", properties);
 
         // go get the details of each geocache
@@ -162,7 +161,7 @@ public class TourCreationActivity extends AppCompatActivity
         _progressBar.setVisibility(View.VISIBLE);
 
         _tour.tourCreationActivityDelegate = this;
-        _tour.addToTour(_geocacheCodesList);
+        _tour.addToTour(_geoCacheCodesList);
 
     }
 

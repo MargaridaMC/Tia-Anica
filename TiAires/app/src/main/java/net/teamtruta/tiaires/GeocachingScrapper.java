@@ -161,18 +161,18 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public Geocache getGeocacheDetails(String code) throws IOException
+    public GeoCache getGeoCacheDetails(String code) throws IOException
     {
         code = code.toUpperCase();
 
-        Log.d(TAG, "Getting cache " + code);
-        //Geocache gc = new Geocache();
+        Log.d(TAG, "Getting geoCache " + code);
+        //GeoCache gc = new GeoCache();
 
         //gc.setCode(code);
 
         // Obtain the HTML of the page, sending the authentication cookie
-        URL geocachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
-        HttpURLConnection httpConnection = (HttpURLConnection) geocachePage.openConnection();
+        URL geoCachePage = new URL(GEOCACHING_URL + GEOCACHE_PAGE + code);
+        HttpURLConnection httpConnection = (HttpURLConnection) geoCachePage.openConnection();
 
         httpConnection.setRequestMethod("GET");
         httpConnection.setRequestProperty("User-Agent", USER_AGENT);
@@ -251,15 +251,15 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexType);
         matcher = pattern.matcher(pageContents);
 
-        CacheTypeEnum type;
+        GeoCacheTypeEnum type;
         if (matcher.find()) {
-            type = CacheTypeEnum.valueOfString(matcher.group(1));
+            type = GeoCacheTypeEnum.valueOfString(matcher.group(1));
         } else {
-            type = CacheTypeEnum.Other;
+            type = GeoCacheTypeEnum.Other;
         }
 
         // If this is a mystery cache then check if it is solved
-        if(type == CacheTypeEnum.Mystery){
+        if(type == GeoCacheTypeEnum.Mystery){
 
             String regexMysterySolved = "\"isUserDefined\":([a-z]+),";
             pattern = Pattern.compile(regexMysterySolved);
@@ -267,7 +267,7 @@ public class GeocachingScrapper {
             if (matcher.find()) {
                 boolean isSolved =  matcher.group(1).equals("true");
                 if(isSolved){
-                    type = CacheTypeEnum.Solved;
+                    type = GeoCacheTypeEnum.Solved;
                 }
             }
         }
@@ -278,11 +278,11 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexFound);
         matcher = pattern.matcher(pageContents);
 
-        FoundEnumType visit;
+        VisitOutcomeEnum visit;
         if (matcher.find()) {
-            visit = matcher.group(1).contains("Found It!") ? FoundEnumType.Found : FoundEnumType.DNF;
+            visit = matcher.group(1).contains("Found It!") ? VisitOutcomeEnum.Found : VisitOutcomeEnum.DNF;
         } else {
-            visit = FoundEnumType.NotAttempted;
+            visit = VisitOutcomeEnum.NotAttempted;
         }
 
         // Check if it is disabled
@@ -290,7 +290,7 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexDisabled);
         matcher = pattern.matcher(pageContents);
         if (matcher.find()){
-            visit = FoundEnumType.Disabled;
+            visit = VisitOutcomeEnum.Disabled;
         }
 
 
@@ -352,15 +352,15 @@ public class GeocachingScrapper {
         // It seems that the log dates are captured in different ways in different accounts
         SimpleDateFormat dateFormatter0 = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat dateFormatter1 = new SimpleDateFormat("dd.MMM.yyyy");
-        ArrayList<GeocacheLog> recentLogs = new ArrayList<>();
+        ArrayList<GeoCacheLog> recentLogs = new ArrayList<>();
 
         try{ // Try first date format
             while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
             {
 
-                FoundEnumType logType = FoundEnumType.valueOfString( matcher.group(1));
+                VisitOutcomeEnum logType = VisitOutcomeEnum.valueOfString( matcher.group(1));
                 Date logDate = dateFormatter0.parse(matcherDates.group(1));
-                GeocacheLog log = new GeocacheLog(logType, logDate);
+                GeoCacheLog log = new GeoCacheLog(logType, logDate);
 
                 recentLogs.add(log);
                 logsParsed++;
@@ -375,9 +375,9 @@ public class GeocachingScrapper {
                 while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
                 {
 
-                    FoundEnumType logType = FoundEnumType.valueOfString( matcher.group(1));
+                    VisitOutcomeEnum logType = VisitOutcomeEnum.valueOfString( matcher.group(1));
                     Date logDate = dateFormatter1.parse(matcherDates.group(1));
-                    GeocacheLog log = new GeocacheLog(logType, logDate);
+                    GeoCacheLog log = new GeoCacheLog(logType, logDate);
 
                     recentLogs.add(log);
                     logsParsed++;
@@ -389,8 +389,8 @@ public class GeocachingScrapper {
         }
 
         // 10. Get cache attributes
-        List<GeocacheAttributeEnum> attributes = new ArrayList();
-        for(GeocacheAttributeEnum attribute: GeocacheAttributeEnum.values()){
+        List<GeoCacheAttributeEnum> attributes = new ArrayList();
+        for(GeoCacheAttributeEnum attribute: GeoCacheAttributeEnum.values()){
             String atString = attribute.attributeString;
             pattern = Pattern.compile(atString);
             matcher = pattern.matcher(pageContents);
@@ -413,7 +413,7 @@ public class GeocachingScrapper {
         // Check if cache is a DNF risk
         //gc.setDNFRisk();
 
-        return new Geocache(code, name, latitude, longitude, size, difficulty, terrain, type, visit,
+        return new GeoCache(code, name, latitude, longitude, size, difficulty, terrain, type, visit,
                 hint, favourites, recentLogs, attributes);
     }
 

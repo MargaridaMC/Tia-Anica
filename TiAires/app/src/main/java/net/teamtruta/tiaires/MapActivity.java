@@ -80,8 +80,6 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
-import static com.mapbox.turf.TurfConstants.UNIT_KILOMETERS;
-
 import java.util.ArrayList;
 
 
@@ -388,7 +386,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if (hitRectText.contains((int) screenPoint.x, (int) screenPoint.y)) {
                     // user clicked on marker
-                    goToCache( window.getStringProperty(PROPERTY_CODE));
+                    goToGeoCache( window.getStringProperty(PROPERTY_CODE));
                     return true;
                 }
             }
@@ -433,35 +431,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         LatLng location;
-        for (GeocacheInTour gcit : _tour._tourCaches) {
-            location = gcit.getGeocache().getLatLng();
+        for (GeoCacheInTour gcit : _tour._tourGeoCaches) {
+            location = gcit.getGeoCache().getLatLng();
 
             Point p = Point.fromLngLat(location.getLongitude(), location.getLatitude());
             routeCoordinates.add(p);
 
             Feature feature = Feature.fromGeometry(p);
 
-            feature.addStringProperty(PROPERTY_NAME, gcit.getGeocache().getName());
-            feature.addStringProperty(PROPERTY_DIFFICULTY, gcit.getGeocache().getDifficulty());
-            feature.addStringProperty(PROPERTY_TERRAIN, gcit.getGeocache().getTerrain());
-            feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(gcit.getGeocache().getFavourites()));
-            feature.addStringProperty(PROPERTY_CODE, gcit.getGeocache().getCode());
+            feature.addStringProperty(PROPERTY_NAME, gcit.getGeoCache().getName());
+            feature.addStringProperty(PROPERTY_DIFFICULTY, gcit.getGeoCache().getDifficulty());
+            feature.addStringProperty(PROPERTY_TERRAIN, gcit.getGeoCache().getTerrain());
+            feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(gcit.getGeoCache().getFavourites()));
+            feature.addStringProperty(PROPERTY_CODE, gcit.getGeoCache().getCode());
             feature.addBooleanProperty(PROPERTY_SELECTED, false);
 
-            if (gcit.getVisit() == FoundEnumType.Found || gcit.getVisit() == FoundEnumType.DNF) {
-                feature.addStringProperty(PROPERTY_TYPE, gcit.getVisit().getTypeString());
+            if (gcit.getCurrentVisitOutcome() == VisitOutcomeEnum.Found || gcit.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF) {
+                feature.addStringProperty(PROPERTY_TYPE, gcit.getCurrentVisitOutcome().getVisitOutcomeString());
             } else {
-                feature.addStringProperty(PROPERTY_TYPE, gcit.getGeocache().getType().getTypeString());//getCacheIconResource(gcit.getGeocache().getType()));
+                feature.addStringProperty(PROPERTY_TYPE, gcit.getGeoCache().getType().getTypeString());
             }
 
             symbolLayerIconFeatureList.add(feature);
             builder.include(location);
         }
 
-        // If there is only one cache in the list the LatLngBoundsBuilder will fail to build-
-        // If that is the case just focus on the cache
-        if( _tour._tourCaches.size() == 1){
-            mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(_tour._tourCaches.get(0).getGeocache().getLatLng()), 2000);
+        // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
+        // If that is the case just focus on the geocache
+        if( _tour._tourGeoCaches.size() == 1){
+            mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(_tour._tourGeoCaches.get(0).getGeoCache().getLatLng()), 2000);
         } else {
             mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
         }
@@ -493,7 +491,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     private void setupSource(@NonNull Style loadedStyle) {
 
-        // Set source for caches
+        // Set source for geocaches
         source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
         loadedStyle.addSource(source);
 
@@ -503,12 +501,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         loadedStyle.addSource(new GeoJsonSource(FULL_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
 
         // Set source for route lines for remaining tour
-        int lastVisitedCache = _tour.getLastVisitedCache();
+        int lastVisitedGeoCache = _tour.getLastVisitedGeoCache();
         List<Point> remainingRouteCoordinates;
-        if(lastVisitedCache == 0){
+        if(lastVisitedGeoCache == 0){
             remainingRouteCoordinates = routeCoordinates.subList(0, routeCoordinates.size());
         } else {
-            remainingRouteCoordinates = routeCoordinates.subList(lastVisitedCache - 1, routeCoordinates.size());
+            remainingRouteCoordinates = routeCoordinates.subList(lastVisitedGeoCache - 1, routeCoordinates.size());
         }
         lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
                 LineString.fromLngLats(remainingRouteCoordinates))});
@@ -521,17 +519,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void setUpImage(@NonNull Style loadedStyle) {
 
 
-        for (CacheTypeEnum type : CacheTypeEnum.values()) {
+        for (GeoCacheTypeEnum type : GeoCacheTypeEnum.values()) {
             String typeString = type.getTypeString();
             if (typeString == null) break;
             loadedStyle.addImage(typeString, BitmapFactory.decodeResource(
-                    MapActivity.this.getResources(), GeocacheIcon.getIconDrawable(typeString)));
+                    MapActivity.this.getResources(), GeoCacheIcon.getIconDrawable(typeString)));
         }
         // Add finds and dnfs as well
-        loadedStyle.addImage(FoundEnumType.Found.getTypeString(), BitmapFactory.decodeResource(
-                MapActivity.this.getResources(), R.drawable.cache_icon_found));
-        loadedStyle.addImage(FoundEnumType.DNF.getTypeString(), BitmapFactory.decodeResource(
-                MapActivity.this.getResources(), R.drawable.cache_icon_dnf));
+        loadedStyle.addImage(VisitOutcomeEnum.Found.getVisitOutcomeString(), BitmapFactory.decodeResource(
+                MapActivity.this.getResources(), R.drawable.geo_cache_icon_found));
+        loadedStyle.addImage(VisitOutcomeEnum.DNF.getVisitOutcomeString(), BitmapFactory.decodeResource(
+                MapActivity.this.getResources(), R.drawable.geo_cache_icon_dnf));
 
 
     }
@@ -542,29 +540,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void setUpMarkerLayer(@NonNull Style loadedStyle) {
 
         loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID, GEOJSON_SOURCE_ID)
-                .withProperties(iconImage(match(get(PROPERTY_TYPE), literal(CacheTypeEnum.Traditional.getTypeString()),
-                        stop(CacheTypeEnum.Traditional.getTypeString(), CacheTypeEnum.Traditional.getTypeString()),
-                        stop(CacheTypeEnum.Mystery.getTypeString(), CacheTypeEnum.Mystery.getTypeString()),
-                        stop(CacheTypeEnum.Solved.getTypeString(), CacheTypeEnum.Solved.getTypeString()),
-                        stop(CacheTypeEnum.Multi.getTypeString(), CacheTypeEnum.Multi.getTypeString()),
-                        stop(CacheTypeEnum.Earth.getTypeString(), CacheTypeEnum.Earth.getTypeString()),
-                        stop(CacheTypeEnum.Letterbox.getTypeString(), CacheTypeEnum.Letterbox.getTypeString()),
-                        stop(CacheTypeEnum.Event.getTypeString(), CacheTypeEnum.Event.getTypeString()),
-                        stop(CacheTypeEnum.CITO.getTypeString(), CacheTypeEnum.CITO.getTypeString()),
-                        stop(CacheTypeEnum.Mega.getTypeString(), CacheTypeEnum.Mega.getTypeString()),
-                        stop(CacheTypeEnum.Giga.getTypeString(), CacheTypeEnum.Giga.getTypeString()),
-                        stop(CacheTypeEnum.HQ.getTypeString(), CacheTypeEnum.HQ.getTypeString()),
-                        stop(CacheTypeEnum.GPSAdventures.getTypeString(), CacheTypeEnum.GPSAdventures.getTypeString()),
-                        stop(CacheTypeEnum.Lab.getTypeString(), CacheTypeEnum.Lab.getTypeString()),
-                        stop(CacheTypeEnum.HQCelebration.getTypeString(), CacheTypeEnum.HQCelebration.getTypeString()),
-                        stop(CacheTypeEnum.HQBlockParty.getTypeString(), CacheTypeEnum.HQBlockParty.getTypeString()),
-                        stop(CacheTypeEnum.CommunityCelebration.getTypeString(), CacheTypeEnum.CommunityCelebration.getTypeString()),
-                        stop(CacheTypeEnum.Virtual.getTypeString(), CacheTypeEnum.Virtual.getTypeString()),
-                        stop(CacheTypeEnum.Webcam.getTypeString(), CacheTypeEnum.Webcam.getTypeString()),
-                        stop(CacheTypeEnum.ProjectAPE.getTypeString(), CacheTypeEnum.ProjectAPE.getTypeString()),
-                        stop(CacheTypeEnum.Locationless.getTypeString(), CacheTypeEnum.Locationless.getTypeString()),
-                        stop(FoundEnumType.Found.getTypeString(), FoundEnumType.Found.getTypeString()),
-                        stop(FoundEnumType.DNF.getTypeString(), FoundEnumType.DNF.getTypeString()))),
+                .withProperties(iconImage(match(get(PROPERTY_TYPE), literal(GeoCacheTypeEnum.Traditional.getTypeString()),
+                        stop(GeoCacheTypeEnum.Traditional.getTypeString(), GeoCacheTypeEnum.Traditional.getTypeString()),
+                        stop(GeoCacheTypeEnum.Mystery.getTypeString(), GeoCacheTypeEnum.Mystery.getTypeString()),
+                        stop(GeoCacheTypeEnum.Solved.getTypeString(), GeoCacheTypeEnum.Solved.getTypeString()),
+                        stop(GeoCacheTypeEnum.Multi.getTypeString(), GeoCacheTypeEnum.Multi.getTypeString()),
+                        stop(GeoCacheTypeEnum.Earth.getTypeString(), GeoCacheTypeEnum.Earth.getTypeString()),
+                        stop(GeoCacheTypeEnum.Letterbox.getTypeString(), GeoCacheTypeEnum.Letterbox.getTypeString()),
+                        stop(GeoCacheTypeEnum.Event.getTypeString(), GeoCacheTypeEnum.Event.getTypeString()),
+                        stop(GeoCacheTypeEnum.CITO.getTypeString(), GeoCacheTypeEnum.CITO.getTypeString()),
+                        stop(GeoCacheTypeEnum.Mega.getTypeString(), GeoCacheTypeEnum.Mega.getTypeString()),
+                        stop(GeoCacheTypeEnum.Giga.getTypeString(), GeoCacheTypeEnum.Giga.getTypeString()),
+                        stop(GeoCacheTypeEnum.HQ.getTypeString(), GeoCacheTypeEnum.HQ.getTypeString()),
+                        stop(GeoCacheTypeEnum.GPSAdventures.getTypeString(), GeoCacheTypeEnum.GPSAdventures.getTypeString()),
+                        stop(GeoCacheTypeEnum.Lab.getTypeString(), GeoCacheTypeEnum.Lab.getTypeString()),
+                        stop(GeoCacheTypeEnum.HQCelebration.getTypeString(), GeoCacheTypeEnum.HQCelebration.getTypeString()),
+                        stop(GeoCacheTypeEnum.HQBlockParty.getTypeString(), GeoCacheTypeEnum.HQBlockParty.getTypeString()),
+                        stop(GeoCacheTypeEnum.CommunityCelebration.getTypeString(), GeoCacheTypeEnum.CommunityCelebration.getTypeString()),
+                        stop(GeoCacheTypeEnum.Virtual.getTypeString(), GeoCacheTypeEnum.Virtual.getTypeString()),
+                        stop(GeoCacheTypeEnum.Webcam.getTypeString(), GeoCacheTypeEnum.Webcam.getTypeString()),
+                        stop(GeoCacheTypeEnum.ProjectAPE.getTypeString(), GeoCacheTypeEnum.ProjectAPE.getTypeString()),
+                        stop(GeoCacheTypeEnum.Locationless.getTypeString(), GeoCacheTypeEnum.Locationless.getTypeString()),
+                        stop(VisitOutcomeEnum.Found.getVisitOutcomeString(), VisitOutcomeEnum.Found.getVisitOutcomeString()),
+                        stop(VisitOutcomeEnum.DNF.getVisitOutcomeString(), VisitOutcomeEnum.DNF.getVisitOutcomeString()))),
                         iconAllowOverlap(true),
                         iconAnchor(Property.ICON_ANCHOR_CENTER),
                         iconSize(0.4f))
@@ -677,11 +675,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             inflater.inflate(R.layout.symbol_layer_info_window_layout_callout, null);
 
                     String name = feature.getStringProperty(PROPERTY_NAME);
-                    TextView titleTextView = bubbleLayout.findViewById(R.id.cache_title);
+                    TextView titleTextView = bubbleLayout.findViewById(R.id.geo_cache_title);
                     titleTextView.setText(name);
 
-                    TextView descriptionTextView = bubbleLayout.findViewById(R.id.cache_description);
-                    descriptionTextView.setText(String.format(activity.getString(R.string.cache_description_box),
+                    TextView descriptionTextView = bubbleLayout.findViewById(R.id.geo_cache_description);
+                    descriptionTextView.setText(String.format(activity.getString(R.string.geo_cache_description_box),
                             feature.getStringProperty(PROPERTY_DIFFICULTY),
                             feature.getStringProperty(PROPERTY_TERRAIN),
                             feature.getStringProperty(PROPERTY_FAVOURITES)));
@@ -719,7 +717,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    public boolean goToCache(String code) {
+    public boolean goToGeoCache(String code) {
 
         String url = "https://coord.info/" + code;
         Intent i = new Intent(Intent.ACTION_VIEW);
@@ -818,17 +816,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         lineLengthTextView.setVisibility(View.VISIBLE);
 
         lineLengthTextView.setText(String.format(getString(R.string.remaining_tour_distance),
-                computeTourDistance(_tour.getLastVisitedCache()), "kms"));
+                computeTourDistance(_tour.getLastVisitedGeoCache()), "kms"));
     }
 
 
-    private double computeTourDistance(int startCacheIDX ){
+    private double computeTourDistance(int startGeoCacheIDX ){
         double distance = 0;
 
-        if(startCacheIDX == 0)
-            startCacheIDX = 1;
+        if(startGeoCacheIDX == 0)
+            startGeoCacheIDX = 1;
 
-        for(int i = startCacheIDX; i < routeCoordinates.size(); i++){
+        for(int i = startGeoCacheIDX; i < routeCoordinates.size(); i++){
             distance += TurfMeasurement.distance(routeCoordinates.get(i), routeCoordinates.get(i - 1));
         }
 

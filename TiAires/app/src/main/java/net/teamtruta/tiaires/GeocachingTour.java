@@ -17,7 +17,7 @@ public class GeocachingTour
     public long _id;
     private String _name;
     boolean _isCurrentTour;
-    public List<GeocacheInTour> _tourCaches = new ArrayList<>();
+    public List<GeoCacheInTour> _tourGeoCaches = new ArrayList<>();
     DbConnection _dbConnection;
 
     TourCreationActivity tourCreationActivityDelegate;
@@ -38,7 +38,7 @@ public class GeocachingTour
     static GeocachingTour getGeocachingTourFromID(long id, DbConnection dbConnection){
         GeocachingTour tour = dbConnection.getTourTable().getTour(id, dbConnection);
         tour._dbConnection = dbConnection;
-        tour._tourCaches = dbConnection.getCacheTable().getAllCachesInTour(id, dbConnection);
+        tour._tourGeoCaches = dbConnection.getGeoCacheTable().getAllGeoCachesInTour(id, dbConnection);
         return tour;
     }
 
@@ -55,21 +55,21 @@ public class GeocachingTour
     }
 
     public long getSize(){
-        return _dbConnection.getCacheTable().getSizeOfTour(_id);
+        return _dbConnection.getGeoCacheTable().getSizeOfTour(_id);
     }
 
     public long getNumFound(){
-        return _dbConnection.getCacheTable().getNumberFindInTour(_id);
+        return _dbConnection.getGeoCacheTable().getNumberFindInTour(_id);
     }
 
     public long getNumDNF(){
-        return _dbConnection.getCacheTable().getNumberDNFInTour(_id);
+        return _dbConnection.getGeoCacheTable().getNumberDNFInTour(_id);
     }
 
-    public List<String> getTourCacheCodes() {
+    public List<String> getTourGeoCacheCodes() {
 
-        return _tourCaches.stream().map(GeocacheInTour::getGeocache)
-                .map(Geocache::getCode).collect(Collectors.toList());
+        return _tourGeoCaches.stream().map(GeoCacheInTour::getGeoCache)
+                .map(GeoCache::getCode).collect(Collectors.toList());
 
     }
 
@@ -80,29 +80,29 @@ public class GeocachingTour
     void removeFromTour(String code)
     {
         final String upperCode = code.toUpperCase();
-        _dbConnection.getCacheTable().deleteCache(upperCode, _id);
+        _dbConnection.getGeoCacheTable().deleteCache(upperCode, _id);
     }
 
-    public void addToTour(List<String> cachesToGet) { // TODO: trocar isto por uma classe básica de todas as collecções?
+    public void addToTour(List<String> geoCachesToGet) { // TODO: trocar isto por uma classe básica de todas as collecções?
 
         // Remove any repeated caches
-        cachesToGet = cachesToGet.stream().distinct().collect(Collectors.toList());
+        geoCachesToGet = geoCachesToGet.stream().distinct().collect(Collectors.toList());
 
         // Process the deltas from the old list to the new list
         // 1. Remove from the original tour caches that are not in the new one
-        List<String> cachesAlreadyInTour = getTourCacheCodes();//new CacheDbTable(this).getTourCacheCodes(tourID);
-        for (String currentTourCache : cachesAlreadyInTour) {
-            if (!cachesToGet.contains(currentTourCache)) {
+        List<String> geoCachesAlreadyInTour = getTourGeoCacheCodes();//new CacheDbTable(this).getTourCacheCodes(tourID);
+        for (String currentTourCache : geoCachesAlreadyInTour) {
+            if (!geoCachesToGet.contains(currentTourCache)) {
                 removeFromTour(currentTourCache);
             }
         }
 
         // 2. Remove from the list of caches to fetch, those we already have loaded
-        cachesToGet = cachesToGet.stream().filter(str -> !cachesAlreadyInTour.contains(str))
+        geoCachesToGet = geoCachesToGet.stream().filter(str -> !geoCachesAlreadyInTour.contains(str))
                 .collect(Collectors.toList());
 
         // Get the IDs of the new caches we obtained and add them to the database
-        Geocache.Companion.getGeocaches(cachesToGet, _dbConnection, this, false);
+        GeoCache.Companion.getGeoCaches(geoCachesToGet, _dbConnection, this, false);
 
     }
 
@@ -111,9 +111,9 @@ public class GeocachingTour
         _dbConnection.getTourTable().changeName(_id, newTourName);
     }
 
-    void onAllGeocachesObtained(boolean reloading){
+    void onAllGeoCachesObtained(boolean reloading){
         if(reloading){
-            tourActivityDelegate.onFinishedReloadingCaches();
+            tourActivityDelegate.onFinishedReloadingGeoCaches();
         } else {
             tourCreationActivityDelegate.onTourCreated();
         }
@@ -122,14 +122,14 @@ public class GeocachingTour
 
     public void reloadTourCaches() {
 
-        Geocache.Companion.getGeocaches(getTourCacheCodes(), _dbConnection, this, true);
+        GeoCache.Companion.getGeoCaches(getTourGeoCacheCodes(), _dbConnection, this, true);
 
     }
 
     public void deleteTour() {
 
         // Delete all GeocacheInTour in this tour
-        _dbConnection.getCacheTable().deleteAllCachesInTour(_id);
+        _dbConnection.getGeoCacheTable().deleteAllGeoCachesInTour(_id);
 
         // Delete Tour
         _dbConnection.getTourTable().deleteTour(_id);
@@ -139,29 +139,29 @@ public class GeocachingTour
 
     public void updateTourCaches(){
 
-        for(int i = 0; i < _tourCaches.size(); i++){
-            _tourCaches.get(i).setOrderIdx(i);
-            _dbConnection.getCacheTable().updateEntry(_tourCaches.get(i));
+        for(int i = 0; i < _tourGeoCaches.size(); i++){
+            _tourGeoCaches.get(i).setOrderIdx(i);
+            _dbConnection.getGeoCacheTable().updateEntry(_tourGeoCaches.get(i));
         }
 
     }
 
-    public int getLastVisitedCache(){
+    public int getLastVisitedGeoCache(){
 
-        GeocacheInTour lastVisitedGeocache = _tourCaches.stream()
-                .filter(x -> x.getVisit() == FoundEnumType.Found ||
-                        x.getVisit() == FoundEnumType.DNF)
+        GeoCacheInTour lastVisitedGeoCache = _tourGeoCaches.stream()
+                .filter(x -> x.getCurrentVisitOutcome() == VisitOutcomeEnum.Found ||
+                        x.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF)
                 .reduce((first, second) -> second)
                 .orElse(null);
 
-        if(lastVisitedGeocache == null){
+        if(lastVisitedGeoCache == null){
             return 0;
         }
 
 
-        ListIterator<GeocacheInTour> it = _tourCaches.listIterator();
+        ListIterator<GeoCacheInTour> it = _tourGeoCaches.listIterator();
         while (it.hasNext()) {
-            if(it.next() == lastVisitedGeocache) return it.nextIndex();
+            if(it.next() == lastVisitedGeoCache) return it.nextIndex();
         }
 
         return 0;

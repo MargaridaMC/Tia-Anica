@@ -1,6 +1,7 @@
 package net.teamtruta.tiaires;
 
-public enum GeocacheAttributeEnum {
+public enum GeoCacheAttributeEnum
+{
 
     BoatRequired("Boat required"),
     ClimbingGearRequired("Climbing gear required"),
@@ -23,12 +24,12 @@ public enum GeocacheAttributeEnum {
 
     public String attributeString;
 
-    GeocacheAttributeEnum(String s) {
+    GeoCacheAttributeEnum(String s) {
         this.attributeString = s;
     }
 
-    public static GeocacheAttributeEnum valueOfString(String typeString) {
-        for (GeocacheAttributeEnum e : values()) {
+    public static GeoCacheAttributeEnum valueOfString(String typeString) {
+        for (GeoCacheAttributeEnum e : values()) {
             if (e.attributeString.equals(typeString)) {
                 return e;
             }
