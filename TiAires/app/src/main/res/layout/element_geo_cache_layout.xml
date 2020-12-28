@@ -89,8 +89,7 @@
             android:id="@+id/geo_cache_has_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:theme="@style/TextView"
-            android:text="@string/geo_cache_has_no_hint"/>
+            android:theme="@style/TextView"/>
 
         <TextView
             android:id="@+id/dnf_risk"

@@ -19,6 +19,7 @@ public enum GeoCacheAttributeEnum
     TeamworkCache("Teamwork cache"),
     TreeClimbingRequired("Tree climbing required"),
     UVLightRequired("UV light required"),
+    NeedsMaintenance("Needs maintenance"),
     //"Field puzzle"
     None("None");
 

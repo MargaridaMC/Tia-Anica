@@ -25,7 +25,9 @@ class GeoCache(val code: String, val name: String, val latitude: Coordinate,
     val dNFRisk: String
         get() {
             if (previousVisitOutcome == VisitOutcomeEnum.Disabled) return "DISABLED"
-            if (recentLogs.any { it.logType == VisitOutcomeEnum.NeedsMaintenance }) return "NEEDS MAINTENANCE"
+            if (recentLogs.subList(0, 10).any {it.logType == VisitOutcomeEnum.DNF}) return "DNF RISK"
+            //if (recentLogs.subList(0, 10).any { it.logType == VisitOutcomeEnum.NeedsMaintenance } ||
+            if (attributes.contains(GeoCacheAttributeEnum.NeedsMaintenance)) return "NEEDS MAINTENANCE"
             return ""
         }
 

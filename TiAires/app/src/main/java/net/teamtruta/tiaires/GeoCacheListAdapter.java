@@ -93,7 +93,8 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         if(geoCache.hasHint()){
             holder.geoCacheHasHint.setText(App.getContext().getString(R.string.geo_cache_has_hint));
         } else {
-            holder.geoCacheHasHint.setText(App.getContext().getString(R.string.geo_cache_has_no_hint));
+            holder.geoCacheHasHint.setText(HtmlCompat.fromHtml(App.getContext().getString(R.string.geo_cache_has_no_hint),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
 
         List<GeoCacheLog> last10Logs = geoCache.getLastNLogs(10);
@@ -116,7 +117,6 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
 
         // 6. Set DNF information if required
         if(geoCache.isDNFRisk()){
-
             String dnfString = App.getContext().getString(R.string.dnf_risk);
             dnfString = String.format(dnfString, geoCache.getDNFRisk());
 
@@ -124,6 +124,9 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
                     dnfString,
                     HtmlCompat.FROM_HTML_MODE_LEGACY));
             holder.dnfInfo.setVisibility(View.VISIBLE);
+        } else {
+            holder.dnfInfo.setText("");
+            holder.dnfInfo.setVisibility(View.GONE);
         }
 
        // 7. Set listener for edit button

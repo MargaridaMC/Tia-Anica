@@ -339,7 +339,7 @@ public class GeocachingScrapper {
         }
 
         // 9. Last logs and their dates
-        int logsParsed = 0, maxLogsToParse = 25;
+        int logsParsed = 0, maxLogsToParse = 10;
         String regexLogType = "\"LogType\":\"([a-zA-Z'\\s]+)\"";
         String regexLogDate = "\"Visited\":\"([A-Za-z0-9/\\.]+)";
 
