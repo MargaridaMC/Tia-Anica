@@ -74,12 +74,15 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         holder.geoCacheCode.setText(geoCache.getCode());
 
         String difTerString = App.getContext().getString(R.string.geo_cache_dif_ter);
-        String difficulty = geoCache.getDifficulty();
-        String terrain = geoCache.getTerrain();
-        String diffString = ((Double.parseDouble(difficulty) > 4) ?
-                "<font color='red'>" + difficulty + "</font>/" : difficulty);
-        String terString = ((Double.parseDouble(terrain) > 4) ?
-                "<font color='red'>" + terrain + "</font>/" : terrain);
+        double difficulty = Double.parseDouble(geoCache.getDifficulty());
+        double terrain = Double.parseDouble(geoCache.getTerrain());
+        
+        String diffString = String.format("%.1f", difficulty);
+        String terString = String.format("%.1f", terrain);
+        diffString = ((difficulty > 4) ?
+                "<font color='red'>" + diffString + "</font>/" : diffString);
+        terString = ((terrain > 4) ?
+                "<font color='red'>" + terString + "</font>/" : terString);
         holder.geoCacheDifTer.setText( HtmlCompat.fromHtml(String.format(difTerString, diffString, terString),
                 HtmlCompat.FROM_HTML_MODE_LEGACY));
 

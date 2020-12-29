@@ -42,7 +42,7 @@ class GeoCache(val code: String, val name: String, val latitude: Coordinate,
 
 
     fun getLastNLogs(n: Int): List<GeoCacheLog> {
-        return recentLogs.subList(0, n + 1)
+        return recentLogs.subList(0, n)
     }
 
 

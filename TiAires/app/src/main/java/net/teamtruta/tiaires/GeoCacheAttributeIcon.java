@@ -55,6 +55,12 @@ public class GeoCacheAttributeIcon
             case TreeClimbingRequired:
                 drawableID = R.drawable.attribute_treeclimbing_required;
                 break;
+            case NeedsMaintenance:
+                drawableID = R.drawable.attribute_needs_maintenance;
+                break;
+            default:
+                drawableID = R.drawable.attribute_unknown;
+                break;
         }
 
         return drawableID;
