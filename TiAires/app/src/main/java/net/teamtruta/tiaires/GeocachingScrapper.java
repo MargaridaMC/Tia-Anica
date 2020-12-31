@@ -253,7 +253,7 @@ public class GeocachingScrapper {
 
         GeoCacheTypeEnum type;
         if (matcher.find()) {
-            type = GeoCacheTypeEnum.valueOfString(matcher.group(1));
+            type = GeoCacheTypeEnum.Companion.valueOfString(matcher.group(1));
         } else {
             type = GeoCacheTypeEnum.Other;
         }
@@ -358,7 +358,7 @@ public class GeocachingScrapper {
             while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
             {
 
-                VisitOutcomeEnum logType = VisitOutcomeEnum.valueOfString( matcher.group(1));
+                VisitOutcomeEnum logType = VisitOutcomeEnum.Companion.valueOfString( matcher.group(1));
                 Date logDate = dateFormatter0.parse(matcherDates.group(1));
                 GeoCacheLog log = new GeoCacheLog(logType, logDate);
 
@@ -375,7 +375,7 @@ public class GeocachingScrapper {
                 while(matcher.find() && matcherDates.find() && logsParsed < maxLogsToParse)
                 {
 
-                    VisitOutcomeEnum logType = VisitOutcomeEnum.valueOfString( matcher.group(1));
+                    VisitOutcomeEnum logType = VisitOutcomeEnum.Companion.valueOfString( matcher.group(1));
                     Date logDate = dateFormatter1.parse(matcherDates.group(1));
                     GeoCacheLog log = new GeoCacheLog(logType, logDate);
 
@@ -391,7 +391,7 @@ public class GeocachingScrapper {
         // 10. Get cache attributes
         List<GeoCacheAttributeEnum> attributes = new ArrayList();
         for(GeoCacheAttributeEnum attribute: GeoCacheAttributeEnum.values()){
-            String atString = attribute.attributeString;
+            String atString = attribute.getAttributeString();
             pattern = Pattern.compile(atString);
             matcher = pattern.matcher(pageContents);
             if(matcher.find()){

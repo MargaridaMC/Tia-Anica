@@ -523,7 +523,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             String typeString = type.getTypeString();
             if (typeString == null) break;
             loadedStyle.addImage(typeString, BitmapFactory.decodeResource(
-                    MapActivity.this.getResources(), GeoCacheIcon.getIconDrawable(typeString)));
+                    MapActivity.this.getResources(), GeoCacheIcon.Companion.getIconDrawable(typeString)));
         }
         // Add finds and dnfs as well
         loadedStyle.addImage(VisitOutcomeEnum.Found.getVisitOutcomeString(), BitmapFactory.decodeResource(

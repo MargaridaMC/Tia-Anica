@@ -1,7 +1,12 @@
 package net.teamtruta.tiaires
 
 enum class VisitOutcomeEnum(var visitOutcomeString: String) {
-    NotAttempted(""), DNF("Didn't find it"), Found("Found it"), Note("Write note"), Disabled("Temporarily Disable Listing"), NeedsMaintenance("Needs Maintenance");
+    NotAttempted(""),
+    DNF("Didn't find it"),
+    Found("Found it"),
+    //Note("Write note"),
+    Disabled("Temporarily Disable Listing");
+    //NeedsMaintenance("Needs Maintenance");
 
     companion object {
         fun valueOfString(foundTypeString: String): VisitOutcomeEnum {

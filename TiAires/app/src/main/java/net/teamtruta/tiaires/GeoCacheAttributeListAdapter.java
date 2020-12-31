@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 public class GeoCacheAttributeListAdapter extends BaseAdapter {
 
-    private ArrayList<GeoCacheAttributeEnum> attributes;
-    private LayoutInflater layoutInflater;
-    private Context context;
+    private final ArrayList<GeoCacheAttributeEnum> attributes;
+    private final LayoutInflater layoutInflater;
+    private final Context context;
 
     public GeoCacheAttributeListAdapter(Context context, ArrayList<GeoCacheAttributeEnum> attributes) {
         this.attributes = attributes;
@@ -54,9 +54,9 @@ public class GeoCacheAttributeListAdapter extends BaseAdapter {
         }
 
         holder.attributeIcon.setImageDrawable(
-                context.getDrawable(GeoCacheAttributeIcon.getGeoCacheAttributeIcon(
+                context.getDrawable(GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(
                         attributes.get(position))));
-        holder.attributeText.setText(attributes.get(position).attributeString);
+        holder.attributeText.setText(attributes.get(position).getAttributeString());
 
         return convertView;
     }

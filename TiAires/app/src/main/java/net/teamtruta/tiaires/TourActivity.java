@@ -290,6 +290,7 @@ public class TourActivity extends AppCompatActivity implements GeoCacheListAdapt
 
         ArrayList<GeoCacheAttributeEnum> allAttributesList = _tour._tourGeoCaches.stream()
                 .flatMap(x -> x.getGeoCache().getAttributes().stream()).distinct()
+                .filter(x -> x != GeoCacheAttributeEnum.NeedsMaintenance)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if(allAttributesList.size() == 0){

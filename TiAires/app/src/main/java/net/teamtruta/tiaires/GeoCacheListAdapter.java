@@ -64,7 +64,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         } else if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Disabled){
             drawableID = R.drawable.geo_cache_icon_disabled50x50;
         } else {
-            drawableID = GeoCacheIcon.getIconDrawable(geoCacheInTour.getGeoCache().getType());
+            drawableID = GeoCacheIcon.Companion.getIconDrawable(geoCacheInTour.getGeoCache().getType());
         }
 
         Drawable geoCacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
@@ -164,7 +164,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
             for(GeoCacheAttributeEnum attribute: geoCache.getAttributes()){
                 ImageView iv = new ImageView(App.getContext());
                 iv.setImageDrawable(App.getContext().getDrawable(
-                        GeoCacheAttributeIcon.getGeoCacheAttributeIcon(attribute)));
+                        GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute)));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size),
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size));
