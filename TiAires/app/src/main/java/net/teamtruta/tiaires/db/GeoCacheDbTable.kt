@@ -166,7 +166,7 @@ class GeoCacheDbTable (private val context: Context) {
         return geoCacheInTour
     }
 
-    fun Cursor.getGeoCacheInTour(dbConnection : DbConnection) : GeoCacheInTour {
+    private fun Cursor.getGeoCacheInTour(dbConnection : DbConnection) : GeoCacheInTour {
 
         val geoCacheID = getLong(GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL)
         val gc = GeoCacheDetailDbTable(context).getGeoCache(geoCacheID)
@@ -174,7 +174,7 @@ class GeoCacheDbTable (private val context: Context) {
         val _id = getLong(GeoCacheEntry._ID)
         val notes = getString(GeoCacheEntry.NOTES_COL)
         val visit = VisitOutcomeEnum.valueOfString(getString(GeoCacheEntry.VISIT_COL))
-        val foundDate = getString(GeoCacheEntry.FOUND_DATE_COL).toDate()
+        val foundDate = getStringOrNull(GeoCacheEntry.FOUND_DATE_COL)?.toDate()
         val needsMaintenance = getBoolean(GeoCacheEntry.NEEDS_MAINTENANCE_COL)
         val foundTrackable = getStringOrNull(GeoCacheEntry.FOUND_TRACKABLE_COL)
         val droppedTrackable = getStringOrNull(GeoCacheEntry.DROPPED_TRACKABLE_COL)

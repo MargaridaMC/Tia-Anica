@@ -56,5 +56,5 @@ fun Date.toFormattedString() : String{
 fun String.toDate() : Date{
     //val format = "E MMM dd hh:mm:ss z yyyy"
     val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT, Locale.getDefault())
-    return dateFormat.parse(this)
+    return dateFormat.parse(this) ?: Date()
 }
