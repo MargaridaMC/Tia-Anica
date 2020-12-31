@@ -74,8 +74,8 @@ class GeoCacheDetailDbTable(private val context: Context)  {
                     val code = getString(GeoCacheDetailEntry.CODE_COL)
                     val type = GeoCacheTypeEnum.valueOfString(getString(GeoCacheDetailEntry.TYPE_COL))
                     val size = getString(GeoCacheDetailEntry.SIZE_COL)
-                    val terrain = getString(GeoCacheDetailEntry.TERRAIN_COL)
-                    val difficulty = getString(GeoCacheDetailEntry.DIF_COL)
+                    val terrain = getDouble(GeoCacheDetailEntry.TERRAIN_COL)
+                    val difficulty = getDouble(GeoCacheDetailEntry.DIF_COL)
                     val visitType = VisitOutcomeEnum.valueOfString(getString(GeoCacheDetailEntry.FIND_COL))
                     val hint = getString(GeoCacheDetailEntry.HINT_COL)
                     val latitude = Coordinate(getDouble(GeoCacheDetailEntry.LAT_COL))
@@ -133,7 +133,7 @@ class GeoCacheDetailDbTable(private val context: Context)  {
 
     }
 
-    fun deleteEntry(id : Long){
+    private fun deleteEntry(id : Long){
 
         // First delete all logs related to this cache
         LogDbTable(context).deleteLogsInGeoCache(id)

@@ -25,7 +25,7 @@ public class GeocachingScrapper {
 
     //private String _username, _password;
 
-    private String TAG = GeocachingScrapper.class.getSimpleName();
+    private final String TAG = GeocachingScrapper.class.getSimpleName();
 
     private static final String GEOCACHING_URL = "https://www.geocaching.com";
     private static final String LOGIN_PAGE = "/account/signin";
@@ -231,19 +231,19 @@ public class GeocachingScrapper {
         pattern = Pattern.compile(regexDifficulty);
         matcher = pattern.matcher(pageContents);
 
-        String difficulty, terrain;
+        double difficulty, terrain;
         if (matcher.find()) {
-            difficulty = matcher.group(1);
+            difficulty = Double.parseDouble(matcher.group(1));
 
             if(matcher.find()) {
-                terrain = matcher.group(1);
+                terrain = Double.parseDouble(matcher.group(1));
             }
             else {
-                terrain = "NO MATCH";
+                terrain = -1;
             }
         } else {
-            difficulty = "NO MATCH";
-            terrain = "NO MATCH";
+            difficulty = -1;
+            terrain = -1;
         }
 
         // 5. Get the cache type

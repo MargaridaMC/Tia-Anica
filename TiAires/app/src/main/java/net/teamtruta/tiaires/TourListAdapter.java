@@ -14,8 +14,8 @@ import java.util.List;
 
 public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourViewHolder> {
 
-    private List<GeocachingTour> _tourList;
-    private ItemClickListener onClickListener;
+    private final List<GeocachingTour> _tourList;
+    private final ItemClickListener onClickListener;
 
     // data is passed into the constructor
     TourListAdapter(List<GeocachingTour> data, ItemClickListener listener){

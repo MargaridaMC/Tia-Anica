@@ -74,8 +74,8 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         holder.geoCacheCode.setText(geoCache.getCode());
 
         String difTerString = App.getContext().getString(R.string.geo_cache_dif_ter);
-        double difficulty = Double.parseDouble(geoCache.getDifficulty());
-        double terrain = Double.parseDouble(geoCache.getTerrain());
+        double difficulty = geoCache.getDifficulty();
+        double terrain = geoCache.getTerrain();
         
         String diffString = String.format("%.1f", difficulty);
         String terString = String.format("%.1f", terrain);

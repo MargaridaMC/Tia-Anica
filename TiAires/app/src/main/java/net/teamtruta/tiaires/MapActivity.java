@@ -440,8 +440,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Feature feature = Feature.fromGeometry(p);
 
             feature.addStringProperty(PROPERTY_NAME, gcit.getGeoCache().getName());
-            feature.addStringProperty(PROPERTY_DIFFICULTY, gcit.getGeoCache().getDifficulty());
-            feature.addStringProperty(PROPERTY_TERRAIN, gcit.getGeoCache().getTerrain());
+            feature.addStringProperty(PROPERTY_DIFFICULTY, Double.toString(gcit.getGeoCache().getDifficulty()));
+            feature.addStringProperty(PROPERTY_TERRAIN, Double.toString(gcit.getGeoCache().getTerrain()));
             feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(gcit.getGeoCache().getFavourites()));
             feature.addStringProperty(PROPERTY_CODE, gcit.getGeoCache().getCode());
             feature.addBooleanProperty(PROPERTY_SELECTED, false);

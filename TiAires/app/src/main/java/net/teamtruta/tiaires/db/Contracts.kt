@@ -3,7 +3,7 @@ package net.teamtruta.tiaires.db
 import android.provider.BaseColumns
 
 val DATABASE_NAME = "tiaires.db"
-val DATABASE_VERSION = 16
+val DATABASE_VERSION = 17
 
 object TourEntry : BaseColumns{
     val TABLE_NAME = "tour"

@@ -5,15 +5,15 @@ import net.teamtruta.tiaires.db.DbConnection
 import kotlin.collections.ArrayList
 
 class GeoCache(val code: String, val name: String, val latitude: Coordinate,
-               val longitude: Coordinate, val size: String, val difficulty: String,
-               val terrain: String, val type: GeoCacheTypeEnum = GeoCacheTypeEnum.Other,
+               val longitude: Coordinate, val size: String, val difficulty: Double,
+               val terrain: Double, val type: GeoCacheTypeEnum = GeoCacheTypeEnum.Other,
                val previousVisitOutcome: VisitOutcomeEnum = VisitOutcomeEnum.NotAttempted,
                val hint: String, val favourites: Int = 0, val recentLogs: List<GeoCacheLog>,
                val attributes: List<GeoCacheAttributeEnum> = listOf(),
                var _id: Long = 0) {
 
     constructor(code: String, name: String, latitude: Coordinate, longitude: Coordinate,
-                size: String, difficulty: String, terrain: String, type: GeoCacheTypeEnum,
+                size: String, difficulty: Double, terrain: Double, type: GeoCacheTypeEnum,
                 visit: VisitOutcomeEnum, hint: String, favourites: Int,
                 recentLogs: ArrayList<GeoCacheLog>, attributes: List<GeoCacheAttributeEnum>) :
             this(code, name, latitude, longitude, size, difficulty, terrain, type, visit, hint,

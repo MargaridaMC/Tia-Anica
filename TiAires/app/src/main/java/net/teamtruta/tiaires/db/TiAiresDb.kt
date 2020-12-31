@@ -53,8 +53,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${GeoCacheDetailEntry.CODE_COL} TEXT UNIQUE," +
             "${GeoCacheDetailEntry.TYPE_COL} INTEGER," + // Matches an Enum
             "${GeoCacheDetailEntry.SIZE_COL} TEXT," +
-            "${GeoCacheDetailEntry.TERRAIN_COL} TEXT," +
-            "${GeoCacheDetailEntry.DIF_COL} TEXT," +
+            "${GeoCacheDetailEntry.TERRAIN_COL} REAL," + //TEXT," +
+            "${GeoCacheDetailEntry.DIF_COL} REAL," + //TEXT," +
             "${GeoCacheDetailEntry.FIND_COL} TEXT," +
             "${GeoCacheDetailEntry.HINT_COL} TEXT," +
             "${GeoCacheDetailEntry.LAT_COL} REAL," + // ?
@@ -220,6 +220,53 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         if(oldVersion <= 15){
             // Create table for attributes
             db?.execSQL(SQL_CREATE_ATTRIBUTE_TABLE)
+        }
+
+        // Change type of difficulty and terrain columns to real
+        if(oldVersion <= 16){
+            // Rename old table to a different name
+            val tempTableName = "${GeoCacheDetailEntry.TABLE_NAME}OLD"
+            val SQL_RENAME_TABLE = "ALTER TABLE ${GeoCacheDetailEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName"
+            db?.execSQL(SQL_RENAME_TABLE)
+
+            // Create new table with appropriate structure
+            db?.execSQL(SQL_CREATE_CACHE_DETAIL_TABLE)
+
+            // Transfer data from old one to the new one
+            val SQL_TRANSFER_DATA = "INSERT INTO ${GeoCacheDetailEntry.TABLE_NAME} (" +
+                    "${GeoCacheDetailEntry._ID}, " +
+                    "${GeoCacheDetailEntry.NAME_COL}, " +
+                    "${GeoCacheDetailEntry.CODE_COL}, " +
+                    "${GeoCacheDetailEntry.TYPE_COL}, " +
+                    "${GeoCacheDetailEntry.SIZE_COL}, " +
+                    "${GeoCacheDetailEntry.TERRAIN_COL}, " +
+                    "${GeoCacheDetailEntry.DIF_COL}, " +
+                    "${GeoCacheDetailEntry.FIND_COL}, " +
+                    "${GeoCacheDetailEntry.HINT_COL}, " +
+                    "${GeoCacheDetailEntry.LAT_COL}, " +
+                    "${GeoCacheDetailEntry.LON_COL}, " +
+                    GeoCacheDetailEntry.FAV_COL +
+                    ")" +
+                    "SELECT " +
+                    "${GeoCacheDetailEntry._ID}, " +
+                    "${GeoCacheDetailEntry.NAME_COL}, " +
+                    "${GeoCacheDetailEntry.CODE_COL}, " +
+                    "${GeoCacheDetailEntry.TYPE_COL}, " +
+                    "${GeoCacheDetailEntry.SIZE_COL}, " +
+                    "${GeoCacheDetailEntry.TERRAIN_COL}, " +
+                    "${GeoCacheDetailEntry.DIF_COL}, " +
+                    "${GeoCacheDetailEntry.FIND_COL}, " +
+                    "${GeoCacheDetailEntry.HINT_COL}, " +
+                    "${GeoCacheDetailEntry.LAT_COL}, " +
+                    "${GeoCacheDetailEntry.LON_COL}, " +
+                    GeoCacheDetailEntry.FAV_COL +
+                    "FROM $tempTableName"
+
+            db?.execSQL(SQL_TRANSFER_DATA)
+
+            // Delete original table
+            db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
         }
     }
 
