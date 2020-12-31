@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 
 class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
@@ -62,7 +64,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         } else if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF){
             drawableID = R.drawable.geo_cache_icon_dnf;
         } else if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Disabled){
-            drawableID = R.drawable.geo_cache_icon_disabled50x50;
+            drawableID = R.drawable.geo_cache_icon_disabled;
         } else {
             drawableID = GeoCacheIcon.Companion.getIconDrawable(geoCacheInTour.getGeoCache().getType());
         }
@@ -77,8 +79,8 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         double difficulty = geoCache.getDifficulty();
         double terrain = geoCache.getTerrain();
         
-        String diffString = String.format("%.1f", difficulty);
-        String terString = String.format("%.1f", terrain);
+        String diffString = String.format(Locale.getDefault(), "%.1f", difficulty);
+        String terString = String.format(Locale.getDefault(), "%.1f", terrain);
         diffString = ((difficulty > 4) ?
                 "<font color='red'>" + diffString + "</font>/" : diffString);
         terString = ((terrain > 4) ?
@@ -163,8 +165,10 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         if(geoCache.getAttributes().size() > 0){
             for(GeoCacheAttributeEnum attribute: geoCache.getAttributes()){
                 ImageView iv = new ImageView(App.getContext());
-                iv.setImageDrawable(App.getContext().getDrawable(
-                        GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute)));
+                iv.setImageDrawable(ResourcesCompat.getDrawable(App.getContext().getResources(),
+                        GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute), null));
+                //iv.setImageDrawable(App.getContext().getDrawable(
+                //        GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute)));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size),
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size));
@@ -239,21 +243,20 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         onVisitListener.onVisit(visit.toString());
     }
 
-    @Override
-    public void onItemDismiss(int position) {
+    //@Override
+    //public void onItemDismiss(int position) {
         //tour._tourCaches.remove(position);
         //notifyItemRemoved(position);
-    }
+    //}
 
     @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
+    public void onItemMove(int fromPosition, int toPosition) {
 
         Collections.swap(tour._tourGeoCaches, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         //tour.swapCachePositions(fromPosition, toPosition);
         tour.updateTourCaches();
 
-        return true;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
