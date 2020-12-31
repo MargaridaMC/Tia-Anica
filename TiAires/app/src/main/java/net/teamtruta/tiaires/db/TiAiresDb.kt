@@ -247,7 +247,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                     "${GeoCacheDetailEntry.LAT_COL}, " +
                     "${GeoCacheDetailEntry.LON_COL}, " +
                     GeoCacheDetailEntry.FAV_COL +
-                    ")" +
+                    ") " +
                     "SELECT " +
                     "${GeoCacheDetailEntry._ID}, " +
                     "${GeoCacheDetailEntry.NAME_COL}, " +
@@ -261,7 +261,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                     "${GeoCacheDetailEntry.LAT_COL}, " +
                     "${GeoCacheDetailEntry.LON_COL}, " +
                     GeoCacheDetailEntry.FAV_COL +
-                    "FROM $tempTableName"
+                    " FROM $tempTableName"
 
             db?.execSQL(SQL_TRANSFER_DATA)
 
