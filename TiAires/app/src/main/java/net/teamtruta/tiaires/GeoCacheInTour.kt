@@ -14,7 +14,9 @@ class GeoCacheInTour(val geoCache: GeoCache, var notes : String = "",
                      var pathToImage : String? = null, val _id : Long = -1,
                      private val _dbConnection : DbConnection? = null) {
 
-    // the following fields have the "In Tour" semantics. So if a geoCache was found but not in the tour, _found will be = NotAttempted; same logic applies to other fields.
+    // the following fields have the "In Tour" semantics.
+    // So if a geoCache was found but not in the tour, currentVisitOutcome will be = NotAttempted;
+    // same logic applies to other fields.
 
     constructor(geoCache: GeoCache) : this(geoCache = geoCache, _dbConnection = null)
 

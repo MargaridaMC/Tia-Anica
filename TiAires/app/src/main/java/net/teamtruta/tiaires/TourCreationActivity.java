@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public class TourCreationActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
         // Setup Database Connection
@@ -75,7 +76,7 @@ public class TourCreationActivity extends AppCompatActivity
             tourTitleView.setText(_tour.getName());
 
             Button enterButton = findViewById(R.id.create_tour_button);
-            enterButton.setText("Save Changes");
+            enterButton.setText(R.string.save_changes);
             //TODO: enterButton.setOnClickListener(); -- just to do changes and don't get everything again
 
             // read the tour from file

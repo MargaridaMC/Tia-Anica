@@ -13,7 +13,7 @@ fun SQLiteDatabase.doQuery(tableName: String, columns : Array<String>, selection
     return query(tableName, columns, selection, selectionArgs, groupBy, having, orderBy)
 }
 
-fun Cursor.getString(columnName : String) = getString(getColumnIndex(columnName))
+fun Cursor.getString(columnName : String): String = getString(getColumnIndex(columnName))
 fun Cursor.getStringOrNull(columnName : String) = getStringOrNull(getColumnIndex(columnName))
 fun Cursor.getInt(columnName : String) = getInt(getColumnIndex(columnName))
 fun Cursor.getDouble(columnName : String) = getDouble(getColumnIndex(columnName))
@@ -46,15 +46,15 @@ inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T) : T{
 
 //fun Boolean.toInt() = if (this) 1 else 0
 
-val DATE_STRING_FORMAT = "dd.MMM.yyyy HH:mm"
+const val DATE_STRING_FORMAT = "dd.MMM.yyyy HH:mm"
 
 fun Date.toFormattedString() : String{
-    val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT)
+    val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT, Locale.getDefault())
     return dateFormat.format(this)
 }
 
 fun String.toDate() : Date{
     //val format = "E MMM dd hh:mm:ss z yyyy"
-    val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT)
+    val dateFormat: DateFormat = SimpleDateFormat(DATE_STRING_FORMAT, Locale.getDefault())
     return dateFormat.parse(this)
 }

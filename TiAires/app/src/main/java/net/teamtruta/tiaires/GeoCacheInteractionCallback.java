@@ -6,8 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
 
 // Useful link: https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
 
@@ -22,8 +25,11 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.geoCacheListAdapter = adapter;
 
-        foundIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_found);
-        dnfIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_dnf);
+        foundIcon = ContextCompat.getDrawable(App.getContext(), R.drawable.geo_cache_icon_found);
+        dnfIcon = ContextCompat.getDrawable(App.getContext(), R.drawable.geo_cache_icon_dnf);
+        // DEPRECATED:
+        //foundIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_found);
+        //dnfIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_dnf);
 
         background = new ColorDrawable(App.getContext().getColor(R.color.light_grey));
 
@@ -40,14 +46,15 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
     }
 
     @Override
-    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+    public int getMovementFlags(@NotNull RecyclerView recyclerView,
+                                @NotNull RecyclerView.ViewHolder viewHolder) {
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
         return makeMovementFlags(dragFlags, swipeFlags);
     }//206-555-0123
 
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+    public boolean onMove(@NotNull RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
         geoCacheListAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         return true;
@@ -71,7 +78,9 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
     }
 
     @Override
-    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive){
+    public void onChildDraw(@NotNull Canvas c, @NotNull RecyclerView recyclerView,
+                            @NotNull RecyclerView.ViewHolder viewHolder, float dX, float dY,
+                            int actionState, boolean isCurrentlyActive){
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         View itemView = viewHolder.itemView;
         int backgroundCornerOffset = 20;

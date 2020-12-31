@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourViewHolder> {
@@ -25,6 +27,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     }
 
     // inflates the row layout from xml when needed
+    @NotNull
     @Override
     public TourViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_tour_layout, parent, false);

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -32,9 +33,6 @@ import net.teamtruta.tiaires.db.GeoCacheDetailDbTable;
 import net.teamtruta.tiaires.db.DbConnection;
 
 public class MainActivity extends AppCompatActivity implements TourListAdapter.ItemClickListener{
-
-    RecyclerView.Adapter tourListAdapter;
-    RecyclerView tourListView;
 
     String TAG = MainActivity.class.getSimpleName();
 
@@ -74,9 +72,10 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
         } else {
             setContentView(R.layout.activity_main);
 
-            tourListView = findViewById(R.id.tour_list);
+            RecyclerView tourListView = findViewById(R.id.tour_list);
             tourListView.setLayoutManager(new LinearLayoutManager(this));
-            tourListAdapter = new TourListAdapter(tourList, this);
+            RecyclerView.Adapter<TourListAdapter.TourViewHolder> tourListAdapter =
+                    new TourListAdapter(tourList, this);
             tourListView.setAdapter(tourListAdapter);
 
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tourListView.getContext(), LinearLayout.VERTICAL);
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements TourListAdapter.I
 
         // Put username on toolbar
         if(!username.equals("")){
-            getSupportActionBar().setTitle(username);
+            Objects.requireNonNull(getSupportActionBar()).setTitle(username);
         }
 
         // Delete all Cache details that are in the database but unused

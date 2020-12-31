@@ -81,6 +81,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
@@ -196,6 +197,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
             try {
+                assert locationComponent.getLastKnownLocation() != null;
                 mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(new LatLng(
                                 locationComponent.getLastKnownLocation().getLatitude(),
                                 locationComponent.getLastKnownLocation().getLongitude()))
@@ -208,7 +210,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (!gps_enabled)
                         Toast.makeText(context, "Please turn on your GPS", Toast.LENGTH_SHORT).show();
                     else
-                        enableLocationComponent(mapboxMap.getStyle());
+                        enableLocationComponent(Objects.requireNonNull(mapboxMap.getStyle()));
 
                 } else {
                     permissionsManager = new PermissionsManager((PermissionsListener) context);
@@ -246,7 +248,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
@@ -302,7 +304,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onPermissionResult(boolean granted) {
         if (granted) {
-            enableLocationComponent(mapboxMap.getStyle());
+            enableLocationComponent(Objects.requireNonNull(mapboxMap.getStyle()));
         } else {
             Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
             finish();
@@ -335,6 +337,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private LatLng convertToLatLng(Feature feature) {
         Point symbolPoint = (Point) feature.geometry();
+        assert symbolPoint != null;
         return new LatLng(symbolPoint.latitude(), symbolPoint.longitude());
     }
 
@@ -375,6 +378,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mapboxMap.getProjection().toScreenLocation(convertToLatLng(window));
 
                 View view = viewMap.get(name);
+                assert view != null;
                 View button = view.findViewById(R.id.go_to_button);
                 // create hitbox for button
                 Rect hitRectText = new Rect();
@@ -400,6 +404,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (featureCollection == null) {
             return false;
         }
+        assert featureCollection.features() != null;
         return featureCollection.features().get(index).getBooleanProperty(PROPERTY_SELECTED);
     }
 
@@ -521,7 +526,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         for (GeoCacheTypeEnum type : GeoCacheTypeEnum.values()) {
             String typeString = type.getTypeString();
-            if (typeString == null) break;
             loadedStyle.addImage(typeString, BitmapFactory.decodeResource(
                     MapActivity.this.getResources(), GeoCacheIcon.Companion.getIconDrawable(typeString)));
         }
@@ -717,13 +721,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    public boolean goToGeoCache(String code) {
+    public void goToGeoCache(String code) {
 
         String url = "https://coord.info/" + code;
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
-        return true;
     }
 
     /**
@@ -768,6 +771,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void showFullTourLineLayer(){
         mapboxMap.getStyle(style -> {
             Layer layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID);
+            assert layer != null;
             layer.setProperties(visibility(VISIBLE));
         });
 
@@ -777,6 +781,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void hideFullTourLineLayer(){
         mapboxMap.getStyle(style -> {
             Layer layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID);
+            assert layer != null;
             layer.setProperties(visibility(NONE));
         });
 
@@ -787,6 +792,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mapboxMap.getStyle(style -> {
             Layer layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID);
+            assert layer != null;
             layer.setProperties(visibility(VISIBLE));
         });
 
@@ -797,6 +803,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mapboxMap.getStyle(style -> {
             Layer layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID);
+            assert layer != null;
             layer.setProperties(visibility(NONE));
         });
 

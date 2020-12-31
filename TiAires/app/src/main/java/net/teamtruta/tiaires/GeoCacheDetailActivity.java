@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
@@ -347,7 +349,8 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                .format(new Date());
         String imageFileName = "GEOCACHEID_" + currentGeoCache.get_id() + "_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -364,7 +367,8 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
     }
 
     private void galleryAddPic() {
-        //invoke the system's media scanner to add your photo to the Media Provider's database, making it available in the Android Gallery application and to other apps.
+        //invoke the system's media scanner to add your photo to the Media Provider's database,
+        // making it available in the Android Gallery application and to other apps.
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
@@ -395,26 +399,25 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         popup.show();
     }
 
-
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.take_new_photo:
-                takePhoto();
-                return true;
-            case R.id.show_geo_cache_photo:
-                showGeoCachePhoto();
-                return true;
-            case R.id.delete_geo_cache_photo:
-                deleteGeoCachePhoto();
-                return true;
-            default:
-                return false;
+        int id = item.getItemId();
+        if (id == R.id.take_new_photo){
+            takePhoto();
+            return true;
         }
+        if (id == R.id.show_geo_cache_photo){
+            showGeoCachePhoto();
+            return true;
+        }
+        if(id == R.id.delete_geo_cache_photo){
+            deleteGeoCachePhoto();
+            return true;
+        }
+        return false;
     }
-
     private void deleteGeoCachePhoto() {
-        File file = new File(currentGeoCache.getPathToImage());
+        File file = new File(Objects.requireNonNull(currentGeoCache.getPathToImage()));
 
         if (file.exists()) {
             if (file.delete()) {

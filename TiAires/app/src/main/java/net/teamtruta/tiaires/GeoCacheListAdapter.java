@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -165,10 +164,10 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         if(geoCache.getAttributes().size() > 0){
             for(GeoCacheAttributeEnum attribute: geoCache.getAttributes()){
                 ImageView iv = new ImageView(App.getContext());
-                iv.setImageDrawable(ResourcesCompat.getDrawable(App.getContext().getResources(),
-                        GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute), null));
-                //iv.setImageDrawable(App.getContext().getDrawable(
-                //        GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute)));
+                int attributeIconID = GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute);
+                iv.setImageDrawable(ContextCompat.getDrawable(App.getContext(), attributeIconID));
+                // DEPRECATED:
+                //iv.setImageDrawable(App.getContext().getDrawable(attributeIconID));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size),
                         (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size));

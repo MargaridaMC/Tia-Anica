@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 
 public class GeoCacheAttributeListAdapter extends BaseAdapter {
@@ -44,7 +46,7 @@ public class GeoCacheAttributeListAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.attribute_element_layout, null);
+            convertView = layoutInflater.inflate(R.layout.attribute_element_layout, parent, false);
             holder = new ViewHolder();
             holder.attributeIcon = convertView.findViewById(R.id.attribute_icon);
             holder.attributeText = convertView.findViewById(R.id.attribute_text);
@@ -53,9 +55,11 @@ public class GeoCacheAttributeListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        int attributeIconID = GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attributes.get(position));
         holder.attributeIcon.setImageDrawable(
-                context.getDrawable(GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(
-                        attributes.get(position))));
+                ContextCompat.getDrawable(context, attributeIconID));
+                // DEPRECATED:
+                //context.getDrawable(attributeIconID));
         holder.attributeText.setText(attributes.get(position).getAttributeString());
 
         return convertView;

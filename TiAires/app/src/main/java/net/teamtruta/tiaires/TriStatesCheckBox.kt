@@ -42,7 +42,7 @@ class TriStatesCheckBox : AppCompatCheckBox {
     }
 
     private fun updateBtn() {
-        var btnDrawable: Int = when (state) {
+        val btnDrawable: Int = when (state) {
             INDETERMINATE -> R.drawable.half_open_eye
             UNCHECKED -> R.drawable.closed_eye
             CHECKED -> R.drawable.open_eye
@@ -55,10 +55,10 @@ class TriStatesCheckBox : AppCompatCheckBox {
         return state
     }
 
-    fun setState(state: Int) {
+    /*fun setState(state: Int) {
         this.state = state
         updateBtn()
-    }
+    }*/
 
     companion object {
         const val UNCHECKED = 0
