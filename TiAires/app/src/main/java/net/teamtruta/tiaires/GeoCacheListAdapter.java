@@ -254,8 +254,12 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         Collections.swap(tour._tourGeoCaches, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         //tour.swapCachePositions(fromPosition, toPosition);
-        tour.updateTourCaches();
+        //tour.updateTourCaches();
 
+    }
+
+    public void onMoveEnded(){
+        tour.updateTourCaches();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{

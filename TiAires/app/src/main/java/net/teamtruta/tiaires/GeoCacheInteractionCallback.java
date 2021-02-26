@@ -6,11 +6,15 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
+
+import static androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG;
 
 // Useful link: https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
 
@@ -20,6 +24,7 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
     private final Drawable foundIcon;
     private final Drawable dnfIcon;
     private final ColorDrawable background;
+    private boolean dragStarted;
 
     GeoCacheInteractionCallback(GeoCacheListAdapter adapter){
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
@@ -133,4 +138,27 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
         icon.draw(c);
     }
 
+    @Override
+    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+        // Called when the user's movement is over.
+        // Save the tour
+        super.clearView(recyclerView, viewHolder);
+        if (dragStarted){
+            viewHolder.itemView.setAlpha(1.0f);
+            dragStarted = false;
+            geoCacheListAdapter.onMoveEnded();
+        }
+
+    }
+
+    @Override
+    public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+        // Make the selected row somewhat transparent so the user knows they can move it
+        super.onSelectedChanged(viewHolder, actionState);
+
+        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG){
+            viewHolder.itemView.setAlpha(0.5f);
+            dragStarted = true;
+        }
+    }
 }
