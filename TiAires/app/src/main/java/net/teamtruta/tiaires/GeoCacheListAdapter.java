@@ -95,7 +95,10 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         String favString = App.getContext().getString(R.string.geo_cache_favs);
         holder.geoCacheFavs.setText(String.format(favString, geoCache.getFavourites()));
         if(geoCache.hasHint()){
-            holder.geoCacheHasHint.setText(App.getContext().getString(R.string.geo_cache_has_hint));
+            String hintString = App.getContext().getString(R.string.geo_cache_has_hint);
+            holder.geoCacheHasHint.setText(HtmlCompat.fromHtml(
+                    hintString,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY));
         } else {
             holder.geoCacheHasHint.setText(HtmlCompat.fromHtml(App.getContext().getString(R.string.geo_cache_has_no_hint),
                     HtmlCompat.FROM_HTML_MODE_LEGACY));

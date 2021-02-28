@@ -53,8 +53,8 @@
     <string name="dash">\u0020-\u0020</string>
     <string name="geo_cache_dif_ter">D/T: %1$s/%2$s</string>
     <string name="geo_cache_size">Size: %1$s</string>
-    <string name="geo_cache_has_hint">HINT</string>
-    <string name="geo_cache_has_no_hint">&lt;font color=\'#CF2A27\'>NO HINT&lt;/font></string>
+    <string name="geo_cache_has_hint">&#160;- HINT</string>
+    <string name="geo_cache_has_no_hint">&#160;- &lt;font color=\'#CF2A27\'>NO HINT&lt;/font></string>
     <string name="geo_cache_favs">❤ %1$d</string>
     <string name="square">■</string>
     <string name="dnf_risk">&#160;- &lt;font color=\'#CF2A27\'>%1$s&lt;/font></string>

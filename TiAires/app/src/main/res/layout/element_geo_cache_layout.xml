@@ -43,7 +43,8 @@
             android:id="@+id/geo_cache_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:theme="@style/TextView"/>
+            android:theme="@style/TextView"
+            android:textIsSelectable="true"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,13 +85,13 @@
             android:id="@+id/geo_cache_favs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
+<!--
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"
             android:text="@string/dash"/>
-
+-->
         <TextView
             android:id="@+id/geo_cache_has_hint"
             android:layout_width="wrap_content"
@@ -182,6 +183,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:theme="@style/TextView"
+            android:textIsSelectable="true"
             android:paddingTop="@dimen/line_space"
             android:paddingBottom="@dimen/line_space"
             android:visibility="gone"
