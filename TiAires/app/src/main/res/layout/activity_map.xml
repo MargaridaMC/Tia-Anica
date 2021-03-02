@@ -28,12 +28,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
             </androidx.appcompat.widget.Toolbar>
+
+            <Button
+                android:id="@+id/home_button"
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:background="@drawable/home"
+                android:layout_marginEnd="@dimen/tiny_padding"
+                app:layout_constraintEnd_toStartOf="@+id/distance_checkbox"
+                app:layout_constraintTop_toTopOf="@+id/distance_checkbox"
+                app:layout_constraintBottom_toBottomOf="@+id/distance_checkbox"
+                android:onClick="set_current_location_as_start_point"/>
 
             <net.teamtruta.tiaires.TriStatesCheckBox
                 android:id="@+id/distance_checkbox"

@@ -28,10 +28,10 @@ android {
 
 dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1@aar') {
-        transitive = true
-    }
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1'
+    //implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1@aar') {
+    //    transitive = true
+    //}
+    //implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1'
 
     def appCenterSdkVersion = '3.0.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
@@ -56,7 +56,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
+    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1'
     //implementation project(':mapbox-android-sdk-9.3.0')
     // https://mvnrepository.com/artifact/org.jxmapviewer/jxmapviewer2
     // implementation group: 'org.jxmapviewer', name: 'jxmapviewer2', version: '2.0'
