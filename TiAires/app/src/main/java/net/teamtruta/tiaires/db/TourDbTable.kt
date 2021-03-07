@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.util.Log
+import androidx.core.database.getDoubleOrNull
 import net.teamtruta.tiaires.*
 
 class TourDbTable(private val context: Context) {
@@ -82,6 +83,15 @@ class TourDbTable(private val context: Context) {
         return nLinesChanged == 1
     }
 
+    fun updateStartingPointInTour(tourID : Long, latitude : Double, longitude : Double): Boolean {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues()
+        values.put(TourEntry.STARTING_POINT_LAT, latitude)
+        values.put(TourEntry.STARTING_POINT_LON, longitude)
+        val nLinesChanged = db.update(TourEntry.TABLE_NAME, values, "${TourEntry._ID} = ?", arrayOf("$tourID"))
+        return nLinesChanged == 1
+    }
+
 }
 
 private fun Cursor.getGeocachingTour(dbConnection: DbConnection) : GeocachingTour {
@@ -89,5 +99,9 @@ private fun Cursor.getGeocachingTour(dbConnection: DbConnection) : GeocachingTou
     val name = getString(TourEntry.NAME_COL)
     val id = getLong(TourEntry._ID)
     val isCurrentTour = getBoolean(TourEntry.CURRENT_TOUR_COL)
-    return GeocachingTour(name, id, isCurrentTour, dbConnection)
+    val startingPointLatitude = getDoubleOrNull(TourEntry.STARTING_POINT_LAT)
+    val startingPointLongitude = getDoubleOrNull(TourEntry.STARTING_POINT_LON)
+    if(startingPointLatitude==null || startingPointLongitude==null)
+        return GeocachingTour(name, id, isCurrentTour, dbConnection)
+    return GeocachingTour(name, id, isCurrentTour, startingPointLatitude, startingPointLongitude, dbConnection)
 }

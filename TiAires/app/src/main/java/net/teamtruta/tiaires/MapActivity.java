@@ -1,6 +1,5 @@
 package net.teamtruta.tiaires;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -113,8 +112,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int LINE_COLOR = Color.RED;
     private static final float LINE_WIDTH = 4f;
 
-    //private static final String DISTANCE_UNITS = UNIT_KILOMETERS;
-
+    private static final String STARTING_POINT_ICON_ID = "STARTING_POINT_ICON_ID";
+    private static final String STARTING_POINT_SOURCE_ID = "STARTING_POINT_SOURCE_ID";
+    private static final String STARTING_POINT_SYMBOL_LAYER_ID ="STARTING_POINT_SYMBOL_LAYER_ID";
 
     String TAG = MapActivity.class.getSimpleName();
     GeocachingTour _tour;
@@ -126,6 +126,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     List<Point> routeCoordinates;
     private static final HashMap<String, View> viewMap = new HashMap<>();
     private double fullTourDistance;
+    Point _startingPoint;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +184,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Compute the full distance of the tour
         fullTourDistance = computeTourDistance(0);
+
+        // If there is a starting point add a marker for it on the map
+        /*
+        if(_startingPoint != null){
+            // Get map's style
+            Style mapStyle = mapboxMap.getStyle();
+
+            // Add image for the starting point to the style
+            //mapStyle.addImage(STARTING_POINT_ICON_ID,
+            //        BitmapFactory.decodeResource(MapActivity.this.getResources(), R.drawable.home));
+
+            // Add the source (coordinates) for the starting point
+            //mapStyle.addSource(new GeoJsonSource(STARTING_POINT_SOURCE_ID,
+             //       FeatureCollection.fromFeature(Feature.fromGeometry(_startingPoint))));
+
+            // Add the actual symbol layer for the starting point
+            mapStyle.addLayer(new SymbolLayer(STARTING_POINT_SYMBOL_LAYER_ID, STARTING_POINT_SOURCE_ID)
+            .withProperties(
+                    iconImage(STARTING_POINT_ICON_ID),
+                    iconAllowOverlap(true),
+                    iconAnchor(Property.ICON_ANCHOR_CENTER),
+                    iconSize(0.4f)
+            ));
+
+        }*/
+
     }
 
     @Override
@@ -193,7 +221,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setupMyLocationFAB() {
 
-        Activity context = this;
         findViewById(R.id.my_location_fab).setOnClickListener(view -> {
 
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
@@ -205,21 +232,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 locationComponent.getLastKnownLocation().getLongitude()))
                         , 2500);
             } catch (Exception e) {
-
-                if (PermissionsManager.areLocationPermissionsGranted(context)) {
-                    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-                    boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                    if (!gps_enabled)
-                        Toast.makeText(context, "Please turn on your GPS", Toast.LENGTH_SHORT).show();
-                    else
-                        enableLocationComponent(Objects.requireNonNull(mapboxMap.getStyle()));
-
-                } else {
-                    permissionsManager = new PermissionsManager((PermissionsListener) context);
-                    permissionsManager.requestLocationPermissions(context);
-                }
-
-
+                checkLocationPermissionIsGrantedAndGPSIsOn();
             }
         });
 
@@ -472,6 +485,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
         featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList);
+
+        // Get starting point if there is one
+
+        if(_tour.getStartingPointLongitude() != null){
+            _startingPoint = Point.fromLngLat(_tour.getStartingPointLongitude(),
+                    _tour.getStartingPointLatitude());
+        }
+
+
     }
 
 
@@ -518,6 +540,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
                 LineString.fromLngLats(remainingRouteCoordinates))});
         loadedStyle.addSource(new GeoJsonSource(REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
+
+        // Set source for starting point
+        if(_startingPoint != null) {
+            loadedStyle.addSource(new GeoJsonSource(STARTING_POINT_SOURCE_ID,
+                    FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(_startingPoint)})));
+        }
     }
 
     /**
@@ -537,6 +565,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         loadedStyle.addImage(VisitOutcomeEnum.DNF.getVisitOutcomeString(), BitmapFactory.decodeResource(
                 MapActivity.this.getResources(), R.drawable.geo_cache_icon_dnf));
 
+        // Add starting point
+        if(_startingPoint != null){
+            loadedStyle.addImage(STARTING_POINT_ICON_ID,
+                    BitmapFactory.decodeResource(MapActivity.this.getResources(), R.drawable.home_filled_green));
+        }
 
     }
 
@@ -553,6 +586,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         stop(GeoCacheTypeEnum.Multi.getTypeString(), GeoCacheTypeEnum.Multi.getTypeString()),
                         stop(GeoCacheTypeEnum.Earth.getTypeString(), GeoCacheTypeEnum.Earth.getTypeString()),
                         stop(GeoCacheTypeEnum.Letterbox.getTypeString(), GeoCacheTypeEnum.Letterbox.getTypeString()),
+                        stop(GeoCacheTypeEnum.Wherigo.getTypeString(), GeoCacheTypeEnum.Wherigo.getTypeString()),
                         stop(GeoCacheTypeEnum.Event.getTypeString(), GeoCacheTypeEnum.Event.getTypeString()),
                         stop(GeoCacheTypeEnum.CITO.getTypeString(), GeoCacheTypeEnum.CITO.getTypeString()),
                         stop(GeoCacheTypeEnum.Mega.getTypeString(), GeoCacheTypeEnum.Mega.getTypeString()),
@@ -573,6 +607,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         iconAnchor(Property.ICON_ANCHOR_CENTER),
                         iconSize(0.4f))
         );
+
+        if(_startingPoint != null){
+            loadedStyle.addLayer(new SymbolLayer(STARTING_POINT_SYMBOL_LAYER_ID, STARTING_POINT_SOURCE_ID)
+                    .withProperties(
+                            iconImage(STARTING_POINT_ICON_ID),
+                            iconAllowOverlap(true),
+                            iconAnchor(ICON_ANCHOR_BOTTOM),
+                            iconSize(0.4f)
+                    ));
+        }
+
     }
 
     /**
@@ -828,7 +873,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 computeTourDistance(_tour.getLastVisitedGeoCache()), "kms"));
     }
 
-
     private double computeTourDistance(int startGeoCacheIDX ){
         double distance = 0;
 
@@ -849,12 +893,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Set current point as starting point of the tour
+
+                        LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                        try {
+                            assert locationComponent.getLastKnownLocation() != null;
+                            double currentLatitude = locationComponent.getLastKnownLocation().getLatitude();
+                            double currentLongitude = locationComponent.getLastKnownLocation().getLongitude();
+                            _tour.setStartingPoint(currentLatitude, currentLongitude);
+                            finish();
+                            startActivity(getIntent());
+                        } catch (Exception e) {
+                            checkLocationPermissionIsGrantedAndGPSIsOn();
+                            e.printStackTrace();
+                        }
+
                     }
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {});
 
         dialogBuilder.create().show();
 
+    }
+
+    void checkLocationPermissionIsGrantedAndGPSIsOn(){
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            if (!gps_enabled)
+                Toast.makeText(this, "Please turn on your GPS", Toast.LENGTH_SHORT).show();
+            else
+                enableLocationComponent(Objects.requireNonNull(mapboxMap.getStyle()));
+
+        } else {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
     }
 
 }

@@ -18,6 +18,8 @@ public class GeocachingTour
     private String _name;
     boolean _isCurrentTour;
     public List<GeoCacheInTour> _tourGeoCaches = new ArrayList<>();
+    private Coordinate _startingPointLatitude;
+    private Coordinate _startingPointLongitude;
     DbConnection _dbConnection;
 
     TourCreationActivity tourCreationActivityDelegate;
@@ -46,6 +48,16 @@ public class GeocachingTour
         this._name = name;
         this._id = id;
         this._isCurrentTour = isCurrentTour;
+        this._dbConnection = dbConnection;
+    }
+
+    public GeocachingTour(String name, long id, boolean isCurrentTour, double startingPointLatitude,
+                          double startingPointLongitude , DbConnection dbConnection){
+        this._name = name;
+        this._id = id;
+        this._isCurrentTour = isCurrentTour;
+        this._startingPointLatitude = new Coordinate(startingPointLatitude);
+        this._startingPointLongitude = new Coordinate(startingPointLongitude);
         this._dbConnection = dbConnection;
     }
 
@@ -165,6 +177,33 @@ public class GeocachingTour
         }
 
         return 0;
+    }
+
+    public void setStartingPoint(Coordinate latitude, Coordinate longitude){
+        this._startingPointLatitude = latitude;
+        this._startingPointLongitude = longitude;
+
+        _dbConnection.getTourTable().updateStartingPointInTour(_id, _startingPointLatitude.getValue(),
+                _startingPointLongitude.getValue());
+    }
+
+    public void setStartingPoint(double latitude, double longitude){
+        this._startingPointLatitude = new Coordinate(latitude);
+        this._startingPointLongitude = new Coordinate(longitude);
+
+        _dbConnection.getTourTable().updateStartingPointInTour(_id, latitude,
+                longitude);
+    }
+
+
+    public Double getStartingPointLatitude(){
+        if (_startingPointLatitude == null) return null;
+        return _startingPointLatitude.getValue();
+    }
+
+    public Double getStartingPointLongitude(){
+        if (_startingPointLongitude == null) return null;
+        return _startingPointLongitude.getValue();
     }
 
 }

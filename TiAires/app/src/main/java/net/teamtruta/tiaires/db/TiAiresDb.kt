@@ -21,7 +21,9 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     private val SQL_CREATE_TOUR_TABLE = "CREATE TABLE ${TourEntry.TABLE_NAME}(" +
             "${TourEntry._ID} INTEGER PRIMARY KEY," +
             "${TourEntry.NAME_COL} TEXT," +
-            "${TourEntry.CURRENT_TOUR_COL} INTEGER" +
+            "${TourEntry.CURRENT_TOUR_COL} INTEGER," +
+            "${TourEntry.STARTING_POINT_LAT} REAL," +
+            "${TourEntry.STARTING_POINT_LON} REAL" +
             ")"
 
     // 2. GeoCache table
@@ -109,31 +111,29 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
             // Rename old table
             val tempTableName = "${GeoCacheEntry.TABLE_NAME}OLD"
-            val SQL_RENAME_TABLE = "ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
-                    "RENAME TO $tempTableName"
-            db?.execSQL(SQL_RENAME_TABLE)
+            db?.execSQL("ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName")
 
             // Create new one with desired constraints
             db?.execSQL(SQL_CREATE_CACHE_TABLE)
 
             // Transfer data from old one to the new one
-            val SQL_TRANSFER_DATA = "INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
-                    "${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
-                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
-                    "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
-                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
-                    "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
-                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})" +
-                    "SELECT ${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
-                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
-                    "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
-                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
-                    "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
-                    GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL +
-                    " FROM (" +
-                    " SELECT * FROM $tempTableName " +
-                    "GROUP BY ${GeoCacheEntry.TOUR_ID_FK_COL}, ${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})"
-            db?.execSQL(SQL_TRANSFER_DATA)
+            db?.execSQL("INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
+                            "${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
+                            "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
+                            "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                            "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
+                            "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                            "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL}) " +
+                            "SELECT ${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
+                            "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
+                            "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                            "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
+                            "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                            GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL +
+                            " FROM (" +
+                            " SELECT * FROM $tempTableName " +
+                            "GROUP BY ${GeoCacheEntry.TOUR_ID_FK_COL}, ${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})")
 
             // DELETE old table
             db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
@@ -183,28 +183,26 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
             // Rename old table to a different name
             val tempTableName = "${GeoCacheEntry.TABLE_NAME}OLD"
-            val SQL_RENAME_TABLE = "ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
-                    "RENAME TO $tempTableName"
-            db?.execSQL(SQL_RENAME_TABLE)
+            db?.execSQL("ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName")
 
             // Create new table with appropriate structure
             db?.execSQL(SQL_CREATE_CACHE_TABLE)
 
             // Transfer data from old one to the new one
-            val SQL_TRANSFER_DATA = "INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
+            db?.execSQL("INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
                     "${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
                     "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
                     "${GeoCacheEntry.NOTES_COL}, ${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
                     "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, ${GeoCacheEntry.FAV_POINT_COL}, " +
                     "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
-                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL})" +
+                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL}) " +
                     "SELECT ${GeoCacheEntry._ID}, ${GeoCacheEntry.FOUND_DATE_COL}, " +
                     "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, ${GeoCacheEntry.VISIT_COL}, " +
                     "${GeoCacheEntry.NOTES_COL}, NULL, NULL, ${GeoCacheEntry.FAV_POINT_COL}, " +
                     "${GeoCacheEntry.ORDER_COL}, ${GeoCacheEntry.TOUR_ID_FK_COL}, " +
                     GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL +
-                    " FROM  $tempTableName "
-            db?.execSQL(SQL_TRANSFER_DATA)
+                    " FROM  $tempTableName ")
 
             // Delete original table
             db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
@@ -212,9 +210,8 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 
         // Add column for image path in cache table
         if(oldVersion <= 14){
-            val SQL_ADD_COLUMN = "ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
-                    "ADD ${GeoCacheEntry.IMAGE_COL} TEXT"
-            db?.execSQL(SQL_ADD_COLUMN)
+            db?.execSQL("ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+                    "ADD ${GeoCacheEntry.IMAGE_COL} TEXT")
         }
 
         if(oldVersion <= 15){
@@ -226,15 +223,15 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         if(oldVersion <= 16){
             // Rename old table to a different name
             val tempTableName = "${GeoCacheDetailEntry.TABLE_NAME}OLD"
-            val SQL_RENAME_TABLE = "ALTER TABLE ${GeoCacheDetailEntry.TABLE_NAME} " +
-                    "RENAME TO $tempTableName"
-            db?.execSQL(SQL_RENAME_TABLE)
+
+            db?.execSQL("ALTER TABLE ${GeoCacheDetailEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName")
 
             // Create new table with appropriate structure
             db?.execSQL(SQL_CREATE_CACHE_DETAIL_TABLE)
 
             // Transfer data from old one to the new one
-            val SQL_TRANSFER_DATA = "INSERT INTO ${GeoCacheDetailEntry.TABLE_NAME} (" +
+            db?.execSQL( "INSERT INTO ${GeoCacheDetailEntry.TABLE_NAME} (" +
                     "${GeoCacheDetailEntry._ID}, " +
                     "${GeoCacheDetailEntry.NAME_COL}, " +
                     "${GeoCacheDetailEntry.CODE_COL}, " +
@@ -261,12 +258,18 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                     "${GeoCacheDetailEntry.LAT_COL}, " +
                     "${GeoCacheDetailEntry.LON_COL}, " +
                     GeoCacheDetailEntry.FAV_COL +
-                    " FROM $tempTableName"
-
-            db?.execSQL(SQL_TRANSFER_DATA)
+                    " FROM $tempTableName")
 
             // Delete original table
             db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
+        }
+
+        // Add column for starting point in tour
+        if(oldVersion <= 17){
+            db?.execSQL("ALTER TABLE ${TourEntry.TABLE_NAME} " +
+                    "ADD ${TourEntry.STARTING_POINT_LAT} REAL")
+            db?.execSQL("ALTER TABLE ${TourEntry.TABLE_NAME} " +
+                    "ADD ${TourEntry.STARTING_POINT_LON} REAL")
         }
     }
 

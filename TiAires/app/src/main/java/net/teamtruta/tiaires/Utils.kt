@@ -2,6 +2,7 @@ package net.teamtruta.tiaires
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import androidx.core.database.getDoubleOrNull
 import androidx.core.database.getStringOrNull
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -17,6 +18,7 @@ fun Cursor.getString(columnName : String): String = getString(getColumnIndex(col
 fun Cursor.getStringOrNull(columnName : String) = getStringOrNull(getColumnIndex(columnName))
 fun Cursor.getInt(columnName : String) = getInt(getColumnIndex(columnName))
 fun Cursor.getDouble(columnName : String) = getDouble(getColumnIndex(columnName))
+fun Cursor.getDoubleOrNull(columnName : String) : Double? = getDoubleOrNull(getColumnIndex(columnName))
 fun Cursor.getLong(columnName : String) = getLong(getColumnIndex(columnName))
 fun Cursor.getBoolean(columnName : String) = getInt(this.getColumnIndex(columnName)) == 1
 
