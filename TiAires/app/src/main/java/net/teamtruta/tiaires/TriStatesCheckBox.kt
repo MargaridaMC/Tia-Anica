@@ -27,7 +27,7 @@ class TriStatesCheckBox : AppCompatCheckBox {
     }
 
     private fun init() {
-        state = UNCHECKED
+        state = INDETERMINATE
         updateBtn()
         setOnCheckedChangeListener { _, _ ->
             // checkbox status is changed from uncheck to checked.

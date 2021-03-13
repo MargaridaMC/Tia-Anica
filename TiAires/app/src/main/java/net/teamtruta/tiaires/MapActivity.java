@@ -110,7 +110,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String PROPERTY_SELECTED = "selected";
     private static final String PROPERTY_CODE = "code";
     private static final int LINE_COLOR = Color.RED;
-    private static final float LINE_WIDTH = 4f;
+    private static final float LINE_WIDTH = 2f;
 
     private static final String STARTING_POINT_ICON_ID = "STARTING_POINT_ICON_ID";
     private static final String STARTING_POINT_SOURCE_ID = "STARTING_POINT_SOURCE_ID";
@@ -184,6 +184,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Compute the full distance of the tour
         fullTourDistance = computeTourDistance(0);
+
+        // Show remaining tour line and distance
+        showRemainingTourDistance();
+        showRemainingTourLineLayer();
 
     }
 
@@ -596,7 +600,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             iconImage(STARTING_POINT_ICON_ID),
                             iconAllowOverlap(true),
                             iconAnchor(ICON_ANCHOR_BOTTOM),
-                            iconSize(0.4f)
+                            iconSize(0.6f)
                     ));
         }
 
@@ -860,6 +864,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if(startGeoCacheIDX == 0)
             startGeoCacheIDX = 1;
+
+        // If there is a starting point it will be the first element in route coordinates so the indices will be shifted by 1
+        if(_startingPoint != null){
+            startGeoCacheIDX += 1;
+        }
 
         for(int i = startGeoCacheIDX; i < routeCoordinates.size(); i++){
             distance += TurfMeasurement.distance(routeCoordinates.get(i), routeCoordinates.get(i - 1));
