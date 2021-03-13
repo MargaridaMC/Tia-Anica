@@ -185,31 +185,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Compute the full distance of the tour
         fullTourDistance = computeTourDistance(0);
 
-        // If there is a starting point add a marker for it on the map
-        /*
-        if(_startingPoint != null){
-            // Get map's style
-            Style mapStyle = mapboxMap.getStyle();
-
-            // Add image for the starting point to the style
-            //mapStyle.addImage(STARTING_POINT_ICON_ID,
-            //        BitmapFactory.decodeResource(MapActivity.this.getResources(), R.drawable.home));
-
-            // Add the source (coordinates) for the starting point
-            //mapStyle.addSource(new GeoJsonSource(STARTING_POINT_SOURCE_ID,
-             //       FeatureCollection.fromFeature(Feature.fromGeometry(_startingPoint))));
-
-            // Add the actual symbol layer for the starting point
-            mapStyle.addLayer(new SymbolLayer(STARTING_POINT_SYMBOL_LAYER_ID, STARTING_POINT_SOURCE_ID)
-            .withProperties(
-                    iconImage(STARTING_POINT_ICON_ID),
-                    iconAllowOverlap(true),
-                    iconAnchor(Property.ICON_ANCHOR_CENTER),
-                    iconSize(0.4f)
-            ));
-
-        }*/
-
     }
 
     @Override
@@ -491,6 +466,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if(_tour.getStartingPointLongitude() != null){
             _startingPoint = Point.fromLngLat(_tour.getStartingPointLongitude(),
                     _tour.getStartingPointLatitude());
+
+            // If we have a starting point add it in the beginning and the end of the route
+            routeCoordinates.add(_startingPoint);
+            routeCoordinates.add(0, _startingPoint);
         }
 
 
@@ -524,9 +503,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
         loadedStyle.addSource(source);
 
+        // Set source for starting point
+        if(_startingPoint != null) {
+            loadedStyle.addSource(new GeoJsonSource(STARTING_POINT_SOURCE_ID,
+                    FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(_startingPoint)})));
+        }
+
         // Set source for route lines for whole tour
-        FeatureCollection lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
-                LineString.fromLngLats(routeCoordinates))});
+        Feature[] route = new Feature[] {Feature.fromGeometry(
+                LineString.fromLngLats(routeCoordinates))};
+        FeatureCollection lineFeatureCollection = FeatureCollection.fromFeatures(route);
         loadedStyle.addSource(new GeoJsonSource(FULL_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
 
         // Set source for route lines for remaining tour
@@ -541,11 +527,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 LineString.fromLngLats(remainingRouteCoordinates))});
         loadedStyle.addSource(new GeoJsonSource(REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
 
-        // Set source for starting point
-        if(_startingPoint != null) {
-            loadedStyle.addSource(new GeoJsonSource(STARTING_POINT_SOURCE_ID,
-                    FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(_startingPoint)})));
-        }
+
     }
 
     /**
