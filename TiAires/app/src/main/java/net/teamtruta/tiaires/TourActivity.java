@@ -14,6 +14,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -34,6 +35,7 @@ import net.teamtruta.tiaires.db.DbConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -313,5 +315,51 @@ public class TourActivity extends AppCompatActivity implements GeoCacheListAdapt
         }
 
 
+    }
+
+    public void uploadDrafts(View view) {
+
+        // Show dialog asking user if they really want tp upload their drafts right now
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Draft Upload")
+                .setMessage("Are you sure you want to upload drafts for the caches you visited? " +
+                        "You won't be able to upload new drafts for those caches.")
+                .setPositiveButton("OK", ((dialog, which) -> uploadDrafts()))
+                .setNegativeButton(getString(R.string.cancel),
+                        ((dialog, which) -> dialog.cancel()));
+        dialogBuilder.create().show();
+
+    }
+
+    private void uploadDrafts(){
+        // Get list of caches that have already been visited
+        List<GeoCacheInTour> visitedGeoCaches = _tour._tourGeoCaches.stream()
+                .filter(x -> x.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF
+                        || x.getCurrentVisitOutcome() == VisitOutcomeEnum.Found)
+                .collect(Collectors.toList());
+
+        // Get authentication cookie from shared preferences
+        SharedPreferences sharedPref = this.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        String authCookie = sharedPref.getString(getString(R.string.authentication_cookie_key), "");
+        if(authCookie.equals("")) {
+            Log.d(TAG, authCookie);
+            // TODO request user to login
+            return;
+        }
+
+        DraftUploadTask draftUploadTask = new DraftUploadTask(authCookie,
+                visitedGeoCaches, this);
+        draftUploadTask.execute();
+    }
+
+    public void onDraftUpload(String message) {
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Draft Upload")
+                .setMessage(message)
+                .setPositiveButton("OK", ((dialog, which) -> {}));
+        dialogBuilder.create().show();
     }
 }

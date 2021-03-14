@@ -47,6 +47,7 @@
                     app:layout_constraintTop_toTopOf="parent"/>
 
                 <Button
+                    android:id="@+id/attribute_button"
                     android:layout_width="@dimen/medium_icon_size"
                     android:layout_height="@dimen/medium_icon_size"
                     android:background="@drawable/attribute_info"
@@ -55,6 +56,17 @@
                     app:layout_constraintEnd_toStartOf="@+id/tour_progress"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <Button
+                    android:id="@+id/upload_button"
+                    android:layout_width="@dimen/medium_icon_size"
+                    android:layout_height="@dimen/medium_icon_size"
+                    android:background="@drawable/upload"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:onClick="uploadDrafts"
+                    app:layout_constraintBottom_toBottomOf="@+id/attribute_button"
+                    app:layout_constraintEnd_toStartOf="@+id/attribute_button"
+                    app:layout_constraintTop_toTopOf="@+id/attribute_button" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
