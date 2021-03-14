@@ -160,10 +160,11 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         }
 
         // 10. Setup expansion
-        holder.view.setOnClickListener(v -> expandHolder(holder, geoCache));
-        holder.extraInfoArrow.setOnClickListener(v -> expandHolder(holder, geoCache));
+        // holder.view.setOnClickListener(v -> expandHolder(holder, geoCache));
+        holder.extraInfoArrow.setOnClickListener(v -> holderExpansionOnClicklistener(holder, geoCache));
 
         // 11. Add Cache Attributes
+        holder.attributeList.removeAllViews();
         if(geoCache.getAttributes().size() > 0){
             for(GeoCacheAttributeEnum attribute: geoCache.getAttributes()){
                 ImageView iv = new ImageView(App.getContext());
@@ -179,7 +180,6 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
                 holder.attributeList.addView(iv);
             }
         }
-
     }
 
     private Spanned getHintText(GeoCache geoCache) {
@@ -189,38 +189,42 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
 
     }
 
+    void holderExpansionOnClicklistener(ViewHolder holder, GeoCache geoCache){
+        if(holder.extraInfoArrow.isChecked() || holder.extraInfoLayout.getVisibility() != View.VISIBLE){
+            expandHolder(holder, geoCache);
+        } else {
+            unexpandHolder(holder);
+        }
+    }
     void expandHolder(ViewHolder holder, GeoCache geoCache){
 
-        if(holder.extraInfoArrow.isChecked() || holder.extraInfoLayout.getVisibility() != View.VISIBLE){
-
-            // Remove hint indication from line 1
-            if(geoCache.hasHint()){
-                holder.geoCacheHasHint.setVisibility(View.GONE);
-                holder.hint.setVisibility(View.VISIBLE);
-            }
-
-            // Show extra information
-            holder.extraInfoLayout.setVisibility(View.VISIBLE);
-
-            holder.extraInfoArrow.setChecked(true);
-
-            // Show attributes
-            if(geoCache.getAttributes().size() != 0)
-                holder.attributeList.setVisibility(View.VISIBLE);
-
-        } else {
-            // Hide extra information
-            if(geoCache.hasHint()){
-                holder.geoCacheHasHint.setVisibility(View.VISIBLE);
-                holder.hint.setVisibility(View.GONE);
-            }
-
-            holder.extraInfoLayout.setVisibility(View.GONE);
-            holder.extraInfoArrow.setChecked(false);
-
-            // Hide attributes
-            holder.attributeList.setVisibility(View.GONE);
+        // Remove hint indication from line 1
+        if(geoCache.hasHint()){
+            holder.geoCacheHasHint.setVisibility(View.GONE);
+            holder.hint.setVisibility(View.VISIBLE);
         }
+
+        // Show extra information
+        holder.extraInfoLayout.setVisibility(View.VISIBLE);
+
+        holder.extraInfoArrow.setChecked(true);
+
+        // Show attributes
+        if(geoCache.getAttributes().size() != 0)
+            holder.attributeList.setVisibility(View.VISIBLE);
+
+    }
+
+    void unexpandHolder(ViewHolder holder){
+        // Hide extra information
+        holder.geoCacheHasHint.setVisibility(View.VISIBLE);
+        holder.hint.setVisibility(View.GONE);
+
+        holder.extraInfoLayout.setVisibility(View.GONE);
+        holder.extraInfoArrow.setChecked(false);
+
+        // Hide attributes
+        holder.attributeList.setVisibility(View.GONE);
     }
 
     @NotNull
