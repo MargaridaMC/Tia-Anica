@@ -600,7 +600,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             iconImage(STARTING_POINT_ICON_ID),
                             iconAllowOverlap(true),
                             iconAnchor(ICON_ANCHOR_BOTTOM),
-                            iconSize(0.6f)
+                            iconSize(0.5f)
                     ));
         }
 
