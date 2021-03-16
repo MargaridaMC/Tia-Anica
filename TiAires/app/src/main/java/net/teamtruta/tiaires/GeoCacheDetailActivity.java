@@ -36,7 +36,7 @@ import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -165,7 +165,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
             // If geocache has already been found and we are clicking on Found again
             // We want to reverse this -- set geocache as not Attempted
             currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
-            currentGeoCache.setFoundDate(null);
+            currentGeoCache.setCurrentVisitDatetime(null);
 
             MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
             geoCacheVisitButton.setStates(new boolean[] {true, false, false});
@@ -173,7 +173,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         } else {
             // We want to set this geocache as found
             currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.Found);
-            currentGeoCache.setFoundDate(Calendar.getInstance().getTime());
+            currentGeoCache.setCurrentVisitDatetime(Instant.now());
             playPing();
         }
 
@@ -187,7 +187,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
             // If geocache is already a DNF and we are clicking on DNF again
             // We want to reverse this -- set geocache as not Attempted
             currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
-            currentGeoCache.setFoundDate(null);
+            currentGeoCache.setCurrentVisitDatetime(null);
 
             MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
             geoCacheVisitButton.setStates(new boolean[] {true, false, false});
@@ -195,7 +195,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         } else {
             // We want to set this geoCache as DNF
             currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.DNF);
-            currentGeoCache.setFoundDate(Calendar.getInstance().getTime());
+            currentGeoCache.setCurrentVisitDatetime(Instant.now());
 
             playPing();
         }

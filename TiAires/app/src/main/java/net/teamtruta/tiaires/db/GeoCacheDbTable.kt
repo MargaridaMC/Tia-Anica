@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.DatabaseUtils
 import android.util.Log
 import net.teamtruta.tiaires.*
+import java.time.Instant
 
 class GeoCacheDbTable (private val context: Context) {
 
@@ -88,7 +89,7 @@ class GeoCacheDbTable (private val context: Context) {
                 put(GeoCacheEntry.VISIT_COL, geoCacheInTour.currentVisitOutcome.visitOutcomeString)
             }
 
-            put(GeoCacheEntry.FOUND_DATE_COL, geoCacheInTour.foundDate?.toString())
+            put(GeoCacheEntry.VISIT_DATETIME_COL, geoCacheInTour.currentVisitDatetime?.toString())
             put(GeoCacheEntry.NEEDS_MAINTENANCE_COL, geoCacheInTour.needsMaintenance)
             put(GeoCacheEntry.NOTES_COL, geoCacheInTour.notes)
             put(GeoCacheEntry.FOUND_TRACKABLE_COL, geoCacheInTour.foundTrackable)
@@ -138,7 +139,7 @@ class GeoCacheDbTable (private val context: Context) {
             put(GeoCacheEntry.NOTES_COL, geoCache.notes)
             put(GeoCacheEntry.VISIT_COL,  geoCache.currentVisitOutcome.visitOutcomeString)
             put(GeoCacheEntry.NEEDS_MAINTENANCE_COL, geoCache.needsMaintenance)
-            put(GeoCacheEntry.FOUND_DATE_COL, geoCache.foundDate?.toFormattedString())
+            put(GeoCacheEntry.VISIT_DATETIME_COL, geoCache.currentVisitDatetime?.toString())
             put(GeoCacheEntry.FOUND_TRACKABLE_COL, geoCache.foundTrackable)
             put(GeoCacheEntry.DROPPED_TRACKABLE_COL, geoCache.droppedTrackable)
             put(GeoCacheEntry.FAV_POINT_COL, geoCache.favouritePoint)
@@ -146,7 +147,8 @@ class GeoCacheDbTable (private val context: Context) {
             put(GeoCacheEntry.IMAGE_COL, geoCache.pathToImage)
         }
 
-        val nLinesChanged = db.update(GeoCacheEntry.TABLE_NAME, values, "${GeoCacheEntry._ID} = ?", arrayOf("${geoCache._id}"))
+        val nLinesChanged = db.update(GeoCacheEntry.TABLE_NAME, values,
+                "${GeoCacheEntry._ID} = ?", arrayOf("${geoCache._id}"))
 
         db.close()
 
@@ -174,7 +176,8 @@ class GeoCacheDbTable (private val context: Context) {
         val _id = getLong(GeoCacheEntry._ID)
         val notes = getString(GeoCacheEntry.NOTES_COL)
         val visit = VisitOutcomeEnum.valueOfString(getString(GeoCacheEntry.VISIT_COL))
-        val foundDate = getStringOrNull(GeoCacheEntry.FOUND_DATE_COL)?.toDate()
+        val visitDatetimeString = getStringOrNull(GeoCacheEntry.VISIT_DATETIME_COL)
+        val visitDatetime = if (visitDatetimeString==null) null else Instant.parse(visitDatetimeString)
         val needsMaintenance = getBoolean(GeoCacheEntry.NEEDS_MAINTENANCE_COL)
         val foundTrackable = getStringOrNull(GeoCacheEntry.FOUND_TRACKABLE_COL)
         val droppedTrackable = getStringOrNull(GeoCacheEntry.DROPPED_TRACKABLE_COL)
@@ -182,7 +185,7 @@ class GeoCacheDbTable (private val context: Context) {
         val orderIdx = getInt(GeoCacheEntry.ORDER_COL)
         val imagePath = getStringOrNull(GeoCacheEntry.IMAGE_COL)
         return GeoCacheInTour(gc, notes, visit, needsMaintenance,
-                foundDate, foundTrackable, droppedTrackable, favouritePoint,
+                visitDatetime, foundTrackable, droppedTrackable, favouritePoint,
                 orderIdx, imagePath, _id, dbConnection)
     }
 

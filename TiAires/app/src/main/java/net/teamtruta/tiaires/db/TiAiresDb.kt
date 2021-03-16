@@ -8,6 +8,7 @@ import android.util.Log
 import net.teamtruta.tiaires.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.Instant
 
 class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -271,9 +272,83 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             db?.execSQL("ALTER TABLE ${TourEntry.TABLE_NAME} " +
                     "ADD ${TourEntry.STARTING_POINT_LON} REAL")
         }
+
+        // Rename cache visit date column name
+        if(oldVersion <= 18){
+            // Apparently this is only possible for the most recent version of SQLite (and android is not up to date)
+            // db?.execSQL("ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+            //        "RENAME COLUMN ${GeoCacheEntry.FOUND_DATE_COL} TO ${GeoCacheEntry.VISIT_DATETIME_COL};")
+
+            // Rename old table to a different name
+            val tempTableName = "${GeoCacheEntry.TABLE_NAME}OLD"
+
+            db?.execSQL("ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+                    "RENAME TO $tempTableName")
+
+            // Create new table with appropriate structure
+            db?.execSQL(SQL_CREATE_CACHE_TABLE)
+
+            // Transfer data from old one to the new one
+            db?.execSQL( "INSERT INTO ${GeoCacheEntry.TABLE_NAME} (" +
+                    "${GeoCacheEntry._ID}, " +
+                    "${GeoCacheEntry.VISIT_DATETIME_COL}, " +
+                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, " +
+                    "${GeoCacheEntry.VISIT_COL}, " +
+                    "${GeoCacheEntry.NOTES_COL}, " +
+                    "${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.FAV_POINT_COL}, " +
+                    "${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL}, " +
+                    "${GeoCacheEntry.ORDER_COL}, " +
+                    GeoCacheEntry.IMAGE_COL +
+                    ") " +
+                    "SELECT " +
+                    "${GeoCacheEntry._ID}, " +
+                    "${GeoCacheEntry.FOUND_DATE_COL}, " +
+                    "${GeoCacheEntry.NEEDS_MAINTENANCE_COL}, " +
+                    "${GeoCacheEntry.VISIT_COL}, " +
+                    "${GeoCacheEntry.NOTES_COL}, " +
+                    "${GeoCacheEntry.FOUND_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.DROPPED_TRACKABLE_COL}, " +
+                    "${GeoCacheEntry.FAV_POINT_COL}, " +
+                    "${GeoCacheEntry.TOUR_ID_FK_COL}, " +
+                    "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL}, " +
+                    "${GeoCacheEntry.ORDER_COL}, " +
+                    GeoCacheEntry.IMAGE_COL +
+                    " FROM $tempTableName")
+
+            // Delete original table
+            db?.execSQL("DROP TABLE IF EXISTS $tempTableName")
+
+            // Change the format of the date for the rows where it exists
+            val selection = "${GeoCacheEntry.VISIT_DATETIME_COL} IS NOT NULL"
+            val cursor = db?.doQuery(GeoCacheEntry.TABLE_NAME, arrayOf(GeoCacheEntry._ID,
+                    GeoCacheEntry.VISIT_DATETIME_COL), selection)
+            val datesNewFormat = mutableMapOf<Long, Instant>()
+            if (cursor != null) {
+                while(cursor.moveToNext()){
+                    val visitDate = cursor.getString(GeoCacheEntry.VISIT_DATETIME_COL).toDate()
+                    val visitInstant = visitDate.toInstant()
+                    val id = cursor.getLong(GeoCacheEntry._ID)
+                    datesNewFormat[id] = visitInstant
+                }
+            }
+
+            for ((id, date) in datesNewFormat){
+                val values = ContentValues()
+                values.put(GeoCacheEntry.VISIT_DATETIME_COL,
+                        date.toString())
+                db?.update(GeoCacheEntry.TABLE_NAME,
+                        values,
+                        "${GeoCacheEntry._ID} = ?",
+                        arrayOf("$id"))
+            }
+        }
     }
 
     override fun onOpen(db: SQLiteDatabase?) {
+
         Log.d(TAG, "Calling TiAiresDb onOpen")
         super.onOpen(db)
         // Foreign Key support is not enabled by default.
