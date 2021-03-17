@@ -31,7 +31,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     //private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE cache(id INTEGER PRIMARY KEY,foundDate TEXT,needsMaintenance INTEGER,visit TEXT,notes TEXT,foundTrackable INTEGER,droppedTrackable INTEGER,favouritePoint INTEGER,orderBy INTEGER,tourID_FK INTEGER,cacheDetailID_FK INTEGER,FOREIGN KEY(tourID_FK) REFERENCES tour ON DELETE CASCADE,FOREIGN KEY(cacheDetailID_FK) REFERENCES cacheDetail ON DELETE CASCADE)"
     private val SQL_CREATE_CACHE_TABLE = "CREATE TABLE ${GeoCacheEntry.TABLE_NAME}(" +
             "${GeoCacheEntry._ID} INTEGER PRIMARY KEY," +
-            "${GeoCacheEntry.FOUND_DATE_COL} TEXT," + // Can be changed to REAL or INTEGER according to convenience
+            "${GeoCacheEntry.VISIT_DATETIME_COL} TEXT," + // Can be changed to REAL or INTEGER according to convenience
             "${GeoCacheEntry.NEEDS_MAINTENANCE_COL} INTEGER," + // No Boolean in SQLITE
             "${GeoCacheEntry.VISIT_COL} TEXT," + // Matches an Enum
             "${GeoCacheEntry.NOTES_COL} TEXT," +
