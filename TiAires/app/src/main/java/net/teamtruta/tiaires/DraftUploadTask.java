@@ -101,15 +101,15 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
 
     private boolean createDraftFile(List<GeoCacheInTour> geoCachesToUpload) {
 
-        // TODO get actual date in which cache was marked as visited
-        //Instant currentTime = Instant.now();
-        //String currentTimeString = currentTime.toString();
-
         StringBuilder stringBuilder = new StringBuilder();
         for(GeoCacheInTour gcit : geoCachesToUpload){
             stringBuilder.append(gcit.getGeoCache().getCode());
             stringBuilder.append(",");
-            stringBuilder.append(gcit.getCurrentVisitDatetime().toString());
+            if(gcit.getCurrentVisitOutcome() != null) {
+                stringBuilder.append(gcit.getCurrentVisitDatetime().toString());
+            } else {
+                stringBuilder.append(Instant.now().toString());
+            }
             stringBuilder.append(",");
             stringBuilder.append(gcit.getCurrentVisitOutcome().getVisitOutcomeString());
             stringBuilder.append(",");
