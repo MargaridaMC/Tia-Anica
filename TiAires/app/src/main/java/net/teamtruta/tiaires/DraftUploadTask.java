@@ -64,7 +64,9 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
         String message;
         if(!successfullyWroteDraftsToFile){
             message = "There was an error in writing your drafts to file";
-        } else if(_response.equals("[]")){
+        } else if(!result){
+            message = "There was an error uploading your drafts";
+        } else if(_response==null || _response.equals("[]")){
             message = "Geocaching did not find any new drafts to upload.";
         } else {
             message = "Your drafts were successfully uploaded!";
@@ -100,14 +102,14 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
     private boolean createDraftFile(List<GeoCacheInTour> geoCachesToUpload) {
 
         // TODO get actual date in which cache was marked as visited
-        Instant currentTime = Instant.now();
-        String currentTimeString = currentTime.toString();
+        //Instant currentTime = Instant.now();
+        //String currentTimeString = currentTime.toString();
 
         StringBuilder stringBuilder = new StringBuilder();
         for(GeoCacheInTour gcit : geoCachesToUpload){
             stringBuilder.append(gcit.getGeoCache().getCode());
             stringBuilder.append(",");
-            stringBuilder.append(currentTimeString);
+            stringBuilder.append(gcit.getCurrentVisitDatetime().toString());
             stringBuilder.append(",");
             stringBuilder.append(gcit.getCurrentVisitOutcome().getVisitOutcomeString());
             stringBuilder.append(",");

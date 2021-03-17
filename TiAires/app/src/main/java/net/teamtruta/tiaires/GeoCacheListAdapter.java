@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -244,6 +245,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
 
         GeoCacheInTour selectedGeoCache = tour._tourGeoCaches.get(position);
         selectedGeoCache.setCurrentVisitOutcome(visit);
+        selectedGeoCache.setCurrentVisitDatetime(Instant.now());
         selectedGeoCache.saveChanges();
 
         onVisitListener.onVisit(visit.toString());

@@ -138,6 +138,7 @@ class GeoCacheDbTable (private val context: Context) {
         with(values){
             put(GeoCacheEntry.NOTES_COL, geoCache.notes)
             put(GeoCacheEntry.VISIT_COL,  geoCache.currentVisitOutcome.visitOutcomeString)
+            put(GeoCacheEntry.VISIT_DATETIME_COL, geoCache.currentVisitDatetime?.toString())
             put(GeoCacheEntry.NEEDS_MAINTENANCE_COL, geoCache.needsMaintenance)
             put(GeoCacheEntry.VISIT_DATETIME_COL, geoCache.currentVisitDatetime?.toString())
             put(GeoCacheEntry.FOUND_TRACKABLE_COL, geoCache.foundTrackable)
