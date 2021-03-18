@@ -105,7 +105,7 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
         for(GeoCacheInTour gcit : geoCachesToUpload){
             stringBuilder.append(gcit.getGeoCache().getCode());
             stringBuilder.append(",");
-            if(gcit.getCurrentVisitOutcome() != null) {
+            if(gcit.getCurrentVisitDatetime() != null) {
                 stringBuilder.append(gcit.getCurrentVisitDatetime().toString());
             } else {
                 stringBuilder.append(Instant.now().toString());
