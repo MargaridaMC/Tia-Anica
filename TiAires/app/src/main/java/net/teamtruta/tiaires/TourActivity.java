@@ -332,10 +332,11 @@ public class TourActivity extends AppCompatActivity implements GeoCacheListAdapt
     }
 
     private void uploadDrafts(){
-        // Get list of caches that have already been visited
+        // Get list of caches that have already been visited (but that have not been logged before)
         List<GeoCacheInTour> visitedGeoCaches = _tour._tourGeoCaches.stream()
-                .filter(x -> x.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF
+                .filter(x -> (x.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF
                         || x.getCurrentVisitOutcome() == VisitOutcomeEnum.Found)
+                        && (x.getGeoCache().getPreviousVisitOutcome() != VisitOutcomeEnum.Found))
                 .collect(Collectors.toList());
 
         // Get authentication cookie from shared preferences
