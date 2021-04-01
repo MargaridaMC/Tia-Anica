@@ -51,6 +51,8 @@ public class TourActivity extends AppCompatActivity implements GeoCacheListAdapt
 
     private final String TAG = TourActivity.class.getSimpleName();
 
+    List<GeoCacheInTour> draftsToUpload;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -334,10 +336,14 @@ public class TourActivity extends AppCompatActivity implements GeoCacheListAdapt
     private void uploadDrafts(){
         // Get list of caches that have already been visited (but that have not been logged before)
         List<GeoCacheInTour> visitedGeoCaches = _tour._tourGeoCaches.stream()
-                .filter(x -> (x.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF
-                        || x.getCurrentVisitOutcome() == VisitOutcomeEnum.Found)
-                        && (x.getGeoCache().getPreviousVisitOutcome() != VisitOutcomeEnum.Found))
+                .filter(x -> (x.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF &&
+                        x.getGeoCache().getPreviousVisitOutcome() != VisitOutcomeEnum.DNF)
+                        || (x.getCurrentVisitOutcome() == VisitOutcomeEnum.Found &&
+                        x.getGeoCache().getPreviousVisitOutcome() != VisitOutcomeEnum.Found))
+                .filter(x -> !x.getDraftUploaded())
                 .collect(Collectors.toList());
+
+        draftsToUpload = visitedGeoCaches;
 
         // Get authentication cookie from shared preferences
         SharedPreferences sharedPref = this.getSharedPreferences(
@@ -355,7 +361,14 @@ public class TourActivity extends AppCompatActivity implements GeoCacheListAdapt
         draftUploadTask.execute();
     }
 
-    public void onDraftUpload(String message) {
+    public void onDraftUpload(String message, Boolean success) {
+
+        if (success){
+            for(GeoCacheInTour gcit : draftsToUpload){
+                gcit.setDraftUploaded(true);
+                gcit.saveChanges();
+            }
+        }
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle("Draft Upload")

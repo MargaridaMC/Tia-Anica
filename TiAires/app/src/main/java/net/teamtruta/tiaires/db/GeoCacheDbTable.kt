@@ -99,6 +99,7 @@ class GeoCacheDbTable (private val context: Context) {
             put(GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL, geoCacheIDFK)
             put(GeoCacheEntry.ORDER_COL, orderIdx)
             put(GeoCacheEntry.IMAGE_COL, geoCacheInTour.pathToImage)
+            put(GeoCacheEntry.DRAFT_UPLOADED_COL, geoCacheInTour.draftUploaded)
         }
 
         val id = db.transaction { insert(GeoCacheEntry.TABLE_NAME, null, values) }
@@ -146,6 +147,7 @@ class GeoCacheDbTable (private val context: Context) {
             put(GeoCacheEntry.FAV_POINT_COL, geoCache.favouritePoint)
             put(GeoCacheEntry.ORDER_COL, geoCache.orderIdx)
             put(GeoCacheEntry.IMAGE_COL, geoCache.pathToImage)
+            put(GeoCacheEntry.DRAFT_UPLOADED_COL, geoCache.draftUploaded)
         }
 
         val nLinesChanged = db.update(GeoCacheEntry.TABLE_NAME, values,
@@ -160,7 +162,8 @@ class GeoCacheDbTable (private val context: Context) {
 
         val db = dbHelper.readableDatabase
 
-        val cursor = db.doQuery(GeoCacheEntry.TABLE_NAME, GeoCacheEntry.getAllColumns(), "${GeoCacheEntry._ID} = ?", arrayOf("$geoCacheID"))
+        val cursor = db.doQuery(GeoCacheEntry.TABLE_NAME, GeoCacheEntry.getAllColumns(),
+                "${GeoCacheEntry._ID} = ?", arrayOf("$geoCacheID"))
         cursor.moveToFirst()
         val geoCacheInTour = cursor.getGeoCacheInTour(dbConnection)
 
@@ -185,9 +188,10 @@ class GeoCacheDbTable (private val context: Context) {
         val favouritePoint = getBoolean(GeoCacheEntry.FAV_POINT_COL)
         val orderIdx = getInt(GeoCacheEntry.ORDER_COL)
         val imagePath = getStringOrNull(GeoCacheEntry.IMAGE_COL)
+        val draftUploaded = getBoolean(GeoCacheEntry.DRAFT_UPLOADED_COL)
         return GeoCacheInTour(gc, notes, visit, needsMaintenance,
                 visitDatetime, foundTrackable, droppedTrackable, favouritePoint,
-                orderIdx, imagePath, _id, dbConnection)
+                orderIdx, imagePath, draftUploaded, _id, dbConnection)
     }
 
     fun deleteAllGeoCachesInTour(_id: Long) {

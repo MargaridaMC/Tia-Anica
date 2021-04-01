@@ -17,6 +17,7 @@ class GeoCacheInTour(
     var favouritePoint : Boolean = false,
     var orderIdx : Int = -1,
     var pathToImage : String? = null,
+    var draftUploaded : Boolean = false,
     val _id : Long = -1,
     private var _dbConnection : DbConnection? = null){
 

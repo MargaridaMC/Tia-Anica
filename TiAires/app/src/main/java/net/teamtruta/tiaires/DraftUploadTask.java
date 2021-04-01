@@ -72,7 +72,7 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
             message = "Your drafts were successfully uploaded!";
         }
 
-        _delegate.onDraftUpload(message);
+        _delegate.onDraftUpload(message, successfullyWroteDraftsToFile && result);
 
     }
 

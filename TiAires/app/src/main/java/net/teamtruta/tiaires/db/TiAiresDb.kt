@@ -40,6 +40,7 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
             "${GeoCacheEntry.FAV_POINT_COL} INTEGER," +
             "${GeoCacheEntry.ORDER_COL} INTEGER," +
             "${GeoCacheEntry.IMAGE_COL} TEXT," +
+            "${GeoCacheEntry.DRAFT_UPLOADED_COL} INTEGER NOT NULL DEFAULT 0, " +
             "${GeoCacheEntry.TOUR_ID_FK_COL} INTEGER," + // REFERENCES ${TourEntry.TABLE_NAME}(${TourEntry._ID}) ON DELETE CASCADE," +
             "${GeoCacheEntry.GEO_CACHE_DETAIL_ID_FK_COL} INTEGER," + // REFERENCES ${CacheDetailEntry.TABLE_NAME}(${CacheDetailEntry._ID})" +
             "FOREIGN KEY(${GeoCacheEntry.TOUR_ID_FK_COL}) REFERENCES ${TourEntry.TABLE_NAME}," +
@@ -344,6 +345,12 @@ class TiAiresDb (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                         "${GeoCacheEntry._ID} = ?",
                         arrayOf("$id"))
             }
+        }
+
+        // Add new column for controlling whether draft has been uploaded
+        if(oldVersion <= 19){
+            db?.execSQL("ALTER TABLE ${GeoCacheEntry.TABLE_NAME} " +
+                    "ADD ${GeoCacheEntry.DRAFT_UPLOADED_COL} INTEGER NOT NULL DEFAULT 0")
         }
     }
 
