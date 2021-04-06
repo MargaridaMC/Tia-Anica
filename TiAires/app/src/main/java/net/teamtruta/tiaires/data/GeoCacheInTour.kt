@@ -37,23 +37,4 @@ class GeoCacheInTour(
 
         @ColumnInfo(index = true)
         val tourIDFK: Long,
-){
-
-
-    // the following fields have the "In Tour" semantics.
-    // So if a geoCache was found but not in the tour, currentVisitOutcome will be = NotAttempted;
-    // same logic applies to other fields.
-
-    /*
-    constructor(geoCache: GeoCache): this(geoCache = geoCache, _dbConnection = null)
-
-    fun saveChanges() {
-        _dbConnection?.geoCacheTable?.updateEntry(this)
-    }
-
-    companion object {
-        fun getGeoCacheFromID(geoCacheID: Long, dbConnection: DbConnection): GeoCacheInTour {
-            return dbConnection.geoCacheTable.getGeoCacheFromID(geoCacheID, dbConnection)
-        }
-    }*/
-}
+)

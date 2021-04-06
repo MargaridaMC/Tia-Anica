@@ -17,7 +17,6 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
     }
 
     fun getCurrentTour(): LiveData<GeocachingTourWithCaches> = repository.getCurrentTour()
-    fun setCurrentTour(tourID: Long) = repository.setCurrentTourID(tourID)
 
     fun deleteTour(tour: GeocachingTourWithCaches) {
         GlobalScope.launch { repository.deleteTour(tour) } }
@@ -25,7 +24,9 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
     fun getGeoCacheInTourFromID(geoCacheInTourID: Long): LiveData<GeoCacheInTourWithDetails> =
             repository.getGeoCacheInTourFromID(geoCacheInTourID)
 
-
+    fun refreshTourGeoCacheDetails(tour: GeocachingTourWithCaches){
+        repository.refreshTourGeoCacheDetails(tour)
+    }
 
 }
 

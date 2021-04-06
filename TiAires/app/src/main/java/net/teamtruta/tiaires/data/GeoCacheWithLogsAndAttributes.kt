@@ -29,7 +29,6 @@ class GeoCacheWithLogsAndAttributes(
                 get() {
                         if (geoCache.previousVisitOutcome == VisitOutcomeEnum.Disabled) return "DISABLED"
                         if (getLastNLogs(10).any {it.logType == VisitOutcomeEnum.DNF }) return "DNF RISK"
-                        //if (recentLogs.subList(0, 10).any { it.logType == VisitOutcomeEnum.NeedsMaintenance } ||
                         if (attributes.contains(GeoCacheAttributeEnum.NeedsMaintenance)) return "NEEDS MAINTENANCE"
                         return ""
                 }
@@ -37,12 +36,6 @@ class GeoCacheWithLogsAndAttributes(
 
         fun isDNFRisk(): Boolean {
                 return dNFRisk != ""
-        }
-
-        fun setGeoCacheID(id: Long){
-                geoCache.id = id
-                recentLogs.forEach{ log -> log.cacheDetailIDFK = id}
-                attributes.forEach{ at -> at.cacheDetailIDFK = id}
         }
 
 }

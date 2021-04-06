@@ -20,6 +20,7 @@ class Repository(private val tourDao: GeocachingTourDao,
     val gettingTour: MutableLiveData<Boolean?> = MutableLiveData(null)
     var allTours: LiveData<List<GeocachingTourWithCaches>> = tourDao.getAllTours()
     private var _currentTourID: Long = 0
+
     fun setCurrentTourID(tourID: Long){
         _currentTourID = tourID
     }
@@ -74,7 +75,7 @@ class Repository(private val tourDao: GeocachingTourDao,
             val authCookie = App.authenticationCookie
             val scrapper = GeocachingScrapper(authCookie)
             val geocachingScrappingTask = GeocachingScrappingTask(scrapper, requestedGeoCacheCodes,
-                    this, tourID, geoCacheOrder)
+                    this, tourID, geoCacheOrder, null)
             geocachingScrappingTask.execute()
         } else {
             // We're done with creating the tour
@@ -84,40 +85,84 @@ class Repository(private val tourDao: GeocachingTourDao,
 
     }
 
+    fun refreshTourGeoCacheDetails(tour: GeocachingTourWithCaches){
+        val geocachesToGet = tour.tourGeoCaches.map{
+             x -> x.geoCache.geoCache.code
+        }
+
+        val geocacheIDs = tour.tourGeoCaches.map{
+            x -> x.geoCache.geoCache.id
+        }
+
+        val authCookie = App.authenticationCookie
+        val scrapper = GeocachingScrapper(authCookie)
+        val geocachingScrappingTask = GeocachingScrappingTask(scrapper, geocachesToGet,
+                this, null, null, geocacheIDs)
+        geocachingScrappingTask.execute()
+    }
+
 
     fun onGeoCachesObtained(obtainedGeoCachesWithLogsAndAttributes: MutableList<GeoCacheWithLogsAndAttributes>, tourID:Long,
-                            geoCacheOrder: Map<String, Int> ) {
+                            geoCacheOrder: Map<String, Int>, geoCacheIDs: List<Long>?  ) {
 
           val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            val obtainedGeoCaches = obtainedGeoCachesWithLogsAndAttributes.map { x -> x.geoCache }
 
-            val geoCacheIDs = geoCacheDao.insert(*obtainedGeoCaches.toTypedArray())
+            if(geoCacheIDs == null){
+                // These caches were just obtained and just need to be store in the database
 
-            obtainedGeoCaches.forEachIndexed { i, geoCache ->
-                val codeID = geoCacheIDs[i]
+                val obtainedGeoCaches = obtainedGeoCachesWithLogsAndAttributes.map { x -> x.geoCache }
+                val obtainedGeoCacheIDs = geoCacheDao.insert(*obtainedGeoCaches.toTypedArray())
+                obtainedGeoCaches.forEachIndexed { i, geoCache ->
+                    val codeID = obtainedGeoCacheIDs[i]
 
-                geoCache.id = codeID
+                    geoCache.id = codeID
 
-                // Save logs
-                val geoCacheLogs = obtainedGeoCachesWithLogsAndAttributes[i].recentLogs
-                geoCacheLogs.forEach{log ->
-                    log.cacheDetailIDFK = codeID
-                    geoCacheLogDao.addNewLog(log)}
+                    // Save logs
+                    val geoCacheLogs = obtainedGeoCachesWithLogsAndAttributes[i].recentLogs
+                    geoCacheLogs.forEach{log ->
+                        log.cacheDetailIDFK = codeID
+                        geoCacheLogDao.insert(log)}
 
-                // Save attributes
-                val geoCacheAttributes = obtainedGeoCachesWithLogsAndAttributes[i].attributes
-                geoCacheAttributes.forEach{attribute ->
-                    attribute.cacheDetailIDFK = codeID
-                    geoCacheAttributeDao.addNewAttribute(attribute)}
+                    // Save attributes
+                    val geoCacheAttributes = obtainedGeoCachesWithLogsAndAttributes[i].attributes
+                    geoCacheAttributes.forEach{attribute ->
+                        attribute.cacheDetailIDFK = codeID
+                        geoCacheAttributeDao.insert(attribute)}
 
-                val geoCacheInTour = GeoCacheInTourWithDetails(geoCache, tourID)
-                geoCacheInTour.geoCacheInTour.orderIdx = geoCacheOrder[geoCache.code]!!
-                addNewGeoCacheInTour(geoCacheInTour.geoCacheInTour)
+                    val geoCacheInTour = GeoCacheInTourWithDetails(geoCache, tourID)
+                    geoCacheInTour.geoCacheInTour.orderIdx = geoCacheOrder[geoCache.code]!!
+                    addNewGeoCacheInTour(geoCacheInTour.geoCacheInTour)
+                }
+            } else {
+                // We are refreshing the caches so we need to replace both the cache details as well as the logs and attributes
+                obtainedGeoCachesWithLogsAndAttributes.forEachIndexed {
+                    i, geoCacheWithLogsAndAttributes ->
+                        val geoCacheID = geoCacheIDs[i]
+
+                        // Update geocache
+                        val geoCache = geoCacheWithLogsAndAttributes.geoCache
+                        geoCache.id = geoCacheID
+                        geoCacheDao.update(geoCache)
+
+                        // Update logs
+                        geoCacheLogDao.deleteLogsInGeoCache(geoCacheID)
+                        val logs: List<GeoCacheLog> = geoCacheWithLogsAndAttributes.recentLogs
+                        logs.map {it.apply { cacheDetailIDFK =  geoCacheID}}
+                        geoCacheLogDao.insert(*logs.toTypedArray())
+
+                        // Update attributes
+                        geoCacheAttributeDao.deleteAttributesInGeoCache(geoCacheID)
+                        val attributes: List<GeoCacheAttribute> = geoCacheWithLogsAndAttributes.attributes
+                        attributes.map {it.apply { cacheDetailIDFK =  geoCacheID}}
+                        geoCacheAttributeDao.insert(*attributes.toTypedArray())
+
+                }
+
             }
 
-            gettingTour.postValue(false)
             _currentTourID = tourID
+            gettingTour.postValue(false)
         }
 
 
@@ -127,5 +172,13 @@ class Repository(private val tourDao: GeocachingTourDao,
         return tourDao.addNewTour(tour)
     }
 
+    fun deleteAllGeoCachesNotBeingUsed() {
+        geoCacheDao.deleteAllGeoCachesNotBeingUsed()
+    }
+
+    fun getNTours() : Int{
+        return if(allTours.value == null) 0
+        else allTours.value!!.size
+    }
 
 }

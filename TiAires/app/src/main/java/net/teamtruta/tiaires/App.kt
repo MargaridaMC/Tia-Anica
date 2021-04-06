@@ -34,11 +34,11 @@ class App : Application() {
                 if (authCookie == "") {
                     val builder = AlertDialog.Builder(context)
                     builder.setMessage("Login information is missing. Please input your credentials in the login screen.")
-                    builder.setPositiveButton(context!!.getString(R.string.ok)) { dialog: DialogInterface?, id: Int ->
+                    builder.setPositiveButton(context!!.getString(R.string.ok)) { _: DialogInterface?, _: Int ->
                         val intent = Intent(context, LoginActivity::class.java)
                         context!!.startActivity(intent)
                     }
-                    builder.setNegativeButton(context!!.getString(R.string.cancel)) { dialog: DialogInterface?, which: Int -> }
+                    builder.setNegativeButton(context!!.getString(R.string.cancel)) { _: DialogInterface?, _: Int -> }
                     val dialog = builder.create()
                     dialog.show()
                 }

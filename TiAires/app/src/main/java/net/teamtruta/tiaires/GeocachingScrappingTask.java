@@ -8,6 +8,7 @@ import net.teamtruta.tiaires.data.GeoCache;
 import net.teamtruta.tiaires.data.GeoCacheWithLogsAndAttributes;
 import net.teamtruta.tiaires.data.Repository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +22,17 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
     Repository delegate;
     Long tourID;
     Map<String, Integer> geoCacheOrder;
+    List<Long> geoCacheIDs;
 
     public GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geoCacheCodesList,
-                                   Repository delegate, Long tourID, Map<String, Integer> geoCacheOrder){
+                                   Repository delegate, Long tourID, Map<String, Integer> geoCacheOrder,
+                                   List<Long> geoCacheIDs){
         this.scrapper = scrapper;
         this.geoCacheCodesList = geoCacheCodesList;
         this.delegate = delegate;
         this.tourID = tourID;
         this.geoCacheOrder = geoCacheOrder;
+        this.geoCacheIDs = geoCacheIDs;
     }
 
     @Override
@@ -40,14 +44,14 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
         Analytics.trackEvent("GeocachingScrappingTask.doBackground", properties);
 
         // Check that we can login
-        /*
+
         try {
             boolean login = scrapper.login();
             if(!login) return 0;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
+
 
         for(String code : geoCacheCodesList)
         {
@@ -67,7 +71,7 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if(result == 1){
-            delegate.onGeoCachesObtained(geoCaches, tourID, geoCacheOrder);
+            delegate.onGeoCachesObtained(geoCaches, tourID, geoCacheOrder, geoCacheIDs);
         }
     }
 }

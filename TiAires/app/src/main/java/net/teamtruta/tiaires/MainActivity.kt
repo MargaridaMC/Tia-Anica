@@ -14,7 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
@@ -26,7 +25,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), ItemClickListener {
 
-    var TAG = MainActivity::class.java.simpleName
+    var tag: String = MainActivity::class.java.simpleName
 
     private val viewModel: MainActivityViewModel by viewModels{
         MainActivityViewModelFactory((application as App).repository)
@@ -44,26 +43,38 @@ class MainActivity : AppCompatActivity(), ItemClickListener {
         val properties: MutableMap<String, String?> = HashMap()
         properties["Username"] = username
         Analytics.trackEvent("MainActivity.onCreate", properties)
-        Log.d(TAG, "Cookie: $authCookie")
+        Log.d(tag, "Cookie: $authCookie")
         if (authCookie == "") {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
         // Setup content
-        setContentView(R.layout.activity_main)
-        val tourListView = findViewById<RecyclerView>(R.id.tour_list)
-        tourListView.layoutManager = LinearLayoutManager(this)
-        val dividerItemDecoration = DividerItemDecoration(tourListView.context, LinearLayout.VERTICAL)
-        dividerItemDecoration.setDrawable(ColorDrawable(getColor(R.color.black)))
-        tourListView.addItemDecoration(dividerItemDecoration)
-
-        viewModel.allTours.observe(this) {
-            tours ->
+        viewModel.allTours.observe(this) { tours ->
 
             if(tours.isEmpty()){
                 setContentView(R.layout.activity_main_nothing_to_show)
+                // Put username on toolbar
+                val toolbar = findViewById<Toolbar>(R.id.toolbar)
+                setSupportActionBar(toolbar)
+
+                val ab = supportActionBar!!
+                if (username != "") ab.title = username
+
             } else {
+                setContentView(R.layout.activity_main)
+                // Put username on toolbar
+                val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
+                setSupportActionBar(toolbar)
+
+                val ab = supportActionBar!!
+                if (username != "") ab.title = username
+
+                val tourListView = findViewById<RecyclerView>(R.id.tour_list)
+                tourListView.layoutManager = LinearLayoutManager(this)
+                val dividerItemDecoration = DividerItemDecoration(tourListView.context, LinearLayout.VERTICAL)
+                dividerItemDecoration.setDrawable(ColorDrawable(getColor(R.color.black)))
+                tourListView.addItemDecoration(dividerItemDecoration)
                 val tourListAdapter: RecyclerView.Adapter<TourViewHolder> =
                         TourListAdapter(tours, this, applicationContext)
                 tourListView.adapter = tourListAdapter
@@ -71,19 +82,9 @@ class MainActivity : AppCompatActivity(), ItemClickListener {
 
         }
 
-        // Setup fab
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener { view: View ->
-            val intent = Intent(view.context, TourCreationActivity::class.java)
-            startActivity(intent)
-        }
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
-        // Put username on toolbar
-        if (username != "") {
-            Objects.requireNonNull(supportActionBar)!!.title = username
-        }
+        // Remove unnecessary cache details from database
+        viewModel.deleteAllGeoCachesNotBeingUsed()
 
     }
 
@@ -120,5 +121,10 @@ class MainActivity : AppCompatActivity(), ItemClickListener {
 
         // android.os.Process.killProcess(android.os.Process.myPid());
         // System.exit(0); // see: https://stackoverflow.com/questions/18292016/difference-between-finish-and-system-exit0
+    }
+
+    fun goToTourCreationActivity(view: View){
+        val intent = Intent(view.context, TourCreationActivity::class.java)
+        startActivity(intent)
     }
 }

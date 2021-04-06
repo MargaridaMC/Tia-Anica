@@ -110,11 +110,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         val progressBar = findViewById<ConstraintLayout>(R.id.progress_layout)
         progressBar.visibility = View.VISIBLE
 
-        //SwipeRefreshLayout swipeToRefreshLayout = findViewById(R.id.swiperefresh);
-        //swipeToRefreshLayout.setRefreshing(false);
-/*
-        _tour.tourActivityDelegate = this;
-        _tour.reloadTourCaches();*/
+        _tour?.let { viewModel.refreshTourGeoCacheDetails(it) }
     }
 
     private fun setProgressBar() {

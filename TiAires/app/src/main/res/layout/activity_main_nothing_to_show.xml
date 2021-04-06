@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:text="@string/nothing_to_show"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,6 +35,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:backgroundTint="@color/colorPrimaryDark"
+        android:clickable="true"
+        android:onClick="goToTourCreationActivity"
         app:srcCompat="@drawable/plus_sign_white" />
 
 

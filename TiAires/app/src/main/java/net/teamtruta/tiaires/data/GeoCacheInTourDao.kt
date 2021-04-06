@@ -20,10 +20,6 @@ interface GeoCacheInTourDao {
     @Query("SELECT COUNT(*) FROM cache WHERE tourIDFK = :tourID")
     fun getTourSize(tourID: Long): Int
 
-    /* This leads to an error - query must constant at compile tile
-    @Query("SELECT COUNT(*) FROM cache WHERE tourID_FK = :tourID AND visit = ${VisitOutcomeEnum.DNF.visitOutcomeString}")
-    fun getNumberDNFsInTour(tourID: Long): Int*/
-
     // TODO I think this should go in the tour dao
     @Query("SELECT COUNT(*) FROM cache WHERE tourIDFK = :tourID AND currentVisitOutcome = :visitType")
     fun getNumberVisitTypeInTour(tourID: Long, visitType: String):Int
