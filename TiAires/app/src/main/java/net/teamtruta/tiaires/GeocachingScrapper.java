@@ -2,6 +2,11 @@ package net.teamtruta.tiaires;
 
 import android.util.Log;
 
+import net.teamtruta.tiaires.data.GeoCache;
+import net.teamtruta.tiaires.data.GeoCacheAttribute;
+import net.teamtruta.tiaires.data.GeoCacheLog;
+import net.teamtruta.tiaires.data.GeoCacheWithLogsAndAttributes;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -161,7 +166,7 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public GeoCache getGeoCacheDetails(String code) throws IOException
+    public GeoCacheWithLogsAndAttributes getGeoCacheDetails(String code) throws IOException
     {
         code = code.toUpperCase();
 
@@ -389,13 +394,13 @@ public class GeocachingScrapper {
         }
 
         // 10. Get cache attributes
-        List<GeoCacheAttributeEnum> attributes = new ArrayList();
+        List<GeoCacheAttribute> attributes = new ArrayList();
         for(GeoCacheAttributeEnum attribute: GeoCacheAttributeEnum.values()){
             String atString = attribute.getAttributeString();
             pattern = Pattern.compile(atString);
             matcher = pattern.matcher(pageContents);
             if(matcher.find()){
-                attributes.add(attribute);
+                attributes.add(new GeoCacheAttribute(attribute));
             }
         }
 
@@ -413,8 +418,11 @@ public class GeocachingScrapper {
         // Check if cache is a DNF risk
         //gc.setDNFRisk();
 
-        return new GeoCache(code, name, latitude, longitude, size, difficulty, terrain, type, visit,
-                hint, favourites, recentLogs, attributes);
+        GeoCache geoCache = new GeoCache(code, name, latitude, longitude, size,
+                difficulty, terrain, type, visit,
+                hint, favourites);
+        GeoCacheWithLogsAndAttributes geoCacheWithLogsAndAttributes = new GeoCacheWithLogsAndAttributes(geoCache, recentLogs, attributes);
+        return geoCacheWithLogsAndAttributes;
     }
 
     private String getTokenFromHtmlBody(StringBuffer htmlPage)

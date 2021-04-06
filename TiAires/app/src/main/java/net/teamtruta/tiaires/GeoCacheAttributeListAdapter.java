@@ -11,14 +11,15 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GeoCacheAttributeListAdapter extends BaseAdapter {
 
-    private final ArrayList<GeoCacheAttributeEnum> attributes;
+    private final List<GeoCacheAttributeEnum> attributes;
     private final LayoutInflater layoutInflater;
     private final Context context;
 
-    public GeoCacheAttributeListAdapter(Context context, ArrayList<GeoCacheAttributeEnum> attributes) {
+    public GeoCacheAttributeListAdapter(Context context, List<GeoCacheAttributeEnum> attributes) {
         this.attributes = attributes;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;

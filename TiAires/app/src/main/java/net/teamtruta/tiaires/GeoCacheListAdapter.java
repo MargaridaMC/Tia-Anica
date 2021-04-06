@@ -1,5 +1,6 @@
 package net.teamtruta.tiaires;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -17,9 +18,18 @@ import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.teamtruta.tiaires.data.GeoCache;
+import net.teamtruta.tiaires.data.GeoCacheAttribute;
+import net.teamtruta.tiaires.data.GeoCacheInTour;
+import net.teamtruta.tiaires.data.GeoCacheInTourWithDetails;
+import net.teamtruta.tiaires.data.GeoCacheLog;
+import net.teamtruta.tiaires.data.GeoCacheWithLogsAndAttributes;
+import net.teamtruta.tiaires.viewModels.TourViewModel;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -27,31 +37,40 @@ import java.util.Locale;
 
 class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewHolder> implements ItemTouchHelperAdapter{
 
-    private static GeocachingTour tour;
+    private static List<GeoCacheInTourWithDetails> geoCacheInTourList = new ArrayList();
     private final EditOnClickListener editOnClickListener;
     private final GoToOnClickListener goToOnClickListener;
+    private final Context context;
+    static TourViewModel viewModel;
 
     static OnVisitListener onVisitListener;
 
-    //private static GeoCacheInTour recentlyVisitedCache;
-    //private static int recentlyVisitedGeoCachePosition;
 
-
-    GeoCacheListAdapter(GeocachingTour tour, EditOnClickListener editOnClickListener, GoToOnClickListener goToOnClickListener){
-        GeoCacheListAdapter.tour = tour;
+    GeoCacheListAdapter(EditOnClickListener editOnClickListener,
+                        GoToOnClickListener goToOnClickListener,
+                        Context applicationContext, TourViewModel viewModel){
         this.editOnClickListener = editOnClickListener;
         this.goToOnClickListener = goToOnClickListener;
+        this.context = applicationContext;
+        this.viewModel = viewModel;
     }
+
+    public void setGeoCacheInTourList(List<GeoCacheInTourWithDetails> list){
+        this.geoCacheInTourList = list;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount(){
-        return (int) tour.getSize();
+        return geoCacheInTourList.size();
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
 
-        GeoCacheInTour geoCacheInTour = tour._tourGeoCaches.get(position);
-        GeoCache geoCache = geoCacheInTour.getGeoCache();
+        GeoCacheInTour geoCacheInTour = geoCacheInTourList.get(position).getGeoCacheInTour();
+        GeoCacheWithLogsAndAttributes geoCacheWithLogsAndAttributes = geoCacheInTourList.get(position).getGeoCache();
+        GeoCache geoCache = geoCacheWithLogsAndAttributes.getGeoCache();
 
         // 1. Set geoCache name
         holder.geoCacheName.setText(geoCache.getName());
@@ -66,7 +85,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         } else if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Disabled){
             drawableID = R.drawable.geo_cache_icon_disabled;
         } else {
-            drawableID = GeoCacheIcon.Companion.getIconDrawable(geoCacheInTour.getGeoCache().getType());
+            drawableID = GeoCacheIcon.Companion.getIconDrawable(geoCache.getType());
         }
 
         Drawable geoCacheSymbolDrawable = ContextCompat.getDrawable(holder.view.getContext(), drawableID);
@@ -75,7 +94,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         // 3. Set information line 1: Code, difficulty and terrain and Size
         holder.geoCacheCode.setText(geoCache.getCode());
 
-        String difTerString = App.getContext().getString(R.string.geo_cache_dif_ter);
+        String difTerString = context.getString(R.string.geo_cache_dif_ter);
         double difficulty = geoCache.getDifficulty();
         double terrain = geoCache.getTerrain();
         
@@ -88,34 +107,35 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         holder.geoCacheDifTer.setText( HtmlCompat.fromHtml(String.format(difTerString, diffString, terString),
                 HtmlCompat.FROM_HTML_MODE_LEGACY));
 
-        String sizeString = App.getContext().getString(R.string.geo_cache_size);
+        String sizeString = context.getString(R.string.geo_cache_size);
         holder.geoCacheSize.setText(String.format(sizeString, geoCache.getSize()));
 
 
         // 4. Set information line 2: Favorites and whether geoCache has hint
-        String favString = App.getContext().getString(R.string.geo_cache_favs);
+        String favString = context.getString(R.string.geo_cache_favs);
         holder.geoCacheFavs.setText(String.format(favString, geoCache.getFavourites()));
         if(geoCache.hasHint()){
-            String hintString = App.getContext().getString(R.string.geo_cache_has_hint);
+            String hintString = context.getString(R.string.geo_cache_has_hint);
             holder.geoCacheHasHint.setText(HtmlCompat.fromHtml(
                     hintString,
                     HtmlCompat.FROM_HTML_MODE_LEGACY));
         } else {
-            holder.geoCacheHasHint.setText(HtmlCompat.fromHtml(App.getContext().getString(R.string.geo_cache_has_no_hint),
+            holder.geoCacheHasHint.setText(HtmlCompat.fromHtml(context.getString(R.string.geo_cache_has_no_hint),
                     HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
 
-        List<GeoCacheLog> last10Logs = geoCache.getLastNLogs(10);
-        for(int i=0; i<10;i++){
+        List<GeoCacheLog> last10Logs = geoCacheWithLogsAndAttributes.getLastNLogs(10);
+        int i = 0;
+        for (GeoCacheLog log:last10Logs) {
             TextView tv = (TextView) holder.lastLogsLayout.getChildAt(i);
-            if(last10Logs.get(i).getLogType() == VisitOutcomeEnum.Found){
+            if(log.getLogType() == VisitOutcomeEnum.Found){
                 tv.setTextColor(holder.view.getContext().getColor(R.color.colorPrimary));
-            } else if( last10Logs.get(i).getLogType() == VisitOutcomeEnum.DNF ){
+            } else if( log.getLogType() == VisitOutcomeEnum.DNF ){
                 tv.setTextColor(holder.view.getContext().getColor(R.color.red));
             } else {
                 tv.setTextColor(holder.view.getContext().getColor(R.color.blue));
             }
-
+            i++;
         }
 
 
@@ -124,9 +144,9 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
 
 
         // 6. Set DNF information if required
-        if(geoCache.isDNFRisk()){
-            String dnfString = App.getContext().getString(R.string.dnf_risk);
-            dnfString = String.format(dnfString, geoCache.getDNFRisk());
+        if(geoCacheWithLogsAndAttributes.isDNFRisk()){
+            String dnfString = context.getString(R.string.dnf_risk);
+            dnfString = String.format(dnfString, geoCacheWithLogsAndAttributes.getDNFRisk());
 
             holder.dnfInfo.setText(HtmlCompat.fromHtml(
                     dnfString,
@@ -140,7 +160,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
        // 7. Set listener for edit button
         holder.editButton.setOnClickListener(v -> {
             if(editOnClickListener!=null){
-                editOnClickListener.onEditClick(geoCacheInTour.get_id());
+                editOnClickListener.onEditClick(geoCacheInTour.getId());
             }
         });
 
@@ -155,33 +175,33 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         if(geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found
                 || geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF
                 || geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Disabled){
-            holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
+            holder.layout.setBackgroundColor(context.getColor(R.color.light_grey));
         } else {
-            holder.layout.setBackgroundColor(App.getContext().getColor(R.color.white));
+            holder.layout.setBackgroundColor(context.getColor(R.color.white));
         }
 
         // 10. Setup expansion
-        // holder.view.setOnClickListener(v -> expandHolder(holder, geoCache));
-        holder.extraInfoArrow.setOnClickListener(v -> holderExpansionOnClicklistener(holder, geoCache));
+        holder.extraInfoArrow.setOnClickListener(v -> holderExpansionOnClicklistener(holder, geoCacheWithLogsAndAttributes));
 
         // 11. Add Cache Attributes
         holder.attributeList.removeAllViews();
-        if(geoCache.getAttributes().size() > 0){
-            for(GeoCacheAttributeEnum attribute: geoCache.getAttributes()){
-                ImageView iv = new ImageView(App.getContext());
-                int attributeIconID = GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute);
-                iv.setImageDrawable(ContextCompat.getDrawable(App.getContext(), attributeIconID));
+        if(geoCacheWithLogsAndAttributes.getAttributes().size() > 0){
+            for(GeoCacheAttribute attribute: geoCacheWithLogsAndAttributes.getAttributes()){
+                ImageView iv = new ImageView(context);
+                int attributeIconID = GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon(attribute.getAttributeType());
+                iv.setImageDrawable(ContextCompat.getDrawable(context, attributeIconID));
                 // DEPRECATED:
                 //iv.setImageDrawable(App.getContext().getDrawable(attributeIconID));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size),
-                        (int) App.getContext().getResources().getDimension(R.dimen.medium_icon_size));
-                layoutParams.setMarginEnd((int) App.getContext().getResources().getDimension(R.dimen.tiny_padding));
+                        (int) context.getResources().getDimension(R.dimen.medium_icon_size),
+                        (int) context.getResources().getDimension(R.dimen.medium_icon_size));
+                layoutParams.setMarginEnd((int) context.getResources().getDimension(R.dimen.tiny_padding));
                 iv.setLayoutParams(layoutParams);
                 holder.attributeList.addView(iv);
             }
         }
     }
+
 
     private Spanned getHintText(GeoCache geoCache) {
 
@@ -190,17 +210,17 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
 
     }
 
-    void holderExpansionOnClicklistener(ViewHolder holder, GeoCache geoCache){
+    void holderExpansionOnClicklistener(ViewHolder holder, GeoCacheWithLogsAndAttributes geoCacheWithLogsAndAttributes){
         if(holder.extraInfoArrow.isChecked() || holder.extraInfoLayout.getVisibility() != View.VISIBLE){
-            expandHolder(holder, geoCache);
+            expandHolder(holder, geoCacheWithLogsAndAttributes);
         } else {
             unexpandHolder(holder);
         }
     }
-    void expandHolder(ViewHolder holder, GeoCache geoCache){
+    void expandHolder(ViewHolder holder, GeoCacheWithLogsAndAttributes geoCacheWithLogsAndAttributes){
 
         // Remove hint indication from line 1
-        if(geoCache.hasHint()){
+        if(geoCacheWithLogsAndAttributes.getGeoCache().hasHint()){
             holder.geoCacheHasHint.setVisibility(View.GONE);
             holder.hint.setVisibility(View.VISIBLE);
         }
@@ -211,7 +231,7 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         holder.extraInfoArrow.setChecked(true);
 
         // Show attributes
-        if(geoCache.getAttributes().size() != 0)
+        if(geoCacheWithLogsAndAttributes.getAttributes().size() != 0)
             holder.attributeList.setVisibility(View.VISIBLE);
 
     }
@@ -243,10 +263,10 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
         // recentlyVisitedCache = tour.getCacheInTour(position);
         // recentlyVisitedCachePosition = position;
 
-        GeoCacheInTour selectedGeoCache = tour._tourGeoCaches.get(position);
+        GeoCacheInTour selectedGeoCache = geoCacheInTourList.get(position).getGeoCacheInTour();
         selectedGeoCache.setCurrentVisitOutcome(visit);
         selectedGeoCache.setCurrentVisitDatetime(Instant.now());
-        selectedGeoCache.saveChanges();
+        viewModel.updateGeoCacheInTour(selectedGeoCache);
 
         onVisitListener.onVisit(visit.toString());
     }
@@ -260,15 +280,16 @@ class GeoCacheListAdapter extends RecyclerView.Adapter<GeoCacheListAdapter.ViewH
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
 
-        Collections.swap(tour._tourGeoCaches, fromPosition, toPosition);
+        Collections.swap(geoCacheInTourList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
-        //tour.swapCachePositions(fromPosition, toPosition);
-        //tour.updateTourCaches();
+        /*
+        tour.swapCachePositions(fromPosition, toPosition);
+        tour.updateTourCaches();*/
 
     }
 
     public void onMoveEnded(){
-        tour.updateTourCaches();
+        /*tour.updateTourCaches();*/
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{

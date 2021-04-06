@@ -1,9 +1,5 @@
 package net.teamtruta.tiaires;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +10,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.microsoft.appcenter.analytics.Analytics;
 
-import net.teamtruta.tiaires.db.DbConnection;
+import net.teamtruta.tiaires.data.GeocachingTourWithCaches;
+import net.teamtruta.tiaires.viewModels.TourCreationViewModel;
+import net.teamtruta.tiaires.viewModels.TourCreationViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +30,11 @@ import java.util.regex.Pattern;
 
 public class TourCreationActivity extends AppCompatActivity
 {
-    GeocachingTour _tour = null; // when activity is initially open
+    GeocachingTourWithCaches _tour = null; // when activity is initially open
     List<String> _geoCacheCodesList = new ArrayList<>();
     ConstraintLayout _progressBar;
-    long tourID = -1;
 
-    DbConnection _dbConnection;
+    TourCreationViewModel viewModel;
 
     /**
      * Activity initializer
@@ -48,12 +49,11 @@ public class TourCreationActivity extends AppCompatActivity
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
-        // Setup Database Connection
-        _dbConnection = new DbConnection(this);
+        // Setup ViewModel
+        viewModel = new TourCreationViewModelFactory(((App) getApplication()).getRepository())
+                .create(TourCreationViewModel.class);
 
         Intent intent = getIntent();
-        // final String tourName = intent.getStringExtra("_tourName");
-        //_originalTourName = intent.getStringExtra("_tourName");
         boolean edit = intent.getBooleanExtra(App.EDIT_EXTRA, false);
 
         // if editing an existing tour
@@ -64,29 +64,14 @@ public class TourCreationActivity extends AppCompatActivity
             properties.put("Operation", "Edit");
             Analytics.trackEvent("TourCreationActivity.onCreate", properties);*/
 
-            tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1L);
-            if(tourID == -1L){
-                // TODO: Something went wrong
-            }
-
             // Get tour from ID
-            _tour = GeocachingTour.getGeocachingTourFromID(tourID, _dbConnection);
+            viewModel.getCurrentTour().observe(this, this::setupTourSpecificData);
 
-            EditText tourTitleView = findViewById(R.id.tour_name);
-            tourTitleView.setText(_tour.getName());
 
             Button enterButton = findViewById(R.id.create_tour_button);
             enterButton.setText(R.string.save_changes);
             //TODO: enterButton.setOnClickListener(); -- just to do changes and don't get everything again
 
-            // read the tour from file
-           /* String rootPath = App.getTourRoot();
-            _tour = GeocachingTour.read(rootPath, _originalTourName);//GeocachingTour.fromFile(rootPath, _originalTourName);
-*/
-            // get the codes of the caches to put in the text field
-            EditText geoCacheCodesView = findViewById(R.id.geo_cache_codes);
-            String allCodesString = _tour.getTourGeoCacheCodes().toString();
-            geoCacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
         }
         else
         {
@@ -96,6 +81,17 @@ public class TourCreationActivity extends AppCompatActivity
             Analytics.trackEvent("TourCreationActivity.onCreate", properties);
         }
 
+    }
+
+    void setupTourSpecificData(GeocachingTourWithCaches tour){
+        _tour = tour;
+        EditText tourTitleView = findViewById(R.id.tour_name);
+        tourTitleView.setText(_tour.getTour().getName());
+
+        // get the codes of the caches to put in the text field
+        EditText geoCacheCodesView = findViewById(R.id.geo_cache_codes);
+        String allCodesString = _tour.getTourGeoCacheCodes().toString();
+        geoCacheCodesView.setText(allCodesString.substring(1, allCodesString.length() - 1));
     }
 
     /**
@@ -152,23 +148,39 @@ public class TourCreationActivity extends AppCompatActivity
 
         // Need new tour and add these caches
         if(_tour == null){
-            _tour = new GeocachingTour(tourName, false, _dbConnection);
+            viewModel.createNewTourWithCaches(tourName, _geoCacheCodesList);
         } else {
-            _tour.changeName(tourName);
-        }
+            if(!_tour.getTour().getName().equals(tourName)) {
+                _tour.getTour().setName(tourName);
+                viewModel.updateGeoCachingTour(_tour);
+            }
 
+            viewModel.setGeoCachesInExistingTour(_geoCacheCodesList, _tour);
+        }
 
         _progressBar = findViewById(R.id.progress_layout);
         _progressBar.setVisibility(View.VISIBLE);
 
-        _tour.tourCreationActivityDelegate = this;
-        _tour.addToTour(_geoCacheCodesList);
+        viewModel.getGettingTour().observe(this, this::setTourLoadingWidgetVisibility);
 
     }
 
-    void onTourCreated(){
+    private void setTourLoadingWidgetVisibility(Boolean value) {
+        ConstraintLayout progressBar = findViewById(R.id.progress_layout);
+
+        if(value != null){
+            if(value){
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.INVISIBLE);
+                onTourCreated();
+            }
+        }
+    }
+
+    public void onTourCreated(){
+
         Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra(App.TOUR_ID_EXTRA, _tour._id);
         startActivity(intent);
     }
 

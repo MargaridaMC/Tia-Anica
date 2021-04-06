@@ -4,16 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import net.teamtruta.tiaires.data.GeoCacheInTour;
+import net.teamtruta.tiaires.data.GeoCacheInTourWithDetails;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -37,7 +34,7 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
 
     private final TourActivity _delegate;
 
-    DraftUploadTask(String groundspeakAuthCookie, List<GeoCacheInTour> geoCachesToUpload, TourActivity delegate){
+    DraftUploadTask(String groundspeakAuthCookie, List<GeoCacheInTourWithDetails> geoCachesToUpload, TourActivity delegate){
         _groundspeakAuthCookie = groundspeakAuthCookie;
         _delegate = delegate;
         successfullyWroteDraftsToFile = createDraftFile(geoCachesToUpload);
@@ -99,21 +96,22 @@ public class DraftUploadTask extends AsyncTask<Void, Void, Boolean> {
         return response.body().string();
     }
 
-    private boolean createDraftFile(List<GeoCacheInTour> geoCachesToUpload) {
+    private boolean createDraftFile(List<GeoCacheInTourWithDetails> geoCachesToUpload) {
 
         StringBuilder stringBuilder = new StringBuilder();
-        for(GeoCacheInTour gcit : geoCachesToUpload){
-            stringBuilder.append(gcit.getGeoCache().getCode());
+        for(GeoCacheInTourWithDetails gcit : geoCachesToUpload){
+            GeoCacheInTour geoCacheInTour = gcit.getGeoCacheInTour();
+            stringBuilder.append(gcit.getGeoCache().getGeoCache().getCode());
             stringBuilder.append(",");
-            if(gcit.getCurrentVisitDatetime() != null) {
-                stringBuilder.append(gcit.getCurrentVisitDatetime().toString());
+            if(geoCacheInTour.getCurrentVisitDatetime() != null) {
+                stringBuilder.append(geoCacheInTour.getCurrentVisitDatetime().toString());
             } else {
                 stringBuilder.append(Instant.now().toString());
             }
             stringBuilder.append(",");
-            stringBuilder.append(gcit.getCurrentVisitOutcome().getVisitOutcomeString());
+            stringBuilder.append(geoCacheInTour.getCurrentVisitOutcome().getVisitOutcomeString());
             stringBuilder.append(",");
-            stringBuilder.append("\"").append(gcit.getNotes()).append("\"");
+            stringBuilder.append("\"").append(geoCacheInTour.getNotes()).append("\"");
             stringBuilder.append("\n");
         }
 

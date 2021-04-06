@@ -2,7 +2,6 @@ package net.teamtruta.tiaires;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,7 +59,13 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.turf.TurfMeasurement;
 
-import net.teamtruta.tiaires.db.DbConnection;
+import net.teamtruta.tiaires.data.GeoCache;
+import net.teamtruta.tiaires.data.GeoCacheInTourWithDetails;
+import net.teamtruta.tiaires.data.GeocachingTourWithCaches;
+import net.teamtruta.tiaires.data.GeoCacheInTour;
+import net.teamtruta.tiaires.viewModels.MapActivityViewModel;
+import net.teamtruta.tiaires.viewModels.MapActivityViewModelFactory;
+
 
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
@@ -117,17 +122,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String STARTING_POINT_SYMBOL_LAYER_ID ="STARTING_POINT_SYMBOL_LAYER_ID";
 
     String TAG = MapActivity.class.getSimpleName();
-    GeocachingTour _tour;
-    long tourID;
-    DbConnection dbConnection;
+    GeocachingTourWithCaches _tour;
 
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
-    List<Point> routeCoordinates;
+    List<Point> routeCoordinates  = new ArrayList<>();
     private static final HashMap<String, View> viewMap = new HashMap<>();
-    private double fullTourDistance;
+    private double fullTourDistance = 0;
+    private double remainingTourDistance = 0;
     Point _startingPoint;
 
+    MapActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,51 +144,52 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        // Get the ID of the tour that was clicked on
-        Intent intent = getIntent();
-        tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1);
-        if (tourID == -1) {
-            // Something went wrong
-            Log.e(TAG, "Could not get clicked tour.");
-            Toast.makeText(this, "An error occurred: couldn't get the requested tour", Toast.LENGTH_LONG).show();
-            return;
-        }
+        // Setup ViewModel
+        viewModel = new MapActivityViewModelFactory(((App) getApplication()).getRepository())
+                .create(MapActivityViewModel.class);
 
-        // Setup connection to database
-        dbConnection = new DbConnection(this);
-        _tour = GeocachingTour.getGeocachingTourFromID(tourID, dbConnection);
-
-        // Set title
+        // Setup bar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle(_tour.getName());
 
         // Set click listener for the tour distance checkbox
         setTourDistanceCheckBox();
+    }
+
+    void setTourRelatedData(GeocachingTourWithCaches tour){
+        _tour = tour;
+
+        // Set title
+        ActionBar ab = getSupportActionBar();
+        ab.setTitle(_tour.getTour().getName());
+
+        getData();
+
+        // Compute the full distance of the tour
+        fullTourDistance = computeTourDistance(0);
+        remainingTourDistance = computeTourDistance(_tour.getLastVisitedGeoCache());
+
+        new GenerateViewIconTask(MapActivity.this).execute(featureCollection);
+
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+            setUpData(featureCollection);
+            enableLocationComponent(style);
+            mapboxMap.addOnMapClickListener(MapActivity.this);
+        });
     }
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
 
-        getData();
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-            setUpData(featureCollection);
-            enableLocationComponent(style);
-            mapboxMap.addOnMapClickListener(MapActivity.this);
-        });
-
-        new GenerateViewIconTask(MapActivity.this).execute(featureCollection);
+        viewModel.getCurrentTour().observe(this, this::setTourRelatedData);
 
         // Set my location FAB onClickListener
         setupMyLocationFAB();
-
-        // Compute the full distance of the tour
-        fullTourDistance = computeTourDistance(0);
 
         // Show remaining tour line and distance
         showRemainingTourDistance();
@@ -324,7 +330,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed Called");
         Intent intent = new Intent(this, TourActivity.class);
-        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
+//        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
@@ -426,29 +432,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void getData(){
 
         List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
-        routeCoordinates = new ArrayList<>();
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         LatLng location;
-        for (GeoCacheInTour gcit : _tour._tourGeoCaches) {
-            location = gcit.getGeoCache().getLatLng();
+
+        for (GeoCacheInTourWithDetails gcit : _tour.getTourGeoCaches()) {
+            GeoCacheInTour geoCacheInTour = gcit.getGeoCacheInTour();
+            GeoCache geoCacheDetails = gcit.getGeoCache().getGeoCache();
+            location = geoCacheDetails.getLatLng();
 
             Point p = Point.fromLngLat(location.getLongitude(), location.getLatitude());
             routeCoordinates.add(p);
 
             Feature feature = Feature.fromGeometry(p);
 
-            feature.addStringProperty(PROPERTY_NAME, gcit.getGeoCache().getName());
-            feature.addStringProperty(PROPERTY_DIFFICULTY, Double.toString(gcit.getGeoCache().getDifficulty()));
-            feature.addStringProperty(PROPERTY_TERRAIN, Double.toString(gcit.getGeoCache().getTerrain()));
-            feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(gcit.getGeoCache().getFavourites()));
-            feature.addStringProperty(PROPERTY_CODE, gcit.getGeoCache().getCode());
+            feature.addStringProperty(PROPERTY_NAME, geoCacheDetails.getName());
+            feature.addStringProperty(PROPERTY_DIFFICULTY, Double.toString(geoCacheDetails.getDifficulty()));
+            feature.addStringProperty(PROPERTY_TERRAIN, Double.toString(geoCacheDetails.getTerrain()));
+            feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(geoCacheDetails.getFavourites()));
+            feature.addStringProperty(PROPERTY_CODE, geoCacheDetails.getCode());
             feature.addBooleanProperty(PROPERTY_SELECTED, false);
 
-            if (gcit.getCurrentVisitOutcome() == VisitOutcomeEnum.Found || gcit.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF) {
-                feature.addStringProperty(PROPERTY_TYPE, gcit.getCurrentVisitOutcome().getVisitOutcomeString());
+            if (geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found || geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF) {
+                feature.addStringProperty(PROPERTY_TYPE, geoCacheInTour.getCurrentVisitOutcome().getVisitOutcomeString());
             } else {
-                feature.addStringProperty(PROPERTY_TYPE, gcit.getGeoCache().getType().getTypeString());
+                feature.addStringProperty(PROPERTY_TYPE, geoCacheDetails.getType().getTypeString());
             }
 
             symbolLayerIconFeatureList.add(feature);
@@ -457,8 +465,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
         // If that is the case just focus on the geocache
-        if( _tour._tourGeoCaches.size() == 1){
-            mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(_tour._tourGeoCaches.get(0).getGeoCache().getLatLng()), 2000);
+        if( _tour.getTourGeoCaches().size() == 1){
+            mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(_tour.getTourGeoCaches().get(0).getGeoCache().getGeoCache().getLatLng()), 2000);
         } else {
             mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
         }
@@ -467,15 +475,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Get starting point if there is one
 
-        if(_tour.getStartingPointLongitude() != null){
-            _startingPoint = Point.fromLngLat(_tour.getStartingPointLongitude(),
-                    _tour.getStartingPointLatitude());
+        if(_tour.getTour().getStartingPointLongitude() != null){
+            _startingPoint = Point.fromLngLat(_tour.getTour().getStartingPointLongitude().getValue(),
+                    _tour.getTour().getStartingPointLatitude().getValue());
 
             // If we have a starting point add it in the beginning and the end of the route
             routeCoordinates.add(_startingPoint);
             routeCoordinates.add(0, _startingPoint);
         }
-
 
     }
 
@@ -856,7 +863,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         lineLengthTextView.setVisibility(View.VISIBLE);
 
         lineLengthTextView.setText(String.format(getString(R.string.remaining_tour_distance),
-                computeTourDistance(_tour.getLastVisitedGeoCache()), "kms"));
+                remainingTourDistance, "kms"));
     }
 
     private double computeTourDistance(int startGeoCacheIDX ){
@@ -880,25 +887,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void set_current_location_as_start_point(View view){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage("Set the current location as the start and finish point of the tour?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Set current point as starting point of the tour
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // Set current point as starting point of the tour
 
-                        LocationComponent locationComponent = mapboxMap.getLocationComponent();
-                        try {
-                            assert locationComponent.getLastKnownLocation() != null;
-                            double currentLatitude = locationComponent.getLastKnownLocation().getLatitude();
-                            double currentLongitude = locationComponent.getLastKnownLocation().getLongitude();
-                            _tour.setStartingPoint(currentLatitude, currentLongitude);
-                            finish();
-                            startActivity(getIntent());
-                        } catch (Exception e) {
-                            checkLocationPermissionIsGrantedAndGPSIsOn();
-                            e.printStackTrace();
-                        }
+                    LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                    try {
+                        assert locationComponent.getLastKnownLocation() != null;
+                        double currentLatitude = locationComponent.getLastKnownLocation().getLatitude();
+                        double currentLongitude = locationComponent.getLastKnownLocation().getLongitude();
 
+                        _tour.getTour().setStartingPoint(currentLatitude, currentLongitude);
+                        viewModel.updateTour(_tour);
+
+                        finish();
+                        startActivity(getIntent());
+                    } catch (Exception e) {
+                        checkLocationPermissionIsGrantedAndGPSIsOn();
+                        e.printStackTrace();
                     }
+
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {});
 

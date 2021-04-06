@@ -29,7 +29,11 @@ import androidx.core.content.FileProvider;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
-import net.teamtruta.tiaires.db.DbConnection;
+import net.teamtruta.tiaires.data.GeoCache;
+import net.teamtruta.tiaires.data.GeoCacheInTourWithDetails;
+import net.teamtruta.tiaires.data.GeoCacheInTour;
+import net.teamtruta.tiaires.viewModels.TourViewModel;
+import net.teamtruta.tiaires.viewModels.TourViewModelFactory;
 
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 
@@ -43,17 +47,18 @@ import java.util.Objects;
 
 public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    GeoCacheInTour currentGeoCache;
+    GeoCacheInTour currentGeoCacheInTour;
 
     SoundPool soundPool;
     int soundID;
 
-    DbConnection _dbConnection;
     long _tourID;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
     String TAG = GeoCacheDetailActivity.class.getSimpleName();
+
+    TourViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,40 +68,61 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         Toolbar toolbar = findViewById(R.id.toolbar_geo_cache_detail);
         setSupportActionBar(toolbar);
 
-        // Setup connection to database
-        _dbConnection = new DbConnection(this);
 
         Intent intent = getIntent();
         long geoCacheID = intent.getLongExtra(App.GEOCACHE_ID_EXTRA,  -1L);
         _tourID = intent.getLongExtra(App.TOUR_ID_EXTRA, -1L);
+
         /*if(geoCacheID == -1L){
             // TODO: Something went wrong
         } else {
 
         }*/
 
-        currentGeoCache = GeoCacheInTour.Companion.getGeoCacheFromID(geoCacheID, _dbConnection);
+        // Setup Action Bar
+        ActionBar ab = getSupportActionBar();
+        assert ab != null;
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        // Get ViewModel
+        viewModel = new TourViewModelFactory(((App) getApplication()).getRepository())
+                .create(TourViewModel.class);
+
+        // Observe geocache that was clicked on
+        viewModel.getGeoCacheInTourFromID(geoCacheID).observe(this,
+                this::setupCacheSpecificDate
+                );
+
+
+        //  Setup ping sound
+        setupAudio();
+
+    }
+
+    void setupCacheSpecificDate(GeoCacheInTourWithDetails geoCacheInTour){
+
+        currentGeoCacheInTour = geoCacheInTour.getGeoCacheInTour();
+        GeoCache currentGeoCache = geoCacheInTour.getGeoCache().getGeoCache();
 
         // Set GeoCache Title
         ActionBar ab = getSupportActionBar();
-        assert ab != null;
-        ab.setTitle(currentGeoCache.getGeoCache().getName());
-        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle(currentGeoCache.getName());
+
 
         // Set Not Found / Found / DNF toggle and appropriate onClickListener
         MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
         boolean[] buttonStates = new boolean[] {true, false, false};
 
-        if(this.currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.Found)
+        if(this.currentGeoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found)
             buttonStates = new boolean[] {false, true, false};
-        else if(this.currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF)
+        else if(this.currentGeoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF)
             buttonStates = new boolean[] {false, false, true};
 
         geoCacheVisitButton.setStates(buttonStates);
 
         geoCacheVisitButton.setOnValueChangedListener(position -> {
             if(position == 0){
-                this.currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
+                this.currentGeoCacheInTour.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
             }
             else if(position == 1) geoCacheFound();
             else if(position == 2) geoCacheNotFound();
@@ -105,39 +131,36 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         // Set Checkboxes
         // 1. Needs Maintenace Checkbox
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
-        if(this.currentGeoCache.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
+        if(this.currentGeoCacheInTour.getNeedsMaintenance()) needsMaintenanceCheckBox.setChecked(true);
 
         // 2. FoundTrackable Checkbox and EditText
         CheckBox foundTrackableCheckBox = findViewById(R.id.foundTrackableCheckBox);
-        if(currentGeoCache.getFoundTrackable() != null){
+        if(currentGeoCacheInTour.getFoundTrackable() != null){
             foundTrackableCheckBox.setChecked(true);
             EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
-            foundTrackableEditText.setText(currentGeoCache.getFoundTrackable());
+            foundTrackableEditText.setText(currentGeoCacheInTour.getFoundTrackable());
         }
 
         // 3. DroppedTrackable Checkbox and EditText
         CheckBox droppedTrackableCheckBox = findViewById(R.id.droppedTrackableCheckBox);
-        if(currentGeoCache.getDroppedTrackable() != null){
+        if(currentGeoCacheInTour.getDroppedTrackable() != null){
             droppedTrackableCheckBox.setChecked(true);
             EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
-            droppedTrackableEditText.setText(currentGeoCache.getDroppedTrackable());
+            droppedTrackableEditText.setText(currentGeoCacheInTour.getDroppedTrackable());
         }
 
         // 4. Favourite Point Checkbox
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
-        if(this.currentGeoCache.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
+        if(this.currentGeoCacheInTour.getFavouritePoint()) favouritePointCheckBox.setChecked(true);
 
         // Set my notes
         EditText notesSection = findViewById(R.id.notes);
-        String myNotes = this.currentGeoCache.getNotes();
+        String myNotes = this.currentGeoCacheInTour.getNotes();
         if(!myNotes.equals("")) notesSection.setText(myNotes);
-
-        //  Setup ping sound
-        setupAudio();
 
         // Setup photo
         CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
-        photoCheckBox.setChecked(currentGeoCache.getPathToImage() != null);
+        photoCheckBox.setChecked(currentGeoCacheInTour.getPathToImage() != null);
     }
 
     @Override
@@ -146,7 +169,9 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
 
         Intent intent = new Intent(this, TourActivity.class);
         intent.putExtra(App.TOUR_ID_EXTRA, _tourID);
-        startActivity(intent);
+        //startActivity(intent);
+        setResult(RESULT_OK, intent);
+        finish();
 
         return true;
     }
@@ -161,19 +186,19 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
 
         // Geocache was found
 
-        if(currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.Found){
+        if(currentGeoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found){
             // If geocache has already been found and we are clicking on Found again
             // We want to reverse this -- set geocache as not Attempted
-            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
-            currentGeoCache.setCurrentVisitDatetime(null);
+            currentGeoCacheInTour.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
+            currentGeoCacheInTour.setCurrentVisitDatetime(null);
 
             MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
             geoCacheVisitButton.setStates(new boolean[] {true, false, false});
 
         } else {
             // We want to set this geocache as found
-            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.Found);
-            currentGeoCache.setCurrentVisitDatetime(Instant.now());
+            currentGeoCacheInTour.setCurrentVisitOutcome(VisitOutcomeEnum.Found);
+            currentGeoCacheInTour.setCurrentVisitDatetime(Instant.now());
             playPing();
         }
 
@@ -183,19 +208,19 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
     public void geoCacheNotFound(){
         // DNF
 
-        if(currentGeoCache.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF){
+        if(currentGeoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF){
             // If geocache is already a DNF and we are clicking on DNF again
             // We want to reverse this -- set geocache as not Attempted
-            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
-            currentGeoCache.setCurrentVisitDatetime(null);
+            currentGeoCacheInTour.setCurrentVisitOutcome(VisitOutcomeEnum.NotAttempted);
+            currentGeoCacheInTour.setCurrentVisitDatetime(null);
 
             MultiStateToggleButton geoCacheVisitButton = this.findViewById(R.id.geo_cache_visit_button);
             geoCacheVisitButton.setStates(new boolean[] {true, false, false});
 
         } else {
             // We want to set this geoCache as DNF
-            currentGeoCache.setCurrentVisitOutcome(VisitOutcomeEnum.DNF);
-            currentGeoCache.setCurrentVisitDatetime(Instant.now());
+            currentGeoCacheInTour.setCurrentVisitOutcome(VisitOutcomeEnum.DNF);
+            currentGeoCacheInTour.setCurrentVisitDatetime(Instant.now());
 
             playPing();
         }
@@ -212,25 +237,25 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         // Get notes
         EditText notesView = findViewById(R.id.notes);
         String myNotes = notesView.getText().toString();
-        currentGeoCache.setNotes(myNotes);
+        currentGeoCacheInTour.setNotes(myNotes);
 
         // Get trackable information
         EditText foundTrackableEditText = findViewById(R.id.foundTrackableEditText);
         String foundTrackableString = foundTrackableEditText.getText().toString().trim();
-        currentGeoCache.setFoundTrackable(foundTrackableString.isEmpty() ? null : foundTrackableString);
+        currentGeoCacheInTour.setFoundTrackable(foundTrackableString.isEmpty() ? null : foundTrackableString);
 
         EditText droppedTrackableEditText = findViewById(R.id.droppedTrackableEditText);
         String droppedTrackableString = droppedTrackableEditText.getText().toString().trim();
-        currentGeoCache.setDroppedTrackable(droppedTrackableString.isEmpty() ? null : droppedTrackableString);
+        currentGeoCacheInTour.setDroppedTrackable(droppedTrackableString.isEmpty() ? null : droppedTrackableString);
 
         // save changes
-        currentGeoCache.saveChanges();
+        viewModel.updateGeoCacheInTour(currentGeoCacheInTour);
     }
 
     public void onNeedsMaintenanceCheckboxClicked(View view) {
 
         CheckBox needsMaintenanceCheckBox = findViewById(R.id.needsMaintenanceCheckBox);
-        currentGeoCache.setNeedsMaintenance(needsMaintenanceCheckBox.isChecked());
+        currentGeoCacheInTour.setNeedsMaintenance(needsMaintenanceCheckBox.isChecked());
 
     }
 
@@ -248,7 +273,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         }
 
         else{
-            currentGeoCache.setFoundTrackable(null);
+            currentGeoCacheInTour.setFoundTrackable(null);
 
             // Delete inputted trackable code in editText area
             foundTrackableEditText.setText("");
@@ -269,7 +294,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         }
 
         else{
-            currentGeoCache.setDroppedTrackable(null);
+            currentGeoCacheInTour.setDroppedTrackable(null);
             droppedTrackableEditText.setText("");
         }
 
@@ -279,7 +304,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
     public void onFavouritePointCheckboxClicked(View view) {
 
         CheckBox favouritePointCheckBox = findViewById(R.id.favouritePointCheckBox);
-        currentGeoCache.setFavouritePoint(favouritePointCheckBox.isChecked());
+        currentGeoCacheInTour.setFavouritePoint(favouritePointCheckBox.isChecked());
 
     }
 
@@ -351,7 +376,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
                 .format(new Date());
-        String imageFileName = "GEOCACHEID_" + currentGeoCache.get_id() + "_" + timeStamp + "_";
+        String imageFileName = "GEOCACHEID_" + currentGeoCacheInTour.getId() + "_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -361,7 +386,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
-        currentGeoCache.setPathToImage(currentPhotoPath);
+        currentGeoCacheInTour.setPathToImage(currentPhotoPath);
 
         return image;
     }
@@ -380,7 +405,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
     public void showPhotoPopup(View view){
 
         // If the current geoCache has no photo then go straight into the photo taking
-        if(currentGeoCache.getPathToImage() == null){
+        if(currentGeoCacheInTour.getPathToImage() == null){
             takePhoto();
             // Set the checkbox to checked
             CheckBox photoCheckBox = findViewById(R.id.photo_checkbox);
@@ -417,7 +442,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         return false;
     }
     private void deleteGeoCachePhoto() {
-        File file = new File(Objects.requireNonNull(currentGeoCache.getPathToImage()));
+        File file = new File(Objects.requireNonNull(currentGeoCacheInTour.getPathToImage()));
 
         if (file.exists()) {
             if (file.delete()) {
@@ -426,7 +451,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
                 System.out.println("File not Deleted :");
             }
         }
-        currentGeoCache.setPathToImage(null);
+        currentGeoCacheInTour.setPathToImage(null);
         CheckBox photoCheckbox = findViewById(R.id.photo_checkbox);
         photoCheckbox.setChecked(false);
     }
@@ -450,7 +475,7 @@ public class GeoCacheDetailActivity extends AppCompatActivity implements PopupMe
         });
 
         ImageView imageView = new ImageView(this);
-        imageView.setImageURI(Uri.parse(currentGeoCache.getPathToImage()));
+        imageView.setImageURI(Uri.parse(currentGeoCacheInTour.getPathToImage()));
         builder.addContentView(imageView, new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));

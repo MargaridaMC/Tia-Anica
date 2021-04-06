@@ -1,5 +1,6 @@
 package net.teamtruta.tiaires;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +11,24 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.teamtruta.tiaires.data.GeocachingTourWithCaches;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourViewHolder> {
 
-    private final List<GeocachingTour> _tourList;
+    private final List<GeocachingTourWithCaches> _tourList;
     private final ItemClickListener onClickListener;
+    private final Context context;
 
     // data is passed into the constructor
-    TourListAdapter(List<GeocachingTour> data, ItemClickListener listener){
+    TourListAdapter(List<GeocachingTourWithCaches>data, ItemClickListener listener, Context applicationContext){
 
         this._tourList = data;
         this.onClickListener = listener;
+        this.context = applicationContext;
     }
 
     // inflates the row layout from xml when needed
@@ -37,20 +42,21 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(TourViewHolder holder, int position) {
-        GeocachingTour tour = _tourList.get(position);
+
+        GeocachingTourWithCaches tour = _tourList.get(position);
 
         // Set tour title
-        holder.tourTitle.setText(tour.getName());
+        holder.tourTitle.setText(tour.getTour().getName());
 
         // Set tour symbol
-        if(tour._isCurrentTour){
+        if(tour.getTour().isCurrentTour()){
             holder.tourSymbol.setImageResource(R.drawable.star);
         }
 
         // Write progress in text
         long numFinds = tour.getNumFound();
         long numDNFS = tour.getNumDNF();
-        long totalGeoCaches = tour.getSize(); // # TODO -- this breaks the OO model...
+        long totalGeoCaches = tour.getSize();// # TODO -- this breaks the OO model...
 
         String progressText = numFinds + " + " + numDNFS + " / " + totalGeoCaches;
         holder.tourProgressText.setText(progressText);
@@ -60,8 +66,9 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
         holder.tourProgress.setProgress((int) progress);
 
         // Grey out section if tour is done
+
         if(numFinds + numDNFS == totalGeoCaches){
-            holder.layout.setBackgroundColor(App.getContext().getColor(R.color.light_grey));
+            holder.layout.setBackgroundColor(context.getColor(R.color.light_grey));
         }
 
     }
@@ -89,7 +96,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
             tourProgress = itemView.findViewById(R.id.tour_progress);
             tourProgressText = itemView.findViewById(R.id.tour_progress_text);
             layout = itemView.findViewById(R.id.constraintLayout);
-            
+
             itemView.setOnClickListener(this);
         }
 
@@ -98,8 +105,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.TourVi
 
             if (onClickListener != null) {
                 int position = getAdapterPosition();
-                //String tourName = _tourList.get(position).getName();
-                onClickListener.onItemClick(view, position, _tourList.get(position)._id);
+                //String tourName = _tourList.get(position).getTour().getName();
+                onClickListener.onItemClick(view, position, _tourList.get(position).getTour().getId());
             }
         }
 

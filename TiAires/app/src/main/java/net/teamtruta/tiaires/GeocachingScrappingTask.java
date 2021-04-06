@@ -4,6 +4,10 @@ import android.os.AsyncTask;
 
 import com.microsoft.appcenter.analytics.Analytics;
 
+import net.teamtruta.tiaires.data.GeoCache;
+import net.teamtruta.tiaires.data.GeoCacheWithLogsAndAttributes;
+import net.teamtruta.tiaires.data.Repository;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +17,18 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
 
     private final GeocachingScrapper scrapper;
     private final List<String> geoCacheCodesList;
-    private final List<GeoCache> geoCaches = new ArrayList<>();
+    private final List<GeoCacheWithLogsAndAttributes> geoCaches = new ArrayList<>();
+    Repository delegate;
+    Long tourID;
+    Map<String, Integer> geoCacheOrder;
 
-    GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geoCacheCodesList){
+    public GeocachingScrappingTask(GeocachingScrapper scrapper, List<String> geoCacheCodesList,
+                                   Repository delegate, Long tourID, Map<String, Integer> geoCacheOrder){
         this.scrapper = scrapper;
         this.geoCacheCodesList = geoCacheCodesList;
+        this.delegate = delegate;
+        this.tourID = tourID;
+        this.geoCacheOrder = geoCacheOrder;
     }
 
     @Override
@@ -41,7 +52,7 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
         for(String code : geoCacheCodesList)
         {
             try {
-                GeoCache geoCache = scrapper.getGeoCacheDetails(code);
+                GeoCacheWithLogsAndAttributes geoCache = scrapper.getGeoCacheDetails(code);
                 geoCaches.add(geoCache);
             }
             catch (Exception e)
@@ -56,7 +67,7 @@ public class GeocachingScrappingTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if(result == 1){
-            GeoCache.Companion.onGeoCachesObtained(geoCaches);
+            delegate.onGeoCachesObtained(geoCaches, tourID, geoCacheOrder);
         }
     }
 }

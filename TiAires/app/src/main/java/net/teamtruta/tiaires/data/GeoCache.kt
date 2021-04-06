@@ -1,50 +1,51 @@
-package net.teamtruta.tiaires
+package net.teamtruta.tiaires.data
 
+import androidx.room.*
 import com.mapbox.mapboxsdk.geometry.LatLng
-import net.teamtruta.tiaires.db.DbConnection
-import kotlin.collections.ArrayList
+import net.teamtruta.tiaires.*
 
-class GeoCache(val code: String, val name: String, val latitude: Coordinate,
-               val longitude: Coordinate, val size: String, val difficulty: Double,
-               val terrain: Double, val type: GeoCacheTypeEnum = GeoCacheTypeEnum.Other,
-               val previousVisitOutcome: VisitOutcomeEnum = VisitOutcomeEnum.NotAttempted,
-               val hint: String, val favourites: Int = 0, val recentLogs: List<GeoCacheLog>,
-               val attributes: List<GeoCacheAttributeEnum> = listOf(),
-               var _id: Long = 0) {
+@Entity(tableName = "cacheDetail")
+class GeoCache (
 
+        val code: String,
+        val name: String,
+        val latitude: Coordinate,
+        val longitude: Coordinate,
+        val size: String,
+        val difficulty: Double,
+        val terrain: Double,
+        val type: GeoCacheTypeEnum = GeoCacheTypeEnum.Other,
+        val previousVisitOutcome: VisitOutcomeEnum = VisitOutcomeEnum.NotAttempted,
+        val hint: String,
+        val favourites: Int = 0,
+
+        @PrimaryKey(autoGenerate = true)
+        var id: Long = 0
+){
+    constructor(code: String, name: String, 
+                latitude: Coordinate, longitude: Coordinate, 
+                size: String, difficulty: Double, terrain: Double, 
+                type: GeoCacheTypeEnum, visit: VisitOutcomeEnum, hint: String, 
+                favourites: Int) : this(code, name, latitude, longitude, size,
+            difficulty, terrain, type, visit,
+            hint, favourites, 0)
+
+    /*
     constructor(code: String, name: String, latitude: Coordinate, longitude: Coordinate,
                 size: String, difficulty: Double, terrain: Double, type: GeoCacheTypeEnum,
                 visit: VisitOutcomeEnum, hint: String, favourites: Int,
                 recentLogs: ArrayList<GeoCacheLog>, attributes: List<GeoCacheAttributeEnum>) :
             this(code, name, latitude, longitude, size, difficulty, terrain, type, visit, hint,
                     favourites, recentLogs, attributes, 0)
-
+*/
     val latLng: LatLng
         get() = LatLng(latitude.value, longitude.value)
-
-    val dNFRisk: String
-        get() {
-            if (previousVisitOutcome == VisitOutcomeEnum.Disabled) return "DISABLED"
-            if (recentLogs.subList(0, 10).any {it.logType == VisitOutcomeEnum.DNF}) return "DNF RISK"
-            //if (recentLogs.subList(0, 10).any { it.logType == VisitOutcomeEnum.NeedsMaintenance } ||
-            if (attributes.contains(GeoCacheAttributeEnum.NeedsMaintenance)) return "NEEDS MAINTENANCE"
-            return ""
-        }
-
-
-    fun isDNFRisk(): Boolean {
-        return dNFRisk != ""
-    }
 
     fun hasHint(): Boolean {
         return hint != "NO MATCH"
     }
 
-
-    fun getLastNLogs(n: Int): List<GeoCacheLog> {
-        return recentLogs.subList(0, n)
-    }
-
+    /*
 
     companion object {
 
@@ -54,18 +55,19 @@ class GeoCache(val code: String, val name: String, val latitude: Coordinate,
         private var overwrite : Boolean = false
 
         private fun existsInDb(code: String?, dbConnection: DbConnection): Long {
+            // This should be in Dao probably
             return dbConnection.geoCacheDetailTable.contains(code!!)
         }
 
         fun getGeoCaches(requestedGeoCacheCodes: List<String>, dbConnection: DbConnection,
                          geocachingTourDelegate: GeocachingTour, overwrite : Boolean = false) {
-
-            this.geocachingTourDelegate = geocachingTourDelegate
-            this.dbConnection = dbConnection
+            // TODO this will need refactoring
+            Companion.geocachingTourDelegate = geocachingTourDelegate
+            Companion.dbConnection = dbConnection
             geoCachesAlreadyInDb =  mutableListOf()
 
             if(overwrite){
-                this.overwrite = overwrite
+                Companion.overwrite = overwrite
                 getGeoCaches(requestedGeoCacheCodes)
                 return
             }
@@ -94,7 +96,7 @@ class GeoCache(val code: String, val name: String, val latitude: Coordinate,
 
         fun onGeoCachesObtained(obtainedGeoCaches: MutableList<GeoCache>) {
             // Store newly obtained geoCaches
-
+            // TODO
             if(overwrite){
                 dbConnection.geoCacheDetailTable.update(obtainedGeoCaches)
             } else {
@@ -106,4 +108,6 @@ class GeoCache(val code: String, val name: String, val latitude: Coordinate,
             geocachingTourDelegate.onAllGeoCachesObtained(overwrite)
         }
     }
+
+*/
 }

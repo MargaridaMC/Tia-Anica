@@ -21,22 +21,22 @@ import static androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG;
 public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback {
 
     private final GeoCacheListAdapter geoCacheListAdapter;
-    private final Drawable foundIcon;
+    /*private final Drawable foundIcon;
     private final Drawable dnfIcon;
-    private final ColorDrawable background;
+    private final ColorDrawable background;*/
     private boolean dragStarted;
 
     GeoCacheInteractionCallback(GeoCacheListAdapter adapter){
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.geoCacheListAdapter = adapter;
-
+/*
         foundIcon = ContextCompat.getDrawable(App.getContext(), R.drawable.geo_cache_icon_found);
         dnfIcon = ContextCompat.getDrawable(App.getContext(), R.drawable.geo_cache_icon_dnf);
         // DEPRECATED:
         //foundIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_found);
         //dnfIcon = App.getContext().getDrawable(R.drawable.geo_cache_icon_dnf);
 
-        background = new ColorDrawable(App.getContext().getColor(R.color.light_grey));
+        background = new ColorDrawable(App.getContext().getColor(R.color.light_grey));*/
 
     }
 
@@ -96,7 +96,7 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
 
         int iconLeft;
         int iconRight;
-
+/*
         Drawable icon = foundIcon;
 
         if (dX > 0) { // Swiping to the right
@@ -135,7 +135,7 @@ public class GeoCacheInteractionCallback extends ItemTouchHelper.SimpleCallback 
         }
 
         background.draw(c);
-        icon.draw(c);
+        icon.draw(c);*/
     }
 
     @Override

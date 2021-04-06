@@ -1,5 +1,7 @@
 package net.teamtruta.tiaires
 
+import androidx.room.TypeConverter
+
 enum class VisitOutcomeEnum(var visitOutcomeString: String) {
     NotAttempted(""),
     DNF("Didn't find it"),
