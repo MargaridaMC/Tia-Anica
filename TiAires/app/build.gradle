@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'net.linguica.maven-settings'
+//apply plugin: 'net.linguica.maven-settings'
 
 android {
     compileSdkVersion 30
@@ -68,7 +68,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation files('libs/json-simple.jar')
+    
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
     implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
     implementation 'androidx.core:core-ktx:1.6.0-alpha01'
@@ -95,4 +95,17 @@ dependencies {
 }
 repositories {
     mavenCentral()
+    maven {
+        url 'https://api.mapbox.com/downloads/v2/releases/maven'
+        authentication {
+            basic(BasicAuthentication)
+        }
+        credentials {
+            // Do not change the username below.
+            // This should always be `mapbox` (not your username).
+            username = 'mapbox'
+            // Use the secret token you stored in gradle.properties as the password
+            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+        }
+    }
 }
