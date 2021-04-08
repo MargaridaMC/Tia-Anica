@@ -28,7 +28,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.GeoCacheListAdapter.*
 import net.teamtruta.tiaires.data.GeoCache
-import net.teamtruta.tiaires.data.GeoCacheInTour
 import net.teamtruta.tiaires.data.GeoCacheInTourWithDetails
 import net.teamtruta.tiaires.data.GeocachingTourWithCaches
 import net.teamtruta.tiaires.viewModels.TourViewModel
@@ -229,13 +228,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         soundID = soundPool?.load(this, R.raw.ping, 1)!!
     }
 
-    fun onFinishedReloadingGeoCaches() {
-        val intent = Intent(this, TourActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    fun reloadTour() {
+    fun reloadTour(view: View?) {
         reloadTourGeoCaches()
     }
 
