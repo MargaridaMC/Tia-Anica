@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import net.teamtruta.tiaires.data.GeocachingTourWithCaches
-import net.teamtruta.tiaires.data.Repository
+import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
+import net.teamtruta.tiaires.data.repositories.Repository
 import java.lang.IllegalArgumentException
 
 

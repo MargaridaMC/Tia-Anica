@@ -1,48 +1,43 @@
 package net.teamtruta.tiaires
 
-import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import net.teamtruta.tiaires.data.Repository
 import net.teamtruta.tiaires.data.TiAiresDatabase
+import net.teamtruta.tiaires.data.repositories.Repository
+
 
 class App : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        context = this
-    }
 
     val database by lazy { TiAiresDatabase.getDatabase(this) }
-    val repository by lazy {Repository(database.geocachingTourDao(), database.geoCacheInTourDao(),
-            database.geoCacheDao(), database.geoCacheLogDao(), database.geoCacheAttributeDao())}
+    val repository by lazy {
+        Repository(database.geocachingTourDao(), database.geoCacheInTourDao(),
+                database.geoCacheDao(), database.geoCacheLogDao(), database.geoCacheAttributeDao())
+    }
+
+    init {
+        instance = this
+    }
 
     companion object {
-        public var context: Context? = null
+        private var instance: App? = null
 
-        public const val TOUR_ID_EXTRA: String = "tourID"
-        public const val EDIT_EXTRA = "edit"
-        public const val GEOCACHE_ID_EXTRA = "geoCacheID"
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
 
-        val authenticationCookie: String?
-            get() {
-                val sharedPreferences = context!!.getSharedPreferences(context!!.getString(R.string.preference_file_key), MODE_PRIVATE)
-                val authCookie = sharedPreferences.getString(context!!.getString(R.string.authentication_cookie_key), "")
-                if (authCookie == "") {
-                    val builder = AlertDialog.Builder(context)
-                    builder.setMessage("Login information is missing. Please input your credentials in the login screen.")
-                    builder.setPositiveButton(context!!.getString(R.string.ok)) { _: DialogInterface?, _: Int ->
-                        val intent = Intent(context, LoginActivity::class.java)
-                        context!!.startActivity(intent)
-                    }
-                    builder.setNegativeButton(context!!.getString(R.string.cancel)) { _: DialogInterface?, _: Int -> }
-                    val dialog = builder.create()
-                    dialog.show()
-                }
-                return authCookie
-            }
+        const val TOUR_ID_EXTRA: String = "tourID"
+        const val EDIT_EXTRA = "edit"
+        const val GEOCACHE_ID_EXTRA = "geoCacheID"
     }
+
+    override fun onCreate() {
+        super.onCreate()
+        // initialize for any
+
+        // Use ApplicationContext.
+        // example: SharedPreferences etc...
+        val context: Context = App.applicationContext()
+    }
+
+
 }

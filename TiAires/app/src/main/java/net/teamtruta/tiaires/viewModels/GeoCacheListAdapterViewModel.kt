@@ -2,8 +2,8 @@ package net.teamtruta.tiaires.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import net.teamtruta.tiaires.data.GeoCacheInTour
-import net.teamtruta.tiaires.data.Repository
+import net.teamtruta.tiaires.data.models.GeoCacheInTour
+import net.teamtruta.tiaires.data.repositories.Repository
 import java.lang.IllegalArgumentException
 
 class GeoCacheListAdapterViewModel(private val repository: Repository) : ViewModel(){

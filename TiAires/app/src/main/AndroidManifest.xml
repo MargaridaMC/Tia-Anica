@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".App"
+        android:name="net.teamtruta.tiaires.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -41,7 +41,7 @@
             android:value="@string/google_maps_key" />-->
 
         <activity
-            android:name=".MainActivity"
+            android:name=".views.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -52,36 +52,36 @@
         </activity>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".views.LoginActivity"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".views.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.teamtruta.tiaires.MainActivity" />
+                android:value="net.teamtruta.tiaires.views.MainActivity" />
         </activity>
 
         <activity
-            android:name=".TourActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".views.TourActivity"
+            android:parentActivityName=".views.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".GeoCacheDetailActivity"
+            android:name=".views.GeoCacheDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".TourCreationActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".views.TourCreationActivity"
+            android:parentActivityName=".views.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".MapActivity"
-            android:parentActivityName=".TourActivity"
+            android:name=".views.MapActivity"
+            android:parentActivityName=".views.TourActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.teamtruta.tiaires.TourActivity" />
+                android:value="net.teamtruta.tiaires.views.TourActivity" />
         </activity>
 
         <provider

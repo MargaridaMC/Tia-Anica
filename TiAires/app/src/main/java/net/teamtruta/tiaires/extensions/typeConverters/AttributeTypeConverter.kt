@@ -1,7 +1,7 @@
 package net.teamtruta.tiaires.extensions.typeConverters
 
 import androidx.room.TypeConverter
-import net.teamtruta.tiaires.GeoCacheAttributeEnum
+import net.teamtruta.tiaires.data.models.GeoCacheAttributeEnum
 
 class AttributeTypeConverter {
 

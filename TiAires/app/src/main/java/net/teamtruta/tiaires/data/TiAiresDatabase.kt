@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import net.teamtruta.tiaires.data.daos.*
+import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.extensions.typeConverters.*
 
 

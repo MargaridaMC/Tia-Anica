@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.*
-import net.teamtruta.tiaires.data.GeocachingTour
-import net.teamtruta.tiaires.data.GeocachingTourWithCaches
-import net.teamtruta.tiaires.data.Repository
+import net.teamtruta.tiaires.data.models.GeocachingTour
+import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
+import net.teamtruta.tiaires.data.repositories.Repository
 
 class TourCreationViewModel(private val repository: Repository) : ViewModel(){
 
@@ -21,28 +21,11 @@ class TourCreationViewModel(private val repository: Repository) : ViewModel(){
         }
     }
 
-    fun setTourGeocaches(geoCacheList: List<String>, tour: GeocachingTourWithCaches){
+    private fun setTourGeocaches(geoCacheList: List<String>, tour: GeocachingTourWithCaches){
 
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-
-            // 1. Remove any repeated caches
-            val geoCachesToGet = geoCacheList.distinct().toList()
-
-            val geoCacheOrder = geoCachesToGet.withIndex().associate { Pair(it.value, (it.index + 1)*1000)  }
-
-            // 2. Process the deltas from the old list to the new list
-            // 2.1 Remove from the original tour caches that are not in the new one
-            val geoCachesAlreadyInTour = tour.getTourGeoCacheCodes()
-            geoCachesAlreadyInTour.forEach{code -> if(!geoCacheList.contains(code))
-                GlobalScope.launch { repository.dropGeoCacheFromTour(code, tour) }}
-
-            // 2.2 Remove from the list of caches to fetch, those we already have loaded
-            var newGeoCachesInTourCodes = geoCachesToGet
-            newGeoCachesInTourCodes = newGeoCachesInTourCodes.filter { code -> !geoCachesAlreadyInTour.contains(code) }.toList()
-
-
-            repository.getGeoCaches(newGeoCachesInTourCodes, geoCacheOrder, tour.tour.id)
+            repository.setTourCacheList(geoCacheList, tour)
         }
 
     }
