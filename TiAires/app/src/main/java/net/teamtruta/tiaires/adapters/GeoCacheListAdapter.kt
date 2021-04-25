@@ -25,7 +25,8 @@ import java.util.*
 
 class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
                                    private val goToOnClickListener: GoToOnClickListener?,
-                                   private val context: Context) :
+                                   private val context: Context,
+                            val viewModel: TourViewModel) :
         RecyclerView.Adapter<GeoCacheListAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
     fun setGeoCacheInTourList(list: List<GeoCacheInTourWithDetails?>) {
@@ -89,12 +90,16 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         var i = 0
         for ((_, logType) in last10Logs) {
             val tv = holder.lastLogsLayout.getChildAt(i) as TextView
-            if (logType === VisitOutcomeEnum.Found) {
-                tv.setTextColor(holder.view.context.getColor(R.color.colorPrimary))
-            } else if (logType === VisitOutcomeEnum.DNF) {
-                tv.setTextColor(holder.view.context.getColor(R.color.red))
-            } else {
-                tv.setTextColor(holder.view.context.getColor(R.color.blue))
+            when {
+                logType === VisitOutcomeEnum.Found -> {
+                    tv.setTextColor(holder.view.context.getColor(R.color.colorPrimary))
+                }
+                logType === VisitOutcomeEnum.DNF -> {
+                    tv.setTextColor(holder.view.context.getColor(R.color.red))
+                }
+                else -> {
+                    tv.setTextColor(holder.view.context.getColor(R.color.blue))
+                }
             }
             i++
         }
@@ -157,7 +162,7 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         return HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    fun holderExpansionOnClicklistener(holder: ViewHolder, geoCacheWithLogsAndAttributes: GeoCacheWithLogsAndAttributes) {
+    private fun holderExpansionOnClicklistener(holder: ViewHolder, geoCacheWithLogsAndAttributes: GeoCacheWithLogsAndAttributes) {
         if (holder.extraInfoArrow.isChecked || holder.extraInfoLayout.visibility != View.VISIBLE) {
             expandHolder(holder, geoCacheWithLogsAndAttributes)
         } else {
@@ -182,7 +187,7 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
             holder.attributeList.visibility = View.VISIBLE
     }
 
-    fun unexpandHolder(holder: ViewHolder) {
+    private fun unexpandHolder(holder: ViewHolder) {
         // Hide extra information
         holder.geoCacheHasHint.visibility = View.VISIBLE
         holder.hint.visibility = View.GONE
@@ -206,56 +211,31 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         Collections.swap(geoCacheInTourList, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
-        /*
-        tour.swapCachePositions(fromPosition, toPosition);
-        tour.updateTourCaches();*/
     }
 
     fun onMoveEnded() {
-        val viewModel: TourViewModel = TourViewModelFactory(App().repository)
-                .create(TourViewModel::class.java)
         viewModel.reorderTourCaches(geoCacheInTourList)
-        /*tour.updateTourCaches();*/
     }
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        var geoCacheName: TextView
-        var geoCacheSymbol: ImageView
-        var geoCacheCode: TextView
-        var geoCacheDifTer: TextView
-        var geoCacheSize: TextView
-        var geoCacheFavs: TextView
-        var geoCacheHasHint: TextView
-        var dnfInfo: TextView
-        var dnfInfoExpanded: TextView
-        var hint: TextView
-        var editButton: Button
-        var goToButton: Button
-        var layout: ConstraintLayout
-        var extraInfoLayout: ConstraintLayout
-        var extraInfoArrow: CheckBox
-        var lastLogsLayout: GridLayout
-        var attributeList: LinearLayout
+        var geoCacheName: TextView = view.findViewById(R.id.geo_cache_title)
+        var geoCacheSymbol: ImageView = view.findViewById(R.id.geo_cache_symbol)
+        var geoCacheCode: TextView = view.findViewById(R.id.geo_cache_code)
+        var geoCacheDifTer: TextView = view.findViewById(R.id.geo_cache_dif_ter)
+        var geoCacheSize: TextView = view.findViewById(R.id.geo_cache_size)
+        var geoCacheFavs: TextView = view.findViewById(R.id.geo_cache_favs)
+        var geoCacheHasHint: TextView = view.findViewById(R.id.geo_cache_has_hint)
+        var dnfInfo: TextView = view.findViewById(R.id.dnf_risk)
+        var dnfInfoExpanded: TextView = view.findViewById(R.id.dnf_info_expanded)
+        var hint: TextView = view.findViewById(R.id.hint)
+        var editButton: Button = view.findViewById(R.id.edit_button)
+        var goToButton: Button = view.findViewById(R.id.go_to_button)
+        var layout: ConstraintLayout = view.findViewById(R.id.element_geo_cache_layout)
+        var extraInfoLayout: ConstraintLayout = view.findViewById(R.id.expandable_info)
+        var extraInfoArrow: CheckBox = view.findViewById(R.id.extra_info_arrow)
+        var lastLogsLayout: GridLayout = view.findViewById(R.id.last10LogsSquares)
+        var attributeList: LinearLayout = view.findViewById(R.id.geo_cache_attributes)
 
-        init {
-            geoCacheName = view.findViewById(R.id.geo_cache_title)
-            geoCacheSymbol = view.findViewById(R.id.geo_cache_symbol)
-            geoCacheCode = view.findViewById(R.id.geo_cache_code)
-            geoCacheDifTer = view.findViewById(R.id.geo_cache_dif_ter)
-            geoCacheSize = view.findViewById(R.id.geo_cache_size)
-            geoCacheFavs = view.findViewById(R.id.geo_cache_favs)
-            geoCacheHasHint = view.findViewById(R.id.geo_cache_has_hint)
-            dnfInfo = view.findViewById(R.id.dnf_risk)
-            dnfInfoExpanded = view.findViewById(R.id.dnf_info_expanded)
-            hint = view.findViewById(R.id.hint)
-            editButton = view.findViewById(R.id.edit_button)
-            goToButton = view.findViewById(R.id.go_to_button)
-            layout = view.findViewById(R.id.element_geo_cache_layout)
-            extraInfoLayout = view.findViewById(R.id.expandable_info)
-            extraInfoArrow = view.findViewById(R.id.extra_info_arrow)
-            lastLogsLayout = view.findViewById(R.id.last10LogsSquares)
-            attributeList = view.findViewById(R.id.geo_cache_attributes)
-        }
     }
 
     interface EditOnClickListener {
@@ -291,7 +271,6 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
                     .create(TourViewModel::class.java)
 
             viewModel.updateGeoCacheInTour(selectedGeoCache)
-            //onVisitListener!!.onVisit(visit.toString())
         }
     }
 

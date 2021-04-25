@@ -43,7 +43,7 @@ class Repository(private val tourDao: GeocachingTourDao,
 
     fun setAuthenticationCookie(authCookie: String){
         val context =  App.applicationContext()
-        val sharedPreferences = context?.getSharedPreferences(context.getString(R.string.preference_file_key),
+        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key),
                 Application.MODE_PRIVATE)
         val editor = sharedPreferences?.edit()
         editor?.putString(context.getString(R.string.authentication_cookie_key), authCookie)
@@ -109,15 +109,13 @@ class Repository(private val tourDao: GeocachingTourDao,
         geoCachesToGet.forEachIndexed {
             index, geoCacheCode ->
 
-            val order = (index + 1) * 100
-
             // If this cache is already in tour simply set it to this position
             if(geoCachesAlreadyInTour.contains(geoCacheCode)){
                 val geoCacheInTourWithGivenCode: GeoCacheInTour = tour.tourGeoCaches.filter {
                     gcit -> gcit.geoCache.geoCache.code == geoCacheCode
                 }[0].geoCacheInTour
 
-                geoCacheInTourWithGivenCode.orderIdx = order
+                geoCacheInTourWithGivenCode.orderIdx = index
                 geoCacheInTourDao.updateGeoCacheInTour(geoCacheInTourWithGivenCode)
             } else {
                 // If it's not in the tour we need to fetch the cache details first and then save it
@@ -130,7 +128,7 @@ class Repository(private val tourDao: GeocachingTourDao,
                 // Save GeoCacheInTour
                 val newGeoCacheInTour = GeoCacheInTour(geoCacheDetailIDFK = newGeoCacheID,
                         tourIDFK = tour.tour.id)
-                newGeoCacheInTour.orderIdx = order
+                newGeoCacheInTour.orderIdx = index
                 geoCacheInTourDao.insert(newGeoCacheInTour)
             }
 

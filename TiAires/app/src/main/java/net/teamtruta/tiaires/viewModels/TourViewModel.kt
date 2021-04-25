@@ -63,8 +63,8 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
         scope.launch {
             geoCacheInTourList.forEachIndexed { index, geoCacheInTourWithDetails ->
                 if(geoCacheInTourWithDetails != null &&
-                        geoCacheInTourWithDetails.geoCacheInTour.orderIdx != (index + 1) * 1000) {
-                    geoCacheInTourWithDetails.geoCacheInTour.orderIdx = (index + 1) * 1000
+                        geoCacheInTourWithDetails.geoCacheInTour.orderIdx != index) {
+                    geoCacheInTourWithDetails.geoCacheInTour.orderIdx = index
                     repository.updateGeoCacheInTour(geoCacheInTourWithDetails.geoCacheInTour)
                 }
             } }

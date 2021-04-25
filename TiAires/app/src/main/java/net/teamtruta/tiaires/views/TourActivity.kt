@@ -64,7 +64,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         geoCacheListView.layoutManager = layoutManager
         //val onVisitListener = this
         val geoCacheListAdapter = GeoCacheListAdapter(this,
-                this, applicationContext)
+                this, applicationContext, viewModel)
         geoCacheListView.adapter = geoCacheListAdapter
 
         // Get tour from ID

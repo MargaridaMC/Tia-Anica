@@ -3,7 +3,6 @@ package net.teamtruta.tiaires.views
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,7 +23,6 @@ import net.teamtruta.tiaires.adapters.TourListAdapter.ItemClickListener
 import net.teamtruta.tiaires.adapters.TourListAdapter.TourViewHolder
 import net.teamtruta.tiaires.viewModels.MainActivityViewModel
 import net.teamtruta.tiaires.viewModels.MainActivityViewModelFactory
-import java.util.*
 
 class MainActivity : AppCompatActivity(), ItemClickListener {
 
