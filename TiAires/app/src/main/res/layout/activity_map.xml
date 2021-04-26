@@ -44,7 +44,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/distance_checkbox"
                 app:layout_constraintTop_toTopOf="@+id/distance_checkbox"
                 app:layout_constraintBottom_toBottomOf="@+id/distance_checkbox"
-                android:onClick="set_current_location_as_start_point"/>
+                android:onClick="setCurrentLocationAsStartPoint"/>
 
             <net.teamtruta.tiaires.extensions.TriStatesCheckBox
                 android:id="@+id/distance_checkbox"

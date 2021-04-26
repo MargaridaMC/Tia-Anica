@@ -1,825 +1,746 @@
-package net.teamtruta.tiaires.views;
+package net.teamtruta.tiaires.views
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.Manifest
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.*
+import android.location.LocationManager
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import com.mapbox.android.core.permissions.PermissionsListener
+import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.BubbleLayout
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLngBounds
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.MapboxMap.OnMapClickListener
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.expressions.Expression
+import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Property
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import kotlinx.android.synthetic.main.activity_map.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import net.teamtruta.tiaires.App
+import net.teamtruta.tiaires.BuildConfig
+import net.teamtruta.tiaires.R
+import net.teamtruta.tiaires.data.models.GeoCacheTypeEnum
+import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
+import net.teamtruta.tiaires.data.models.VisitOutcomeEnum
+import net.teamtruta.tiaires.extensions.GeoCacheIcon.Companion.getIconDrawable
+import net.teamtruta.tiaires.extensions.TriStatesCheckBox
+import net.teamtruta.tiaires.viewModels.MapActivityViewModel
+import net.teamtruta.tiaires.viewModels.MapActivityViewModelFactory
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.geojson.LineString;
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.style.layers.Layer;
-import com.mapbox.mapboxsdk.style.layers.LineLayer;
-import com.mapbox.mapboxsdk.style.layers.Property;
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.turf.TurfMeasurement;
-
-import net.teamtruta.tiaires.App;
-import net.teamtruta.tiaires.GenerateViewIconTask;
-import net.teamtruta.tiaires.R;
-import net.teamtruta.tiaires.data.models.GeoCache;
-import net.teamtruta.tiaires.data.models.GeoCacheInTour;
-import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails;
-import net.teamtruta.tiaires.data.models.GeoCacheTypeEnum;
-import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches;
-import net.teamtruta.tiaires.data.models.VisitOutcomeEnum;
-import net.teamtruta.tiaires.extensions.GeoCacheIcon;
-import net.teamtruta.tiaires.extensions.TriStatesCheckBox;
-import net.teamtruta.tiaires.viewModels.MapActivityViewModel;
-import net.teamtruta.tiaires.viewModels.MapActivityViewModelFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
-import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.match;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.stop;
-import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
-import static com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_ROUND;
-import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
-import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 // classes needed to initialize map
 // classes needed to add the location component
 // classes needed to add a marker
-
-
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener, PermissionsListener {
+    // variables for adding location layer
+    //private val mapView: MapView? = null
+    private var mapboxMap: MapboxMap? = null
 
     // variables for adding location layer
-    private MapView mapView;
-    private MapboxMap mapboxMap;
+    private var permissionsManager: PermissionsManager? = null
+    var TAG = MapActivity::class.java.simpleName
+    private var _tour: GeocachingTourWithCaches? = null
+    private var source: GeoJsonSource? = null
+    private var featureCollection: FeatureCollection? = null
+    private var routeCoordinates: MutableList<Point?> = ArrayList()
+    private var _startingPoint: Point? = null
+    private val viewModel: MapActivityViewModel by viewModels {
+        MapActivityViewModelFactory((application as App).repository)
+    }
 
-    // variables for adding location layer
-    private PermissionsManager permissionsManager;
 
-    private static final String GEOJSON_SOURCE_ID = "GEOJSON_SOURCE_ID";
-    private static final String FULL_TOUR_LINE_GEOJSON_SOURCE_ID = "FULL_TOUR_LINE_GEOJSON_SOURCE_ID";
-    private static final String REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID = "REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID";
-    private static final String MARKER_LAYER_ID = "MARKER_LAYER_ID";
-    private static final String CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID";
-    private static final String FULL_TOUR_LINE_LAYER_ID = "FULL_TOUR_LINE_LAYER_ID";
-    private static final String REMAINING_TOUR_LINE_LAYER_ID = "REMAINING_TOUR_LINE_LAYER_ID";
+    private val GEOJSON_SOURCE_ID = "GEOJSON_SOURCE_ID"
+    private val FULL_TOUR_LINE_GEOJSON_SOURCE_ID = "FULL_TOUR_LINE_GEOJSON_SOURCE_ID"
+    private val REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID = "REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID"
+    private val MARKER_LAYER_ID = "MARKER_LAYER_ID"
+    private val CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID"
+    private val FULL_TOUR_LINE_LAYER_ID = "FULL_TOUR_LINE_LAYER_ID"
+    private val REMAINING_TOUR_LINE_LAYER_ID = "REMAINING_TOUR_LINE_LAYER_ID"
+    private val PROPERTY_NAME = "name"
+    private val PROPERTY_TYPE = "type"
+    private val PROPERTY_DIFFICULTY = "difficulty"
+    private val PROPERTY_TERRAIN = "terrain"
+    private val PROPERTY_FAVOURITES = "favourites"
+    private val PROPERTY_SELECTED = "selected"
+    private val PROPERTY_CODE = "code"
+    private val LINE_COLOR = Color.RED
+    private val LINE_WIDTH = 2f
+    private val STARTING_POINT_ICON_ID = "STARTING_POINT_ICON_ID"
+    private val STARTING_POINT_SOURCE_ID = "STARTING_POINT_SOURCE_ID"
+    private val STARTING_POINT_SYMBOL_LAYER_ID = "STARTING_POINT_SYMBOL_LAYER_ID"
+    private val viewMap = HashMap<String, View>()
 
-    private static final String PROPERTY_NAME = "name";
-    private static final String PROPERTY_TYPE = "type";
-    private static final String PROPERTY_DIFFICULTY = "difficulty";
-    private static final String PROPERTY_TERRAIN = "terrain";
-    private static final String PROPERTY_FAVOURITES = "favourites";
-    private static final String PROPERTY_SELECTED = "selected";
-    private static final String PROPERTY_CODE = "code";
-    private static final int LINE_COLOR = Color.RED;
-    private static final float LINE_WIDTH = 2f;
+    override fun onCreate(savedInstanceState: Bundle?) {
 
-    private static final String STARTING_POINT_ICON_ID = "STARTING_POINT_ICON_ID";
-    private static final String STARTING_POINT_SOURCE_ID = "STARTING_POINT_SOURCE_ID";
-    private static final String STARTING_POINT_SYMBOL_LAYER_ID ="STARTING_POINT_SYMBOL_LAYER_ID";
+        super.onCreate(savedInstanceState)
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
+        setContentView(R.layout.activity_map)
 
-    String TAG = MapActivity.class.getSimpleName();
-    GeocachingTourWithCaches _tour;
-
-    private GeoJsonSource source;
-    private FeatureCollection featureCollection;
-    List<Point> routeCoordinates  = new ArrayList<>();
-    private static final HashMap<String, View> viewMap = new HashMap<>();
-    private double fullTourDistance = 0;
-    private double remainingTourDistance = 0;
-    Point _startingPoint;
-
-    MapActivityViewModel viewModel;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-        setContentView(R.layout.activity_map);
-        mapView = findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-
-        // Setup ViewModel
-        viewModel = new MapActivityViewModelFactory(((App) getApplication()).getRepository())
-                .create(MapActivityViewModel.class);
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
         // Setup bar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        ActionBar ab = getSupportActionBar();
-        assert ab != null;
-        ab.setDisplayHomeAsUpEnabled(true);
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        val ab = supportActionBar!!
+        ab.setDisplayHomeAsUpEnabled(true)
 
         // Set click listener for the tour distance checkbox
-        setTourDistanceCheckBox();
+        setTourDistanceCheckBox()
     }
 
-    void setTourRelatedData(GeocachingTourWithCaches tour){
-        _tour = tour;
-
-        // Set title
-        ActionBar ab = getSupportActionBar();
-        ab.setTitle(_tour.getTour().getName());
-
-        getData();
-
-        // Compute the full distance of the tour
-        fullTourDistance = computeTourDistance(0);
-        remainingTourDistance = computeTourDistance(_tour.getLastVisitedGeoCache());
-
-        new GenerateViewIconTask(MapActivity.this, true, viewMap)
-                .execute(featureCollection);
-
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-            setUpData(featureCollection);
-            enableLocationComponent(style);
-            mapboxMap.addOnMapClickListener(MapActivity.this);
-        });
-    }
-
-    @Override
-    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
-
-        viewModel.getCurrentTour().observe(this, this::setTourRelatedData);
+    // Method called when map is done loading
+    override fun onMapReady(mapboxMap: MapboxMap) {
+        this.mapboxMap = mapboxMap
+        viewModel.currentTour.observe(this,
+                { tour: GeocachingTourWithCaches? -> setTourRelatedData(tour) })
 
         // Set my location FAB onClickListener
-        setupMyLocationFAB();
+        setupMyLocationFAB()
+
+    }
+
+    private fun setTourRelatedData(tour: GeocachingTourWithCaches?) {
+        _tour = tour
+
+        // Set title
+        val ab = supportActionBar
+        ab!!.title = _tour!!.tour.name
+        setupMapData()
+
+        generateViewIcon()
+
+        mapboxMap!!.setStyle(Style.MAPBOX_STREETS) { style: Style ->
+            setUpData(featureCollection)
+            enableLocationComponent(style)
+            mapboxMap!!.addOnMapClickListener(this@MapActivity)
+        }
 
         // Show remaining tour line and distance
-        showRemainingTourDistance();
-        showRemainingTourLineLayer();
-
+        showRemainingTourDistance()
+        showRemainingTourLineLayer()
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.map_menu, menu);
-        return true;
+        return true
     }
 
-    private void setupMyLocationFAB() {
-
-        findViewById(R.id.my_location_fab).setOnClickListener(view -> {
-
-            LocationComponent locationComponent = mapboxMap.getLocationComponent();
-
+    private fun setupMyLocationFAB() {
+        findViewById<View>(R.id.my_location_fab).setOnClickListener {
+            val locationComponent = mapboxMap!!.locationComponent
             try {
-                assert locationComponent.getLastKnownLocation() != null;
-                mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(new LatLng(
-                                locationComponent.getLastKnownLocation().getLatitude(),
-                                locationComponent.getLastKnownLocation().getLongitude()))
-                        , 2500);
-            } catch (Exception e) {
-                checkLocationPermissionIsGrantedAndGPSIsOn();
+                if (BuildConfig.DEBUG && locationComponent.lastKnownLocation == null) {
+                    error("Assertion failed")
+                }
+                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(LatLng(
+                        locationComponent.lastKnownLocation!!.latitude,
+                        locationComponent.lastKnownLocation!!.longitude)), 2500)
+            } catch (e: Exception) {
+                checkLocationPermissionIsGrantedAndGPSIsOn()
             }
-        });
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mapView.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mapView.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mapView.onStop();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
-
-    @SuppressWarnings( {"MissingPermission"})
-    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-        // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            // Activate the MapboxMap LocationComponent to show user location
-            // Adding in LocationComponentOptions is also an optional parameter
-            LocationComponent locationComponent = mapboxMap.getLocationComponent();
-            locationComponent.activateLocationComponent(this, loadedMapStyle);
-            locationComponent.setLocationComponentEnabled(true);
-            // Set the component's camera mode
-            //locationComponent.setCameraMode(CameraMode.TRACKING);
-
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
         }
     }
 
-
-    @SuppressWarnings( {"MissingPermission"})
-    @Override
-    public boolean onMapClick(@NonNull LatLng point) {
-        return handleClickIcon(mapboxMap.getProjection().toScreenLocation(point));
+    /***
+     * MapBox specific methods
+     */
+    override fun onStart() {
+        super.onStart()
+        mapView!!.onStart()
     }
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    override fun onResume() {
+        super.onResume()
+        mapView!!.onResume()
     }
 
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
+    override fun onPause() {
+        super.onPause()
+        mapView!!.onPause()
     }
 
-    @Override
-    public void onPermissionResult(boolean granted) {
+    override fun onStop() {
+        super.onStop()
+        mapView!!.onStop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView!!.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView!!.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView!!.onLowMemory()
+    }
+
+    override fun onMapClick(point: LatLng): Boolean {
+        return handleClickIcon(mapboxMap!!.projection.toScreenLocation(point))
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        permissionsManager!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onExplanationNeeded(permissionsToExplain: List<String>) {
+        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPermissionResult(granted: Boolean) {
         if (granted) {
-            enableLocationComponent(Objects.requireNonNull(mapboxMap.getStyle()));
+            enableLocationComponent(Objects.requireNonNull(mapboxMap!!.style)!!)
         } else {
-            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            finish();
+            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show()
+            finish()
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id  = item.getItemId();
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
 
         // click on icon to go back
         //triangle icon on the main android toolbar.
-
         if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
+            onBackPressed()
+            return true
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-    @Override
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed Called");
-        Intent intent = new Intent(this, TourActivity.class);
-//        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    override fun onBackPressed() {
+        Log.d(TAG, "onBackPressed Called")
+        val intent = Intent(this, TourActivity::class.java)
+        //        intent.putExtra(App.TOUR_ID_EXTRA, tourID);
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
-    private LatLng convertToLatLng(Feature feature) {
-        Point symbolPoint = (Point) feature.geometry();
-        assert symbolPoint != null;
-        return new LatLng(symbolPoint.latitude(), symbolPoint.longitude());
-    }
+    /**
+     * Defines the coordinates of all elements to be shown on the map
+     */
+    private fun setupMapData(){
 
-    private boolean handleClickIcon(PointF screenPoint) {
-
-        // Display text box with info
-        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID);
-        if (!features.isEmpty()) {
-
-            String name = features.get(0).getStringProperty(PROPERTY_NAME);
-
-            List<Feature> featureList = featureCollection.features();
-            if (featureList != null) {
-                for (int i = 0; i < featureList.size(); i++) {
-                    if (featureList.get(i).getStringProperty(PROPERTY_NAME).equals(name)) {
-                        if (featureSelectStatus(i)) {
-                            setFeatureSelectState(featureList.get(i), false);
-                        } else {
-                            setSelected(i);
-
-                        }
-                        return true;
-                    }
+            val symbolLayerIconFeatureList: MutableList<Feature> = ArrayList()
+            val builder = LatLngBounds.Builder()
+            var location: LatLng
+            for (gcit in _tour!!.tourGeoCaches) {
+                val geoCacheInTour = gcit.geoCacheInTour
+                val geoCacheDetails = gcit.geoCache.geoCache
+                location = geoCacheDetails.latLng
+                val p = Point.fromLngLat(location.longitude, location.latitude)
+                routeCoordinates.add(p)
+                val feature = Feature.fromGeometry(p)
+                feature.addStringProperty(PROPERTY_NAME, geoCacheDetails.name)
+                feature.addStringProperty(PROPERTY_DIFFICULTY, geoCacheDetails.difficulty.toString())
+                feature.addStringProperty(PROPERTY_TERRAIN, geoCacheDetails.terrain.toString())
+                feature.addStringProperty(PROPERTY_FAVOURITES, geoCacheDetails.favourites.toString())
+                feature.addStringProperty(PROPERTY_CODE, geoCacheDetails.code)
+                feature.addBooleanProperty(PROPERTY_SELECTED, false)
+                if (geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.Found || geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.DNF) {
+                    feature.addStringProperty(PROPERTY_TYPE, geoCacheInTour.currentVisitOutcome.visitOutcomeString)
+                } else {
+                    feature.addStringProperty(PROPERTY_TYPE, geoCacheDetails.type.typeString)
                 }
+                symbolLayerIconFeatureList.add(feature)
+                builder.include(location)
             }
 
-        } else {
-
-            List<Feature> infoWindows = mapboxMap.queryRenderedFeatures(
-                    screenPoint, CALLOUT_LAYER_ID);
-
-            if(!infoWindows.isEmpty()){
-
-                Feature window = infoWindows.get(0);
-
-                String name = window.getStringProperty(PROPERTY_NAME);
-                PointF symbolScreenPoint =
-                        mapboxMap.getProjection().toScreenLocation(convertToLatLng(window));
-
-                View view = viewMap.get(name);
-                assert view != null;
-                View button = view.findViewById(R.id.go_to_button);
-                // create hitbox for button
-                Rect hitRectText = new Rect();
-                button.getHitRect(hitRectText);
-                // move hitbox to location of symbol
-                hitRectText.offset((int) symbolScreenPoint.x, (int) symbolScreenPoint.y);
-                // offset to consider box's size
-                hitRectText.offset(- view.getWidth() / 2, - view.getHeight() - 50);
-
-                if (hitRectText.contains((int) screenPoint.x, (int) screenPoint.y)) {
-                    // user clicked on marker
-                    goToGeoCache( window.getStringProperty(PROPERTY_CODE));
-                    return true;
-                }
-            }
-        }
-
-        return false;
-
-    }
-
-    private boolean featureSelectStatus(int index) {
-        if (featureCollection == null) {
-            return false;
-        }
-        assert featureCollection.features() != null;
-        return featureCollection.features().get(index).getBooleanProperty(PROPERTY_SELECTED);
-    }
-
-    private void setSelected(int index) {
-        if (featureCollection.features() != null) {
-            Feature feature = featureCollection.features().get(index);
-            setFeatureSelectState(feature, true);
-            refreshSource();
-        }
-    }
-
-    private void setFeatureSelectState(Feature feature, boolean selectedState) {
-        if (feature.properties() != null) {
-            feature.properties().addProperty(PROPERTY_SELECTED, selectedState);
-            refreshSource();
-        }
-    }
-
-    public void refreshSource() {
-        if (source != null && featureCollection != null) {
-            source.setGeoJson(featureCollection);
-        }
-    }
-
-    public void getData(){
-
-        List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        LatLng location;
-
-        for (GeoCacheInTourWithDetails gcit : _tour.getTourGeoCaches()) {
-            GeoCacheInTour geoCacheInTour = gcit.getGeoCacheInTour();
-            GeoCache geoCacheDetails = gcit.getGeoCache().getGeoCache();
-            location = geoCacheDetails.getLatLng();
-
-            Point p = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-            routeCoordinates.add(p);
-
-            Feature feature = Feature.fromGeometry(p);
-
-            feature.addStringProperty(PROPERTY_NAME, geoCacheDetails.getName());
-            feature.addStringProperty(PROPERTY_DIFFICULTY, Double.toString(geoCacheDetails.getDifficulty()));
-            feature.addStringProperty(PROPERTY_TERRAIN, Double.toString(geoCacheDetails.getTerrain()));
-            feature.addStringProperty(PROPERTY_FAVOURITES, Integer.toString(geoCacheDetails.getFavourites()));
-            feature.addStringProperty(PROPERTY_CODE, geoCacheDetails.getCode());
-            feature.addBooleanProperty(PROPERTY_SELECTED, false);
-
-            if (geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.Found || geoCacheInTour.getCurrentVisitOutcome() == VisitOutcomeEnum.DNF) {
-                feature.addStringProperty(PROPERTY_TYPE, geoCacheInTour.getCurrentVisitOutcome().getVisitOutcomeString());
+            // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
+            // If that is the case just focus on the geocache
+            if (_tour!!.tourGeoCaches.size == 1) {
+                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(_tour!!.tourGeoCaches[0].geoCache.geoCache.latLng), 2000)
             } else {
-                feature.addStringProperty(PROPERTY_TYPE, geoCacheDetails.getType().getTypeString());
+                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000)
             }
+            featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList)
 
-            symbolLayerIconFeatureList.add(feature);
-            builder.include(location);
+            // Get starting point if there is one
+            if (_tour!!.tour.startingPointLongitude != null) {
+                _startingPoint = Point.fromLngLat(_tour!!.tour.startingPointLongitude!!.value,
+                        _tour!!.tour.startingPointLatitude!!.value)
+
+                // If we have a starting point add it in the beginning and the end of the route
+                routeCoordinates.add(_startingPoint)
+                routeCoordinates.add(0, _startingPoint)
+            }
         }
-
-        // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
-        // If that is the case just focus on the geocache
-        if( _tour.getTourGeoCaches().size() == 1){
-            mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(_tour.getTourGeoCaches().get(0).getGeoCache().getGeoCache().getLatLng()), 2000);
-        } else {
-            mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000);
-        }
-
-        featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList);
-
-        // Get starting point if there is one
-
-        if(_tour.getTour().getStartingPointLongitude() != null){
-            _startingPoint = Point.fromLngLat(_tour.getTour().getStartingPointLongitude().getValue(),
-                    _tour.getTour().getStartingPointLatitude().getValue());
-
-            // If we have a starting point add it in the beginning and the end of the route
-            routeCoordinates.add(_startingPoint);
-            routeCoordinates.add(0, _startingPoint);
-        }
-
-    }
-
 
     /**
      * Sets up all of the sources and layers needed for this example
      *
      * @param collection the FeatureCollection to set equal to the globally-declared FeatureCollection
      */
-    public void setUpData(final FeatureCollection collection) {
-        featureCollection = collection;
+    private fun setUpData(collection: FeatureCollection?) {
+        featureCollection = collection
         if (mapboxMap != null) {
-            mapboxMap.getStyle(style -> {
-                setupSource(style);
-                setUpImage(style);
-                setUpMarkerLayer(style);
-                setUpInfoWindowLayer(style);
-                setupLineLayer(style);
-            });
+            mapboxMap!!.getStyle { style: Style ->
+                setupSource(style)
+                setUpImage(style)
+                setUpMarkerLayer(style)
+                setUpInfoWindowLayer(style)
+                setupLineLayer(style)
+            }
         }
     }
 
     /**
      * Adds the GeoJSON source to the map
      */
-    private void setupSource(@NonNull Style loadedStyle) {
+    private fun setupSource(loadedStyle: Style) {
 
         // Set source for geocaches
-        source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
-        loadedStyle.addSource(source);
+        source = GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection)
+        loadedStyle.addSource(source!!)
 
         // Set source for starting point
-        if(_startingPoint != null) {
-            loadedStyle.addSource(new GeoJsonSource(STARTING_POINT_SOURCE_ID,
-                    FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(_startingPoint)})));
+        if (_startingPoint != null) {
+            loadedStyle.addSource(GeoJsonSource(STARTING_POINT_SOURCE_ID,
+                    FeatureCollection.fromFeatures(arrayOf(Feature.fromGeometry(_startingPoint)))))
         }
 
         // Set source for route lines for whole tour
-        Feature[] route = new Feature[] {Feature.fromGeometry(
-                LineString.fromLngLats(routeCoordinates))};
-        FeatureCollection lineFeatureCollection = FeatureCollection.fromFeatures(route);
-        loadedStyle.addSource(new GeoJsonSource(FULL_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
+        val route = arrayOf(Feature.fromGeometry(
+                LineString.fromLngLats(routeCoordinates)))
+        var lineFeatureCollection = FeatureCollection.fromFeatures(route)
+        loadedStyle.addSource(GeoJsonSource(FULL_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection))
 
         // Set source for route lines for remaining tour
-        int lastVisitedGeoCache = _tour.getLastVisitedGeoCache();
-        List<Point> remainingRouteCoordinates;
-        if(lastVisitedGeoCache == 0){
-            remainingRouteCoordinates = routeCoordinates.subList(0, routeCoordinates.size());
+        val lastVisitedGeoCache = _tour!!.getLastVisitedGeoCache()
+        val remainingRouteCoordinates: List<Point?> = if (lastVisitedGeoCache == 0) {
+            routeCoordinates.subList(0, routeCoordinates.size)
         } else {
-            remainingRouteCoordinates = routeCoordinates.subList(lastVisitedGeoCache - 1, routeCoordinates.size());
+            routeCoordinates.subList(lastVisitedGeoCache - 1, routeCoordinates.size)
         }
-        lineFeatureCollection = FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
-                LineString.fromLngLats(remainingRouteCoordinates))});
-        loadedStyle.addSource(new GeoJsonSource(REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection));
-
-
+        lineFeatureCollection = FeatureCollection.fromFeatures(arrayOf(Feature.fromGeometry(
+                LineString.fromLngLats(remainingRouteCoordinates))))
+        loadedStyle.addSource(GeoJsonSource(REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection))
     }
 
     /**
-     * Adds the marker image to the map for use as a SymbolLayer icon
+     * Adds the cache icons
      */
-    private void setUpImage(@NonNull Style loadedStyle) {
-
-
-        for (GeoCacheTypeEnum type : GeoCacheTypeEnum.values()) {
-            String typeString = type.getTypeString();
+    private fun setUpImage(loadedStyle: Style) {
+        for (type in GeoCacheTypeEnum.values()) {
+            val typeString = type.typeString
             loadedStyle.addImage(typeString, BitmapFactory.decodeResource(
-                    MapActivity.this.getResources(), GeoCacheIcon.Companion.getIconDrawable(typeString)));
+                    this@MapActivity.resources, getIconDrawable(typeString)))
         }
         // Add finds and dnfs as well
-        loadedStyle.addImage(VisitOutcomeEnum.Found.getVisitOutcomeString(), BitmapFactory.decodeResource(
-                MapActivity.this.getResources(), R.drawable.geo_cache_icon_found));
-        loadedStyle.addImage(VisitOutcomeEnum.DNF.getVisitOutcomeString(), BitmapFactory.decodeResource(
-                MapActivity.this.getResources(), R.drawable.geo_cache_icon_dnf));
+        loadedStyle.addImage(VisitOutcomeEnum.Found.visitOutcomeString, BitmapFactory.decodeResource(
+                this@MapActivity.resources, R.drawable.geo_cache_icon_found))
+        loadedStyle.addImage(VisitOutcomeEnum.DNF.visitOutcomeString, BitmapFactory.decodeResource(
+                this@MapActivity.resources, R.drawable.geo_cache_icon_dnf))
 
         // Add starting point
-        if(_startingPoint != null){
+        if (_startingPoint != null) {
             loadedStyle.addImage(STARTING_POINT_ICON_ID,
-                    BitmapFactory.decodeResource(MapActivity.this.getResources(), R.drawable.home_filled_green));
+                    BitmapFactory.decodeResource(this@MapActivity.resources, R.drawable.home_filled_green))
         }
-
     }
 
     /**
-     * Setup a layer with maki icons, eg. west coast city.
+     * setup marker layer
      */
-    private void setUpMarkerLayer(@NonNull Style loadedStyle) {
-
-        loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID, GEOJSON_SOURCE_ID)
-                .withProperties(iconImage(match(get(PROPERTY_TYPE), literal(GeoCacheTypeEnum.Traditional.getTypeString()),
-                        stop(GeoCacheTypeEnum.Traditional.getTypeString(), GeoCacheTypeEnum.Traditional.getTypeString()),
-                        stop(GeoCacheTypeEnum.Mystery.getTypeString(), GeoCacheTypeEnum.Mystery.getTypeString()),
-                        stop(GeoCacheTypeEnum.Solved.getTypeString(), GeoCacheTypeEnum.Solved.getTypeString()),
-                        stop(GeoCacheTypeEnum.Multi.getTypeString(), GeoCacheTypeEnum.Multi.getTypeString()),
-                        stop(GeoCacheTypeEnum.Earth.getTypeString(), GeoCacheTypeEnum.Earth.getTypeString()),
-                        stop(GeoCacheTypeEnum.Letterbox.getTypeString(), GeoCacheTypeEnum.Letterbox.getTypeString()),
-                        stop(GeoCacheTypeEnum.Wherigo.getTypeString(), GeoCacheTypeEnum.Wherigo.getTypeString()),
-                        stop(GeoCacheTypeEnum.Event.getTypeString(), GeoCacheTypeEnum.Event.getTypeString()),
-                        stop(GeoCacheTypeEnum.CITO.getTypeString(), GeoCacheTypeEnum.CITO.getTypeString()),
-                        stop(GeoCacheTypeEnum.Mega.getTypeString(), GeoCacheTypeEnum.Mega.getTypeString()),
-                        stop(GeoCacheTypeEnum.Giga.getTypeString(), GeoCacheTypeEnum.Giga.getTypeString()),
-                        stop(GeoCacheTypeEnum.HQ.getTypeString(), GeoCacheTypeEnum.HQ.getTypeString()),
-                        stop(GeoCacheTypeEnum.GPSAdventures.getTypeString(), GeoCacheTypeEnum.GPSAdventures.getTypeString()),
-                        stop(GeoCacheTypeEnum.Lab.getTypeString(), GeoCacheTypeEnum.Lab.getTypeString()),
-                        stop(GeoCacheTypeEnum.HQCelebration.getTypeString(), GeoCacheTypeEnum.HQCelebration.getTypeString()),
-                        stop(GeoCacheTypeEnum.HQBlockParty.getTypeString(), GeoCacheTypeEnum.HQBlockParty.getTypeString()),
-                        stop(GeoCacheTypeEnum.CommunityCelebration.getTypeString(), GeoCacheTypeEnum.CommunityCelebration.getTypeString()),
-                        stop(GeoCacheTypeEnum.Virtual.getTypeString(), GeoCacheTypeEnum.Virtual.getTypeString()),
-                        stop(GeoCacheTypeEnum.Webcam.getTypeString(), GeoCacheTypeEnum.Webcam.getTypeString()),
-                        stop(GeoCacheTypeEnum.ProjectAPE.getTypeString(), GeoCacheTypeEnum.ProjectAPE.getTypeString()),
-                        stop(GeoCacheTypeEnum.Locationless.getTypeString(), GeoCacheTypeEnum.Locationless.getTypeString()),
-                        stop(VisitOutcomeEnum.Found.getVisitOutcomeString(), VisitOutcomeEnum.Found.getVisitOutcomeString()),
-                        stop(VisitOutcomeEnum.DNF.getVisitOutcomeString(), VisitOutcomeEnum.DNF.getVisitOutcomeString()))),
-                        iconAllowOverlap(true),
-                        iconAnchor(Property.ICON_ANCHOR_CENTER),
-                        iconSize(0.4f))
-        );
-
-        if(_startingPoint != null){
-            loadedStyle.addLayer(new SymbolLayer(STARTING_POINT_SYMBOL_LAYER_ID, STARTING_POINT_SOURCE_ID)
+    private fun setUpMarkerLayer(loadedStyle: Style) {
+        loadedStyle.addLayer(SymbolLayer(MARKER_LAYER_ID, GEOJSON_SOURCE_ID)
+                .withProperties(PropertyFactory.iconImage(Expression.match(Expression.get(PROPERTY_TYPE), Expression.literal(GeoCacheTypeEnum.Traditional.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Traditional.typeString, GeoCacheTypeEnum.Traditional.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Mystery.typeString, GeoCacheTypeEnum.Mystery.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Solved.typeString, GeoCacheTypeEnum.Solved.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Multi.typeString, GeoCacheTypeEnum.Multi.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Earth.typeString, GeoCacheTypeEnum.Earth.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Letterbox.typeString, GeoCacheTypeEnum.Letterbox.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Wherigo.typeString, GeoCacheTypeEnum.Wherigo.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Event.typeString, GeoCacheTypeEnum.Event.typeString),
+                        Expression.stop(GeoCacheTypeEnum.CITO.typeString, GeoCacheTypeEnum.CITO.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Mega.typeString, GeoCacheTypeEnum.Mega.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Giga.typeString, GeoCacheTypeEnum.Giga.typeString),
+                        Expression.stop(GeoCacheTypeEnum.HQ.typeString, GeoCacheTypeEnum.HQ.typeString),
+                        Expression.stop(GeoCacheTypeEnum.GPSAdventures.typeString, GeoCacheTypeEnum.GPSAdventures.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Lab.typeString, GeoCacheTypeEnum.Lab.typeString),
+                        Expression.stop(GeoCacheTypeEnum.HQCelebration.typeString, GeoCacheTypeEnum.HQCelebration.typeString),
+                        Expression.stop(GeoCacheTypeEnum.HQBlockParty.typeString, GeoCacheTypeEnum.HQBlockParty.typeString),
+                        Expression.stop(GeoCacheTypeEnum.CommunityCelebration.typeString, GeoCacheTypeEnum.CommunityCelebration.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Virtual.typeString, GeoCacheTypeEnum.Virtual.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Webcam.typeString, GeoCacheTypeEnum.Webcam.typeString),
+                        Expression.stop(GeoCacheTypeEnum.ProjectAPE.typeString, GeoCacheTypeEnum.ProjectAPE.typeString),
+                        Expression.stop(GeoCacheTypeEnum.Locationless.typeString, GeoCacheTypeEnum.Locationless.typeString),
+                        Expression.stop(VisitOutcomeEnum.Found.visitOutcomeString, VisitOutcomeEnum.Found.visitOutcomeString),
+                        Expression.stop(VisitOutcomeEnum.DNF.visitOutcomeString, VisitOutcomeEnum.DNF.visitOutcomeString))),
+                        PropertyFactory.iconAllowOverlap(true),
+                        PropertyFactory.iconAnchor(Property.ICON_ANCHOR_CENTER),
+                        PropertyFactory.iconSize(0.4f))
+        )
+        if (_startingPoint != null) {
+            loadedStyle.addLayer(SymbolLayer(STARTING_POINT_SYMBOL_LAYER_ID, STARTING_POINT_SOURCE_ID)
                     .withProperties(
-                            iconImage(STARTING_POINT_ICON_ID),
-                            iconAllowOverlap(true),
-                            iconAnchor(ICON_ANCHOR_BOTTOM),
-                            iconSize(0.5f)
-                    ));
+                            PropertyFactory.iconImage(STARTING_POINT_ICON_ID),
+                            PropertyFactory.iconAllowOverlap(true),
+                            PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),
+                            PropertyFactory.iconSize(0.5f)
+                    ))
         }
-
     }
 
     /**
      * Setup a layer with Android SDK call-outs
-     * <p>
+     *
+     *
      * name of the feature is used as key for the iconImage
-     * </p>
+     *
      */
-    private void setUpInfoWindowLayer(@NonNull Style loadedStyle) {
-        loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID, GEOJSON_SOURCE_ID)
-                .withProperties(
-                        /* show image with id title based on the value of the name feature property */
-                        iconImage("{name}"),
-
-                        /* set anchor of icon to bottom-left */
-                        iconAnchor(ICON_ANCHOR_BOTTOM),
-
-                        /* all info window and marker image to appear at the same time*/
-                        iconAllowOverlap(true),
-
-                        /* offset the info window to be above the marker */
-                        iconOffset(new Float[] {-2f, -20f})
-                )
-/* add a filter to show only when selected feature property is true */
-                .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
+    private fun setUpInfoWindowLayer(loadedStyle: Style) {
+        loadedStyle.addLayer(SymbolLayer(CALLOUT_LAYER_ID, GEOJSON_SOURCE_ID)
+                .withProperties( /* show image with id title based on the value of the name feature property */
+                        PropertyFactory.iconImage("{name}"),  /* set anchor of icon to bottom-left */
+                        PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),  /* all info window and marker image to appear at the same time*/
+                        PropertyFactory.iconAllowOverlap(true),  /* offset the info window to be above the marker */
+                        PropertyFactory.iconOffset(arrayOf(-2f, -20f))
+                ) /* add a filter to show only when selected feature property is true */
+                .withFilter(Expression.eq(Expression.get(PROPERTY_SELECTED), Expression.literal(true))))
     }
 
-    private void setupLineLayer(@NonNull Style loadedStyle){
+    private fun setupLineLayer(loadedStyle: Style) {
 
         // Style and add the LineLayer to the map. The LineLayer is placed below the CircleLayer.
-        loadedStyle.addLayerBelow(new LineLayer(FULL_TOUR_LINE_LAYER_ID, FULL_TOUR_LINE_GEOJSON_SOURCE_ID).withProperties(
-                    lineColor(LINE_COLOR),
-                    lineWidth(LINE_WIDTH),
-                    lineJoin(LINE_JOIN_ROUND),
-                    visibility(NONE)
-                ), MARKER_LAYER_ID);
-
-        loadedStyle.addLayerBelow(new LineLayer(REMAINING_TOUR_LINE_LAYER_ID, REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID).withProperties(
-                lineColor(LINE_COLOR),
-                lineWidth(LINE_WIDTH),
-                lineJoin(LINE_JOIN_ROUND),
-                visibility(NONE)
-        ), MARKER_LAYER_ID);
+        loadedStyle.addLayerBelow(LineLayer(FULL_TOUR_LINE_LAYER_ID, FULL_TOUR_LINE_GEOJSON_SOURCE_ID).withProperties(
+                PropertyFactory.lineColor(LINE_COLOR),
+                PropertyFactory.lineWidth(LINE_WIDTH),
+                PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+                PropertyFactory.visibility(Property.NONE)
+        ), MARKER_LAYER_ID)
+        loadedStyle.addLayerBelow(LineLayer(REMAINING_TOUR_LINE_LAYER_ID, REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID).withProperties(
+                PropertyFactory.lineColor(LINE_COLOR),
+                PropertyFactory.lineWidth(LINE_WIDTH),
+                PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+                PropertyFactory.visibility(Property.NONE)
+        ), MARKER_LAYER_ID)
     }
 
-    private void setTourDistanceCheckBox() {
-        TriStatesCheckBox checkBox = findViewById(R.id.distance_checkbox);
-        checkBox.setOnClickListener(v -> {
-            switch (checkBox.getState()){
-                case(TriStatesCheckBox.INDETERMINATE):
-                    showRemainingTourLineLayer();
-                    break;
-                case(TriStatesCheckBox.CHECKED):
-                    hideRemainingTourLineLayer();
-                    showFullTourLineLayer();
-                    break;
-                case(TriStatesCheckBox.UNCHECKED):
-                    hideFullTourLineLayer();
-                    break;
-                default:
-                    hideRemainingTourLineLayer();
-                    hideFullTourLineLayer();
-                    break;
+
+
+
+
+    private fun enableLocationComponent(loadedMapStyle: Style) {
+        // Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            // Activate the MapboxMap LocationComponent to show user location
+            // Adding in LocationComponentOptions is also an optional parameter
+            val locationComponent = mapboxMap!!.locationComponent
+            locationComponent.activateLocationComponent(this, loadedMapStyle)
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
             }
-        });
+            locationComponent.isLocationComponentEnabled = true
+            // Set the component's camera mode
+            //locationComponent.setCameraMode(CameraMode.TRACKING);
+        } else {
+            permissionsManager = PermissionsManager(this)
+            permissionsManager!!.requestLocationPermissions(this)
+        }
     }
 
 
 
+    private fun convertToLatLng(feature: Feature): LatLng {
+        val symbolPoint = (feature.geometry() as Point?)!!
+        return LatLng(symbolPoint.latitude(), symbolPoint.longitude())
+    }
 
-    public void goToGeoCache(String code) {
+    private fun handleClickIcon(screenPoint: PointF): Boolean {
 
-        String url = "https://coord.info/" + code;
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
+        // Display text box with info
+        val features = mapboxMap!!.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID)
+        if (features.isNotEmpty()) {
+            val name = features[0].getStringProperty(PROPERTY_NAME)
+            val featureList = featureCollection!!.features()
+            if (featureList != null) {
+                for (i in featureList.indices) {
+                    if (featureList[i].getStringProperty(PROPERTY_NAME) == name) {
+                        if (featureSelectStatus(i)) {
+                            setFeatureSelectState(featureList[i], false)
+                        } else {
+                            setSelected(i)
+                        }
+                        return true
+                    }
+                }
+            }
+        } else {
+            val infoWindows = mapboxMap!!.queryRenderedFeatures(
+                    screenPoint, CALLOUT_LAYER_ID)
+            if (infoWindows.isNotEmpty()) {
+                val window = infoWindows[0]
+                val name = window.getStringProperty(PROPERTY_NAME)
+                val symbolScreenPoint = mapboxMap!!.projection.toScreenLocation(convertToLatLng(window))
+                val view = viewMap[name]!!
+                val button = view.findViewById<View>(R.id.go_to_button)
+                // create hitbox for button
+                val hitRectText = Rect()
+                button.getHitRect(hitRectText)
+                // move hitbox to location of symbol
+                hitRectText.offset(symbolScreenPoint.x.toInt(), symbolScreenPoint.y.toInt())
+                // offset to consider box's size
+                hitRectText.offset(-view.width / 2, -view.height - 50)
+                if (hitRectText.contains(screenPoint.x.toInt(), screenPoint.y.toInt())) {
+                    // user clicked on marker
+                    goToGeoCache(window.getStringProperty(PROPERTY_CODE))
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun featureSelectStatus(index: Int): Boolean {
+        if (featureCollection == null) {
+            return false
+        }
+        if (BuildConfig.DEBUG && featureCollection!!.features() == null) {
+            error("Assertion failed")
+        }
+        return featureCollection!!.features()!![index].getBooleanProperty(PROPERTY_SELECTED)
+    }
+
+    private fun setSelected(index: Int) {
+        if (featureCollection!!.features() != null) {
+            val feature = featureCollection!!.features()!![index]
+            setFeatureSelectState(feature, true)
+            refreshSource()
+        }
+    }
+
+    private fun setFeatureSelectState(feature: Feature, selectedState: Boolean) {
+        if (feature.properties() != null) {
+            feature.properties()!!.addProperty(PROPERTY_SELECTED, selectedState)
+            refreshSource()
+        }
+    }
+
+    private fun refreshSource() {
+        if (source != null && featureCollection != null) {
+            source!!.setGeoJson(featureCollection)
+        }
+    }// If we have a starting point add it in the beginning and the end of the route
+    // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
+    // If that is the case just focus on the geocache
+
+    // Get starting point if there is one
+
+
+
+    private fun setTourDistanceCheckBox() {
+        val checkBox = findViewById<TriStatesCheckBox>(R.id.distance_checkbox)
+        checkBox.setOnClickListener {
+            when (checkBox.getState()) {
+                TriStatesCheckBox.INDETERMINATE -> showRemainingTourLineLayer()
+                TriStatesCheckBox.CHECKED -> {
+                    hideRemainingTourLineLayer()
+                    showFullTourLineLayer()
+                }
+                TriStatesCheckBox.UNCHECKED -> hideFullTourLineLayer()
+                else -> {
+                    hideRemainingTourLineLayer()
+                    hideFullTourLineLayer()
+                }
+            }
+        }
+    }
+
+    private fun goToGeoCache(code: String) {
+        val url = "https://coord.info/$code"
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
     }
 
     /**
      * Invoked when the bitmaps have been generated from a view.
      */
-    public void setImageGenResults(HashMap<String, Bitmap> imageMap) {
+    private fun setImageGenResults(imageMap: HashMap<String?, Bitmap?>?) {
         if (mapboxMap != null) {
-            mapboxMap.getStyle(style -> {
+            mapboxMap!!.getStyle { style: Style ->
 // calling addImages is faster as separate addImage calls for each bitmap.
-                style.addImages(imageMap);
-            });
+                style.addImages(imageMap!!)
+            }
         }
     }
 
-
-
-    private void showFullTourLineLayer(){
-        mapboxMap.getStyle(style -> {
-            Layer layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID);
-            assert layer != null;
-            layer.setProperties(visibility(VISIBLE));
-        });
-
-        showFullTourDistance();
-    }
-
-    private void hideFullTourLineLayer(){
-        mapboxMap.getStyle(style -> {
-            Layer layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID);
-            assert layer != null;
-            layer.setProperties(visibility(NONE));
-        });
-
-        findViewById(R.id.line_distance).setVisibility(View.INVISIBLE);
-    }
-
-    private void showRemainingTourLineLayer(){
-
-        mapboxMap.getStyle(style -> {
-            Layer layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID);
-            assert layer != null;
-            layer.setProperties(visibility(VISIBLE));
-        });
-
-        showRemainingTourDistance();
-    }
-
-    private void hideRemainingTourLineLayer(){
-
-        mapboxMap.getStyle(style -> {
-            Layer layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID);
-            assert layer != null;
-            layer.setProperties(visibility(NONE));
-        });
-
-        findViewById(R.id.line_distance).setVisibility(View.INVISIBLE);
-    }
-
-    private void showFullTourDistance(){
-        TextView lineLengthTextView = findViewById(R.id.line_distance);
-        lineLengthTextView.setVisibility(View.VISIBLE);
-
-        lineLengthTextView.setText(String.format(getString(R.string.full_tour_distance),
-                fullTourDistance, "kms"));
-    }
-
-    private void showRemainingTourDistance(){
-        TextView lineLengthTextView = findViewById(R.id.line_distance);
-        lineLengthTextView.setVisibility(View.VISIBLE);
-
-        lineLengthTextView.setText(String.format(getString(R.string.remaining_tour_distance),
-                remainingTourDistance, "kms"));
-    }
-
-    private double computeTourDistance(int startGeoCacheIDX ){
-        double distance = 0;
-
-        if(startGeoCacheIDX == 0)
-            startGeoCacheIDX = 1;
-
-        // If there is a starting point it will be the first element in route coordinates so the indices will be shifted by 1
-        if(_startingPoint != null){
-            startGeoCacheIDX += 1;
+    private fun showFullTourLineLayer() {
+        mapboxMap!!.getStyle { style: Style ->
+            val layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID)!!
+            layer.setProperties(PropertyFactory.visibility(Property.VISIBLE))
         }
-
-        for(int i = startGeoCacheIDX; i < routeCoordinates.size(); i++){
-            distance += TurfMeasurement.distance(routeCoordinates.get(i), routeCoordinates.get(i - 1));
-        }
-
-        return distance;
+        showFullTourDistance()
     }
 
-    public void set_current_location_as_start_point(View view){
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+    private fun hideFullTourLineLayer() {
+        mapboxMap!!.getStyle { style: Style ->
+            val layer = style.getLayer(FULL_TOUR_LINE_LAYER_ID)!!
+            layer.setProperties(PropertyFactory.visibility(Property.NONE))
+        }
+        findViewById<View>(R.id.line_distance).visibility = View.INVISIBLE
+    }
+
+    private fun showRemainingTourLineLayer() {
+        mapboxMap!!.getStyle { style: Style ->
+            val layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID)!!
+            layer.setProperties(PropertyFactory.visibility(Property.VISIBLE))
+        }
+        showRemainingTourDistance()
+    }
+
+    private fun hideRemainingTourLineLayer() {
+        mapboxMap!!.getStyle { style: Style ->
+            val layer = style.getLayer(REMAINING_TOUR_LINE_LAYER_ID)!!
+            layer.setProperties(PropertyFactory.visibility(Property.NONE))
+        }
+        findViewById<View>(R.id.line_distance).visibility = View.INVISIBLE
+    }
+
+    private fun showFullTourDistance() {
+        val lineLengthTextView = findViewById<TextView>(R.id.line_distance)
+        lineLengthTextView.visibility = View.VISIBLE
+        lineLengthTextView.text = String.format(getString(R.string.full_tour_distance),
+                viewModel.computeTourFullDistance(), "kms")
+    }
+
+    private fun showRemainingTourDistance() {
+        val lineLengthTextView = findViewById<TextView>(R.id.line_distance)
+        lineLengthTextView.visibility = View.VISIBLE
+        lineLengthTextView.text = String.format(getString(R.string.remaining_tour_distance),
+                viewModel.computeTourRemainingDistance(), "kms")
+    }
+
+
+    fun setCurrentLocationAsStartPoint(view: View?) {
+        val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setMessage("Set the current location as the start and finish point of the tour?")
-                .setPositiveButton("Yes", (dialog, which) -> {
+                .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     // Set current point as starting point of the tour
-
-                    LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                    val locationComponent = mapboxMap!!.locationComponent
                     try {
-                        assert locationComponent.getLastKnownLocation() != null;
-                        double currentLatitude = locationComponent.getLastKnownLocation().getLatitude();
-                        double currentLongitude = locationComponent.getLastKnownLocation().getLongitude();
-
-                        _tour.getTour().setStartingPoint(currentLatitude, currentLongitude);
-                        viewModel.updateTour(_tour);
-
-                        finish();
-                        startActivity(getIntent());
-                    } catch (Exception e) {
-                        checkLocationPermissionIsGrantedAndGPSIsOn();
-                        e.printStackTrace();
+                        if (BuildConfig.DEBUG && locationComponent.lastKnownLocation == null) {
+                            error("Assertion failed")
+                        }
+                        val currentLatitude = locationComponent.lastKnownLocation!!.latitude
+                        val currentLongitude = locationComponent.lastKnownLocation!!.longitude
+                        _tour!!.tour.setStartingPoint(currentLatitude, currentLongitude)
+                        viewModel.updateTour(_tour!!)
+                        finish()
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        checkLocationPermissionIsGrantedAndGPSIsOn()
+                        e.printStackTrace()
                     }
-
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> {});
-
-        dialogBuilder.create().show();
-
+                }
+                .setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> }
+        dialogBuilder.create().show()
     }
 
-    void checkLocationPermissionIsGrantedAndGPSIsOn(){
+    private fun checkLocationPermissionIsGrantedAndGPSIsOn() {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            if (!gps_enabled)
-                Toast.makeText(this, "Please turn on your GPS", Toast.LENGTH_SHORT).show();
-            else
-                enableLocationComponent(Objects.requireNonNull(mapboxMap.getStyle()));
-
+            val lm = this.getSystemService(LOCATION_SERVICE) as LocationManager
+            val gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            if (!gpsEnabled) Toast.makeText(this, "Please turn on your GPS", Toast.LENGTH_SHORT).show() else enableLocationComponent(Objects.requireNonNull(mapboxMap!!.style)!!)
         } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
+            permissionsManager = PermissionsManager(this)
+            permissionsManager!!.requestLocationPermissions(this)
         }
     }
 
+    private fun generateSymbol(view: View): Bitmap {
+        val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        view.measure(measureSpec, measureSpec)
+        val measuredWidth = view.measuredWidth
+        val measuredHeight = view.measuredHeight
+        view.layout(0, 0, measuredWidth, measuredHeight)
+        val bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+        bitmap.eraseColor(Color.TRANSPARENT)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
+
+    private fun generateViewIcon(){
+
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch{
+
+            val imagesMap = HashMap<String?, Bitmap?>()
+            val inflater = LayoutInflater.from(this@MapActivity)
+
+            for (feature in featureCollection?.features()!!) {
+
+                val bubbleLayout = inflater.inflate(R.layout.symbol_layer_info_window_layout_callout, null) as BubbleLayout
+                val name = feature.getStringProperty(PROPERTY_NAME)
+                val titleTextView = bubbleLayout.findViewById<TextView>(R.id.geo_cache_title)
+                titleTextView.text = name
+                val descriptionTextView = bubbleLayout.findViewById<TextView>(R.id.geo_cache_description)
+                descriptionTextView.text = String.format(this@MapActivity.getString(R.string.geo_cache_description_box),
+                        feature.getStringProperty(PROPERTY_DIFFICULTY),
+                        feature.getStringProperty(PROPERTY_TERRAIN),
+                        feature.getStringProperty(PROPERTY_FAVOURITES))
+
+                val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                bubbleLayout.measure(measureSpec, measureSpec)
+                val measuredWidth = bubbleLayout.measuredWidth.toFloat()
+                bubbleLayout.arrowPosition = measuredWidth / 2 - 5
+                val bitmap = generateSymbol(bubbleLayout)
+                imagesMap[name] = bitmap
+                viewMap[name] = bubbleLayout
+            }
+            withContext(Dispatchers.Main){
+                setImageGenResults(imagesMap)
+                refreshSource()
+            }
+        }
+    }
 }
