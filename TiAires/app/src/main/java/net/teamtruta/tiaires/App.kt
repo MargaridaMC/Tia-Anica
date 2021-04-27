@@ -10,8 +10,12 @@ class App : Application() {
 
     val database by lazy { TiAiresDatabase.getDatabase(this) }
     val repository by lazy {
-        Repository(database.geocachingTourDao(), database.geoCacheInTourDao(),
-                database.geoCacheDao(), database.geoCacheLogDao(), database.geoCacheAttributeDao())
+        Repository(database.geocachingTourDao(),
+                database.geoCacheInTourDao(),
+                database.geoCacheDao(),
+                database.geoCacheLogDao(),
+                database.geoCacheAttributeDao(),
+                database.waypointDao())
     }
 
     init {

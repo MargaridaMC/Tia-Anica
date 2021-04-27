@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import java.lang.Integer.min
 
-class GeoCacheWithLogsAndAttributes(
+class GeoCacheWithLogsAndAttributesAndWaypoints(
         @Embedded val geoCache: GeoCache,
         @Relation(
                 parentColumn = "id",
@@ -16,7 +16,13 @@ class GeoCacheWithLogsAndAttributes(
                 parentColumn = "id",
                 entityColumn = "cacheDetailIDFK"
         )
-        val attributes: List<GeoCacheAttribute>
+        val attributes: List<GeoCacheAttribute>,
+
+        @Relation(
+                parentColumn = "id",
+                entityColumn = "cacheDetailIDFK"
+        )
+        val waypoints: List<Waypoint>
 ){
 
         fun getLastNLogs(n: Int): List<GeoCacheLog>{

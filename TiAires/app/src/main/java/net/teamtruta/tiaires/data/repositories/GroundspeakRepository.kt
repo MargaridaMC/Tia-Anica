@@ -5,7 +5,7 @@ import android.util.Log
 import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
-import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributes
+import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints
 import net.teamtruta.tiaires.extensions.Resource
 import net.teamtruta.tiaires.extensions.Status
 import net.teamtruta.tiaires.integration.GeocachingScrapper
@@ -17,11 +17,10 @@ import java.util.HashMap
 class GroundspeakRepository {
 
     private val tag: String = GroundspeakRepository::class.java.simpleName
-    // private val dbRepository by lazy { App().repository }
 
     val USERNAME = "username"
 
-    fun getGeoCacheFromCode(code: String): GeoCacheWithLogsAndAttributes? {
+    fun getGeoCacheFromCode(code: String): GeoCacheWithLogsAndAttributesAndWaypoints? {
         // val authCookie = dbRepository.getAuthenticationCookie()
         val authCookie = getAuthenticationCookie()
         val scrapper = GeocachingScrapper(authCookie)
@@ -31,7 +30,7 @@ class GroundspeakRepository {
         return scrapper.getGeoCacheDetails(code)
     }
 
-    fun getAuthenticationCookie() : String? {
+    private fun getAuthenticationCookie() : String? {
 
         val context = App.applicationContext()
         val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Application.MODE_PRIVATE)
@@ -65,7 +64,7 @@ class GroundspeakRepository {
         }
     }
 
-    fun setAuthenticationCookie(authCookie: String){
+    private fun setAuthenticationCookie(authCookie: String){
         val context =  App.applicationContext()
         val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key),
                 Application.MODE_PRIVATE)

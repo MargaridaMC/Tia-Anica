@@ -8,8 +8,9 @@ import net.teamtruta.tiaires.data.models.GeoCacheAttribute;
 import net.teamtruta.tiaires.data.models.GeoCacheAttributeEnum;
 import net.teamtruta.tiaires.data.models.GeoCacheLog;
 import net.teamtruta.tiaires.data.models.GeoCacheTypeEnum;
-import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributes;
+import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints;
 import net.teamtruta.tiaires.data.models.VisitOutcomeEnum;
+import net.teamtruta.tiaires.data.models.Waypoint;
 import net.teamtruta.tiaires.extensions.Rot13;
 
 import java.io.BufferedReader;
@@ -172,7 +173,7 @@ public class GeocachingScrapper {
         return status == 200;
     }
 
-    public GeoCacheWithLogsAndAttributes getGeoCacheDetails(String code) throws IOException
+    public GeoCacheWithLogsAndAttributesAndWaypoints getGeoCacheDetails(String code) throws IOException
     {
         code = code.toUpperCase();
 
@@ -410,25 +411,47 @@ public class GeocachingScrapper {
             }
         }
 
-        //gc.setRecentLogs(recentLogs);
-        // else do nothing -- the collection will be non-null but empty
+        // 11. Get Cache Waypoints if they exist
+        String regexAdditionalWaypointsSection = "<table class=\"Table alternating-row-stacked\" id=\"ctl00_ContentBody_Waypoints\">(.*?)</tbody> </table>";
+        Pattern waypointSectionPattern = Pattern.compile(regexAdditionalWaypointsSection);
+        Matcher waypointSectionMatcher = waypointSectionPattern.matcher(pageContents);
 
+        ArrayList<Waypoint> waypoints = new ArrayList<>();
 
-        // PrintWriter pw = new PrintWriter(geocacheCode + ".html", "UTF-8");
-        // pw.write(ReadHttpRequest(httpConnection).toString());
-        // pw.close();
+        if(waypointSectionMatcher.find()){
+            // Then this cache has an "Additional Waypoint" section
+            String additionalWaypointSection = waypointSectionMatcher.group(0);
+
+            String regexWaypoint = ">([A-Za-z0-9 ]+)</a>.*?([N|S] [0-9]{2,3}° [0-9]{2}.[0-9]{3}) ([E|W] [0-9]{2,3}° [0-9]{2}.[0-9]{3})";
+            Pattern waypointPattern = Pattern.compile(regexWaypoint);
+            Matcher waypointMatcher = waypointPattern.matcher(additionalWaypointSection);
+
+            while(waypointMatcher.find()){
+
+                String waypointName = waypointMatcher.group(1);
+                String latitudeString = waypointMatcher.group(2);
+                String longitudeString = waypointMatcher.group(3);
+
+                if(name != null && latitudeString != null && longitudeString != null){
+                    Waypoint waypoint = new Waypoint(
+                            waypointName,
+                            latitudeString,
+                            longitudeString);
+                    waypoints.add(waypoint);
+                }
+
+            }
+
+        }
 
         // Refactor Login() as appropriate
         httpConnection.disconnect();
 
-        // Check if cache is a DNF risk
-        //gc.setDNFRisk();
 
         GeoCache geoCache = new GeoCache(code, name, latitude, longitude, size,
                 difficulty, terrain, type, visit,
                 hint, favourites);
-        GeoCacheWithLogsAndAttributes geoCacheWithLogsAndAttributes = new GeoCacheWithLogsAndAttributes(geoCache, recentLogs, attributes);
-        return geoCacheWithLogsAndAttributes;
+        return new GeoCacheWithLogsAndAttributesAndWaypoints(geoCache, recentLogs, attributes, waypoints);
     }
 
     private String getTokenFromHtmlBody(StringBuffer htmlPage)

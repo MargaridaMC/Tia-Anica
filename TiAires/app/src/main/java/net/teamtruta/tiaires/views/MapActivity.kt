@@ -42,10 +42,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.android.synthetic.main.activity_map.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.BuildConfig
 import net.teamtruta.tiaires.R
@@ -69,10 +66,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
 
     // variables for adding location layer
     private var permissionsManager: PermissionsManager? = null
-    var TAG = MapActivity::class.java.simpleName
+    private var TAG = MapActivity::class.java.simpleName
     private var _tour: GeocachingTourWithCaches? = null
-    private var source: GeoJsonSource? = null
+    private var geoCacheSource: GeoJsonSource? = null
+    private var waypointSource: GeoJsonSource? = null
     private var featureCollection: FeatureCollection? = null
+    private var waypointFeatureCollection: FeatureCollection? = null
     private var routeCoordinates: MutableList<Point?> = ArrayList()
     private var _startingPoint: Point? = null
     private val viewModel: MapActivityViewModel by viewModels {
@@ -87,7 +86,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private val CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID"
     private val FULL_TOUR_LINE_LAYER_ID = "FULL_TOUR_LINE_LAYER_ID"
     private val REMAINING_TOUR_LINE_LAYER_ID = "REMAINING_TOUR_LINE_LAYER_ID"
-    private val PROPERTY_NAME = "name"
+    private val PROPERTY_GEOCACHE_NAME = "name"
     private val PROPERTY_TYPE = "type"
     private val PROPERTY_DIFFICULTY = "difficulty"
     private val PROPERTY_TERRAIN = "terrain"
@@ -99,6 +98,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private val STARTING_POINT_ICON_ID = "STARTING_POINT_ICON_ID"
     private val STARTING_POINT_SOURCE_ID = "STARTING_POINT_SOURCE_ID"
     private val STARTING_POINT_SYMBOL_LAYER_ID = "STARTING_POINT_SYMBOL_LAYER_ID"
+
+    // Properties for Waypoints
+    private val PROPERTY_WAYPOINT_NAME = "WAYPOINT_NAME"
+    private val WAYPOINT_GEOJSON_SOURCE_ID = "WAYPOINT_GEOJSON_SOURCE_ID"
+    private val WAYPOINT_MARKER_LAYER = "WAYPOINT_MARKER_LAYER"
+    private val WAYPOINT_CALLOUT_LAYER_ID = "WAYPOINT_CALLOUT_LAYER_ID"
+
     private val viewMap = HashMap<String, View>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -260,50 +266,67 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
      */
     private fun setupMapData(){
 
-            val symbolLayerIconFeatureList: MutableList<Feature> = ArrayList()
-            val builder = LatLngBounds.Builder()
-            var location: LatLng
-            for (gcit in _tour!!.tourGeoCaches) {
-                val geoCacheInTour = gcit.geoCacheInTour
-                val geoCacheDetails = gcit.geoCache.geoCache
-                location = geoCacheDetails.latLng
-                val p = Point.fromLngLat(location.longitude, location.latitude)
-                routeCoordinates.add(p)
-                val feature = Feature.fromGeometry(p)
-                feature.addStringProperty(PROPERTY_NAME, geoCacheDetails.name)
-                feature.addStringProperty(PROPERTY_DIFFICULTY, geoCacheDetails.difficulty.toString())
-                feature.addStringProperty(PROPERTY_TERRAIN, geoCacheDetails.terrain.toString())
-                feature.addStringProperty(PROPERTY_FAVOURITES, geoCacheDetails.favourites.toString())
-                feature.addStringProperty(PROPERTY_CODE, geoCacheDetails.code)
-                feature.addBooleanProperty(PROPERTY_SELECTED, false)
-                if (geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.Found || geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.DNF) {
-                    feature.addStringProperty(PROPERTY_TYPE, geoCacheInTour.currentVisitOutcome.visitOutcomeString)
-                } else {
-                    feature.addStringProperty(PROPERTY_TYPE, geoCacheDetails.type.typeString)
-                }
-                symbolLayerIconFeatureList.add(feature)
-                builder.include(location)
-            }
-
-            // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
-            // If that is the case just focus on the geocache
-            if (_tour!!.tourGeoCaches.size == 1) {
-                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(_tour!!.tourGeoCaches[0].geoCache.geoCache.latLng), 2000)
+        // Get cache coordinates and their properties
+        val symbolLayerIconFeatureList: MutableList<Feature> = ArrayList()
+        val builder = LatLngBounds.Builder()
+        var location: LatLng
+        for (gcit in _tour!!.tourGeoCaches) {
+            val geoCacheInTour = gcit.geoCacheInTour
+            val geoCacheDetails = gcit.geoCache.geoCache
+            location = geoCacheDetails.latLng
+            val p = Point.fromLngLat(location.longitude, location.latitude)
+            routeCoordinates.add(p)
+            val feature = Feature.fromGeometry(p)
+            feature.addStringProperty(PROPERTY_GEOCACHE_NAME, geoCacheDetails.name)
+            feature.addStringProperty(PROPERTY_DIFFICULTY, geoCacheDetails.difficulty.toString())
+            feature.addStringProperty(PROPERTY_TERRAIN, geoCacheDetails.terrain.toString())
+            feature.addStringProperty(PROPERTY_FAVOURITES, geoCacheDetails.favourites.toString())
+            feature.addStringProperty(PROPERTY_CODE, geoCacheDetails.code)
+            feature.addBooleanProperty(PROPERTY_SELECTED, false)
+            if (geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.Found || geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.DNF) {
+                feature.addStringProperty(PROPERTY_TYPE, geoCacheInTour.currentVisitOutcome.visitOutcomeString)
             } else {
-                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000)
+                feature.addStringProperty(PROPERTY_TYPE, geoCacheDetails.type.typeString)
             }
-            featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList)
+            symbolLayerIconFeatureList.add(feature)
+            builder.include(location)
+        }
+        featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList)
 
-            // Get starting point if there is one
-            if (_tour!!.tour.startingPointLongitude != null) {
-                _startingPoint = Point.fromLngLat(_tour!!.tour.startingPointLongitude!!.value,
-                        _tour!!.tour.startingPointLatitude!!.value)
+        // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
+        // If that is the case just focus on the geocache
+        if (_tour!!.tourGeoCaches.size == 1) {
+            mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(_tour!!.tourGeoCaches[0].geoCache.geoCache.latLng), 2000)
+        } else {
+            mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000)
+        }
 
-                // If we have a starting point add it in the beginning and the end of the route
-                routeCoordinates.add(_startingPoint)
-                routeCoordinates.add(0, _startingPoint)
+
+        // Get starting point if there is one
+        if (_tour!!.tour.startingPointLongitude != null) {
+            _startingPoint = Point.fromLngLat(_tour!!.tour.startingPointLongitude!!.value,
+                    _tour!!.tour.startingPointLatitude!!.value)
+
+            // If we have a starting point add it in the beginning and the end of the route
+            routeCoordinates.add(_startingPoint)
+            routeCoordinates.add(0, _startingPoint)
+        }
+
+        // Get waypoint information if there are any waypoints
+        val waypointFeatureList: MutableList<Feature> = ArrayList()
+        for (gcit in _tour!!.tourGeoCaches) {
+            for (waypoint in gcit.geoCache.waypoints){
+                val p = Point.fromLngLat(waypoint.longitude.value, waypoint.latitude.value)
+                val feature = Feature.fromGeometry(p)
+                feature.addStringProperty(PROPERTY_GEOCACHE_NAME, gcit.geoCache.geoCache.name)
+                feature.addStringProperty(PROPERTY_CODE, gcit.geoCache.geoCache.code)
+                feature.addStringProperty(PROPERTY_WAYPOINT_NAME, waypoint.name)
+                feature.addBooleanProperty(PROPERTY_SELECTED, false)
+                waypointFeatureList.add(feature)
             }
         }
+        waypointFeatureCollection = FeatureCollection.fromFeatures(waypointFeatureList)
+    }
 
     /**
      * Sets up all of the sources and layers needed for this example
@@ -317,8 +340,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 setupSource(style)
                 setUpImage(style)
                 setUpMarkerLayer(style)
+                setUpStartingPointLayer(style)
                 setUpInfoWindowLayer(style)
                 setupLineLayer(style)
+                setUpWaypointLayer(style)
             }
         }
     }
@@ -329,8 +354,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private fun setupSource(loadedStyle: Style) {
 
         // Set source for geocaches
-        source = GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection)
-        loadedStyle.addSource(source!!)
+        geoCacheSource = GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection)
+        loadedStyle.addSource(geoCacheSource!!)
 
         // Set source for starting point
         if (_startingPoint != null) {
@@ -354,6 +379,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         lineFeatureCollection = FeatureCollection.fromFeatures(arrayOf(Feature.fromGeometry(
                 LineString.fromLngLats(remainingRouteCoordinates))))
         loadedStyle.addSource(GeoJsonSource(REMAINING_TOUR_LINE_GEOJSON_SOURCE_ID, lineFeatureCollection))
+
+        // Set source for waypoint layer
+        waypointSource = GeoJsonSource(WAYPOINT_GEOJSON_SOURCE_ID, waypointFeatureCollection)
+        loadedStyle.addSource(waypointSource!!)
+
     }
 
     /**
@@ -371,11 +401,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         loadedStyle.addImage(VisitOutcomeEnum.DNF.visitOutcomeString, BitmapFactory.decodeResource(
                 this@MapActivity.resources, R.drawable.geo_cache_icon_dnf))
 
-        // Add starting point
-        if (_startingPoint != null) {
-            loadedStyle.addImage(STARTING_POINT_ICON_ID,
-                    BitmapFactory.decodeResource(this@MapActivity.resources, R.drawable.home_filled_green))
-        }
     }
 
     /**
@@ -411,7 +436,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                         PropertyFactory.iconAnchor(Property.ICON_ANCHOR_CENTER),
                         PropertyFactory.iconSize(0.4f))
         )
+
+    }
+
+    /**
+     * Add layer with starting point symbol
+     */
+    private fun setUpStartingPointLayer(loadedStyle: Style){
         if (_startingPoint != null) {
+
+            loadedStyle.addImage(STARTING_POINT_ICON_ID,
+                        BitmapFactory.decodeResource(this@MapActivity.resources, R.drawable.home_filled_green))
+
             loadedStyle.addLayer(SymbolLayer(STARTING_POINT_SYMBOL_LAYER_ID, STARTING_POINT_SOURCE_ID)
                     .withProperties(
                             PropertyFactory.iconImage(STARTING_POINT_ICON_ID),
@@ -423,11 +459,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     }
 
     /**
-     * Setup a layer with Android SDK call-outs
-     *
-     *
-     * name of the feature is used as key for the iconImage
-     *
+     * Add layer with cache info
      */
     private fun setUpInfoWindowLayer(loadedStyle: Style) {
         loadedStyle.addLayer(SymbolLayer(CALLOUT_LAYER_ID, GEOJSON_SOURCE_ID)
@@ -440,6 +472,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 .withFilter(Expression.eq(Expression.get(PROPERTY_SELECTED), Expression.literal(true))))
     }
 
+    /**
+     * Add layer with route lines
+     */
     private fun setupLineLayer(loadedStyle: Style) {
 
         // Style and add the LineLayer to the map. The LineLayer is placed below the CircleLayer.
@@ -457,7 +492,30 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         ), MARKER_LAYER_ID)
     }
 
+    private fun setUpWaypointLayer(loadedStyle: Style){
 
+        val WAYPOINT_ICON_ID = "WAYPOINT_ICON_ID"
+        loadedStyle.addImage(WAYPOINT_ICON_ID,
+                BitmapFactory.decodeResource(this@MapActivity.resources, R.drawable.waypoint_icon))
+
+        loadedStyle.addLayer(SymbolLayer(WAYPOINT_MARKER_LAYER, WAYPOINT_GEOJSON_SOURCE_ID)
+                .withProperties(
+                        PropertyFactory.iconImage(WAYPOINT_ICON_ID),
+                        PropertyFactory.iconAllowOverlap(true),
+                        PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),
+                        PropertyFactory.iconSize(0.5f)
+                ))
+
+
+        loadedStyle.addLayer(SymbolLayer(WAYPOINT_CALLOUT_LAYER_ID, WAYPOINT_GEOJSON_SOURCE_ID)
+                .withProperties( /* show image with id title based on the value of the name feature property */
+                        PropertyFactory.iconImage("{$PROPERTY_GEOCACHE_NAME}{$PROPERTY_WAYPOINT_NAME}"),  /* set anchor of icon to bottom-left */
+                        PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),  /* all info window and marker image to appear at the same time*/
+                        PropertyFactory.iconAllowOverlap(true),  /* offset the info window to be above the marker */
+                        PropertyFactory.iconOffset(arrayOf(-2f, -20f))
+                ) /* add a filter to show only when selected feature property is true */
+                .withFilter(Expression.eq(Expression.get(PROPERTY_SELECTED), Expression.literal(true))))
+    }
 
 
 
@@ -499,54 +557,75 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         // Display text box with info
         val features = mapboxMap!!.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID)
         if (features.isNotEmpty()) {
-            val name = features[0].getStringProperty(PROPERTY_NAME)
+            val name = features[0].getStringProperty(PROPERTY_GEOCACHE_NAME)
             val featureList = featureCollection!!.features()
             if (featureList != null) {
                 for (i in featureList.indices) {
-                    if (featureList[i].getStringProperty(PROPERTY_NAME) == name) {
-                        if (featureSelectStatus(i)) {
+                    if (featureList[i].getStringProperty(PROPERTY_GEOCACHE_NAME) == name) { // If the feature that was clicked on matches this one
+                        if (featureSelectStatus(i, featureCollection)) {
                             setFeatureSelectState(featureList[i], false)
                         } else {
-                            setSelected(i)
+                            setFeatureSelectState(featureList[i], true)
                         }
                         return true
                     }
                 }
             }
         } else {
-            val infoWindows = mapboxMap!!.queryRenderedFeatures(
-                    screenPoint, CALLOUT_LAYER_ID)
-            if (infoWindows.isNotEmpty()) {
-                val window = infoWindows[0]
-                val name = window.getStringProperty(PROPERTY_NAME)
-                val symbolScreenPoint = mapboxMap!!.projection.toScreenLocation(convertToLatLng(window))
-                val view = viewMap[name]!!
-                val button = view.findViewById<View>(R.id.go_to_button)
-                // create hitbox for button
-                val hitRectText = Rect()
-                button.getHitRect(hitRectText)
-                // move hitbox to location of symbol
-                hitRectText.offset(symbolScreenPoint.x.toInt(), symbolScreenPoint.y.toInt())
-                // offset to consider box's size
-                hitRectText.offset(-view.width / 2, -view.height - 50)
-                if (hitRectText.contains(screenPoint.x.toInt(), screenPoint.y.toInt())) {
-                    // user clicked on marker
-                    goToGeoCache(window.getStringProperty(PROPERTY_CODE))
-                    return true
+                // If the user didn't click on a cache check if they clicked on a waypoint
+                val features = mapboxMap!!.queryRenderedFeatures(screenPoint, WAYPOINT_MARKER_LAYER)
+                if(features.isNotEmpty()){
+                    val geoCacheName = features[0].getStringProperty(PROPERTY_GEOCACHE_NAME)
+                    val waypointName = features[0].getStringProperty(PROPERTY_WAYPOINT_NAME)
+                    val featureList = waypointFeatureCollection!!.features()
+                    if (featureList != null) {
+                        for (i in featureList.indices) {
+                            if (featureList[i].getStringProperty(PROPERTY_GEOCACHE_NAME) == geoCacheName &&
+                                    featureList[i].getStringProperty(PROPERTY_WAYPOINT_NAME) == waypointName) { // If the feature that was clicked on matches this one
+                                if (featureSelectStatus(i, waypointFeatureCollection)) {
+                                    setFeatureSelectState(featureList[i], false)
+                                } else {
+                                    setFeatureSelectState(featureList[i], true)
+                                }
+                                return true
+                            }
+                        }
+                    }
+                } else { // User clicked somewhere that's not on top of the symbol
+                    val infoWindows = mapboxMap!!.queryRenderedFeatures(
+                            screenPoint, CALLOUT_LAYER_ID, WAYPOINT_CALLOUT_LAYER_ID)
+                    if (infoWindows.isNotEmpty()) {
+                        val window = infoWindows[0]
+                        val name = window.getStringProperty(PROPERTY_GEOCACHE_NAME)
+                        val symbolScreenPoint = mapboxMap!!.projection.toScreenLocation(convertToLatLng(window))
+                        val view = viewMap[name]!!
+                        val button = view.findViewById<View>(R.id.go_to_button)
+                        // create hitbox for button
+                        val hitRectText = Rect()
+                        button.getHitRect(hitRectText)
+                        // move hitbox to location of symbol
+                        hitRectText.offset(symbolScreenPoint.x.toInt(), symbolScreenPoint.y.toInt())
+                        // offset to consider box's size
+                        hitRectText.offset(-view.width / 2, -view.height - 50)
+                        if (hitRectText.contains(screenPoint.x.toInt(), screenPoint.y.toInt())) {
+                            // user clicked on marker
+                            goToGeoCache(window.getStringProperty(PROPERTY_CODE))
+                            return true
+                        }
+                    }
                 }
             }
-        }
         return false
     }
 
-    private fun featureSelectStatus(index: Int): Boolean {
-        if (featureCollection == null) {
+    private fun featureSelectStatus(index: Int, selectedFeatureCollection: FeatureCollection?): Boolean {
+        if (selectedFeatureCollection == null) {
             return false
         }
-        if (BuildConfig.DEBUG && featureCollection!!.features() == null) {
+        if (BuildConfig.DEBUG && selectedFeatureCollection.features() == null) {
             error("Assertion failed")
         }
-        return featureCollection!!.features()!![index].getBooleanProperty(PROPERTY_SELECTED)
+        return selectedFeatureCollection.features()!![index].getBooleanProperty(PROPERTY_SELECTED)
     }
 
     private fun setSelected(index: Int) {
@@ -565,8 +644,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     }
 
     private fun refreshSource() {
-        if (source != null && featureCollection != null) {
-            source!!.setGeoJson(featureCollection)
+        if (geoCacheSource != null && featureCollection != null) {
+            geoCacheSource!!.setGeoJson(featureCollection)
+        }
+        if(waypointSource != null && waypointFeatureCollection != null){
+            waypointSource!!.setGeoJson(waypointFeatureCollection)
         }
     }// If we have a starting point add it in the beginning and the end of the route
     // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
@@ -601,17 +683,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         startActivity(i)
     }
 
-    /**
-     * Invoked when the bitmaps have been generated from a view.
-     */
-    private fun setImageGenResults(imageMap: HashMap<String?, Bitmap?>?) {
-        if (mapboxMap != null) {
-            mapboxMap!!.getStyle { style: Style ->
-// calling addImages is faster as separate addImage calls for each bitmap.
-                style.addImages(imageMap!!)
-            }
-        }
-    }
 
     private fun showFullTourLineLayer() {
         mapboxMap!!.getStyle { style: Style ->
@@ -720,7 +791,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
             for (feature in featureCollection?.features()!!) {
 
                 val bubbleLayout = inflater.inflate(R.layout.symbol_layer_info_window_layout_callout, null) as BubbleLayout
-                val name = feature.getStringProperty(PROPERTY_NAME)
+                val name = feature.getStringProperty(PROPERTY_GEOCACHE_NAME)
                 val titleTextView = bubbleLayout.findViewById<TextView>(R.id.geo_cache_title)
                 titleTextView.text = name
                 val descriptionTextView = bubbleLayout.findViewById<TextView>(R.id.geo_cache_description)
@@ -737,9 +808,45 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 imagesMap[name] = bitmap
                 viewMap[name] = bubbleLayout
             }
+
+            val waypointsMap = HashMap<String?, Bitmap?>()
+            for (feature in waypointFeatureCollection?.features()!!) {
+
+                val bubbleLayout = inflater.inflate(R.layout.symbol_layer_info_window_layout_callout, null) as BubbleLayout
+                val geoCacheName = feature.getStringProperty(PROPERTY_GEOCACHE_NAME)
+                val titleTextView = bubbleLayout.findViewById<TextView>(R.id.geo_cache_title)
+                titleTextView.text = geoCacheName
+                val descriptionTextView = bubbleLayout.findViewById<TextView>(R.id.geo_cache_description)
+                val waypointName = feature.getStringProperty(PROPERTY_WAYPOINT_NAME)
+                descriptionTextView.text = waypointName
+
+                val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                bubbleLayout.measure(measureSpec, measureSpec)
+                val measuredWidth = bubbleLayout.measuredWidth.toFloat()
+                bubbleLayout.arrowPosition = measuredWidth / 2 - 5
+                val bitmap = generateSymbol(bubbleLayout)
+
+                val name = geoCacheName + waypointName
+                waypointsMap[name] = bitmap
+                viewMap[name] = bubbleLayout
+            }
             withContext(Dispatchers.Main){
                 setImageGenResults(imagesMap)
+                setImageGenResults(waypointsMap)
                 refreshSource()
+            }
+        }
+    }
+
+
+    /**
+     * Invoked when the bitmaps have been generated from a view.
+     */
+    private fun setImageGenResults(imageMap: HashMap<String?, Bitmap?>?) {
+        if (mapboxMap != null) {
+            mapboxMap!!.getStyle { style: Style ->
+// calling addImages is faster as separate addImage calls for each bitmap.
+                style.addImages(imageMap!!)
             }
         }
     }

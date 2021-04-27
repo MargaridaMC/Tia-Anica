@@ -16,7 +16,7 @@ import net.teamtruta.tiaires.extensions.GeoCacheIcon.Companion.getIconDrawable
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.GeoCache
 import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
-import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributes
+import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints
 import net.teamtruta.tiaires.data.models.VisitOutcomeEnum
 import net.teamtruta.tiaires.viewModels.TourViewModel
 import net.teamtruta.tiaires.viewModels.TourViewModelFactory
@@ -162,18 +162,18 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         return HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun holderExpansionOnClicklistener(holder: ViewHolder, geoCacheWithLogsAndAttributes: GeoCacheWithLogsAndAttributes) {
+    private fun holderExpansionOnClicklistener(holder: ViewHolder, geoCacheWithLogsAndAttributesAndWaypoints: GeoCacheWithLogsAndAttributesAndWaypoints) {
         if (holder.extraInfoArrow.isChecked || holder.extraInfoLayout.visibility != View.VISIBLE) {
-            expandHolder(holder, geoCacheWithLogsAndAttributes)
+            expandHolder(holder, geoCacheWithLogsAndAttributesAndWaypoints)
         } else {
             unexpandHolder(holder)
         }
     }
 
-    private fun expandHolder(holder: ViewHolder, geoCacheWithLogsAndAttributes: GeoCacheWithLogsAndAttributes) {
+    private fun expandHolder(holder: ViewHolder, geoCacheWithLogsAndAttributesAndWaypoints: GeoCacheWithLogsAndAttributesAndWaypoints) {
 
         // Remove hint indication from line 1
-        if (geoCacheWithLogsAndAttributes.geoCache.hasHint()) {
+        if (geoCacheWithLogsAndAttributesAndWaypoints.geoCache.hasHint()) {
             holder.geoCacheHasHint.visibility = View.GONE
             holder.hint.visibility = View.VISIBLE
         }
@@ -183,7 +183,7 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         holder.extraInfoArrow.isChecked = true
 
         // Show attributes
-        if (geoCacheWithLogsAndAttributes.attributes.isNotEmpty())
+        if (geoCacheWithLogsAndAttributesAndWaypoints.attributes.isNotEmpty())
             holder.attributeList.visibility = View.VISIBLE
     }
 

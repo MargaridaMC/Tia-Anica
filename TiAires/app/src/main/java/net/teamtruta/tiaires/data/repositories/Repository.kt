@@ -22,7 +22,8 @@ class Repository(private val tourDao: GeocachingTourDao,
                  private val geoCacheInTourDao: GeoCacheInTourDao,
                  private val geoCacheDao: GeoCacheDao,
                  private val geoCacheLogDao: GeoCacheLogDao,
-                 private val geoCacheAttributeDao: GeoCacheAttributeDao){
+                 private val geoCacheAttributeDao: GeoCacheAttributeDao,
+                 private val waypointDao: WaypointDao){
 
     private val TAG = Repository::class.java.simpleName
     private val DRAFT_FILE_PATH = "drafts.txt"
@@ -145,23 +146,31 @@ class Repository(private val tourDao: GeocachingTourDao,
         if(geoCacheID != 0L){
             return geoCacheID
         } else {
-            val obtainedGeoCacheWithLogsAndAttributes = groundspeakRepository.getGeoCacheFromCode(geocacheCode)
-            if(obtainedGeoCacheWithLogsAndAttributes!=null){
+            val obtainedGeoCacheWithLogsAndAttributesAndWaypoints = groundspeakRepository.getGeoCacheFromCode(geocacheCode)
+            if(obtainedGeoCacheWithLogsAndAttributesAndWaypoints!=null){
 
                 // Save GeoCache Details
-                val newGeoCacheID = geoCacheDao.insert(obtainedGeoCacheWithLogsAndAttributes.geoCache)
+                val newGeoCacheID = geoCacheDao.insert(obtainedGeoCacheWithLogsAndAttributesAndWaypoints.geoCache)
 
                 // Save logs
-                val geoCacheLogs = obtainedGeoCacheWithLogsAndAttributes.recentLogs
+                val geoCacheLogs = obtainedGeoCacheWithLogsAndAttributesAndWaypoints.recentLogs
                 geoCacheLogs.forEach{ log ->
                     log.cacheDetailIDFK = newGeoCacheID
                     geoCacheLogDao.insert(log)}
 
                 // Save attributes
-                val geoCacheAttributes = obtainedGeoCacheWithLogsAndAttributes.attributes
+                val geoCacheAttributes = obtainedGeoCacheWithLogsAndAttributesAndWaypoints.attributes
                 geoCacheAttributes.forEach{ attribute ->
                     attribute.cacheDetailIDFK = newGeoCacheID
                     geoCacheAttributeDao.insert(attribute)}
+
+                // Save waypoints
+                val waypoints = obtainedGeoCacheWithLogsAndAttributesAndWaypoints.waypoints
+                waypoints.forEach {
+                    waypoint ->
+                    waypoint.cacheDetailIDFK = newGeoCacheID
+                    waypointDao.insert(waypoint)
+                }
 
                 return newGeoCacheID
             }
@@ -191,17 +200,28 @@ class Repository(private val tourDao: GeocachingTourDao,
                 newlyObtainedGeocache.geoCache.id = id
                 geoCacheDao.update(newlyObtainedGeocache.geoCache)
 
-                // Update logs
+                // Remove logs from cache and update them
+                geoCacheLogDao.deleteLogsInGeoCache(id)
                 val geoCacheLogs = newlyObtainedGeocache.recentLogs
                 geoCacheLogs.forEach{ log ->
                     log.cacheDetailIDFK = id
                     geoCacheLogDao.insert(log)}
 
-                // Save attributes
+                // Remove attributes from cache and update them
+                geoCacheAttributeDao.deleteAttributesInGeoCache(id)
                 val geoCacheAttributes = newlyObtainedGeocache.attributes
                 geoCacheAttributes.forEach{ attribute ->
                     attribute.cacheDetailIDFK = id
                     geoCacheAttributeDao.insert(attribute)}
+
+                // Remove waypoints from cache and update them
+                waypointDao.deleteAttributesInGeoCache(id)
+                val waypoints = newlyObtainedGeocache.waypoints
+                waypoints.forEach {
+                    waypoint ->
+                    waypoint.cacheDetailIDFK = id
+                    waypointDao.insert(waypoint)
+                }
 
             }
 

@@ -1,7 +1,7 @@
 package net.teamtruta.tiaires.data.daos
 
 import androidx.room.*
-import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributes
+import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints
 import net.teamtruta.tiaires.data.models.GeoCache
 
 @Dao
@@ -25,7 +25,7 @@ interface GeoCacheDao {
 
     @Transaction
     @Query("SELECT * FROM cacheDetail WHERE id = :geoCacheID")
-    fun getGeocache(geoCacheID: Long): GeoCacheWithLogsAndAttributes
+    fun getGeocache(geoCacheID: Long): GeoCacheWithLogsAndAttributesAndWaypoints
 
     // TODO : Delete all entries that are not being used in any geocache in tour
 

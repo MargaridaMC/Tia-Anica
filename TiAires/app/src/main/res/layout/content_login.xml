@@ -46,29 +46,12 @@
         app:layout_constraintStart_toStartOf="@+id/username"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
-    <!--
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space"
-        android:layout_marginEnd="@dimen/margin"
-        android:background="@color/colorAccent"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:padding="@dimen/small_padding"
-        android:textColor="@color/white"
-        android:theme="@style/EditText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/password_view"
-        app:layout_constraintTop_toBottomOf="@+id/password_view" />
--->
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
+        android:layout_marginTop="@dimen/space"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorLight"
         app:layout_constraintEnd_toEndOf="@id/username"
@@ -86,26 +69,25 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space"
         android:text="@string/login_button"
-        android:theme="@style/Button"
         android:onClick="login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordLayout"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space"
         android:text="@string/logout_button"
-        android:theme="@style/Button"
         android:onClick="logout"
+        app:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_button" />

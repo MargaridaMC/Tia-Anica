@@ -10,11 +10,11 @@ class GeoCacheInTourWithDetails (
                 entityColumn = "id",
                 entity = GeoCache::class
         )
-        val geoCache: GeoCacheWithLogsAndAttributes
+        val geoCache: GeoCacheWithLogsAndAttributesAndWaypoints
         ){
         constructor(geoCache: GeoCache, tourID: Long):
                 this(GeoCacheInTour(geoCacheDetailIDFK = geoCache.id, tourIDFK = tourID),
-                        geoCache = GeoCacheWithLogsAndAttributes(geoCache, listOf(), listOf())){
+                        geoCache = GeoCacheWithLogsAndAttributesAndWaypoints(geoCache, listOf(), listOf(), listOf())){
                         this.geoCacheInTour.currentVisitOutcome = geoCache.previousVisitOutcome
                 }
 

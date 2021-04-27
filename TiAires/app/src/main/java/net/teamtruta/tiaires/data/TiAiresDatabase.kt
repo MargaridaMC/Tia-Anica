@@ -13,10 +13,11 @@ import net.teamtruta.tiaires.extensions.typeConverters.*
 
 
 @Database(entities = [GeoCache::class,
-    GeoCacheInTour::class,
-    GeocachingTour::class,
-    GeoCacheLog::class,
-    GeoCacheAttribute::class], version = 21, exportSchema = true)
+                    GeoCacheInTour::class,
+                    GeocachingTour::class,
+                    GeoCacheLog::class,
+                    GeoCacheAttribute::class,
+                     Waypoint::class], version = 22, exportSchema = true)
 @TypeConverters(CoordinateConverter::class, GeoCacheTypeConverter::class,
         AttributeTypeConverter::class, DateConverter::class, InstantConverter::class,
         VisitOutcomeConverter::class)
@@ -27,7 +28,7 @@ abstract class TiAiresDatabase: RoomDatabase() {
     abstract fun geocachingTourDao(): GeocachingTourDao
     abstract fun geoCacheLogDao(): GeoCacheLogDao
     abstract fun geoCacheAttributeDao(): GeoCacheAttributeDao
-
+    abstract fun waypointDao(): WaypointDao
 
     companion object{
 
@@ -190,6 +191,18 @@ abstract class TiAiresDatabase: RoomDatabase() {
             }
         }
 
+        private val MIGRATION_21_22 = object : Migration(21, 22) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE Waypoint (" +
+                        "id INTEGER PRIMARY KEY NOT NULL, " +
+                        "name TEXT NOT NULL, " +
+                        "latitude REAL NOT NULL, " +
+                        "longitude REAL NOT NULL, " +
+                        "cacheDetailIDFK INTEGER NOT NULL REFERENCES cacheDetail(id) ON DELETE CASCADE)")
+
+                database.execSQL("CREATE INDEX index_waypoint_cacheDetailIDFK ON Waypoint(cacheDetailIDFK);")
+            }
+        }
 
         @Volatile
         private var INSTANCE: TiAiresDatabase? = null
@@ -200,7 +213,7 @@ abstract class TiAiresDatabase: RoomDatabase() {
                         context.applicationContext,
                         TiAiresDatabase::class.java,
                         "tiaires.db"
-                ).addMigrations(MIGRATION_20_21).build()
+                ).addMigrations(MIGRATION_20_21, MIGRATION_21_22).build()
                 INSTANCE = instance
                 instance
             }
