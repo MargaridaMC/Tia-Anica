@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.*
@@ -126,7 +127,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
 
     fun deleteTour(view: View?) {
         val tourName = _tour!!.tour.name
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
         builder.setTitle("Delete tour?")
         builder.setMessage("This will delete tour $tourName")
         builder.setPositiveButton("Confirm") { _: DialogInterface?, _: Int ->
@@ -166,7 +167,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
     override fun onGoToClick(geoCache: GeoCache?) {
 
         // Open geocache in Geocache app or website
-        val chooser = AlertDialog.Builder(this)
+        val chooser = MaterialAlertDialogBuilder(this)
                 .setMessage("Which app would you like to use to go to this geocache?")
                 .setPositiveButton("Geocaching") { _: DialogInterface?, _: Int ->
                     val url = "https://coord.info/" + geoCache?.code
@@ -241,7 +242,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         if(allAttributesList.isEmpty()){
 
             // Tell user that this tour doesn't need anything special
-            val builder : AlertDialog.Builder = AlertDialog.Builder(this)
+            val builder = MaterialAlertDialogBuilder(this)
             builder.setMessage("Looks like this tour doesn't have any special requirements!")
             builder.setPositiveButton("OK"){ _: DialogInterface, _: Int -> }
             builder.show()
@@ -263,7 +264,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
     fun uploadDrafts(view: View?) {
 
         // Show dialog asking user if they really want tp upload their drafts right now
-        val dialogBuilder = AlertDialog.Builder(this)
+        val dialogBuilder = MaterialAlertDialogBuilder(this)
         dialogBuilder.setTitle("Draft Upload")
                 .setMessage("Are you sure you want to upload drafts for the caches you visited? " +
                         "You won't be able to upload new drafts for those caches.")
@@ -277,7 +278,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
 
         viewModel.draftUploadResult.observe(this, {
             draftUploadResult -> draftUploadResult.getContentIfNotHandled()?.let {
-            val dialogBuilder = AlertDialog.Builder(this)
+            val dialogBuilder = MaterialAlertDialogBuilder(this)
             dialogBuilder.setTitle("Draft Upload")
                     .setMessage(it.message)
                     .setPositiveButton("OK") { _: DialogInterface?, _: Int -> }
