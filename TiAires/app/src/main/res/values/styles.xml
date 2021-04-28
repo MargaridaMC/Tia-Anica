@@ -21,6 +21,7 @@
 
     <style name="Widget.App.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="backgroundTint">@color/colorPrimaryDark</item>
+        <item name="tint">@color/white</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
