@@ -238,8 +238,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:button="@drawable/more_info_arrow"
-        app:layout_constraintStart_toStartOf="@id/geo_cache_symbol"
-        app:layout_constraintEnd_toEndOf="@id/geo_cache_symbol"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:gravity="center"
+        android:text=""
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/geo_cache_symbol"
+        app:layout_constraintStart_toStartOf="@id/geo_cache_symbol" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
