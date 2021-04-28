@@ -8,9 +8,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import net.teamtruta.tiaires.*
+import net.teamtruta.tiaires.App
+import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.daos.*
-import net.teamtruta.tiaires.data.models.*
+import net.teamtruta.tiaires.data.models.GeoCacheInTour
+import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
+import net.teamtruta.tiaires.data.models.GeocachingTour
+import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
 import net.teamtruta.tiaires.extensions.Resource
 import net.teamtruta.tiaires.extensions.Status
 import java.io.FileOutputStream
@@ -104,16 +108,14 @@ class Repository(private val tourDao: GeocachingTourDao,
         // 2. Process the deltas from the old list to the new list
         // 2.1 Remove from the original tour caches that are not in the new one
         val geoCachesAlreadyInTour = tour.getTourGeoCacheCodes()
-        geoCachesAlreadyInTour.forEach{code -> if(!geoCacheList.contains(code))
+        geoCachesAlreadyInTour.forEach{ code -> if(!geoCacheList.contains(code))
             GlobalScope.launch { dropGeoCacheFromTour(code, tour) }}
 
-        geoCachesToGet.forEachIndexed {
-            index, geoCacheCode ->
+        geoCachesToGet.forEachIndexed { index, geoCacheCode ->
 
             // If this cache is already in tour simply set it to this position
             if(geoCachesAlreadyInTour.contains(geoCacheCode)){
-                val geoCacheInTourWithGivenCode: GeoCacheInTour = tour.tourGeoCaches.filter {
-                    gcit -> gcit.geoCache.geoCache.code == geoCacheCode
+                val geoCacheInTourWithGivenCode: GeoCacheInTour = tour.tourGeoCaches.filter { gcit -> gcit.geoCache.geoCache.code == geoCacheCode
                 }[0].geoCacheInTour
 
                 geoCacheInTourWithGivenCode.orderIdx = index
@@ -166,8 +168,7 @@ class Repository(private val tourDao: GeocachingTourDao,
 
                 // Save waypoints
                 val waypoints = obtainedGeoCacheWithLogsAndAttributesAndWaypoints.waypoints
-                waypoints.forEach {
-                    waypoint ->
+                waypoints.forEach { waypoint ->
                     waypoint.cacheDetailIDFK = newGeoCacheID
                     waypointDao.insert(waypoint)
                 }
@@ -188,8 +189,7 @@ class Repository(private val tourDao: GeocachingTourDao,
         val geoCacheIDs = tour.tourGeoCaches.map{ x -> x.geoCache.geoCache.id
         }
 
-        geoCacheCodesToGet.forEachIndexed{
-            index, geoCacheCode ->
+        geoCacheCodesToGet.forEachIndexed{ index, geoCacheCode ->
 
             val newlyObtainedGeocache = groundspeakRepository.getGeoCacheFromCode(geoCacheCode)
             if(newlyObtainedGeocache != null){
@@ -217,8 +217,7 @@ class Repository(private val tourDao: GeocachingTourDao,
                 // Remove waypoints from cache and update them
                 waypointDao.deleteAttributesInGeoCache(id)
                 val waypoints = newlyObtainedGeocache.waypoints
-                waypoints.forEach {
-                    waypoint ->
+                waypoints.forEach { waypoint ->
                     waypoint.cacheDetailIDFK = id
                     waypointDao.insert(waypoint)
                 }
@@ -252,7 +251,7 @@ class Repository(private val tourDao: GeocachingTourDao,
 
         val result = groundspeakRepository.uploadDrafts(draftFileAbsolutePath)
         if(result.status == Status.SUCCESS){
-            visitedGeoCaches.forEach{gcit ->
+            visitedGeoCaches.forEach{ gcit ->
                 gcit.geoCacheInTour.draftUploaded = true
                 updateGeoCacheInTour(gcit.geoCacheInTour)}
         }
@@ -303,6 +302,14 @@ class Repository(private val tourDao: GeocachingTourDao,
         return true
     }
 
+    fun userIsLoggedIn(): Boolean {
+        return try {
+            return groundspeakRepository.login()
+        } catch (e: IOException){
+            e.printStackTrace()
+            false
+        }
+    }
 
 
 }

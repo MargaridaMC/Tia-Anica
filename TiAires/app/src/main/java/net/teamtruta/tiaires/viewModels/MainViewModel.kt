@@ -1,16 +1,22 @@
 package net.teamtruta.tiaires.viewModels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.*
 import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
 import net.teamtruta.tiaires.data.repositories.Repository
+import net.teamtruta.tiaires.extensions.Event
+import net.teamtruta.tiaires.extensions.Resource
 import java.lang.IllegalArgumentException
 
 class MainActivityViewModel(private val repository: Repository) : ViewModel(){
 
     val allTours : LiveData<List<GeocachingTourWithCaches>> = repository.allTours
+    private val _userIsLoggedIn =  MutableLiveData<Event<Boolean>>()
+    val userIsLoggedIn: LiveData<Event<Boolean>>
+        get() = _userIsLoggedIn
 
     fun setCurrentTourID(tourID: Long) = repository.setCurrentTourID(tourID)
     fun deleteAllGeoCachesNotBeingUsed() {
@@ -18,9 +24,11 @@ class MainActivityViewModel(private val repository: Repository) : ViewModel(){
         scope.launch {repository.deleteAllGeoCachesNotBeingUsed()}
     }
 
-    fun userIsLoggedIn(): Boolean {
-        val authenticationCookie = repository.getAuthenticationCookie()
-        return  authenticationCookie != null && authenticationCookie != ""
+    fun userIsLoggedIn() {
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            _userIsLoggedIn.postValue(Event(repository.userIsLoggedIn()))
+        }
     }
 
     fun getUsername(): String {

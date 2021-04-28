@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -38,11 +39,15 @@ class MainActivity : AppCompatActivity(), ItemClickListener {
 
         // If Login is required, set contentView to the login page
         // Else go to home page
-        val userIsLoggedIn = viewModel.userIsLoggedIn()
-        if(!userIsLoggedIn){
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
+        viewModel.userIsLoggedIn.observe(this,
+                { userIsLoggedIn -> userIsLoggedIn.getContentIfNotHandled()?.let {
+                    if(!it){
+                        Toast.makeText(this, "It seems you're not logged in or your authentication cookie is no longer valid. Please login again.", Toast.LENGTH_LONG).show()
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
+                } })
+        viewModel.userIsLoggedIn()
 
 
         // Setup content

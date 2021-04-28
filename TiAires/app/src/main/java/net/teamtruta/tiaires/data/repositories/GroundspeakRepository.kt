@@ -34,7 +34,7 @@ class GroundspeakRepository {
 
         val context = App.applicationContext()
         val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Application.MODE_PRIVATE)
-        return sharedPreferences.getString(context.getString(R.string.authentication_cookie_key), "")
+        return sharedPreferences.getString(context.getString(R.string.authentication_cookie_key), null)
     }
 
     fun login(username: String, password: String): Boolean{
