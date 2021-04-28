@@ -19,40 +19,46 @@
     app:mapbox_bl_strokeColor="@android:color/darker_gray"
     app:mapbox_bl_strokeWidth="1dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
         <TextView
             android:id="@+id/geo_cache_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="bold"
-            tools:text="Bubble title"/>
-            <Button
-                android:id="@+id/go_to_button"
-                android:layout_width="@dimen/small_icon_size"
-                android:layout_height="@dimen/small_icon_size"
-                android:background="@drawable/direction_arrow"/>
+            tools:text="Bubble title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        </LinearLayout>
+        <Button
+            android:id="@+id/go_to_button"
+            android:layout_width="@dimen/small_icon_size"
+            android:layout_height="@dimen/small_icon_size"
+            android:background="@drawable/direction_arrow"
+            android:layout_marginStart="@dimen/tiny_padding"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/geo_cache_title"/>
+
+
         <TextView
             android:id="@+id/geo_cache_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textStyle="italic"
-            tools:text="Bubble description"/>
+            tools:text="Bubble description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/geo_cache_title"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.mapbox.mapboxsdk.annotations.BubbleLayout>
