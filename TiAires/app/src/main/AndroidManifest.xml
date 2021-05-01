@@ -3,30 +3,35 @@
     package="net.teamtruta.tiaires"
     android:versionCode="2"
     android:versionName="2.0">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name="net.teamtruta.tiaires.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:name=".views.GeoCacheDetailWithWaypointActivity"
+            android:label="@string/title_activity_multi_cache_detail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -35,11 +40,11 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-<!--
+        <!--
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />-->
-
+            android:value="@string/google_maps_key" />
+        -->
         <activity
             android:name=".views.MainActivity"
             android:label="@string/app_name"
@@ -50,7 +55,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".views.LoginActivity"
             android:label="@string/title_activity_login"
@@ -60,21 +64,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.teamtruta.tiaires.views.MainActivity" />
         </activity>
-
         <activity
             android:name=".views.TourActivity"
             android:parentActivityName=".views.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".views.GeoCacheDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".views.TourCreationActivity"
             android:parentActivityName=".views.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".views.MapActivity"
             android:parentActivityName=".views.TourActivity"
@@ -93,7 +93,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>

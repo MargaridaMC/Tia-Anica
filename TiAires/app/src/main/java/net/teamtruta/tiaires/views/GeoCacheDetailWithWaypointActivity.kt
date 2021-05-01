@@ -5,16 +5,16 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.os.bundleOf
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
+import net.teamtruta.tiaires.adapters.SectionsPagerAdapter
 import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
 import net.teamtruta.tiaires.viewModels.GeoCacheDetailViewModel
 import net.teamtruta.tiaires.viewModels.GeoCacheDetailViewModelFactory
 
-class GeoCacheDetailActivity : AppCompatActivity(){
+class GeoCacheDetailWithWaypointActivity : AppCompatActivity() {
 
     private val viewModel: GeoCacheDetailViewModel by viewModels{
         GeoCacheDetailViewModelFactory((application as App).repository)
@@ -22,28 +22,27 @@ class GeoCacheDetailActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_geo_cache_detail)
+        setContentView(R.layout.activity_cache_w_waypoints_detail)
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar_geo_cache_detail)
         setSupportActionBar(toolbar)
-        val geoCacheID = intent.getLongExtra(App.GEOCACHE_IN_TOUR_ID_EXTRA, -1L)
 
         // Setup Action Bar
         val ab = supportActionBar!!
         ab.setDisplayHomeAsUpEnabled(true)
 
+        val geoCacheID = intent.getLongExtra(App.GEOCACHE_IN_TOUR_ID_EXTRA, -1L)
+
         // Observe geocache that was clicked on
         viewModel.getGeoCacheInTourFromID(geoCacheID).observe(this,
                 { geoCacheInTour: GeoCacheInTourWithDetails -> setupToolbarName(geoCacheInTour) })
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                val bundle = bundleOf("geoCacheID" to geoCacheID)
-                supportFragmentManager.commit {
-                    setReorderingAllowed(true)
-                    add<GeoCacheDetailFragment>(R.id.fragment_container_view, args = bundle)
-                }
-            }
-        }
+        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager, geoCacheID)
+
+        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        tabs.setupWithViewPager(viewPager)
 
     }
 
@@ -55,18 +54,10 @@ class GeoCacheDetailActivity : AppCompatActivity(){
         ab!!.title = currentGeoCache.name
     }
 
+
     override fun onSupportNavigateUp(): Boolean {
         val intent = Intent(this, TourActivity::class.java)
-
-        setResult(RESULT_OK, intent)
-        finish()
+        startActivity(intent)
         return true
     }
-    /*
-    override fun onBackPressed() {
-        saveChanges()
-        onSupportNavigateUp()
-    }*/
-
-
 }

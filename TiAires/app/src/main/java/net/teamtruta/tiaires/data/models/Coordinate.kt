@@ -50,16 +50,54 @@ class Coordinate {
         return value.toString()
     }
 
+    private fun DM2Decimal(deg: Double, min: Double, dir: String): Double {
+        var result = deg + min / 60.0
+        if (dir.equals("S", ignoreCase = true)
+                ||
+                dir.equals("W", ignoreCase = true)
+                ||
+                dir.equals("-", ignoreCase = true)) result = -result
+        return result
+    }
+
     companion object {
 
-        private fun DM2Decimal(deg: Double, min: Double, dir: String): Double {
-            var result = deg + min / 60.0
-            if (dir.equals("S", ignoreCase = true)
-                    ||
-                    dir.equals("W", ignoreCase = true)
-                    ||
-                    dir.equals("-", ignoreCase = true)) result = -result
-            return result
+        fun prettyPrint(latitude: Coordinate, longitude: Coordinate): String{
+            // Pretty print coordinates
+            val (latitudeDegrees, latitudeMinutes) = Decimal2DM(latitude.value)
+            val latitudeDirection = if(latitude.value > 0) "N" else "S"
+
+            val (longitudeDegrees, longitudeMinutes) = Decimal2DM(longitude.value)
+            val longitudeDirection = if(longitude.value > 0) "E" else "W"
+
+            return latitudeDirection + latitudeDegrees.toInt() + " " +
+                    latitudeMinutes.toString().padStart(6, '0') +
+                    " " + longitudeDirection + longitudeDegrees.toInt() + " " +
+                    longitudeMinutes.toString().padStart(6, '0')
         }
+
+        private fun Decimal2DM(coordinates: Double): DoubleArray {
+            var degrees = coordinates.toInt().toDouble()
+            var minutes = Math.abs(coordinates - degrees) * 60
+            minutes = Math.round(minutes * 1000.0) / 1000.0
+            if (minutes == 60.0) {
+                degrees += 1.0
+                minutes = 0.0
+            }
+            return doubleArrayOf(Math.abs(degrees), minutes)
+        }
+
+        fun fromFullCoordinates(coordinateString: String): Array<Coordinate>{
+
+            var indexOfLongitudeStart = coordinateString.indexOf("E")
+            if(indexOfLongitudeStart == -1) indexOfLongitudeStart = coordinateString.indexOf("W")
+
+            val latitude = Coordinate(coordinateString.substring(0, indexOfLongitudeStart).trim())
+            val longitude = Coordinate(coordinateString.substring(indexOfLongitudeStart).trim())
+
+            return arrayOf(latitude, longitude)
+
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package net.teamtruta.tiaires.data.daos
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -16,4 +17,7 @@ interface WaypointDao {
 
     @Query("DELETE FROM waypoint WHERE cacheDetailIDFK = :geoCacheID")
     fun deleteAttributesInGeoCache(geoCacheID: Long)
+
+    @Query("SELECT * FROM waypoint WHERE cacheDetailIDFK = :geoCacheID")
+    fun getWaypointsInGeoCache(geoCacheID: Long): LiveData<Array<Waypoint>>
 }

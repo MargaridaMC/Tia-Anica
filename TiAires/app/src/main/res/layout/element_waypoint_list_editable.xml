@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/add_new_waypoint_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/tiny_padding"
+    app:cardCornerRadius="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/medium_padding">
+
+        <EditText
+            android:id="@+id/et_waypoint_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/waypoint_name_hint"
+            android:layout_gravity="start"
+            android:layout_weight=".25"
+            android:layout_marginEnd="@dimen/margin"/>
+
+        <EditText
+            android:id="@+id/et_waypoint_coordinates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/waypoint_coordinates_hint"
+            android:layout_gravity="end"
+            android:layout_weight=".7"
+            android:layout_marginEnd="@dimen/margin"/>
+
+        <Button
+            android:id="@+id/add_waypoint_button"
+            android:layout_width="@dimen/small_icon_size"
+            android:layout_height="@dimen/small_icon_size"
+            android:layout_gravity="center"
+            android:background="@drawable/add_box"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -14,19 +14,16 @@ import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.extensions.GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon
 import net.teamtruta.tiaires.extensions.GeoCacheIcon.Companion.getIconDrawable
 import net.teamtruta.tiaires.R
-import net.teamtruta.tiaires.data.models.GeoCache
-import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
-import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints
-import net.teamtruta.tiaires.data.models.VisitOutcomeEnum
+import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.viewModels.TourViewModel
 import net.teamtruta.tiaires.viewModels.TourViewModelFactory
 import java.time.Instant
 import java.util.*
 
 class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
-                                   private val goToOnClickListener: GoToOnClickListener?,
-                                   private val context: Context,
-                            val viewModel: TourViewModel) :
+                          private val goToOnClickListener: GoToOnClickListener?,
+                          private val context: Context,
+                          private val viewModel: TourViewModel) :
         RecyclerView.Adapter<GeoCacheListAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
     fun setGeoCacheInTourList(list: List<GeoCacheInTourWithDetails?>) {
@@ -123,10 +120,14 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         }
 
         // 7. Set listener for edit button
-        holder.editButton.setOnClickListener {editOnClickListener?.onEditClick(geoCacheInTour.id)}
+        holder.editButton.setOnClickListener {
+            editOnClickListener?.onEditClick(geoCacheInTourList[position]!!)
+        }
 
         // 8. Set listener for go-to-geoCache button
-        holder.goToButton.setOnClickListener {goToOnClickListener?.onGoToClick(geoCache) }
+        holder.goToButton.setOnClickListener {
+            goToOnClickListener?.onGoToClick(geoCache)
+        }
 
         // 9. Make section grey if geoCache has been visited
         if (geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.Found || geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.DNF || geoCacheInTour.currentVisitOutcome === VisitOutcomeEnum.Disabled) {
@@ -239,7 +240,7 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
     }
 
     interface EditOnClickListener {
-        fun onEditClick(geoCacheID: Long)
+        fun onEditClick(geoCacheInTour: GeoCacheInTourWithDetails)
     }
 
     interface GoToOnClickListener {

@@ -293,15 +293,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         }
         featureCollection = FeatureCollection.fromFeatures(symbolLayerIconFeatureList)
 
-        // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
-        // If that is the case just focus on the geocache
-        if (_tour!!.tourGeoCaches.size == 1) {
-            mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(_tour!!.tourGeoCaches[0].geoCache.geoCache.latLng), 2000)
-        } else {
-            mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000)
-        }
-
-
         // Get starting point if there is one
         if (_tour!!.tour.startingPointLongitude != null) {
             _startingPoint = Point.fromLngLat(_tour!!.tour.startingPointLongitude!!.value,
@@ -313,6 +304,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         }
 
         // Get waypoint information if there are any waypoints
+        var numberOfPointsInMap = _tour!!.tourGeoCaches.size
         val waypointFeatureList: MutableList<Feature> = ArrayList()
         for (gcit in _tour!!.tourGeoCaches) {
             for (waypoint in gcit.geoCache.waypoints){
@@ -323,9 +315,23 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 feature.addStringProperty(PROPERTY_WAYPOINT_NAME, waypoint.name)
                 feature.addBooleanProperty(PROPERTY_SELECTED, false)
                 waypointFeatureList.add(feature)
+
+                location = LatLng(waypoint.latitude.value, waypoint.longitude.value)
+                builder.include(location)
             }
+
+            numberOfPointsInMap += gcit.geoCache.waypoints.size
         }
         waypointFeatureCollection = FeatureCollection.fromFeatures(waypointFeatureList)
+
+        // Center camera in such a way that we can see all points in the map
+        // If there is only one geocache in the list the LatLngBoundsBuilder will fail to build-
+        // If that is the case just focus on the geocache
+        if (numberOfPointsInMap == 1) {
+            mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(_tour!!.tourGeoCaches[0].geoCache.geoCache.latLng), 2000)
+        } else {
+            mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50), 2000)
+        }
     }
 
     /**
@@ -517,8 +523,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 .withFilter(Expression.eq(Expression.get(PROPERTY_SELECTED), Expression.literal(true))))
     }
 
-
-
     private fun enableLocationComponent(loadedMapStyle: Style) {
         // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
@@ -545,8 +549,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         }
     }
 
-
-
     private fun convertToLatLng(feature: Feature): LatLng {
         val symbolPoint = (feature.geometry() as Point?)!!
         return LatLng(symbolPoint.latitude(), symbolPoint.longitude())
@@ -555,9 +557,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private fun handleClickIcon(screenPoint: PointF): Boolean {
 
         // Display text box with info
-        val features = mapboxMap!!.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID)
-        if (features.isNotEmpty()) {
-            val name = features[0].getStringProperty(PROPERTY_GEOCACHE_NAME)
+        val clickedCacheFeature = mapboxMap!!.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID)
+        if (clickedCacheFeature.isNotEmpty()) {
+            val name = clickedCacheFeature[0].getStringProperty(PROPERTY_GEOCACHE_NAME)
             val featureList = featureCollection!!.features()
             if (featureList != null) {
                 for (i in featureList.indices) {
@@ -573,10 +575,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
             }
         } else {
                 // If the user didn't click on a cache check if they clicked on a waypoint
-                val features = mapboxMap!!.queryRenderedFeatures(screenPoint, WAYPOINT_MARKER_LAYER)
-                if(features.isNotEmpty()){
-                    val geoCacheName = features[0].getStringProperty(PROPERTY_GEOCACHE_NAME)
-                    val waypointName = features[0].getStringProperty(PROPERTY_WAYPOINT_NAME)
+                val clickedWaypointFeature = mapboxMap!!.queryRenderedFeatures(screenPoint, WAYPOINT_MARKER_LAYER)
+                if(clickedWaypointFeature.isNotEmpty()){
+                    val geoCacheName = clickedWaypointFeature[0].getStringProperty(PROPERTY_GEOCACHE_NAME)
+                    val waypointName = clickedWaypointFeature[0].getStringProperty(PROPERTY_WAYPOINT_NAME)
                     val featureList = waypointFeatureCollection!!.features()
                     if (featureList != null) {
                         for (i in featureList.indices) {
@@ -637,10 +639,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     }
 
     private fun setFeatureSelectState(feature: Feature, selectedState: Boolean) {
+        for(otherFeature: Feature in featureCollection?.features()!!){
+            otherFeature.properties()!!.addProperty(PROPERTY_SELECTED, false)
+        }
+
+        for(otherFeature: Feature in waypointFeatureCollection?.features()!!){
+            otherFeature.properties()!!.addProperty(PROPERTY_SELECTED, false)
+        }
+
         if (feature.properties() != null) {
             feature.properties()!!.addProperty(PROPERTY_SELECTED, selectedState)
-            refreshSource()
         }
+
+        refreshSource()
     }
 
     private fun refreshSource() {

@@ -156,11 +156,19 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         startActivity(intent)
     }
 
-    override fun onEditClick(geoCacheID: Long) {
-        val intent = Intent(this, GeoCacheDetailActivity::class.java)
-        intent.putExtra(App.GEOCACHE_ID_EXTRA, geoCacheID)
-        intent.putExtra(App.TOUR_ID_EXTRA, _tour?.tour?.id)
-        startActivityForResult(intent, geoCAcheDetailActivityRequestCode)
+    override fun onEditClick(geoCacheInTour: GeoCacheInTourWithDetails) {
+        if(geoCacheInTour.geoCache.waypoints.isNotEmpty()){
+            val intent = Intent(this, GeoCacheDetailWithWaypointActivity::class.java)
+            intent.putExtra(App.GEOCACHE_IN_TOUR_ID_EXTRA, geoCacheInTour.geoCacheInTour.id)
+            startActivity(intent)
+        } else {
+            val intent = Intent(this, GeoCacheDetailActivity::class.java)
+            intent.putExtra(App.GEOCACHE_IN_TOUR_ID_EXTRA, geoCacheInTour.geoCacheInTour.id)
+            //intent.putExtra(App.TOUR_ID_EXTRA, _tour?.tour?.id)
+            startActivity(intent)
+        }
+
+
     }
 
     override fun onGoToClick(geoCache: GeoCache?) {

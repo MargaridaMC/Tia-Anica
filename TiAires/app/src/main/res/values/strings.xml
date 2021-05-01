@@ -61,5 +61,10 @@
     <string name="password_placeholder">aaaaaaaaaaaa</string>
     <string name="authentication">Authentication</string>
     <string name="save_changes">Save Changes</string>
+    <string name="title_activity_multi_cache_detail">MultiCacheDetailActivity</string>
+    <string name="tab_text_1">Details</string>
+    <string name="tab_text_2">Waypoints</string>
+    <string name="waypoint_name_hint">Name</string>
+    <string name="waypoint_coordinates_hint">Waypoint Coordinates</string>
 
 </resources>

@@ -31,7 +31,7 @@ class App : Application() {
 
         const val TOUR_ID_EXTRA: String = "tourID"
         const val EDIT_EXTRA = "edit"
-        const val GEOCACHE_ID_EXTRA = "geoCacheID"
+        const val GEOCACHE_IN_TOUR_ID_EXTRA = "geoCacheID"
     }
 
     override fun onCreate() {

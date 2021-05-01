@@ -11,10 +11,7 @@ import kotlinx.coroutines.launch
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.daos.*
-import net.teamtruta.tiaires.data.models.GeoCacheInTour
-import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
-import net.teamtruta.tiaires.data.models.GeocachingTour
-import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
+import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.extensions.Resource
 import net.teamtruta.tiaires.extensions.Status
 import java.io.FileOutputStream
@@ -309,6 +306,12 @@ class Repository(private val tourDao: GeocachingTourDao,
             e.printStackTrace()
             false
         }
+    }
+
+    fun addNewWaypointToGeoCache(newWaypoint: Waypoint, geoCacheInTourID: Long) {
+        val geoCacheID = geoCacheInTourDao.getGeoCacheIDFromGeoCacheInTourID(geoCacheInTourID)
+        newWaypoint.cacheDetailIDFK = geoCacheID
+        waypointDao.insert(newWaypoint)
     }
 
 

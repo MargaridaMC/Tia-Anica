@@ -36,4 +36,7 @@ interface GeoCacheInTourDao {
             "ON cache.tourIDFK = tour.id WHERE tour.id=:tourID)")
     fun dropGeoCacheFromTour(code: String, tourID: Long)
 
+    @Query("SELECT geoCacheDetailIDFK FROM cache WHERE id=:geoCacheInTourID")
+    fun getGeoCacheIDFromGeoCacheInTourID(geoCacheInTourID: Long): Long
+
 }

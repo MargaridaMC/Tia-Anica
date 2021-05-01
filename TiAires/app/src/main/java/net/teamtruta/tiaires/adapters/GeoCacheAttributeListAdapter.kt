@@ -32,7 +32,7 @@ class GeoCacheAttributeListAdapter(private val context: Context,
         var convertView = view
         val holder: ViewHolder
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.attribute_element_layout, parent, false)
+            convertView = layoutInflater.inflate(R.layout.element_attribute, parent, false)
             holder = ViewHolder()
             holder.attributeIcon = convertView.findViewById(R.id.attribute_icon)
             holder.attributeText = convertView.findViewById(R.id.attribute_text)

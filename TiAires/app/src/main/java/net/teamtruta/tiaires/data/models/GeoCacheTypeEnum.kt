@@ -33,6 +33,10 @@ enum class GeoCacheTypeEnum(val typeString: String) {
             }
             return Other
         }
+
+        fun geoCacheCanHaveWaypoints(geoCacheType: GeoCacheTypeEnum): Boolean{
+            return geoCacheType == Multi
+        }
     }
 
 }

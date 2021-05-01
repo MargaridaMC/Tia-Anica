@@ -7,9 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import net.teamtruta.tiaires.data.models.GeoCacheInTour
-import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
-import net.teamtruta.tiaires.data.models.VisitOutcomeEnum
+import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.data.repositories.Repository
 import java.time.Instant
 
@@ -63,6 +61,19 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             repository.updateGeoCacheInTour(currentGeoCacheInTour)
+        }
+
+
+    }
+
+    fun addNewWaypointToGeoCache(waypointName: String, waypointCoordinates: String, geoCacheInTourID: Long) {
+
+        val (latitude, longitude) = Coordinate.fromFullCoordinates(waypointCoordinates)
+        val newWaypoint = Waypoint(waypointName, latitude, longitude)
+
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            repository.addNewWaypointToGeoCache(newWaypoint, geoCacheInTourID)
         }
 
     }
