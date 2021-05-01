@@ -15,7 +15,7 @@
             android:id="@+id/waypoint_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:button="@drawable/waypoint_done_checkbox"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stage 1"
+            android:layout_marginStart="@dimen/margin"
             app:layout_constraintStart_toEndOf="@+id/waypoint_checkbox"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

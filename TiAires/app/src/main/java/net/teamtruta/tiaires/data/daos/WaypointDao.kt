@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import net.teamtruta.tiaires.data.models.Waypoint
 
 @Dao
@@ -20,4 +21,7 @@ interface WaypointDao {
 
     @Query("SELECT * FROM waypoint WHERE cacheDetailIDFK = :geoCacheID")
     fun getWaypointsInGeoCache(geoCacheID: Long): LiveData<Array<Waypoint>>
+
+    @Update
+    fun updateWaypoint(waypoint: Waypoint)
 }

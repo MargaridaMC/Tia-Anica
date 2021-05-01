@@ -77,6 +77,14 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
         }
 
     }
+
+    fun onWaypointDone(waypoint: Waypoint, done: Boolean) {
+        waypoint.isDone = done
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            repository.onWaypointDone(waypoint)
+        }
+    }
 }
 
 class GeoCacheDetailViewModelFactory(private val repository: Repository): ViewModelProvider.Factory{

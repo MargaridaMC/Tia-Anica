@@ -11,7 +11,8 @@ import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.Coordinate
 import net.teamtruta.tiaires.data.models.Waypoint
 
-class WaypointListAdapter(private val goToOnClickListener: GoToOnClickListener)
+class WaypointListAdapter(private val goToOnClickListener: GoToOnClickListener,
+                          private val waypointDoneOnClickListener: WaypointDoneOnClickListener)
     : RecyclerView.Adapter<WaypointListAdapter.ViewHolder>() {
 
     private var waypoints: List<Waypoint> = listOf()
@@ -38,6 +39,9 @@ class WaypointListAdapter(private val goToOnClickListener: GoToOnClickListener)
     // Replace the contents of a view with the actual contents
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val waypoint = waypoints[position]
+        holder.waypointCheckBox.isChecked = waypoint.isDone || waypoint.isParking
+        holder.waypointCheckBox.setOnClickListener{
+            waypointDoneOnClickListener.onWaypointDone(waypoint, holder.waypointCheckBox.isChecked)}
         holder.waypointName.text = waypoint.name
         holder.waypointCoordinates.text = Coordinate.prettyPrint(waypoint.latitude, waypoint.longitude)
         holder.goToWaypointButton.setOnClickListener { goToOnClickListener.onGoToClick(waypoint) }
@@ -49,5 +53,9 @@ class WaypointListAdapter(private val goToOnClickListener: GoToOnClickListener)
 
     interface GoToOnClickListener {
         fun onGoToClick(waypoint: Waypoint)
+    }
+
+    interface  WaypointDoneOnClickListener {
+        fun onWaypointDone(waypoint:Waypoint, done: Boolean)
     }
 }

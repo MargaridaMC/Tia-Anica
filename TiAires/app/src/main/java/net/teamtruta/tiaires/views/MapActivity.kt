@@ -104,6 +104,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private val WAYPOINT_GEOJSON_SOURCE_ID = "WAYPOINT_GEOJSON_SOURCE_ID"
     private val WAYPOINT_MARKER_LAYER = "WAYPOINT_MARKER_LAYER"
     private val WAYPOINT_CALLOUT_LAYER_ID = "WAYPOINT_CALLOUT_LAYER_ID"
+    private val PROPERTY_WAYPOINT_TYPE = "PROPERTY_WAYPOINT_TYPE"
+    private val WAYPOINT_PARKING_TYPE = "parkingWaypoint"
+    private val WAYPOINT_DONE_TYPE = "doneWaypoint"
+    private val WAYPOINT_NORMAL_TYPE = "normalWaypoint"
 
     private val viewMap = HashMap<String, View>()
 
@@ -137,49 +141,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
 
     }
 
-    private fun setTourRelatedData(tour: GeocachingTourWithCaches?) {
-        _tour = tour
-
-        // Set title
-        val ab = supportActionBar
-        ab!!.title = _tour!!.tour.name
-        setupMapData()
-
-        generateViewIcon()
-
-        mapboxMap!!.setStyle(Style.MAPBOX_STREETS) { style: Style ->
-            setUpData(featureCollection)
-            enableLocationComponent(style)
-            mapboxMap!!.addOnMapClickListener(this@MapActivity)
-        }
-
-        // Show remaining tour line and distance
-        showRemainingTourDistance()
-        showRemainingTourLineLayer()
-    }
-
-
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.map_menu, menu);
         return true
-    }
-
-    private fun setupMyLocationFAB() {
-        findViewById<View>(R.id.my_location_fab).setOnClickListener {
-            val locationComponent = mapboxMap!!.locationComponent
-            try {
-                if (BuildConfig.DEBUG && locationComponent.lastKnownLocation == null) {
-                    error("Assertion failed")
-                }
-                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(LatLng(
-                        locationComponent.lastKnownLocation!!.latitude,
-                        locationComponent.lastKnownLocation!!.longitude)), 2500)
-            } catch (e: Exception) {
-                checkLocationPermissionIsGrantedAndGPSIsOn()
-            }
-        }
     }
 
     /***
@@ -261,6 +226,44 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         startActivity(intent)
     }
 
+    private fun setTourRelatedData(tour: GeocachingTourWithCaches?) {
+        _tour = tour
+
+        // Set title
+        val ab = supportActionBar
+        ab!!.title = _tour!!.tour.name
+        setupMapData()
+
+        generateViewIcon()
+
+        mapboxMap!!.setStyle(Style.MAPBOX_STREETS) { style: Style ->
+            setUpData(featureCollection)
+            enableLocationComponent(style)
+            mapboxMap!!.addOnMapClickListener(this@MapActivity)
+        }
+
+        // Show remaining tour line and distance
+        showRemainingTourDistance()
+        showRemainingTourLineLayer()
+    }
+
+    private fun setupMyLocationFAB() {
+        findViewById<View>(R.id.my_location_fab).setOnClickListener {
+            val locationComponent = mapboxMap!!.locationComponent
+            try {
+                if (BuildConfig.DEBUG && locationComponent.lastKnownLocation == null) {
+                    error("Assertion failed")
+                }
+                mapboxMap!!.easeCamera(CameraUpdateFactory.newLatLng(LatLng(
+                        locationComponent.lastKnownLocation!!.latitude,
+                        locationComponent.lastKnownLocation!!.longitude)), 2500)
+            } catch (e: Exception) {
+                checkLocationPermissionIsGrantedAndGPSIsOn()
+            }
+        }
+    }
+
+
     /**
      * Defines the coordinates of all elements to be shown on the map
      */
@@ -314,6 +317,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 feature.addStringProperty(PROPERTY_CODE, gcit.geoCache.geoCache.code)
                 feature.addStringProperty(PROPERTY_WAYPOINT_NAME, waypoint.name)
                 feature.addBooleanProperty(PROPERTY_SELECTED, false)
+
+                if(waypoint.isParking){
+                    feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_PARKING_TYPE)
+                } else if(waypoint.isDone){
+                    feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_DONE_TYPE)
+                } else {
+                    feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_NORMAL_TYPE)
+                }
+
                 waypointFeatureList.add(feature)
 
                 location = LatLng(waypoint.latitude.value, waypoint.longitude.value)
@@ -414,30 +426,36 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
      */
     private fun setUpMarkerLayer(loadedStyle: Style) {
         loadedStyle.addLayer(SymbolLayer(MARKER_LAYER_ID, GEOJSON_SOURCE_ID)
-                .withProperties(PropertyFactory.iconImage(Expression.match(Expression.get(PROPERTY_TYPE), Expression.literal(GeoCacheTypeEnum.Traditional.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Traditional.typeString, GeoCacheTypeEnum.Traditional.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Mystery.typeString, GeoCacheTypeEnum.Mystery.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Solved.typeString, GeoCacheTypeEnum.Solved.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Multi.typeString, GeoCacheTypeEnum.Multi.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Earth.typeString, GeoCacheTypeEnum.Earth.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Letterbox.typeString, GeoCacheTypeEnum.Letterbox.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Wherigo.typeString, GeoCacheTypeEnum.Wherigo.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Event.typeString, GeoCacheTypeEnum.Event.typeString),
-                        Expression.stop(GeoCacheTypeEnum.CITO.typeString, GeoCacheTypeEnum.CITO.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Mega.typeString, GeoCacheTypeEnum.Mega.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Giga.typeString, GeoCacheTypeEnum.Giga.typeString),
-                        Expression.stop(GeoCacheTypeEnum.HQ.typeString, GeoCacheTypeEnum.HQ.typeString),
-                        Expression.stop(GeoCacheTypeEnum.GPSAdventures.typeString, GeoCacheTypeEnum.GPSAdventures.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Lab.typeString, GeoCacheTypeEnum.Lab.typeString),
-                        Expression.stop(GeoCacheTypeEnum.HQCelebration.typeString, GeoCacheTypeEnum.HQCelebration.typeString),
-                        Expression.stop(GeoCacheTypeEnum.HQBlockParty.typeString, GeoCacheTypeEnum.HQBlockParty.typeString),
-                        Expression.stop(GeoCacheTypeEnum.CommunityCelebration.typeString, GeoCacheTypeEnum.CommunityCelebration.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Virtual.typeString, GeoCacheTypeEnum.Virtual.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Webcam.typeString, GeoCacheTypeEnum.Webcam.typeString),
-                        Expression.stop(GeoCacheTypeEnum.ProjectAPE.typeString, GeoCacheTypeEnum.ProjectAPE.typeString),
-                        Expression.stop(GeoCacheTypeEnum.Locationless.typeString, GeoCacheTypeEnum.Locationless.typeString),
-                        Expression.stop(VisitOutcomeEnum.Found.visitOutcomeString, VisitOutcomeEnum.Found.visitOutcomeString),
-                        Expression.stop(VisitOutcomeEnum.DNF.visitOutcomeString, VisitOutcomeEnum.DNF.visitOutcomeString))),
+                .withProperties(
+                        PropertyFactory.iconImage(
+                                Expression.match(
+                                        Expression.get(PROPERTY_TYPE), // Property to get
+                                        Expression.literal(GeoCacheTypeEnum.Traditional.typeString), // Default value
+                                        Expression.stop(GeoCacheTypeEnum.Traditional.typeString, GeoCacheTypeEnum.Traditional.typeString), // Options
+                                        Expression.stop(GeoCacheTypeEnum.Mystery.typeString, GeoCacheTypeEnum.Mystery.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Solved.typeString, GeoCacheTypeEnum.Solved.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Multi.typeString, GeoCacheTypeEnum.Multi.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Earth.typeString, GeoCacheTypeEnum.Earth.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Letterbox.typeString, GeoCacheTypeEnum.Letterbox.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Wherigo.typeString, GeoCacheTypeEnum.Wherigo.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Event.typeString, GeoCacheTypeEnum.Event.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.CITO.typeString, GeoCacheTypeEnum.CITO.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Mega.typeString, GeoCacheTypeEnum.Mega.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Giga.typeString, GeoCacheTypeEnum.Giga.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.HQ.typeString, GeoCacheTypeEnum.HQ.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.GPSAdventures.typeString, GeoCacheTypeEnum.GPSAdventures.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Lab.typeString, GeoCacheTypeEnum.Lab.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.HQCelebration.typeString, GeoCacheTypeEnum.HQCelebration.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.HQBlockParty.typeString, GeoCacheTypeEnum.HQBlockParty.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.CommunityCelebration.typeString, GeoCacheTypeEnum.CommunityCelebration.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Virtual.typeString, GeoCacheTypeEnum.Virtual.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Webcam.typeString, GeoCacheTypeEnum.Webcam.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.ProjectAPE.typeString, GeoCacheTypeEnum.ProjectAPE.typeString),
+                                        Expression.stop(GeoCacheTypeEnum.Locationless.typeString, GeoCacheTypeEnum.Locationless.typeString),
+                                        Expression.stop(VisitOutcomeEnum.Found.visitOutcomeString, VisitOutcomeEnum.Found.visitOutcomeString),
+                                        Expression.stop(VisitOutcomeEnum.DNF.visitOutcomeString, VisitOutcomeEnum.DNF.visitOutcomeString)
+                                )
+                        ),
                         PropertyFactory.iconAllowOverlap(true),
                         PropertyFactory.iconAnchor(Property.ICON_ANCHOR_CENTER),
                         PropertyFactory.iconSize(0.4f))
@@ -501,12 +519,29 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private fun setUpWaypointLayer(loadedStyle: Style){
 
         val WAYPOINT_ICON_ID = "WAYPOINT_ICON_ID"
+        val WAYPOINT_DONE_ICON_ID = "WAYPOINT_DONE_ICON_ID"
+        val WAYPOINT_PARKING_ICON_ID = "WAYPOINT_PARKING_ICON_ID"
+
         loadedStyle.addImage(WAYPOINT_ICON_ID,
                 BitmapFactory.decodeResource(this@MapActivity.resources, R.drawable.waypoint_icon))
+        loadedStyle.addImage(WAYPOINT_DONE_ICON_ID, BitmapFactory.decodeResource(
+                this@MapActivity.resources, R.drawable.waypoint_done_checkmark))
+        loadedStyle.addImage(WAYPOINT_PARKING_ICON_ID, BitmapFactory.decodeResource(
+                this@MapActivity.resources, R.drawable.waypoint_parking_icon))
 
         loadedStyle.addLayer(SymbolLayer(WAYPOINT_MARKER_LAYER, WAYPOINT_GEOJSON_SOURCE_ID)
                 .withProperties(
-                        PropertyFactory.iconImage(WAYPOINT_ICON_ID),
+                        PropertyFactory.iconImage(
+                                Expression.match(
+                                        Expression.get(PROPERTY_WAYPOINT_TYPE), // Property to get
+                                        Expression.literal(WAYPOINT_NORMAL_TYPE), // Default value
+                                        Expression.stop(WAYPOINT_NORMAL_TYPE, WAYPOINT_ICON_ID),
+                                        Expression.stop(WAYPOINT_PARKING_TYPE, WAYPOINT_PARKING_ICON_ID),
+                                        Expression.stop(WAYPOINT_DONE_TYPE, WAYPOINT_DONE_ICON_ID),
+
+                                )
+                        ),
+
                         PropertyFactory.iconAllowOverlap(true),
                         PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),
                         PropertyFactory.iconSize(0.5f)

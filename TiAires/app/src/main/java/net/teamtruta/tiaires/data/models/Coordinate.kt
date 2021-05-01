@@ -66,14 +66,16 @@ class Coordinate {
             // Pretty print coordinates
             val (latitudeDegrees, latitudeMinutes) = Decimal2DM(latitude.value)
             val latitudeDirection = if(latitude.value > 0) "N" else "S"
+            val latitudeMinutesString = "%.${3}f".format(latitudeMinutes).padStart(6, '0')
 
             val (longitudeDegrees, longitudeMinutes) = Decimal2DM(longitude.value)
             val longitudeDirection = if(longitude.value > 0) "E" else "W"
+            val longitudeMinutesString = "%.${3}f".format(longitudeMinutes).padStart(6, '0')
 
             return latitudeDirection + latitudeDegrees.toInt() + " " +
-                    latitudeMinutes.toString().padStart(6, '0') +
+                    latitudeMinutesString +
                     " " + longitudeDirection + longitudeDegrees.toInt() + " " +
-                    longitudeMinutes.toString().padStart(6, '0')
+                    longitudeMinutesString
         }
 
         private fun Decimal2DM(coordinates: Double): DoubleArray {

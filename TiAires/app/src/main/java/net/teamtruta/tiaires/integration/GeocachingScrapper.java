@@ -422,21 +422,25 @@ public class GeocachingScrapper {
             // Then this cache has an "Additional Waypoint" section
             String additionalWaypointSection = waypointSectionMatcher.group(0);
 
-            String regexWaypoint = ">([A-Za-z0-9 ]+)</a>.*?([N|S] [0-9]{2,3}° [0-9]{2}.[0-9]{3}) ([E|W] [0-9]{2,3}° [0-9]{2}.[0-9]{3})";
+            // Loop through found waypoints
+            String regexWaypoint = ">([A-Za-z0-9 ]+)</a> \\(([A-Za-z\\s]+)\\).*?([N|S] [0-9]{2,3}° [0-9]{2}.[0-9]{3}) ([E|W] [0-9]{2,3}° [0-9]{2}.[0-9]{3})";
             Pattern waypointPattern = Pattern.compile(regexWaypoint);
             Matcher waypointMatcher = waypointPattern.matcher(additionalWaypointSection);
 
             while(waypointMatcher.find()){
 
                 String waypointName = waypointMatcher.group(1);
-                String latitudeString = waypointMatcher.group(2);
-                String longitudeString = waypointMatcher.group(3);
+                String waypointType = waypointMatcher.group(2);
+                String latitudeString = waypointMatcher.group(3);
+                String longitudeString = waypointMatcher.group(4);
 
                 if(name != null && latitudeString != null && longitudeString != null){
                     Waypoint waypoint = new Waypoint(
                             waypointName,
                             latitudeString,
-                            longitudeString);
+                            longitudeString,
+                            false,
+                            waypointType.equals("Parking Area"));
                     waypoints.add(waypoint);
                 }
 

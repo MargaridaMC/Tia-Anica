@@ -26,7 +26,7 @@ import net.teamtruta.tiaires.viewModels.GeoCacheDetailViewModelFactory
  */
 private const val ARG_PARAM1 = "geoCacheID"
 
-class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener {
+class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener, WaypointListAdapter.WaypointDoneOnClickListener {
 
     private var geoCacheInTourID: Long = -1L
 
@@ -60,7 +60,7 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
         val layoutManager = LinearLayoutManager(container?.context)
         waypointListView.layoutManager = layoutManager
 
-        val waypointListAdapter = WaypointListAdapter(this)
+        val waypointListAdapter = WaypointListAdapter(this, this)
         waypointListView.adapter = waypointListAdapter
 
         // Observe data and fill in list
@@ -89,7 +89,6 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
         newWaypointNameET.text.clear()
         newWaypointCoordinatesET.text.clear()
         hideKeyboard()
-        //waypointListView.adapter?.itemCount?.minus(1)?.let { waypointListView.scrollToPosition(it) }
         waypointListView.adapter?.notifyItemInserted(waypointListView.adapter!!.itemCount + 1)
     }
 
@@ -113,5 +112,9 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
                 waypoint.latitude.value, waypoint.longitude.value))
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
         startActivity(mapIntent)
+    }
+
+    override fun onWaypointDone(waypoint: Waypoint, done: Boolean) {
+        viewModel.onWaypointDone(waypoint, done)
     }
 }

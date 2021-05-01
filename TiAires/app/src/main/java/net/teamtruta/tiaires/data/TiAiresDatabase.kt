@@ -17,7 +17,7 @@ import net.teamtruta.tiaires.extensions.typeConverters.*
                     GeocachingTour::class,
                     GeoCacheLog::class,
                     GeoCacheAttribute::class,
-                     Waypoint::class], version = 22, exportSchema = true)
+                     Waypoint::class], version = 23, exportSchema = true)
 @TypeConverters(CoordinateConverter::class, GeoCacheTypeConverter::class,
         AttributeTypeConverter::class, DateConverter::class, InstantConverter::class,
         VisitOutcomeConverter::class)
@@ -204,6 +204,13 @@ abstract class TiAiresDatabase: RoomDatabase() {
             }
         }
 
+        private val MIGRATION_22_23 = object : Migration(22, 23){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE Waypoint ADD COLUMN isDone INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE Waypoint ADD COLUMN isParking INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         @Volatile
         private var INSTANCE: TiAiresDatabase? = null
 
@@ -213,7 +220,9 @@ abstract class TiAiresDatabase: RoomDatabase() {
                         context.applicationContext,
                         TiAiresDatabase::class.java,
                         "tiaires.db"
-                ).addMigrations(MIGRATION_20_21, MIGRATION_21_22).build()
+                ).addMigrations(MIGRATION_20_21,
+                        MIGRATION_21_22,
+                        MIGRATION_22_23).build()
                 INSTANCE = instance
                 instance
             }
