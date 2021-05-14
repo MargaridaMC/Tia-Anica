@@ -86,23 +86,17 @@ class LoginActivity : AppCompatActivity() {
         // Else, if both string are there, try to login
         viewModel.loginSuccessful.observe(this, { loginEventContent ->
             loginEventContent.getContentIfNotHandled()?.let {
-            if(it){
-                // Login Successsful
-                val t = Toast.makeText(this, "Login Successful.", Toast.LENGTH_LONG)
-                t.show()
+                (success, message) ->
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
-                // Open home page
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                    if(success){
+                        // Open home page
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
 
-            } else{
-                // Login not successful
-                val t = Toast.makeText(this,
-                        "Login NOT Successful. Please check your credentials", Toast.LENGTH_LONG)
-                t.show()
-
+                    }
             }
-        } })
+        })
         viewModel.login(username, password)
     }
 
@@ -112,18 +106,17 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.logoutSuccessful.observe(this, { logoutEvent ->
             logoutEvent.getContentIfNotHandled()?.let{
-            if(it){
-                Toast.makeText(this, "Logout Successful.", Toast.LENGTH_SHORT).show()
-                val logoutButton = findViewById<Button>(R.id.logout_button)
-                logoutButton.visibility = View.INVISIBLE
-                val usernameField = findViewById<EditText>(R.id.username)
-                val passwordField = findViewById<EditText>(R.id.password)
-                usernameField.setText("")
-                passwordField.setText("")
-            } else {
-                Toast.makeText(this, "Logout NOT Successful.", Toast.LENGTH_SHORT).show()
-            }
-        } })
+                (success, message) ->
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                if(success){
+                    val logoutButton = findViewById<Button>(R.id.logout_button)
+                    logoutButton.visibility = View.INVISIBLE
+                    val usernameField = findViewById<EditText>(R.id.username)
+                    val passwordField = findViewById<EditText>(R.id.password)
+                    usernameField.setText("")
+                    passwordField.setText("")
+                }
+            } })
 
         viewModel.logout()
 

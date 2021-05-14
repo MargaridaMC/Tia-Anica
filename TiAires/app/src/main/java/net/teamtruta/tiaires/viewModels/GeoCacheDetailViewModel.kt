@@ -1,6 +1,7 @@
 package net.teamtruta.tiaires.viewModels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
@@ -9,9 +10,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.data.repositories.Repository
+import net.teamtruta.tiaires.extensions.Event
 import java.time.Instant
 
 class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel(){
+
+    private val _waypointAdditionSuccessful = MutableLiveData<Event<String>>()
+    val waypointAdditionSuccessful: LiveData<Event<String>>
+        get() = _waypointAdditionSuccessful
 
     fun getGeoCacheInTourFromID(geoCacheInTourID: Long): LiveData<GeoCacheInTourWithDetails> =
             repository.getGeoCacheInTourFromID(geoCacheInTourID)
@@ -66,15 +72,28 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
 
     }
 
-    fun addNewWaypointToGeoCache(waypointName: String, waypointCoordinates: String, geoCacheInTourID: Long) {
+    fun addNewWaypointToGeoCache(waypointName: String, waypointCoordinates: String,
+                                 waypointNotes: String,
+                                 geoCacheInTourID: Long) {
 
-        val (latitude, longitude) = Coordinate.fromFullCoordinates(waypointCoordinates)
-        val newWaypoint = Waypoint(waypointName, latitude, longitude)
+        val coordinatePair = Coordinate.fromFullCoordinates(waypointCoordinates)
+        if(coordinatePair == null){
+            _waypointAdditionSuccessful.postValue(Event(false, "Could not create new waypoint. Please check the coordinate format."))
 
-        val scope = CoroutineScope(Dispatchers.IO)
-        scope.launch {
-            repository.addNewWaypointToGeoCache(newWaypoint, geoCacheInTourID)
+        } else {
+            val (latitude, longitude) = coordinatePair
+            val newWaypoint = Waypoint(waypointName, latitude, longitude,
+                    waypointDone = false, isParking = false, notes = waypointNotes)
+
+            val scope = CoroutineScope(Dispatchers.IO)
+            scope.launch {
+                repository.addNewWaypointToGeoCache(newWaypoint, geoCacheInTourID)
+            }
+            _waypointAdditionSuccessful.postValue(Event(false, "Successfully created new waypoint!"))
         }
+
+
+
 
     }
 
@@ -84,6 +103,14 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
         scope.launch {
             repository.onWaypointDone(waypoint)
         }
+    }
+
+    fun deleteWaypoint(waypoint: Waypoint) {
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            repository.deleteWaypoint(waypoint)
+        }
+
     }
 }
 

@@ -41,8 +41,9 @@ class MainActivity : AppCompatActivity(), ItemClickListener {
         // Else go to home page
         viewModel.userIsLoggedIn.observe(this,
                 { userIsLoggedIn -> userIsLoggedIn.getContentIfNotHandled()?.let {
-                    if(!it){
-                        Toast.makeText(this, "It seems you're not logged in or your authentication cookie is no longer valid. Please login again.", Toast.LENGTH_LONG).show()
+                    (success, message, _) ->
+                    if(!success){
+                        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                         val intent = Intent(this, LoginActivity::class.java)
                         startActivity(intent)
                     }

@@ -8,13 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.adapters.WaypointListAdapter
+import net.teamtruta.tiaires.callbacks.WaypointInteractionCallback
 import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
 import net.teamtruta.tiaires.data.models.Waypoint
 import net.teamtruta.tiaires.extensions.hideKeyboard
@@ -36,6 +39,7 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
 
     private lateinit var newWaypointNameET: EditText
     private lateinit var newWaypointCoordinatesET: EditText
+    private lateinit var newWaypointNotesET: EditText
     private lateinit var waypointListView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,18 +54,24 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_waypoint_list, container, false)
-        //val textView: TextView = root.findViewById(R.id.section_label)
-        //pageViewModel.text.observe(viewLifecycleOwner, Observer<String> {
-        //    textView.text = it
-        //})
 
         // Setup recyclerview with waypoint list
         waypointListView = root.findViewById(R.id.waypoint_list)
         val layoutManager = LinearLayoutManager(container?.context)
         waypointListView.layoutManager = layoutManager
 
-        val waypointListAdapter = WaypointListAdapter(this, this)
+        val waypointListAdapter = WaypointListAdapter(this, this, viewModel)
         waypointListView.adapter = waypointListAdapter
+
+        // Add handler for swiping to delete
+        val swipeHandler = object : WaypointInteractionCallback(requireContext()){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = waypointListView.adapter as WaypointListAdapter
+                adapter.onItemDismiss(viewHolder.absoluteAdapterPosition)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(waypointListView)
 
         // Observe data and fill in list
         viewModel.getGeoCacheInTourFromID(geoCacheInTourID).observe(requireActivity(),
@@ -71,6 +81,7 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
         // Add click listener to button top add new waypoint
         newWaypointNameET = root.findViewById(R.id.et_waypoint_name)
         newWaypointCoordinatesET = root.findViewById(R.id.et_waypoint_coordinates)
+        newWaypointNotesET = root.findViewById(R.id.et_waypoint_notes)
         val addNewWaypointButton: Button = root.findViewById(R.id.add_waypoint_button)
         addNewWaypointButton.setOnClickListener {
             addNewWaypoint()
@@ -82,14 +93,23 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
         // Get name and coordinates for the waypoint from the editTexts
         val waypointName: String = newWaypointNameET.text.toString()
         val waypointCoordinates: String = newWaypointCoordinatesET.text.toString()
+        val waypointNotes: String = newWaypointNotesET.text.toString()
 
-        viewModel.addNewWaypointToGeoCache(waypointName, waypointCoordinates, geoCacheInTourID)
-
-        // Clear the editTexts and scroll to bottom of list
-        newWaypointNameET.text.clear()
-        newWaypointCoordinatesET.text.clear()
-        hideKeyboard()
-        waypointListView.adapter?.notifyItemInserted(waypointListView.adapter!!.itemCount + 1)
+        viewModel.waypointAdditionSuccessful.observe(requireActivity(), { waypointAddedEvent ->
+            waypointAddedEvent.getContentIfNotHandled()?.let {
+                (success, message) ->
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+                if(success){
+                    // Clear the editTexts and scroll to bottom of list
+                    newWaypointNameET.setText("")
+                    newWaypointCoordinatesET.setText("")
+                    newWaypointNotesET.setText("")
+                    hideKeyboard()
+                    waypointListView.adapter?.notifyItemInserted(waypointListView.adapter!!.itemCount + 1)
+                }
+            }
+        })
+        viewModel.addNewWaypointToGeoCache(waypointName, waypointCoordinates, waypointNotes, geoCacheInTourID)
     }
 
     companion object {
@@ -108,10 +128,12 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
     }
 
     override fun onGoToClick(waypoint: Waypoint) {
-        val gmmIntentUri = Uri.parse(String.format(resources.getString(R.string.coordinates_format),
-                waypoint.latitude.value, waypoint.longitude.value))
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        startActivity(mapIntent)
+        if(waypoint.latitude != null && waypoint.longitude != null){
+            val gmmIntentUri = Uri.parse(String.format(resources.getString(R.string.coordinates_format),
+                    waypoint.latitude.value, waypoint.longitude.value))
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            startActivity(mapIntent)
+        }
     }
 
     override fun onWaypointDone(waypoint: Waypoint, done: Boolean) {

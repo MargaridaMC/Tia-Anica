@@ -310,20 +310,35 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
         var numberOfPointsInMap = _tour!!.tourGeoCaches.size
         val waypointFeatureList: MutableList<Feature> = ArrayList()
         for (gcit in _tour!!.tourGeoCaches) {
+
+            val geoCacheInTourLatLng = gcit.geoCache.geoCache.latLng
+            val geoCacheInTourCoordinatePoint = Point.fromLngLat(geoCacheInTourLatLng.longitude, geoCacheInTourLatLng.latitude)
+
             for (waypoint in gcit.geoCache.waypoints){
+
+                if(waypoint.latitude == null || waypoint.longitude ==  null){
+                    continue
+                }
                 val p = Point.fromLngLat(waypoint.longitude.value, waypoint.latitude.value)
+                // If the waypoint coincides with the GZ don't show it on the map
+                if (geoCacheInTourCoordinatePoint == p) continue
+
                 val feature = Feature.fromGeometry(p)
                 feature.addStringProperty(PROPERTY_GEOCACHE_NAME, gcit.geoCache.geoCache.name)
                 feature.addStringProperty(PROPERTY_CODE, gcit.geoCache.geoCache.code)
                 feature.addStringProperty(PROPERTY_WAYPOINT_NAME, waypoint.name)
                 feature.addBooleanProperty(PROPERTY_SELECTED, false)
 
-                if(waypoint.isParking){
-                    feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_PARKING_TYPE)
-                } else if(waypoint.isDone){
-                    feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_DONE_TYPE)
-                } else {
-                    feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_NORMAL_TYPE)
+                when {
+                    waypoint.isParking -> {
+                        feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_PARKING_TYPE)
+                    }
+                    waypoint.isDone -> {
+                        feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_DONE_TYPE)
+                    }
+                    else -> {
+                        feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_NORMAL_TYPE)
+                    }
                 }
 
                 waypointFeatureList.add(feature)
@@ -798,7 +813,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                         e.printStackTrace()
                     }
                 }
-                .setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> }
+                .setNegativeButton("No") { _: DialogInterface?, _: Int -> }
         dialogBuilder.create().show()
     }
 

@@ -27,7 +27,12 @@ class MainActivityViewModel(private val repository: Repository) : ViewModel(){
     fun userIsLoggedIn() {
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            _userIsLoggedIn.postValue(Event(repository.userIsLoggedIn()))
+            val success = repository.userIsLoggedIn()
+            if (success){
+                _userIsLoggedIn.postValue(Event(success, "User is logged in"))
+            } else{
+                _userIsLoggedIn.postValue(Event(success, "It seems you are no longer logged in. Please login again."))
+            }
         }
     }
 

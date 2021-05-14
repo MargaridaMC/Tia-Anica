@@ -285,9 +285,10 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
 
         viewModel.draftUploadResult.observe(this, {
             draftUploadResult -> draftUploadResult.getContentIfNotHandled()?.let {
+            (_, message, _) ->
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setTitle("Draft Upload")
-                    .setMessage(it.message)
+                    .setMessage(message)
                     .setPositiveButton("OK") { _: DialogInterface?, _: Int -> }
             dialogBuilder.create().show()
         }

@@ -6,12 +6,14 @@ import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints
+import net.teamtruta.tiaires.extensions.Event
 import net.teamtruta.tiaires.extensions.Resource
 import net.teamtruta.tiaires.extensions.Status
 import net.teamtruta.tiaires.integration.GeocachingScrapper
 import okhttp3.*
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.util.HashMap
 
 class GroundspeakRepository {
@@ -27,7 +29,12 @@ class GroundspeakRepository {
         val login: Boolean = scrapper.login()
         if(!login)
             return null
-        return scrapper.getGeoCacheDetails(code)
+        return try {
+            scrapper.getGeoCacheDetails(code)
+        } catch (e: Exception){
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun getAuthenticationCookie() : String? {
@@ -96,7 +103,7 @@ class GroundspeakRepository {
 
     }
 
-    fun uploadDrafts(draftFileAbsolutePath: String): Resource<Boolean> {
+    fun uploadDrafts(draftFileAbsolutePath: String): Event<Any> {
         val draftUploadURL = "https://www.geocaching.com/api/proxy/web/v1/LogDrafts/upload"
 
         val client = OkHttpClient().newBuilder()
@@ -119,13 +126,13 @@ class GroundspeakRepository {
             val response = client.newCall(request).execute()
             val requestResponse = response.body()?.string()
             if (requestResponse == null || requestResponse == "[]")
-                Resource(Status.ERROR, null, "Geocaching did not find any new drafts to upload.")
+                Event(false, "Geocaching did not find any new drafts to upload.")
             else {
-                Resource(Status.SUCCESS, null, "Your drafts were successfully uploaded!")
+                Event(true, "Your drafts were successfully uploaded!")
             }
         } catch (e: IOException){
             e.printStackTrace()
-            Resource(Status.ERROR, null, "There was an error uploading your drafts")
+            Event(false, "There was an error uploading your drafts")
         }
 
     }

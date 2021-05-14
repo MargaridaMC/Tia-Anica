@@ -1,5 +1,7 @@
 package net.teamtruta.tiaires.data.models
 
+import java.util.*
+
 class Coordinate {
     var value = 0.0
     var direction : String = ""
@@ -89,15 +91,23 @@ class Coordinate {
             return doubleArrayOf(Math.abs(degrees), minutes)
         }
 
-        fun fromFullCoordinates(coordinateString: String): Array<Coordinate>{
+        fun fromFullCoordinates(coordinateString: String): Pair<Coordinate, Coordinate>?{
 
-            var indexOfLongitudeStart = coordinateString.indexOf("E")
-            if(indexOfLongitudeStart == -1) indexOfLongitudeStart = coordinateString.indexOf("W")
+            return try {
+                coordinateString.toUpperCase(Locale.ROOT)
 
-            val latitude = Coordinate(coordinateString.substring(0, indexOfLongitudeStart).trim())
-            val longitude = Coordinate(coordinateString.substring(indexOfLongitudeStart).trim())
+                var indexOfLongitudeStart = coordinateString.indexOf("E")
+                if(indexOfLongitudeStart == -1) indexOfLongitudeStart = coordinateString.indexOf("W")
 
-            return arrayOf(latitude, longitude)
+                val latitude = Coordinate(coordinateString.substring(0, indexOfLongitudeStart).trim())
+                val longitude = Coordinate(coordinateString.substring(indexOfLongitudeStart).trim())
+
+                Pair(latitude, longitude)
+            } catch (e: Exception){
+                e.printStackTrace()
+                null
+            }
+
 
         }
 

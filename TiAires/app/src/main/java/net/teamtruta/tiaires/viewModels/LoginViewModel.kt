@@ -17,12 +17,12 @@ import net.teamtruta.tiaires.data.repositories.Repository
 
 class LoginViewModel(private val dbRepository: Repository) : ViewModel(){
 
-    private val _loginSuccessful = MutableLiveData<Event<Boolean>>()
-    val loginSuccessful : LiveData<Event<Boolean>>
+    private val _loginSuccessful = MutableLiveData<Event<String>>()
+    val loginSuccessful : LiveData<Event<String>>
         get() = _loginSuccessful
 
-    private val _logoutSuccessful = MutableLiveData<Event<Boolean>>()
-    val logoutSuccessful : LiveData<Event<Boolean>>
+    private val _logoutSuccessful = MutableLiveData<Event<String>>()
+    val logoutSuccessful : LiveData<Event<String>>
         get() = _logoutSuccessful
 
     fun getVersionName(): String{
@@ -48,14 +48,25 @@ class LoginViewModel(private val dbRepository: Repository) : ViewModel(){
     fun login(username: String, password: String) {
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            _loginSuccessful.postValue(Event(dbRepository.login(username, password)))
+            val success = dbRepository.login(username, password)
+            if(success){
+                _loginSuccessful.postValue(Event(success, "Login successful!"))
+            } else {
+                _loginSuccessful.postValue(Event(success, "Login not successful. Please check your credentials."))
+            }
+
         }
     }
 
     fun logout(){
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            _logoutSuccessful.postValue(Event(dbRepository.logout()))
+            val success = dbRepository.logout()
+            if(success){
+                _logoutSuccessful.postValue(Event(success, "Logout successful!"))
+            } else {
+                _logoutSuccessful.postValue(Event(success, "Logout not successful."))
+            }
         }
     }
 

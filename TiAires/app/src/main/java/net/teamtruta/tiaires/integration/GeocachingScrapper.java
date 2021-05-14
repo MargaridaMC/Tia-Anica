@@ -13,6 +13,11 @@ import net.teamtruta.tiaires.data.models.VisitOutcomeEnum;
 import net.teamtruta.tiaires.data.models.Waypoint;
 import net.teamtruta.tiaires.extensions.Rot13;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -28,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import kotlin.Pair;
 
 /**
  * GeocachingScrapper Useful site: https://www.baeldung.com/java-http-request
@@ -422,27 +429,43 @@ public class GeocachingScrapper {
             // Then this cache has an "Additional Waypoint" section
             String additionalWaypointSection = waypointSectionMatcher.group(0);
 
-            // Loop through found waypoints
-            String regexWaypoint = ">([A-Za-z0-9 ]+)</a> \\(([A-Za-z\\s]+)\\).*?([N|S] [0-9]{2,3}° [0-9]{2}.[0-9]{3}) ([E|W] [0-9]{2,3}° [0-9]{2}.[0-9]{3})";
-            Pattern waypointPattern = Pattern.compile(regexWaypoint);
-            Matcher waypointMatcher = waypointPattern.matcher(additionalWaypointSection);
+            Document doc = Jsoup.parse(additionalWaypointSection);
+            // Loop through each row in the "Additional Waypoint" table
+            Elements trElements = doc.select("tr");
 
-            while(waypointMatcher.find()){
+            // Starting at index 1 as the first one is just the titles of the columns
+            for(int i = 1; i < trElements.size(); i+=2){
 
-                String waypointName = waypointMatcher.group(1);
-                String waypointType = waypointMatcher.group(2);
-                String latitudeString = waypointMatcher.group(3);
-                String longitudeString = waypointMatcher.group(4);
-
-                if(name != null && latitudeString != null && longitudeString != null){
-                    Waypoint waypoint = new Waypoint(
-                            waypointName,
-                            latitudeString,
-                            longitudeString,
-                            false,
-                            waypointType.equals("Parking Area"));
-                    waypoints.add(waypoint);
+                Element row = trElements.get(i);
+                Elements tds = row.select("td");
+                String waypointType = tds.get(4).text();
+                if(waypointType.contains("Reference Point")) {
+                    continue;
                 }
+                String waypointName = tds.get(4).select("a").text();
+                String coordinates = tds.get(5).text();
+
+                Coordinate waypointLatitude, waypointLongitude;
+                if(coordinates.equals("???")){
+                    waypointLatitude = null;
+                    waypointLongitude = null;
+                } else {
+                    Pair<Coordinate, Coordinate> waypointCoordinates = Coordinate.Companion.fromFullCoordinates(coordinates);
+                    waypointLatitude = waypointCoordinates.getFirst();
+                    waypointLongitude = waypointCoordinates.getSecond();
+                }
+
+                Elements notesSection = trElements.get(i + 1).select("td");
+                String notes = notesSection.get(2).text();
+
+                Waypoint waypoint = new Waypoint(
+                        waypointName,
+                        waypointLatitude,
+                        waypointLongitude,
+                        false,
+                        waypointType.contains("Parking Area"),
+                        notes);
+                waypoints.add(waypoint);
 
             }
 

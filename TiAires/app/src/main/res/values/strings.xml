@@ -8,7 +8,7 @@
     <string name="notes_input">Notes:</string>
     <string name="found">Found</string>
     <string name="dnf">DNF</string>
-    <string name="notes_hint">Write notes and trackable codes here</string>
+    <string name="notes_hint">Add your notes here</string>
     <string name="failed_login_message">Login failed, please check your username and password and try again.</string>
     <string name="login_button">Login to geocaching.com</string>
     <string name="logout_button">Logout from geocaching.com</string>
@@ -66,5 +66,6 @@
     <string name="tab_text_2">Waypoints</string>
     <string name="waypoint_name_hint">Name</string>
     <string name="waypoint_coordinates_hint">Waypoint Coordinates</string>
+    <string name="waypoint_note">Note:</string>
 
 </resources>

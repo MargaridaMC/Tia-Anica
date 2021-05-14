@@ -12,6 +12,7 @@ import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.daos.*
 import net.teamtruta.tiaires.data.models.*
+import net.teamtruta.tiaires.extensions.Event
 import net.teamtruta.tiaires.extensions.Resource
 import net.teamtruta.tiaires.extensions.Status
 import java.io.FileOutputStream
@@ -123,13 +124,14 @@ class Repository(private val tourDao: GeocachingTourDao,
 
                 if(newGeoCacheID == -1L){
                     //TODO Something went wrong
+                } else {
+                    // Save GeoCacheInTour
+                    val newGeoCacheInTour = GeoCacheInTour(geoCacheDetailIDFK = newGeoCacheID,
+                            tourIDFK = tour.tour.id)
+                    newGeoCacheInTour.orderIdx = index
+                    geoCacheInTourDao.insert(newGeoCacheInTour)
                 }
 
-                // Save GeoCacheInTour
-                val newGeoCacheInTour = GeoCacheInTour(geoCacheDetailIDFK = newGeoCacheID,
-                        tourIDFK = tour.tour.id)
-                newGeoCacheInTour.orderIdx = index
-                geoCacheInTourDao.insert(newGeoCacheInTour)
             }
 
         }
@@ -234,20 +236,21 @@ class Repository(private val tourDao: GeocachingTourDao,
         geoCacheDao.deleteAllGeoCachesNotBeingUsed()
     }
 
-    fun uploadDrafts(visitedGeoCaches: List<GeoCacheInTourWithDetails>): Resource<Boolean> {
+    fun uploadDrafts(visitedGeoCaches: List<GeoCacheInTourWithDetails>): Event<Any> {
 
         val successfullyWroteDraftsToFile = createDraftFile(visitedGeoCaches)
         if(!successfullyWroteDraftsToFile)
-            return Resource(Status.ERROR, null, "There was an error in writing your drafts to file.")
+            return Event(false, "There was an error in writing your drafts to file.")
 
         val draftFileAbsolutePath = App.applicationContext().filesDir.toString() + "/" + DRAFT_FILE_PATH
         val authenticationCookie = getAuthenticationCookie()
         if(authenticationCookie == null || authenticationCookie == "")
-            return Resource(Status.ERROR, null, "There was an issue with your authentication cookie. Please re-authenticate.")
+            return Event(false, "There was an issue with your authentication cookie. Please re-authenticate.")
 
 
         val result = groundspeakRepository.uploadDrafts(draftFileAbsolutePath)
-        if(result.status == Status.SUCCESS){
+        val (success, _, _) = result.peekContent()
+        if(success){
             visitedGeoCaches.forEach{ gcit ->
                 gcit.geoCacheInTour.draftUploaded = true
                 updateGeoCacheInTour(gcit.geoCacheInTour)}
@@ -316,6 +319,10 @@ class Repository(private val tourDao: GeocachingTourDao,
 
     fun onWaypointDone(waypoint: Waypoint) {
         waypointDao.updateWaypoint(waypoint)
+    }
+
+    fun deleteWaypoint(waypoint: Waypoint) {
+        waypointDao.delete(waypoint)
     }
 
 

@@ -14,8 +14,8 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
 
     val gettingTour: MutableLiveData<Boolean?> = repository.gettingTour
 
-    private val _draftUploadResult = MutableLiveData<Event<Resource<Boolean>>> ()
-    val draftUploadResult: LiveData<Event<Resource<Boolean>>>
+    private val _draftUploadResult = MutableLiveData<Event<Any>> ()
+    val draftUploadResult: LiveData<Event<Any>>
         get() = _draftUploadResult
 
     fun updateGeoCacheInTour(gcit: GeoCacheInTour){
@@ -52,7 +52,7 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             if (visitedGeoCaches != null) {
-                _draftUploadResult.postValue(Event(repository.uploadDrafts(visitedGeoCaches)))
+                _draftUploadResult.postValue(repository.uploadDrafts(visitedGeoCaches))
             }
         }
 
