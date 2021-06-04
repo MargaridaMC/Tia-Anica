@@ -317,7 +317,7 @@ class Repository(private val tourDao: GeocachingTourDao,
         waypointDao.insert(newWaypoint)
     }
 
-    fun onWaypointDone(waypoint: Waypoint) {
+    fun updateWaypoint(waypoint: Waypoint) {
         waypointDao.updateWaypoint(waypoint)
     }
 

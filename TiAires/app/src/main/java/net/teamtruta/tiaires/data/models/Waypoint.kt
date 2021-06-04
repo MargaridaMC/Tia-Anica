@@ -11,38 +11,49 @@ import androidx.room.PrimaryKey
                 childColumns = arrayOf("cacheDetailIDFK"),
                 onDelete = ForeignKey.CASCADE)])
 class Waypoint(
-        @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
         val id: Long,
 
-        val name: String = "",
-        val latitude: Coordinate?,
-        val longitude: Coordinate?,
+    var name: String = "",
+    var latitude: Coordinate?,
+    var longitude: Coordinate?,
 
-        var isDone: Boolean,
-        val isParking: Boolean = false,
+    @ColumnInfo(name="isDone") // this is me being lazy and not wanting to change the name in the db
+    var waypointState: Int = WAYPOINT_NOT_ATTEMPTED,
+    val isParking: Boolean = false,
 
-        val notes: String = "",
+    var notes: String = "",
 
-        @ColumnInfo(index = true)
+    @ColumnInfo(index = true)
         var cacheDetailIDFK: Long
 ) {
 
     constructor(name:String, latitude: Coordinate?, longitude: Coordinate?,
-                    waypointDone: Boolean, isParking: Boolean, notes: String):
+                    waypointState: Int, isParking: Boolean, notes: String):
                 this(0, name, latitude, longitude,
-                        waypointDone, isParking, notes, 0)
+                    waypointState, isParking, notes, 0)
 
         constructor(name: String, latitude: String, longitude: String,
-                    waypointDone: Boolean, isParking: Boolean, notes: String) :
+                    waypointState: Int, isParking: Boolean, notes: String) :
                 this(0, name, Coordinate(latitude), Coordinate(longitude),
-                        waypointDone, isParking, notes, 0)
+                    waypointState, isParking, notes, 0)
 
         constructor(name: String, latitude: Coordinate?, longitude: Coordinate?):
                 this(0, name, latitude, longitude,
-                        false, false, "", 0)
+                    WAYPOINT_NOT_ATTEMPTED, false, "", 0)
 
         constructor(name: String, latitude: String, longitude: String):
                 this(0, name, Coordinate(latitude), Coordinate(longitude),
-                        false, false, "", 0)
+                    WAYPOINT_NOT_ATTEMPTED, false, "", 0)
+
+    fun isDone(): Boolean{
+        return waypointState == WAYPOINT_DONE || waypointState == WAYPOINT_NOT_FOUND
+    }
+
+    companion object{
+        val WAYPOINT_NOT_ATTEMPTED = 0
+        val WAYPOINT_DONE = 1
+        val WAYPOINT_NOT_FOUND = 2
+    }
 
 }

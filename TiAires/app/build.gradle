@@ -54,7 +54,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    def appCenterSdkVersion = '3.0.0'
+    def appCenterSdkVersion = '4.1.1'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -71,11 +71,14 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.0'
     
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
-    implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+
     implementation 'androidx.core:core-ktx:1.6.0-alpha03'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // Multistate button (https://github.com/jlhonora/multistatetogglebutton)
+    compile 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
 
     // Mapbox
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
@@ -117,4 +120,5 @@ repositories {
             password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
         }
     }
+    jcenter()
 }

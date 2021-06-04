@@ -1,14 +1,19 @@
 package net.teamtruta.tiaires.extensions
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatCheckBox
 import net.teamtruta.tiaires.R
 
 class TriStatesCheckBox : AppCompatCheckBox {
     private var state = 0
+    private var indeterminateStateDrawableID: Int = R.drawable.half_open_eye
+    private var checkedStateDrawableID: Int = R.drawable.open_eye
+    private var uncheckedStateDrawableID: Int = R.drawable.closed_eye
 
-    constructor(context: Context) : super(context) {
+    constructor(context: Context)
+            : super(context) {
         init()
     }
 
@@ -25,6 +30,14 @@ class TriStatesCheckBox : AppCompatCheckBox {
             defStyleAttr: Int
     ) : super(context, attrs, defStyleAttr) {
         init()
+    }
+
+    fun setCheckboxDrawables(indeterminateStateDrawableID: Int,
+                             checkedStateDrawableID: Int, uncheckedStateDrawableID: Int){
+        this.indeterminateStateDrawableID = indeterminateStateDrawableID
+        this.checkedStateDrawableID = checkedStateDrawableID
+        this.uncheckedStateDrawableID = uncheckedStateDrawableID
+        updateBtn()
     }
 
     private fun init() {
@@ -44,16 +57,21 @@ class TriStatesCheckBox : AppCompatCheckBox {
 
     private fun updateBtn() {
         val btnDrawable: Int = when (state) {
-            INDETERMINATE -> R.drawable.half_open_eye
-            UNCHECKED -> R.drawable.closed_eye
-            CHECKED -> R.drawable.open_eye
-            else -> R.drawable.closed_eye
+            INDETERMINATE -> indeterminateStateDrawableID
+            UNCHECKED -> uncheckedStateDrawableID
+            CHECKED -> checkedStateDrawableID
+            else -> uncheckedStateDrawableID
         }
         setButtonDrawable(btnDrawable)
     }
 
     fun getState(): Int {
         return state
+    }
+
+    fun setState(state : Int){
+        this.state = state
+        updateBtn()
     }
 
     companion object {

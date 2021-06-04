@@ -1,5 +1,7 @@
 package net.teamtruta.tiaires.views
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,6 +21,7 @@ import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.adapters.WaypointListAdapter
 import net.teamtruta.tiaires.callbacks.WaypointInteractionCallback
+import net.teamtruta.tiaires.data.models.Coordinate
 import net.teamtruta.tiaires.data.models.GeoCacheInTourWithDetails
 import net.teamtruta.tiaires.data.models.Waypoint
 import net.teamtruta.tiaires.extensions.hideKeyboard
@@ -29,7 +33,10 @@ import net.teamtruta.tiaires.viewModels.GeoCacheDetailViewModelFactory
  */
 private const val ARG_PARAM1 = "geoCacheID"
 
-class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener, WaypointListAdapter.WaypointDoneOnClickListener {
+class WaypointListFragment : Fragment(),
+    WaypointListAdapter.GoToOnClickListener,
+    WaypointListAdapter.WaypointDoneOnClickListener,
+    WaypointListAdapter.EditWaypointOnClickListener{
 
     private var geoCacheInTourID: Long = -1L
 
@@ -60,7 +67,8 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
         val layoutManager = LinearLayoutManager(container?.context)
         waypointListView.layoutManager = layoutManager
 
-        val waypointListAdapter = WaypointListAdapter(this, this, viewModel)
+        val waypointListAdapter = WaypointListAdapter(this, this,
+            this, viewModel)
         waypointListView.adapter = waypointListAdapter
 
         // Add handler for swiping to delete
@@ -130,13 +138,59 @@ class WaypointListFragment : Fragment(), WaypointListAdapter.GoToOnClickListener
     override fun onGoToClick(waypoint: Waypoint) {
         if(waypoint.latitude != null && waypoint.longitude != null){
             val gmmIntentUri = Uri.parse(String.format(resources.getString(R.string.coordinates_format),
-                    waypoint.latitude.value, waypoint.longitude.value))
+                    waypoint.latitude!!.value, waypoint.longitude!!.value))
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
             startActivity(mapIntent)
         }
     }
 
-    override fun onWaypointDone(waypoint: Waypoint, done: Boolean) {
-        viewModel.onWaypointDone(waypoint, done)
+    override fun onWaypointDone(waypoint: Waypoint, waypointState: Int) {
+        viewModel.onWaypointDone(waypoint, waypointState)
     }
+
+    override fun editWaypoint(waypoint: Waypoint) {
+        val dialog = Dialog(requireActivity())
+        dialog.setContentView(R.layout.edit_waypoint_dialog)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
+        // Get the dialog fields
+        val waypointNameET = dialog.findViewById<EditText>(R.id.et_waypoint_name)
+        waypointNameET.setText(waypoint.name)
+        val waypointCoordinatesET = dialog.findViewById<EditText>(R.id.et_waypoint_coordinates)
+        waypointCoordinatesET.setText(waypoint.latitude?.let {
+            waypoint.longitude?.let { it1 ->
+                Coordinate.prettyPrint(
+                    it, it1
+                )
+            }
+        })
+        val waypointNotesET = dialog.findViewById<EditText>(R.id.et_waypoint_notes)
+        waypointNotesET.setText(waypoint.notes)
+
+        // Setup button to delete waypoint
+        val deleteButton = dialog.findViewById<Button>(R.id.delete_button)
+        deleteButton.setOnClickListener {
+            deleteWaypointDialog(waypoint)
+            dialog.dismiss()
+        }
+
+        // Setup button to accept the changes made to the waypoint
+        val acceptChangesButton = dialog.findViewById<Button>(R.id.accept_changes_button)
+        acceptChangesButton.setOnClickListener {
+            val name: String= waypointNameET.text.toString()
+            val coordinateString: String = waypointCoordinatesET.text.toString()
+            val notes: String = waypointNotesET.text.toString()
+            viewModel.updateWaypoint(waypoint, name, coordinateString, notes)
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    private fun deleteWaypointDialog(waypoint: Waypoint){
+        val alertDialogBuilder = AlertDialog.Builder(requireActivity())
+        alertDialogBuilder.setMessage("Are you sure you want to delete this waypoint? This is irreversible.")
+            .setPositiveButton("Yes") { _, _ -> viewModel.deleteWaypoint(waypoint) }
+            .setNegativeButton("No") {dialog, _ -> dialog.dismiss()}
+    }
+
 }

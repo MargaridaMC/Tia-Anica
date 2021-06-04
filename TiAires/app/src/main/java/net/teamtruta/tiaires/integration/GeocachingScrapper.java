@@ -462,7 +462,7 @@ public class GeocachingScrapper {
                         waypointName,
                         waypointLatitude,
                         waypointLongitude,
-                        false,
+                        Waypoint.Companion.getWAYPOINT_NOT_ATTEMPTED(),
                         waypointType.contains("Parking Area"),
                         notes);
                 waypoints.add(waypoint);

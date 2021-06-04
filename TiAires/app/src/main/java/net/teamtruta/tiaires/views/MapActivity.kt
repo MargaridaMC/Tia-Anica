@@ -319,7 +319,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                 if(waypoint.latitude == null || waypoint.longitude ==  null){
                     continue
                 }
-                val p = Point.fromLngLat(waypoint.longitude.value, waypoint.latitude.value)
+                if(waypoint.isParking) continue
+
+                val p = Point.fromLngLat(waypoint.longitude!!.value, waypoint.latitude!!.value)
                 // If the waypoint coincides with the GZ don't show it on the map
                 if (geoCacheInTourCoordinatePoint == p) continue
 
@@ -333,7 +335,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
                     waypoint.isParking -> {
                         feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_PARKING_TYPE)
                     }
-                    waypoint.isDone -> {
+                    waypoint.isDone() -> {
                         feature.addStringProperty(PROPERTY_WAYPOINT_TYPE, WAYPOINT_DONE_TYPE)
                     }
                     else -> {
@@ -343,7 +345,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
 
                 waypointFeatureList.add(feature)
 
-                location = LatLng(waypoint.latitude.value, waypoint.longitude.value)
+                location = LatLng(waypoint.latitude!!.value, waypoint.longitude!!.value)
                 builder.include(location)
             }
 

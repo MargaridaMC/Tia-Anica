@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.data.repositories.Repository
 import net.teamtruta.tiaires.extensions.Event
@@ -83,7 +80,7 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
         } else {
             val (latitude, longitude) = coordinatePair
             val newWaypoint = Waypoint(waypointName, latitude, longitude,
-                    waypointDone = false, isParking = false, notes = waypointNotes)
+                    waypointState = Waypoint.WAYPOINT_NOT_ATTEMPTED, isParking = false, notes = waypointNotes)
 
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
@@ -97,11 +94,11 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
 
     }
 
-    fun onWaypointDone(waypoint: Waypoint, done: Boolean) {
-        waypoint.isDone = done
+    fun onWaypointDone(waypoint: Waypoint, waypointState: Int) {
+        waypoint.waypointState = waypointState
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            repository.onWaypointDone(waypoint)
+            repository.updateWaypoint(waypoint)
         }
     }
 
@@ -111,6 +108,23 @@ class GeoCacheDetailViewModel (private val repository: Repository) : ViewModel()
             repository.deleteWaypoint(waypoint)
         }
 
+    }
+
+    fun updateWaypoint(waypoint: Waypoint, name: String, coordinateString: String, notes: String) {
+        waypoint.name = name
+        val coordinatePair = Coordinate.fromFullCoordinates(coordinateString)
+        if (coordinatePair != null) {
+            waypoint.latitude = coordinatePair.first
+            waypoint.longitude = coordinatePair.second
+        } else {
+            waypoint.latitude = null
+            waypoint.longitude = null
+        }
+        waypoint.notes = notes
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            repository.updateWaypoint(waypoint)
+        }
     }
 }
 

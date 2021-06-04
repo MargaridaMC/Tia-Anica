@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/tiny_padding"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/medium_padding"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <EditText
+            android:id="@+id/et_waypoint_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/waypoint_name_hint"
+            android:layout_gravity="start"
+            android:layout_weight=".25"
+            android:layout_marginEnd="@dimen/margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/delete_button"/>
+
+        <EditText
+            android:id="@+id/et_waypoint_coordinates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/waypoint_coordinates_hint"
+            android:layout_gravity="end"
+            android:layout_weight=".7"
+            android:layout_marginEnd="@dimen/margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_waypoint_name"
+            app:layout_constraintEnd_toStartOf="@+id/delete_button"
+            />
+
+
+
+        <EditText
+            android:id="@+id/et_waypoint_notes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/notes_hint"
+            android:layout_marginEnd="@dimen/margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_waypoint_coordinates"
+            app:layout_constraintEnd_toStartOf="@+id/delete_button"
+            />
+
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:background="@drawable/delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/et_waypoint_name"
+            app:layout_constraintBottom_toBottomOf="@+id/et_waypoint_name"/>
+
+        <Button
+            android:id="@+id/accept_changes_button"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:background="@drawable/check_circle_filled_in"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/et_waypoint_notes"
+            app:layout_constraintTop_toTopOf="@id/et_waypoint_notes"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
