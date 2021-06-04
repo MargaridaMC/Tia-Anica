@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.*
@@ -46,8 +47,6 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
     private val viewModel: TourViewModel by viewModels{
         TourViewModelFactory((application as App).repository)
     }
-
-    private val geoCAcheDetailActivityRequestCode = 1
 
     // Connect to tour view model
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,9 +100,36 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         dividerItemDecoration.setDrawable(ColorDrawable(getColor(R.color.black)))
         geoCacheListView.addItemDecoration(dividerItemDecoration)
 
-
         //  Setup ping sound
         setupAudio()
+
+        // Setup Bottom navigation bar
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_toolbar)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when(item.itemId) {
+                R.id.refresh_button -> {
+                    reloadTour()
+                    true
+                }
+                R.id.delete_button -> {
+                    deleteTour()
+                    true
+                }
+                R.id.edit_tour_button -> {
+                    editTour()
+                    true
+                }
+                R.id.share_button -> {
+                    share()
+                    true
+                }
+                R.id.map_button -> {
+                    goToMap()
+                    true
+                }
+                    else -> false
+                }
+        }
     }
 
     private fun reloadTourGeoCaches() {
@@ -117,14 +143,13 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         progressText.text = progress
     }
 
-    fun editTour(view: View?) {
+    private fun editTour() {
         val intent = Intent(this, TourCreationActivity::class.java)
-        //intent.putExtra(App.TOUR_ID_EXTRA, tourID)
         intent.putExtra(App.EDIT_EXTRA, true)
         startActivity(intent)
     }
 
-    fun deleteTour(view: View?) {
+    private fun deleteTour() {
         val tourName = _tour!!.tour.name
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Delete tour?")
@@ -151,7 +176,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         dialog.show()
     }
 
-    fun goToMap(view: View?) {
+    fun goToMap() {
         val intent = Intent(this, MapActivity::class.java)
         startActivity(intent)
     }
@@ -164,7 +189,6 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         } else {
             val intent = Intent(this, GeoCacheDetailActivity::class.java)
             intent.putExtra(App.GEOCACHE_IN_TOUR_ID_EXTRA, geoCacheInTour.geoCacheInTour.id)
-            //intent.putExtra(App.TOUR_ID_EXTRA, _tour?.tour?.id)
             startActivity(intent)
         }
 
@@ -198,7 +222,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         finish()
     }
 
-    fun share(view: View?) {
+    fun share() {
         var tourGeoCacheCodesString = _tour?.getTourGeoCacheCodes().toString()
         tourGeoCacheCodesString = tourGeoCacheCodesString.substring(1, tourGeoCacheCodesString.length - 1)
         val shareIntent = Intent(Intent.ACTION_SEND)
@@ -235,7 +259,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         soundID = soundPool?.load(this, R.raw.ping, 1)!!
     }
 
-    fun reloadTour(view: View?) {
+    private fun reloadTour() {
         reloadTourGeoCaches()
     }
 
@@ -308,5 +332,6 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
             }
         }
     }
+
 
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/refresh_button"
+        android:enabled="true"
+        android:icon="@drawable/refresh"
+        android:title="Refresh Tour"/>
+    <item
+        android:id="@+id/delete_button"
+        android:enabled="true"
+        android:icon="@drawable/delete"
+        android:title="Delete Tour"/>
+    <item
+        android:id="@+id/edit_tour_button"
+        android:enabled="true"
+        android:icon="@drawable/pencil_dark"
+        android:title="Edit Tour"/>
+    <item
+        android:id="@+id/share_button"
+        android:enabled="true"
+        android:icon="@drawable/share"
+        android:title="Share Tour"/>
+    <item
+        android:id="@+id/map_button"
+        android:enabled="true"
+        android:icon="@drawable/map_dark"
+        android:title="Go to Map"/>
+
+</menu>
