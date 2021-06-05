@@ -12,12 +12,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/waypoint_name_hint"
-            android:layout_gravity="start"
-            android:layout_weight=".25"
-            android:layout_marginEnd="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/delete_button"/>
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <EditText
             android:id="@+id/et_waypoint_coordinates"
@@ -26,10 +23,9 @@
             android:hint="@string/waypoint_coordinates_hint"
             android:layout_gravity="end"
             android:layout_weight=".7"
-            android:layout_marginEnd="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_waypoint_name"
-            app:layout_constraintEnd_toStartOf="@+id/delete_button"
+            app:layout_constraintEnd_toEndOf="parent"
             />
 
 
@@ -39,28 +35,31 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/notes_hint"
-            android:layout_marginEnd="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_waypoint_coordinates"
-            app:layout_constraintEnd_toStartOf="@+id/delete_button"
+            app:layout_constraintEnd_toEndOf="parent"
             />
 
-        <Button
-            android:id="@+id/delete_button"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:background="@drawable/delete"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/et_waypoint_name"
-            app:layout_constraintBottom_toBottomOf="@+id/et_waypoint_name"/>
 
         <Button
             android:id="@+id/accept_changes_button"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:background="@drawable/check_circle_filled_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_changes"
+            android:theme="@style/Button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_waypoint_notes"
+            app:layout_constraintEnd_toStartOf="@+id/delete_button"/>
+
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_waypoint"
+            android:theme="@style/Button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/et_waypoint_notes"
-            app:layout_constraintTop_toTopOf="@id/et_waypoint_notes"/>
+            app:layout_constraintTop_toBottomOf="@id/et_waypoint_notes"
+            app:layout_constraintStart_toEndOf="@+id/accept_changes_button"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
