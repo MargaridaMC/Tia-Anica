@@ -68,5 +68,6 @@
     <string name="waypoint_coordinates_hint">Waypoint Coordinates</string>
     <string name="waypoint_note">Note:</string>
     <string name="delete_waypoint">Delete Waypoint</string>
+    <string name="geocache_code">Enter the code for a new geocache here</string>
 
 </resources>

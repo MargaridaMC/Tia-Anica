@@ -66,29 +66,8 @@
                 android:hint="@string/notes_hint"
                 app:layout_constraintTop_toBottomOf="@+id/line1"
                 app:layout_constraintStart_toEndOf="@+id/notes"
-                app:layout_constraintEnd_toStartOf="@+id/delete_button"
+                app:layout_constraintEnd_toEndOf="@+id/line1"
                 />
-
-        <Button
-            android:id="@+id/delete_button"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:background="@drawable/delete"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/line1"/>
-
-        <Button
-            android:id="@+id/accept_changes_button"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:background="@drawable/check_circle_filled_in"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/et_waypoint_notes"
-            app:layout_constraintBottom_toBottomOf="@+id/et_waypoint_notes"
-            app:layout_constraintTop_toTopOf="@id/et_waypoint_notes"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

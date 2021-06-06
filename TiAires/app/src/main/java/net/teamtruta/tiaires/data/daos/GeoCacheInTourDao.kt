@@ -39,4 +39,7 @@ interface GeoCacheInTourDao {
     @Query("SELECT geoCacheDetailIDFK FROM cache WHERE id=:geoCacheInTourID")
     fun getGeoCacheIDFromGeoCacheInTourID(geoCacheInTourID: Long): Long
 
+    @Delete
+    fun delete(geoCacheInTour: GeoCacheInTour)
+
 }

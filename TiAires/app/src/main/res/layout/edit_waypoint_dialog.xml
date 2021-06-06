@@ -47,6 +47,7 @@
             android:layout_height="wrap_content"
             android:text="@string/save_changes"
             android:theme="@style/Button"
+            style="?android:attr/borderlessButtonStyle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_waypoint_notes"
             app:layout_constraintEnd_toStartOf="@+id/delete_button"/>
@@ -56,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/delete_waypoint"
+            style="?android:attr/borderlessButtonStyle"
             android:theme="@style/Button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_waypoint_notes"

@@ -14,12 +14,14 @@ import net.teamtruta.tiaires.adapters.GeoCacheListAdapter.Companion.visitItem
 import net.teamtruta.tiaires.data.models.VisitOutcomeEnum
 
 // Useful link: https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
-class GeoCacheInteractionCallback(private val context : Context, private val geoCacheListAdapter: GeoCacheListAdapter) :
+class GeoCacheInteractionCallback(private val context : Context,
+                                  private val geoCacheListAdapter: GeoCacheListAdapter) :
         ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
     private var dragStarted = false
     override fun isLongPressDragEnabled(): Boolean {
-        return true
+        //return true
+        return false
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {

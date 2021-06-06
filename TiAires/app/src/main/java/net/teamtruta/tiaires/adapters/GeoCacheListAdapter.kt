@@ -1,8 +1,10 @@
 package net.teamtruta.tiaires.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Spanned
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -11,19 +13,23 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import net.teamtruta.tiaires.App
-import net.teamtruta.tiaires.extensions.GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon
-import net.teamtruta.tiaires.extensions.GeoCacheIcon.Companion.getIconDrawable
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.*
+import net.teamtruta.tiaires.extensions.GeoCacheAttributeIcon.Companion.getGeoCacheAttributeIcon
+import net.teamtruta.tiaires.extensions.GeoCacheIcon.Companion.getIconDrawable
 import net.teamtruta.tiaires.viewModels.TourViewModel
 import net.teamtruta.tiaires.viewModels.TourViewModelFactory
+import net.teamtruta.tiaires.views.TourActivity
 import java.time.Instant
 import java.util.*
 
+
 class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
                           private val goToOnClickListener: GoToOnClickListener?,
+                          private val viewHolderOnClickListener: ViewHolder.ClickListener,
                           private val context: Context,
-                          private val viewModel: TourViewModel) :
+                          private val viewModel: TourViewModel,
+                          val activity: TourActivity) :
         RecyclerView.Adapter<GeoCacheListAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
     fun setGeoCacheInTourList(list: List<GeoCacheInTourWithDetails?>) {
@@ -36,7 +42,8 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val geoCacheInTour = geoCacheInTourList[position]!!.geoCacheInTour
+        val geoCacheInTourWithDetails = geoCacheInTourList[position]
+        val geoCacheInTour = geoCacheInTourWithDetails!!.geoCacheInTour
         val geoCacheWithLogsAndAttributes = geoCacheInTourList[position]!!.geoCache
         val geoCache = geoCacheWithLogsAndAttributes.geoCache
 
@@ -156,6 +163,30 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
                 holder.attributeList.addView(iv)
             }
         }
+
+        // Setup Edit Mode
+        holder.geoCacheSelectedCheckbox.setOnClickListener{
+            viewHolderOnClickListener.onItemClicked(position)}
+
+        if(TourActivity.isInActionMode){
+            unexpandHolder(holder)
+            holder.geoCacheSymbol.visibility = View.INVISIBLE
+            holder.extraInfoArrow.visibility = View.INVISIBLE
+            holder.editButton.visibility = View.GONE
+            holder.goToButton.visibility = View.GONE
+            holder.geoCacheSelectedCheckbox.visibility = View.VISIBLE
+            holder.reorderHandle.visibility = View.VISIBLE
+            val geocacheIsSelected = TourActivity.selectedGeoCacheCodes.contains(geoCache.code)
+            holder.geoCacheSelectedCheckbox.isChecked = geocacheIsSelected
+        } else {
+            holder.geoCacheSymbol.visibility = View.VISIBLE
+            holder.extraInfoArrow.visibility = View.VISIBLE
+            holder.editButton.visibility = View.VISIBLE
+            holder.goToButton.visibility = View.VISIBLE
+            holder.geoCacheSelectedCheckbox.visibility = View.GONE
+            holder.reorderHandle.visibility = View.GONE
+        }
+
     }
 
     private fun getHintText(geoCache: GeoCache): Spanned {
@@ -199,16 +230,19 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         holder.attributeList.visibility = View.GONE
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.element_geo_cache_layout, parent, false)
-        return ViewHolder(v)
+        val viewHolder =  ViewHolder(v, viewHolderOnClickListener)
+        viewHolder.reorderHandle.setOnTouchListener{
+            _, event -> if(event.actionMasked == MotionEvent.ACTION_DOWN){
+                activity.startDragging(viewHolder)
+                }
+            return@setOnTouchListener true
+        }
+        return viewHolder
     }
 
-    //@Override
-    //public void onItemDismiss(int position) {
-    //tour._tourCaches.remove(position);
-    //notifyItemRemoved(position);
-    //}
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         Collections.swap(geoCacheInTourList, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
@@ -218,7 +252,9 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         viewModel.reorderTourCaches(geoCacheInTourList)
     }
 
-    class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(var view: View, private val onClickListener: ClickListener) :
+        RecyclerView.ViewHolder(view), View.OnClickListener, View.OnLongClickListener {
+
         var geoCacheName: TextView = view.findViewById(R.id.geo_cache_title)
         var geoCacheSymbol: ImageView = view.findViewById(R.id.geo_cache_symbol)
         var geoCacheCode: TextView = view.findViewById(R.id.geo_cache_code)
@@ -227,7 +263,6 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         var geoCacheFavs: TextView = view.findViewById(R.id.geo_cache_favs)
         var geoCacheHasHint: TextView = view.findViewById(R.id.geo_cache_has_hint)
         var dnfInfo: TextView = view.findViewById(R.id.dnf_risk)
-        var dnfInfoExpanded: TextView = view.findViewById(R.id.dnf_info_expanded)
         var hint: TextView = view.findViewById(R.id.hint)
         var editButton: Button = view.findViewById(R.id.edit_button)
         var goToButton: Button = view.findViewById(R.id.go_to_button)
@@ -236,6 +271,30 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         var extraInfoArrow: CheckBox = view.findViewById(R.id.extra_info_arrow)
         var lastLogsLayout: GridLayout = view.findViewById(R.id.last10LogsSquares)
         var attributeList: LinearLayout = view.findViewById(R.id.geo_cache_attributes)
+
+        var geoCacheSelectedCheckbox: CheckBox = view.findViewById(R.id.geo_cache_selection_checkbox)
+        var reorderHandle: ImageView = view.findViewById(R.id.reorder_handle)
+
+        // Setup click listener so that long click enables action mode
+        init {
+            view.setOnLongClickListener(this)
+            view.setOnClickListener(this)
+            }
+
+
+        override fun onLongClick(view: View?): Boolean {
+            onClickListener.onItemLongClicked(absoluteAdapterPosition)
+            return true
+        }
+
+        override fun onClick(view: View?) {
+            onClickListener.onItemClicked(absoluteAdapterPosition)
+        }
+
+        interface ClickListener {
+            fun onItemClicked(position: Int)
+            fun onItemLongClicked(position: Int): Boolean
+        }
 
     }
 
@@ -250,6 +309,8 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
     interface OnVisitListener {
         fun onVisit(visit: String?)
     }
+
+
 
     companion object {
         private var geoCacheInTourList: List<GeoCacheInTourWithDetails?> = listOf()

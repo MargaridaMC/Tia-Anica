@@ -67,7 +67,8 @@
         <activity
             android:name=".views.TourActivity"
             android:parentActivityName=".views.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".views.GeoCacheDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />

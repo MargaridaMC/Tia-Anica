@@ -10,12 +10,13 @@ import android.media.AudioManager
 import android.media.SoundPool
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -26,17 +27,20 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.*
+import net.teamtruta.tiaires.adapters.GeoCacheAttributeListAdapter
 import net.teamtruta.tiaires.adapters.GeoCacheListAdapter
 import net.teamtruta.tiaires.adapters.GeoCacheListAdapter.*
-import net.teamtruta.tiaires.adapters.GeoCacheAttributeListAdapter
 import net.teamtruta.tiaires.callbacks.GeoCacheInteractionCallback
 import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.viewModels.TourViewModel
 import net.teamtruta.tiaires.viewModels.TourViewModelFactory
 import java.util.*
 
-class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListener,
-        OnVisitListener {
+class TourActivity : AppCompatActivity(),
+        EditOnClickListener,
+        GoToOnClickListener,
+        OnVisitListener,
+        ViewHolder.ClickListener{
 
     private var _tour: GeocachingTourWithCaches? = null
 
@@ -47,6 +51,11 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
     private val viewModel: TourViewModel by viewModels{
         TourViewModelFactory((application as App).repository)
     }
+
+    lateinit var geoCacheListAdapter: GeoCacheListAdapter
+    private lateinit var itemTouchHelper: ItemTouchHelper
+    var actionMode: ActionMode? = null
+
 
     // Connect to tour view model
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,8 +71,9 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         val layoutManager = LinearLayoutManager(this)
         geoCacheListView.layoutManager = layoutManager
         //val onVisitListener = this
-        val geoCacheListAdapter = GeoCacheListAdapter(this,
-                this, applicationContext, viewModel)
+        geoCacheListAdapter = GeoCacheListAdapter(this,
+                this, this,
+            applicationContext, viewModel, this)
         geoCacheListView.adapter = geoCacheListAdapter
 
         // Get tour from ID
@@ -89,7 +99,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
                 layoutManager.scrollToPosition(lastVisitedCacheIndex)
 
                 // Add swipe to visit action
-                val itemTouchHelper = ItemTouchHelper(
+                itemTouchHelper = ItemTouchHelper(
                         GeoCacheInteractionCallback(this, geoCacheListAdapter))
                 itemTouchHelper.attachToRecyclerView(geoCacheListView)
             }})
@@ -130,6 +140,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
                     else -> false
                 }
         }
+
     }
 
     private fun reloadTourGeoCaches() {
@@ -176,7 +187,7 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         dialog.show()
     }
 
-    fun goToMap() {
+    private fun goToMap() {
         val intent = Intent(this, MapActivity::class.java)
         startActivity(intent)
     }
@@ -333,5 +344,90 @@ class TourActivity : AppCompatActivity(), EditOnClickListener, GoToOnClickListen
         }
     }
 
+    // Action / Edit Mode
+    private val callback = object : ActionMode.Callback {
 
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.tour_edit_mode, menu)
+            mode?.title = "1 selected"
+            isInActionMode = true
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            return false
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.action_delete -> {
+                    // Remove selected geoCaches from tour
+                    for(geoCacheCode in selectedGeoCacheCodes){
+                        val geoCacheInTourToRemove: GeoCacheInTourWithDetails? =
+                            _tour?.tourGeoCaches?.filter { x -> x.geoCache.geoCache.code == geoCacheCode }
+                                ?.get(0)
+                        if (geoCacheInTourToRemove != null) {
+                            viewModel.removeGeoCacheFromTour(geoCacheInTourToRemove )
+                        }
+                    }
+                    selectedGeoCacheCodes = ArrayList()
+                    mode?.finish()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            actionMode = null
+            isInActionMode = false
+        }
+    }
+
+
+    override fun onItemClicked(position: Int) {
+        selectItem(position)
+    }
+
+    override fun onItemLongClicked(position: Int): Boolean {
+        if(actionMode != null){
+            return false
+        }
+        actionMode = startSupportActionMode(callback)
+        geoCacheListAdapter.notifyDataSetChanged()
+        selectItem(position)
+        return true
+    }
+
+    private fun selectItem(position: Int) {
+        val selectedGeoCacheCode: String = _tour?.tourGeoCaches?.get(position)?.geoCache?.geoCache?.code ?: return
+
+        if (!selectedGeoCacheCodes.contains(selectedGeoCacheCode)) {
+            selectedGeoCacheCodes.add(selectedGeoCacheCode)
+        } else {
+            selectedGeoCacheCodes.remove(selectedGeoCacheCode)
+        }
+        updateViewCounter()
+        geoCacheListAdapter.notifyItemChanged(position)
+    }
+
+    private fun updateViewCounter() {
+        val counter: Int = selectedGeoCacheCodes.size
+        if (counter >= 1) {
+            actionMode?.title = "$counter item(s) selected"
+        } else {
+            actionMode?.finish()
+            geoCacheListAdapter.notifyDataSetChanged()
+        }
+
+    }
+
+    companion object{
+        var isInActionMode = false
+        var selectedGeoCacheCodes: ArrayList<String> = ArrayList()
+    }
+
+    fun startDragging(viewHolder: RecyclerView.ViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
+    }
 }

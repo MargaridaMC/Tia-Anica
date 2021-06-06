@@ -18,6 +18,8 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
     val draftUploadResult: LiveData<Event<Any>>
         get() = _draftUploadResult
 
+    val geoCachesBeingObtained: MutableMap<String, MutableLiveData<Event<Any>?>> = mutableMapOf()
+
     fun updateGeoCacheInTour(gcit: GeoCacheInTour){
         val scope = CoroutineScope(Job() + Dispatchers.IO)
         scope.launch {
@@ -70,7 +72,30 @@ class TourViewModel(private val repository: Repository) : ViewModel(){
             } }
         }
 
+    fun addNewGeoCacheToTour(_tour: GeocachingTourWithCaches,  newGeoCacheCode: String) {
+
+        geoCachesBeingObtained[newGeoCacheCode] = MutableLiveData(null)
+
+        // Check if the geocache already exists in the tour
+        if(newGeoCacheCode in _tour.getTourGeoCacheCodes()){
+            geoCachesBeingObtained[newGeoCacheCode]?.value = Event(false, "The geocache with code $newGeoCacheCode already exists in the tour. Check if you specified the correct code.")
+            return
+        }
+
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            geoCachesBeingObtained[newGeoCacheCode]?.postValue(repository.addNewGeoCacheToTour(_tour, newGeoCacheCode))
+        }
     }
+
+    fun removeGeoCacheFromTour(geoCacheInTour: GeoCacheInTourWithDetails) {
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            repository.removeGeoCacheFromTour(geoCacheInTour.geoCacheInTour)
+        }
+    }
+
+}
 
 
 class TourViewModelFactory(private val repository: Repository): ViewModelProvider.Factory{

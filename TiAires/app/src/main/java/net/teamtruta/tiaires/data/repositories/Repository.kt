@@ -13,8 +13,6 @@ import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.daos.*
 import net.teamtruta.tiaires.data.models.*
 import net.teamtruta.tiaires.extensions.Event
-import net.teamtruta.tiaires.extensions.Resource
-import net.teamtruta.tiaires.extensions.Status
 import java.io.FileOutputStream
 import java.io.IOException
 import java.time.Instant
@@ -325,5 +323,31 @@ class Repository(private val tourDao: GeocachingTourDao,
         waypointDao.delete(waypoint)
     }
 
+    suspend fun addNewGeoCacheToTour(tour: GeocachingTourWithCaches, newGeoCacheCode: String): Event<Any> {
+
+        // Get GeoCache
+        val newGeoCacheID = getGeoCacheIDFromCode(newGeoCacheCode)
+
+        if (newGeoCacheID == -1L) {
+            return Event(
+                false,
+                "Something went wrong when getting the cache $newGeoCacheCode. Please check that the code is correct."
+            )
+        } else {
+            // Save GeoCacheInTour
+            val newGeoCacheInTour = GeoCacheInTour(
+                geoCacheDetailIDFK = newGeoCacheID,
+                tourIDFK = tour.tour.id
+            )
+            newGeoCacheInTour.orderIdx = tour.tourGeoCaches.size + 1
+            geoCacheInTourDao.insert(newGeoCacheInTour)
+            return Event(true, "Successfully obtained the cache $newGeoCacheCode")
+
+        }
+    }
+
+    fun removeGeoCacheFromTour(geoCacheInTour: GeoCacheInTour) {
+        geoCacheInTourDao.delete(geoCacheInTour)
+    }
 
 }
