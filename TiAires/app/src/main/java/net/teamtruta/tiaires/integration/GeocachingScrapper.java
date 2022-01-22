@@ -204,7 +204,7 @@ public class GeocachingScrapper {
         String pageContents = readHttpRequest(httpConnection).toString();
 
         // 1. Get cache name
-        String regexNamePattern = "<span id=\"ctl00_ContentBody_CacheName\">(.+?)</span>";
+        String regexNamePattern = "<span id=\"ctl00_ContentBody_CacheName\" class=\"tex2jax_ignore\">(.+?)</span>";
         Pattern pattern = Pattern.compile(regexNamePattern);
         Matcher matcher = pattern.matcher(pageContents);
 
@@ -409,12 +409,17 @@ public class GeocachingScrapper {
 
         // 10. Get cache attributes
         List<GeoCacheAttribute> attributes = new ArrayList();
-        for(GeoCacheAttributeEnum attribute: GeoCacheAttributeEnum.values()){
-            String atString = attribute.getAttributeString();
-            pattern = Pattern.compile(atString);
-            matcher = pattern.matcher(pageContents);
-            if(matcher.find()){
-                attributes.add(new GeoCacheAttribute(attribute));
+        Pattern attributePageSectionPattern = Pattern.compile("Attributes((.|\\n)*)Attributes");
+        Matcher attributePageSectionMatcher =  attributePageSectionPattern.matcher(pageContents);
+        if(attributePageSectionMatcher.find()){
+            String attributePageSection = attributePageSectionMatcher.group(0);
+            for(GeoCacheAttributeEnum attribute: GeoCacheAttributeEnum.values()){
+                String atString = attribute.getAttributeString();
+                pattern = Pattern.compile(atString);
+                matcher = pattern.matcher(attributePageSection);
+                if(matcher.find()){
+                    attributes.add(new GeoCacheAttribute(attribute));
+                }
             }
         }
 

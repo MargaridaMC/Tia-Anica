@@ -87,7 +87,8 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
                     hintString,
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
-            holder.geoCacheHasHint.text = HtmlCompat.fromHtml(context.getString(R.string.geo_cache_has_no_hint),
+            val hintString = context.getString(R.string.geo_cache_has_no_hint)
+                holder.geoCacheHasHint.text = HtmlCompat.fromHtml(hintString,
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
         val last10Logs = geoCacheWithLogsAndAttributes.getLastNLogs(10)

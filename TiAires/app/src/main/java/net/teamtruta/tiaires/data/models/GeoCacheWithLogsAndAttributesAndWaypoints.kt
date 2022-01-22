@@ -33,7 +33,7 @@ class GeoCacheWithLogsAndAttributesAndWaypoints(
                 get() {
                         if (geoCache.previousVisitOutcome == VisitOutcomeEnum.Disabled) return "DISABLED"
                         if (getLastNLogs(10).any {it.logType == VisitOutcomeEnum.DNF }) return "DNF RISK"
-                        if (attributes.map { it.equals(GeoCacheAttributeEnum.NeedsMaintenance) }.any()) return "NEEDS MAINTENANCE"
+                        if (this.attributes.filter{ it.attributeType == GeoCacheAttributeEnum.NeedsMaintenance }.any()) return "NEEDS MAINTENANCE"
                         return ""
                 }
 

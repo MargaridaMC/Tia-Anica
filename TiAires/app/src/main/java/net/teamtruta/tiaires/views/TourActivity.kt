@@ -381,6 +381,7 @@ class TourActivity : AppCompatActivity(),
         override fun onDestroyActionMode(mode: ActionMode?) {
             actionMode = null
             isInActionMode = false
+            selectedGeoCacheCodes.clear()
         }
     }
 
