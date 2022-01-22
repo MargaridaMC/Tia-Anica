@@ -34,8 +34,8 @@ class GeocachingTourWithCaches(
         fun getLastVisitedGeoCache(): Int{
 
                 val lastVisitedGeoCache = tourGeoCaches
-                        .indexOfFirst { x -> x.geoCacheInTour.currentVisitOutcome == VisitOutcomeEnum.Found ||
-                        x.geoCacheInTour.currentVisitOutcome == VisitOutcomeEnum.DNF}
+                        .indexOfLast { it.geoCacheInTour.currentVisitOutcome == VisitOutcomeEnum.Found ||
+                        it.geoCacheInTour.currentVisitOutcome == VisitOutcomeEnum.DNF}
 
 
                 if(lastVisitedGeoCache == -1){
