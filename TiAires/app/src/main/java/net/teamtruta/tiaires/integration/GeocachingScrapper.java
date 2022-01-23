@@ -150,7 +150,7 @@ public class GeocachingScrapper {
         // Added my Mg
         // Login using the Authentication Cookie (or rather, check that this authentication cookie is valid)
 
-        // Check that this object does have an Authetication Token
+        // Check that this object does have an Authentication Token
         if (_groundspeakAuthCookie == null) return false;
 
         URL url = new URL(GEOCACHING_URL + LOGIN_PAGE);

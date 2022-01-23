@@ -11,11 +11,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.teamtruta.tiaires.App
+import net.teamtruta.tiaires.data.repositories.GroundspeakRepository
 import net.teamtruta.tiaires.extensions.Event
-import net.teamtruta.tiaires.data.repositories.Repository
 
 
-class LoginViewModel(private val dbRepository: Repository) : ViewModel(){
+class LoginViewModel(private val groundspeakRepository: GroundspeakRepository) : ViewModel(){
 
     private val _loginSuccessful = MutableLiveData<Event<String>>()
     val loginSuccessful : LiveData<Event<String>>
@@ -36,19 +36,29 @@ class LoginViewModel(private val dbRepository: Repository) : ViewModel(){
         }
     }
 
-    fun userIsLoggedIn(): Boolean {
-        val authenticationCookie = dbRepository.getAuthenticationCookie()
-        return  authenticationCookie != null && authenticationCookie != ""
+    fun userIsLoggedIn() {
+        /*val authenticationCookie = dbRepository.getAuthenticationCookie()
+        return  authenticationCookie != null && authenticationCookie != ""*/
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            val success = groundspeakRepository.login()
+            if(success){
+                _loginSuccessful.postValue(Event(success, "Login successful!"))
+            } else {
+                _loginSuccessful.postValue(Event(success, "Login not successful. Please check your credentials."))
+            }
+
+        }
     }
 
     fun getUsername(): String {
-        return dbRepository.getUsername() ?: ""
+        return groundspeakRepository.getUsername() ?: ""
     }
 
     fun login(username: String, password: String) {
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            val success = dbRepository.login(username, password)
+            val success = groundspeakRepository.login(username, password)
             if(success){
                 _loginSuccessful.postValue(Event(success, "Login successful!"))
             } else {
@@ -61,7 +71,7 @@ class LoginViewModel(private val dbRepository: Repository) : ViewModel(){
     fun logout(){
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            val success = dbRepository.logout()
+            val success = groundspeakRepository.logout()
             if(success){
                 _logoutSuccessful.postValue(Event(success, "Logout successful!"))
             } else {
@@ -72,10 +82,10 @@ class LoginViewModel(private val dbRepository: Repository) : ViewModel(){
 
 }
 
-class LoginViewModelFactory(private val repository: Repository): ViewModelProvider.Factory{
+class LoginViewModelFactory(private val groundspeakRepository: GroundspeakRepository): ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)){
-            return LoginViewModel(repository) as T
+            return LoginViewModel(groundspeakRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
     }

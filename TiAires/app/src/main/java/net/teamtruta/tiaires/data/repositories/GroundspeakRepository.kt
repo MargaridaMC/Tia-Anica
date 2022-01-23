@@ -2,13 +2,12 @@ package net.teamtruta.tiaires.data.repositories
 
 import android.app.Application
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.microsoft.appcenter.analytics.Analytics
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.GeoCacheWithLogsAndAttributesAndWaypoints
 import net.teamtruta.tiaires.extensions.Event
-import net.teamtruta.tiaires.extensions.Resource
-import net.teamtruta.tiaires.extensions.Status
 import net.teamtruta.tiaires.integration.GeocachingScrapper
 import okhttp3.*
 import java.io.File
@@ -44,6 +43,29 @@ class GroundspeakRepository {
         return sharedPreferences.getString(context.getString(R.string.authentication_cookie_key), null)
     }
 
+    private fun setAuthenticationCookie(authCookie: String){
+        val context =  App.applicationContext()
+        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key),
+                Application.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(context.getString(R.string.authentication_cookie_key), authCookie)
+        editor.apply()
+    }
+
+    fun getUsername(): String?{
+        val context =  App.applicationContext()
+        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Application.MODE_PRIVATE)
+        return sharedPreferences.getString(USERNAME, "")
+    }
+
+    fun setUsername(username: String){
+        val context =  App.applicationContext()
+        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key),
+                Application.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(USERNAME, username)
+        editor.apply()
+    }
     fun login(username: String, password: String): Boolean{
 
         val gs = GeocachingScrapper(getAuthenticationCookie())
@@ -71,36 +93,22 @@ class GroundspeakRepository {
         }
     }
 
-    private fun setAuthenticationCookie(authCookie: String){
-        val context =  App.applicationContext()
-        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key),
-                Application.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString(context.getString(R.string.authentication_cookie_key), authCookie)
-        editor.apply()
-    }
-
-    fun getUsername(): String?{
-        val context =  App.applicationContext()
-        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Application.MODE_PRIVATE)
-        return sharedPreferences.getString(USERNAME, "")
-    }
-
-    fun setUsername(username: String){
-        val context =  App.applicationContext()
-        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key),
-                Application.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString(USERNAME, username)
-        editor.apply()
-    }
-
     fun login(): Boolean{
 
         val authenticationCookie = getAuthenticationCookie() ?: return false
         val gs = GeocachingScrapper(authenticationCookie)
         return gs.login()
 
+    }
+
+    fun logout(): Boolean {
+        val context =  App.applicationContext()
+        val sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), AppCompatActivity.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(USERNAME)
+        editor.remove(context.getString(R.string.authentication_cookie_key))
+        editor.apply()
+        return true
     }
 
     fun uploadDrafts(draftFileAbsolutePath: String): Event<Any> {

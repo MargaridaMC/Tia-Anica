@@ -3,6 +3,7 @@ package net.teamtruta.tiaires
 import android.app.Application
 import android.content.Context
 import net.teamtruta.tiaires.data.TiAiresDatabase
+import net.teamtruta.tiaires.data.repositories.GroundspeakRepository
 import net.teamtruta.tiaires.data.repositories.Repository
 
 
@@ -17,6 +18,7 @@ class App : Application() {
                 database.geoCacheAttributeDao(),
                 database.waypointDao())
     }
+    val groundspeakRepository by lazy { GroundspeakRepository() }
 
     init {
         instance = this

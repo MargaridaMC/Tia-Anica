@@ -21,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
     var TAG: String = LoginActivity::class.java.simpleName
 
     private val viewModel: LoginViewModel by viewModels{
-        LoginViewModelFactory((application as App).repository)
+        LoginViewModelFactory((application as App).groundspeakRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,9 +48,8 @@ class LoginActivity : AppCompatActivity() {
             handled
         }
 
-        // Check if we already have a authentication cookie
-        val userIsLoggedIn = viewModel.userIsLoggedIn()
-        if (!userIsLoggedIn) {
+        // Check if we already have a username
+        if (viewModel.getUsername() == "") {
             val logoutButton = findViewById<Button>(R.id.logout_button)
             logoutButton.visibility = View.INVISIBLE
         } else {

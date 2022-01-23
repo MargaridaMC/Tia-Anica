@@ -18,6 +18,8 @@ import kotlinx.android.synthetic.main.activity_tour_creation.*
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
+import net.teamtruta.tiaires.viewModels.LoginViewModel
+import net.teamtruta.tiaires.viewModels.LoginViewModelFactory
 import net.teamtruta.tiaires.viewModels.TourCreationViewModel
 import net.teamtruta.tiaires.viewModels.TourCreationViewModelFactory
 import java.util.*
@@ -29,6 +31,9 @@ class TourCreationActivity : AppCompatActivity() {
 
     private val viewModel: TourCreationViewModel by viewModels{
         TourCreationViewModelFactory((application as App).repository)
+    }
+    private val loginViewModel: LoginViewModel by viewModels{
+        LoginViewModelFactory((application as App).groundspeakRepository)
     }
 
     /**
@@ -82,7 +87,7 @@ class TourCreationActivity : AppCompatActivity() {
     fun createTour(view: View?) {
 
 
-        // Get cache codes from UI and save to file
+        // Get cache codes from UI
         val tourNameField = findViewById<EditText>(R.id.tour_name)
         val newTourName = tourNameField.text.toString()
         val tourGeoCacheCodesField = findViewById<EditText>(R.id.geo_cache_codes)
@@ -96,7 +101,7 @@ class TourCreationActivity : AppCompatActivity() {
         }
         val properties: MutableMap<String, String> = HashMap()
         properties["TourName"] = newTourName
-        properties["NumGeoCaches"] = Integer.toString(_geoCacheCodesList.size)
+        properties["NumGeoCaches"] = _geoCacheCodesList.size.toString()
         Analytics.trackEvent("TourCreationActivity.createTour", properties)
 
         // go get the details of each geocache
@@ -111,7 +116,7 @@ class TourCreationActivity : AppCompatActivity() {
     fun getTour(tourName: String) {
 
         // If we have caches to get, check for internet access
-        if (!isNetworkConnected) {
+         if (!isNetworkConnected) {
             Log.e("TAG", "Not connected")
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Unable to get caches. Please make sure you are connected to the internet.")
@@ -121,19 +126,40 @@ class TourCreationActivity : AppCompatActivity() {
             return
         }
 
-        // Need new tour and add these caches
-        if (_tour == null) {
-            viewModel.createNewTourWithCaches(tourName, _geoCacheCodesList)
-        } else {
-            if (_tour!!.tour.name != tourName) {
-                _tour!!.tour.name = tourName
-                viewModel.updateGeoCachingTour(_tour!!)
+        // Check that user is properly logged in
+        loginViewModel.loginSuccessful.observe(this, { loginEventContent ->
+            loginEventContent.getContentIfNotHandled()?.let {
+                    (success, _) ->
+                if(!success){
+                    // Login not success
+                    Log.e("TAG", "Not logged in")
+                    val builder = AlertDialog.Builder(this)
+                    builder.setMessage("Unable to get caches. Please refresh your Geocaching credentials in the Authentication page.")
+                        .setPositiveButton("Ok.") { _: DialogInterface?, _: Int ->
+                            val intent = Intent(this, LoginActivity::class.java)
+                            startActivity(intent)}
+                    val dialog = builder.create()
+                    dialog.show()
+                } else {
+                    // Need new tour and add these caches
+                    if (_tour == null) {
+                        viewModel.createNewTourWithCaches(tourName, _geoCacheCodesList)
+                    } else {
+                        if (_tour!!.tour.name != tourName) {
+                            _tour!!.tour.name = tourName
+                            viewModel.updateGeoCachingTour(_tour!!)
+                        }
+                        viewModel.setGeoCachesInExistingTour(_geoCacheCodesList, _tour!!)
+                    }
+                    //_progressBar = findViewById(R.id.progress_layout)
+                    progress_layout.visibility = View.VISIBLE
+                    viewModel.gettingTour.observe(this, { value: Boolean? -> setTourLoadingWidgetVisibility(value) })
+
+                }
             }
-            viewModel.setGeoCachesInExistingTour(_geoCacheCodesList, _tour!!)
-        }
-        //_progressBar = findViewById(R.id.progress_layout)
-        progress_layout.visibility = View.VISIBLE
-        viewModel.gettingTour.observe(this, { value: Boolean? -> setTourLoadingWidgetVisibility(value) })
+        })
+        loginViewModel.userIsLoggedIn()
+
     }
 
     private fun setTourLoadingWidgetVisibility(value: Boolean?) {
