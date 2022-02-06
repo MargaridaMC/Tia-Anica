@@ -21,7 +21,7 @@ class MapActivityViewModel(private val repository: Repository) : ViewModel(){
     }
 
     fun computeTourFullDistance(): Double{
-        return computeTourDistance(0)
+        return computeTourDistance(-1)
     }
 
     fun computeTourRemainingDistance():Double{
@@ -38,21 +38,28 @@ class MapActivityViewModel(private val repository: Repository) : ViewModel(){
         }
 
         val tour = currentTour.value!!
+        val tourGeoCacheCoordinates = tour.tourGeoCaches.map {
+                gcit -> Point.fromLngLat(gcit.geoCache.geoCache.longitude.value,
+            gcit.geoCache.geoCache.latitude.value)
+        }
 
         var startIDX = startGeoCacheIDX
-        if (startIDX == 0) startIDX = 1
 
-        // If there is a starting point it will be the first element in route coordinates so the indices will be shifted by 1
-        if (tour.tour.startingPointLatitude != null) {
+        var distance = 0.0
+        if (startIDX == -1) {
+            startIDX = 1
+
+            // If there is a starting point it will be the first element in route coordinates
+            if (tour.tour.startingPointLatitude != null) {
+                distance = TurfMeasurement.distance(tourGeoCacheCoordinates[0]!!,
+                    Point.fromLngLat(tour.tour.startingPointLongitude!!.value, tour.tour.startingPointLatitude
+                        !!.value))
+            }
+        }
+        else {
             startIDX += 1
         }
 
-        val tourGeoCacheCoordinates = tour.tourGeoCaches.map {
-            gcit -> Point.fromLngLat(gcit.geoCache.geoCache.longitude.value,
-                gcit.geoCache.geoCache.latitude.value)
-        }
-
-        var distance = 0.0
         for (i in startIDX until tourGeoCacheCoordinates.size) {
             distance += TurfMeasurement.distance(tourGeoCacheCoordinates[i]!!,
                     tourGeoCacheCoordinates[i - 1]!!)

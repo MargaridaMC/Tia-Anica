@@ -406,10 +406,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
 
         // Set source for route lines for remaining tour
         val lastVisitedGeoCache = _tour!!.getLastVisitedGeoCache()
-        val remainingRouteCoordinates: List<Point?> = if (lastVisitedGeoCache == 0) {
+        val remainingRouteCoordinates: List<Point?> = if (lastVisitedGeoCache == -1) {
             routeCoordinates.subList(0, routeCoordinates.size)
         } else {
-            routeCoordinates.subList(lastVisitedGeoCache - 1, routeCoordinates.size)
+            if (_tour!!.tour.startingPointLongitude != null) {
+                routeCoordinates.subList(lastVisitedGeoCache + 1, routeCoordinates.size)
+            } else routeCoordinates.subList(lastVisitedGeoCache, routeCoordinates.size)
         }
         lineFeatureCollection = FeatureCollection.fromFeatures(arrayOf(Feature.fromGeometry(
                 LineString.fromLngLats(remainingRouteCoordinates))))

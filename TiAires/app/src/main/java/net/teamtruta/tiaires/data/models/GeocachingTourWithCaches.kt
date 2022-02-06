@@ -37,11 +37,6 @@ class GeocachingTourWithCaches(
                         .indexOfLast { it.geoCacheInTour.currentVisitOutcome == VisitOutcomeEnum.Found ||
                         it.geoCacheInTour.currentVisitOutcome == VisitOutcomeEnum.DNF}
 
-
-                if(lastVisitedGeoCache == -1){
-                        return 0
-                }
-
                 return lastVisitedGeoCache
         }
 
