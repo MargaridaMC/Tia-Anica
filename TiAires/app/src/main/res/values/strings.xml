@@ -51,13 +51,12 @@
     <string name="full_tour_distance">Full distance in tour is: %.2f %s</string>
     <string name="remaining_tour_distance">Remaining distance in tour is: %.2f %s</string>
     <string name="dash">\u0020-\u0020</string>
-    <string name="geo_cache_dif_ter">D/T: %1$s/%2$s</string>
+    <string name="geo_cache_dif_ter">D/T: %.1f/%.1f</string>
     <string name="geo_cache_size">Size: %1$s</string>
-    <string name="geo_cache_has_hint">&#160;- HINT</string>
-    <string name="geo_cache_has_no_hint">&#160;- &lt;font color=\'#CF2A27\'>NO HINT&lt;/font></string>
-    <string name="geo_cache_favs">❤ %1$d</string>
+    <string name="geo_cache_has_hint">HINT</string>
+    <string name="geo_cache_has_no_hint">NO HINT</string>
+    <string name="geo_cache_favs">❤ %1$d </string>
     <string name="square">■</string>
-    <string name="dnf_risk">&#160;- &lt;font color=\'#CF2A27\'>%1$s&lt;/font></string>
     <string name="password_placeholder">aaaaaaaaaaaa</string>
     <string name="authentication">Authentication</string>
     <string name="save_changes">Save Changes</string>

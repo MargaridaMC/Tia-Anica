@@ -2,7 +2,9 @@ package net.teamtruta.tiaires.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Typeface
 import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -10,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
@@ -22,6 +23,9 @@ import net.teamtruta.tiaires.viewModels.TourViewModelFactory
 import net.teamtruta.tiaires.views.TourActivity
 import java.time.Instant
 import java.util.*
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 
 
 class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
@@ -63,17 +67,17 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         val geoCacheSymbolDrawable = ContextCompat.getDrawable(holder.view.context, drawableID)
         holder.geoCacheSymbol.setImageDrawable(geoCacheSymbolDrawable)
 
-        // 3. Set information line 1: Code, difficulty and terrain and Size
+        // 3. Set information line 1: Code, difficulty and terrain and size
+        val red = ForegroundColorSpan(context.getColor(R.color.red))
         holder.geoCacheCode.text = geoCache.code
-        val difTerString = context.getString(R.string.geo_cache_dif_ter)
         val difficulty = geoCache.difficulty
         val terrain = geoCache.terrain
-        var diffString = String.format(Locale.getDefault(), "%.1f", difficulty)
-        var terString = String.format(Locale.getDefault(), "%.1f", terrain)
-        diffString = if (difficulty > 4) "<font color='red'>$diffString</font>/" else diffString
-        terString = if (terrain > 4) "<font color='red'>$terString</font>/" else terString
-        holder.geoCacheDifTer.text = HtmlCompat.fromHtml(String.format(difTerString, diffString, terString),
-                HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+        val difficultyTerrainString = SpannableString(String.format(context.getString(R.string.geo_cache_dif_ter), difficulty, terrain))
+        if (difficulty > 4) difficultyTerrainString.setSpan(red, 5, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        if (terrain > 24) difficultyTerrainString.setSpan(red, 9, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        holder.geoCacheDifTer.text = difficultyTerrainString
+
         val sizeString = context.getString(R.string.geo_cache_size)
         holder.geoCacheSize.text = String.format(sizeString, geoCache.size)
 
@@ -82,14 +86,13 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
         val favString = context.getString(R.string.geo_cache_favs)
         holder.geoCacheFavs.text = String.format(favString, geoCache.favourites)
         if (geoCache.hasHint()) {
-            val hintString = context.getString(R.string.geo_cache_has_hint)
-            holder.geoCacheHasHint.text = HtmlCompat.fromHtml(
-                    hintString,
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val hintString = " - " + context.getString(R.string.geo_cache_has_hint)
+            holder.geoCacheHasHint.text = hintString
         } else {
-            val hintString = context.getString(R.string.geo_cache_has_no_hint)
-                holder.geoCacheHasHint.text = HtmlCompat.fromHtml(hintString,
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val hintString = " - " + context.getString(R.string.geo_cache_has_no_hint)
+            val string = SpannableString(hintString)
+            string.setSpan(red, 3, string.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            holder.geoCacheHasHint.text = string
         }
         val last10Logs = geoCacheWithLogsAndAttributes.getLastNLogs(10)
         var i = 0
@@ -116,11 +119,10 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
 
         // 6. Set DNF information if required
         if (geoCacheWithLogsAndAttributes.isDNFRisk()) {
-            var dnfString = context.getString(R.string.dnf_risk)
-            dnfString = String.format(dnfString, geoCacheWithLogsAndAttributes.dNFRisk)
-            holder.dnfInfo.text = HtmlCompat.fromHtml(
-                    dnfString,
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+            val dnfString = SpannableString(" - " + geoCacheWithLogsAndAttributes.dNFRisk)
+            dnfString.setSpan(red, 3, dnfString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            holder.dnfInfo.text = dnfString
             holder.dnfInfo.visibility = View.VISIBLE
         } else {
             holder.dnfInfo.text = ""
@@ -191,8 +193,10 @@ class GeoCacheListAdapter(private val editOnClickListener: EditOnClickListener?,
     }
 
     private fun getHintText(geoCache: GeoCache): Spanned {
-        val hintString = "<strong>HINT</strong>: <i>" + geoCache.hint + "</i>"
-        return HtmlCompat.fromHtml(hintString, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val stringBuilder = SpannableStringBuilder()
+        stringBuilder.append("HINT: ", StyleSpan(Typeface.BOLD), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        stringBuilder.append(geoCache.hint, StyleSpan(Typeface.ITALIC), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return stringBuilder
     }
 
     private fun holderExpansionOnClicklistener(holder: ViewHolder, geoCacheWithLogsAndAttributesAndWaypoints: GeoCacheWithLogsAndAttributesAndWaypoints) {
