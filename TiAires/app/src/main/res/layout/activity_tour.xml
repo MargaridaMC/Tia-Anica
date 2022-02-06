@@ -19,17 +19,20 @@
                 android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="?attr/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/upload_button"
+                    android:layout_marginEnd="@dimen/half_margin"
                     app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 </androidx.appcompat.widget.Toolbar>
@@ -39,7 +42,7 @@
                     android:id="@+id/tour_progress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_marginEnd="@dimen/half_margin"
                     android:textColor="@color/colorLight"
                     android:textSize="@dimen/small_text_size"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -52,7 +55,7 @@
                     android:layout_height="@dimen/medium_icon_size"
                     android:background="@drawable/attribute_info"
                     android:onClick="showAttributeInfo"
-                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_marginEnd="@dimen/half_margin"
                     app:layout_constraintEnd_toStartOf="@+id/tour_progress"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
@@ -62,7 +65,7 @@
                     android:layout_width="@dimen/medium_icon_size"
                     android:layout_height="@dimen/medium_icon_size"
                     android:background="@drawable/upload"
-                    android:layout_marginEnd="@dimen/margin"
+                    android:layout_marginEnd="@dimen/half_margin"
                     android:onClick="uploadDrafts"
                     app:layout_constraintBottom_toBottomOf="@+id/attribute_button"
                     app:layout_constraintEnd_toStartOf="@+id/attribute_button"
