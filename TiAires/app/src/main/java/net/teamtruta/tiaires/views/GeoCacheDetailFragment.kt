@@ -29,8 +29,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.view.View
 import androidx.fragment.app.viewModels
-import kotlinx.android.synthetic.main.fragment_geo_cache_detail.*
 import net.teamtruta.tiaires.App
+import net.teamtruta.tiaires.databinding.FragmentGeoCacheDetailBinding
 import net.teamtruta.tiaires.viewModels.GeoCacheDetailViewModelFactory
 
 // TODO: Rename parameter arguments, choose names that match
@@ -50,6 +50,11 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
     private val viewModel: GeoCacheDetailViewModel by viewModels{
             GeoCacheDetailViewModelFactory((requireActivity().application as App).repository)}
 
+    private var _binding: FragmentGeoCacheDetailBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -60,7 +65,9 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment - this method is called only after onCreate
-        return inflater.inflate(R.layout.fragment_geo_cache_detail, container, false)
+        _binding = FragmentGeoCacheDetailBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,9 +104,9 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
         // Set Not Found / Found / DNF toggle and appropriate onClickListener
         var buttonStates = booleanArrayOf(true, false, false)
         if (currentGeoCacheInTour!!.currentVisitOutcome === VisitOutcomeEnum.Found) buttonStates = booleanArrayOf(false, true, false) else if (currentGeoCacheInTour!!.currentVisitOutcome === VisitOutcomeEnum.DNF) buttonStates = booleanArrayOf(false, false, true)
-        geo_cache_visit_button.states = buttonStates
+        binding.geoCacheVisitButton.states = buttonStates
 
-        geo_cache_visit_button.setOnValueChangedListener { position: Int ->
+        binding.geoCacheVisitButton.setOnValueChangedListener { position: Int ->
             when(position){
                 0 -> viewModel.setGeoCacheInTourVisit(currentGeoCacheInTour!!, VisitOutcomeEnum.NotAttempted)
                 1 -> {
@@ -112,29 +119,29 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
 
         // Set Checkboxes
         // 1. Needs Maintenance Checkbox
-        needsMaintenanceCheckBox.isChecked = currentGeoCacheInTour!!.needsMaintenance
+        binding.needsMaintenanceCheckBox.isChecked = currentGeoCacheInTour!!.needsMaintenance
 
         // 2. FoundTrackable Checkbox and EditText
         if (currentGeoCacheInTour!!.foundTrackable != null) {
-            foundTrackableCheckBox.isChecked = true
-            foundTrackableEditText.setText(currentGeoCacheInTour!!.foundTrackable)
+            binding.foundTrackableCheckBox.isChecked = true
+            binding.foundTrackableEditText.setText(currentGeoCacheInTour!!.foundTrackable)
         }
 
         // 3. DroppedTrackable Checkbox and EditText
         if (currentGeoCacheInTour!!.droppedTrackable != null) {
-            droppedTrackableCheckBox.isChecked = true
-            droppedTrackableEditText.setText(currentGeoCacheInTour!!.droppedTrackable)
+            binding.droppedTrackableCheckBox.isChecked = true
+            binding.droppedTrackableEditText.setText(currentGeoCacheInTour!!.droppedTrackable)
         }
 
         // 4. Favourite Point Checkbox
-        if (currentGeoCacheInTour!!.favouritePoint) favouritePointCheckBox?.isChecked = true
+        if (currentGeoCacheInTour!!.favouritePoint) binding.favouritePointCheckBox?.isChecked = true
 
         // Set my notes
         val myNotes = currentGeoCacheInTour!!.notes
-        if (myNotes != "") notes.setText(myNotes)
+        if (myNotes != "") binding.notes.setText(myNotes)
 
         // Setup photo
-        photo_checkbox.isChecked = currentGeoCacheInTour!!.pathToImage != null
+        binding.photoCheckbox.isChecked = currentGeoCacheInTour!!.pathToImage != null
     }
 
     /**
@@ -144,34 +151,34 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
         Analytics.trackEvent("GeoCacheDetailActivity.saveChanges")
 
         // save changes
-        if( needsMaintenanceCheckBox != null && favouritePointCheckBox != null
-                && foundTrackableEditText != null && droppedTrackableEditText != null && notes != null){
+        if( binding.needsMaintenanceCheckBox != null && binding.favouritePointCheckBox != null
+                && binding.foundTrackableEditText != null && binding.droppedTrackableEditText != null && binding.notes != null){
         viewModel.updateGeocaCheInTourDetails(currentGeoCacheInTour!!,
-                needsMaintenanceCheckBox.isChecked,
-                favouritePointCheckBox.isChecked,
-                foundTrackableEditText.text.toString(),
-                droppedTrackableEditText.text.toString(),
-                notes.text.toString())
+            binding.needsMaintenanceCheckBox.isChecked,
+            binding.favouritePointCheckBox.isChecked,
+            binding.foundTrackableEditText.text.toString(),
+            binding.droppedTrackableEditText.text.toString(),
+            binding.notes.text.toString())
             }
     }
 
 
     private fun onFoundTrackableCheckboxClicked(view: View?) {
-        if (foundTrackableCheckBox?.isChecked == true) {
+        if (binding.foundTrackableCheckBox?.isChecked == true) {
             // Focus attention on text box to fill in value
-            foundTrackableEditText?.requestFocus()
+            binding.foundTrackableEditText?.requestFocus()
         } else {
             // Delete inputted trackable code in editText area
-            foundTrackableEditText?.setText("")
+            binding.foundTrackableEditText?.setText("")
         }
     }
 
     private fun onDroppedTrackableCheckboxClicked(view: View?) {
-        if (droppedTrackableCheckBox?.isChecked == true) {
+        if (binding.droppedTrackableCheckBox?.isChecked == true) {
             // Focus attention on text box to fill in value
-            droppedTrackableEditText?.requestFocus()
+            binding.droppedTrackableEditText?.requestFocus()
         } else {
-            droppedTrackableEditText?.setText("")
+            binding.droppedTrackableEditText?.setText("")
         }
     }
 
@@ -179,6 +186,11 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
     override fun onPause() {
         saveChanges()
         super.onPause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
@@ -270,13 +282,13 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
         if (currentGeoCacheInTour!!.pathToImage == null) {
             takePhoto()
             // Set the checkbox to checked
-            photo_checkbox.isChecked = true
+            binding.photoCheckbox.isChecked = true
             return
         }
         val context = activity
         if(context != null && isAdded){
             // Set the checkbox to checked
-            photo_checkbox.isChecked = true
+            binding.photoCheckbox.isChecked = true
             val popup = PopupMenu(context, view)
             // This activity implements OnMenuItemClickListener
             popup.setOnMenuItemClickListener(this)
@@ -312,7 +324,7 @@ class GeoCacheDetailFragment : Fragment(), PopupMenu.OnMenuItemClickListener{
             }
         }
         currentGeoCacheInTour!!.pathToImage = null
-        photo_checkbox.isChecked = false
+        binding.photoCheckbox.isChecked = false
     }
 
     /*  // Throws an exception because it exposes App files to the system

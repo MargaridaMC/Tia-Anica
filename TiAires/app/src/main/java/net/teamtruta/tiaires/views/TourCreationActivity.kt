@@ -6,7 +6,9 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.viewModels
@@ -14,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.microsoft.appcenter.analytics.Analytics
-import kotlinx.android.synthetic.main.activity_tour_creation.*
+import net.teamtruta.tiaires.databinding.ActivityTourCreationBinding
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.R
 import net.teamtruta.tiaires.data.models.GeocachingTourWithCaches
@@ -36,12 +38,17 @@ class TourCreationActivity : AppCompatActivity() {
         LoginViewModelFactory((application as App).groundspeakRepository)
     }
 
+    private lateinit var binding: ActivityTourCreationBinding
+
     /**
      * Activity initializer
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tour_creation)
+        binding = ActivityTourCreationBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         Objects.requireNonNull(supportActionBar)!!.setDisplayHomeAsUpEnabled(true)
@@ -152,7 +159,7 @@ class TourCreationActivity : AppCompatActivity() {
                         viewModel.setGeoCachesInExistingTour(_geoCacheCodesList, _tour!!)
                     }
                     //_progressBar = findViewById(R.id.progress_layout)
-                    progress_layout.visibility = View.VISIBLE
+                    binding.progressLayout.root.visibility = View.VISIBLE
                     viewModel.gettingTour.observe(this, { value: Boolean? -> setTourLoadingWidgetVisibility(value) })
 
                 }
