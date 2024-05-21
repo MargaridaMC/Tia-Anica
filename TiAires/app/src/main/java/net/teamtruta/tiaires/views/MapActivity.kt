@@ -115,9 +115,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        binding = ActivityMapBinding.inflate(layoutInflater)
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
 
+        binding = ActivityMapBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
