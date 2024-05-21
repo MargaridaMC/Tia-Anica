@@ -41,7 +41,7 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import kotlinx.android.synthetic.main.activity_map.*
+import net.teamtruta.tiaires.databinding.ActivityMapBinding
 import kotlinx.coroutines.*
 import net.teamtruta.tiaires.App
 import net.teamtruta.tiaires.BuildConfig
@@ -110,15 +110,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
     private val WAYPOINT_NORMAL_TYPE = "normalWaypoint"
 
     private val viewMap = HashMap<String, View>()
+    private lateinit var binding: ActivityMapBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        binding = ActivityMapBinding.inflate(layoutInflater)
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
-        setContentView(R.layout.activity_map)
 
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+        val view = binding.root
+        setContentView(view)
+
+        binding.mapView.onCreate(savedInstanceState)
+        binding.mapView.getMapAsync(this)
 
         // Setup bar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -152,37 +156,37 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapClickListener,
      */
     override fun onStart() {
         super.onStart()
-        mapView!!.onStart()
+        binding.mapView!!.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        mapView!!.onResume()
+        binding.mapView!!.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView!!.onPause()
+        binding.mapView!!.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        mapView!!.onStop()
+        binding.mapView!!.onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mapView!!.onSaveInstanceState(outState)
+        binding.mapView!!.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView!!.onDestroy()
+        binding.mapView!!.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView!!.onLowMemory()
+        binding.mapView!!.onLowMemory()
     }
 
     override fun onMapClick(point: LatLng): Boolean {
